@@ -4,3 +4,4 @@ openai
 chromadb
 requests
 supabase
+gunicorn
