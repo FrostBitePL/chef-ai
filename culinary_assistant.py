@@ -611,6 +611,47 @@ def create_app():
             "imports_today":count_i,"imports_limit":limit_i
         })
 
+    @app.route("/api/create-checkout-session",methods=["POST"])
+    @require_auth
+    def create_checkout_session():
+        uid=g.user_id
+        try:
+            # Get or create Stripe customer
+            profile=db_get_profile(uid)
+            customer_id=profile.get("stripe_customer_id")
+            
+            if not customer_id:
+                # Get user email from Supabase Auth
+                try:
+                    user_resp=sb.auth.get_user(request.headers.get("Authorization","").replace("Bearer ",""))
+                    email=user_resp.user.email if user_resp and user_resp.user else "unknown@example.com"
+                except:
+                    email="unknown@example.com"
+                
+                # Create Stripe customer
+                customer=stripe.Customer.create(email=email,metadata={"supabase_uid":uid})
+                customer_id=customer["id"]
+                db_update_profile(uid,{"stripe_customer_id":customer_id})
+            
+            # Create checkout session
+            session=stripe.checkout.Session.create(
+                customer=customer_id,
+                payment_method_types=["card"],
+                line_items=[{
+                    "price":STRIPE_PRICE_ID,
+                    "quantity":1,
+                }],
+                mode="subscription",
+                success_url=request.host_url+"?upgrade=success",
+                cancel_url=request.host_url,
+                metadata={"supabase_uid":uid},
+            )
+            
+            return jsonify({"sessionId":session["id"],"publicKey":os.environ.get("STRIPE_PUBLISHABLE_KEY","")})
+        except Exception as e:
+            logger.error(f"Checkout session error: {e}")
+            return jsonify({"error":str(e)}),500
+
     @app.route("/api/stripe/webhook",methods=["POST"])
     def stripe_webhook():
         payload=request.get_data()

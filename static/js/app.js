@@ -441,3 +441,53 @@ async function finishOnboarding(){
     sendQ(q);
   },500);
 }
+// Add this to app.js at the end of the file
+
+async function openStripeCheckout() {
+    try {
+        const response = await fetch('/api/create-checkout-session', {
+            method: 'POST',
+            headers: authHeaders(),
+        });
+        
+        if (!response.ok) {
+            console.error('Checkout error:', response.status);
+            return;
+        }
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            alert('Błąd: ' + data.error);
+            return;
+        }
+        
+        // Redirect to Stripe Checkout
+        if (data.sessionId) {
+            // Load Stripe.js if not already loaded
+            if (typeof Stripe === 'undefined') {
+                const script = document.createElement('script');
+                script.src = 'https://js.stripe.com/v3/';
+                script.onload = () => {
+                    const stripe = Stripe('pk_test_51TEt6G91D0CH9ZxXPuj22BXterECRejNIuyQrxoQVmze7CQgMlhtBwHuJtAjhXEI7wYEkwyESBLvPGbNJbiVbDK700LqSyhM3H');
+                    stripe.redirectToCheckout({ sessionId: data.sessionId });
+                };
+                document.head.appendChild(script);
+            } else {
+                const stripe = Stripe('pk_test_51TEt6G91D0CH9ZxXPuj22BXterECRejNIuyQrxoQVmze7CQgMlhtBwHuJtAjhXEI7wYEkwyESBLvPGbNJbiVbDK700LqSyhM3H');
+                stripe.redirectToCheckout({ sessionId: data.sessionId });
+            }
+        }
+    } catch (error) {
+        console.error('Checkout error:', error);
+        alert('Błąd podczas otwierania checkout: ' + error.message);
+    }
+}
+
+// Hook this to the PRO badge/button click
+document.addEventListener('DOMContentLoaded', () => {
+    const proBtn = document.getElementById('proBadge');
+    if (proBtn) {
+        proBtn.addEventListener('click', openStripeCheckout);
+    }
+});
