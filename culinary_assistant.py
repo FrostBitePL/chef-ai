@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Culinary AI v10 — Supabase Auth + PostgreSQL"""
+"""Chef AI v11 — Supabase Auth + PostgreSQL + Stripe"""
 
 import os,json,logging,traceback,random,re,functools
 from datetime import datetime
@@ -9,6 +9,7 @@ from flask_cors import CORS
 import chromadb
 from chromadb.utils import embedding_functions
 from supabase import create_client,Client
+import stripe
 try:
     import requests as http_requests
 except ImportError:
@@ -22,6 +23,15 @@ DEEPSEEK_MODEL="deepseek-chat"; DEEPSEEK_MAX_TOKENS=8192
 SUPABASE_URL=os.environ.get("SUPABASE_URL","")
 SUPABASE_KEY=os.environ.get("SUPABASE_SERVICE_KEY","")
 SUPABASE_ANON_KEY=os.environ.get("SUPABASE_ANON_KEY","")
+
+STRIPE_SECRET_KEY=os.environ.get("STRIPE_SECRET_KEY","")
+STRIPE_WEBHOOK_SECRET=os.environ.get("STRIPE_WEBHOOK_SECRET","")
+STRIPE_PRICE_ID=os.environ.get("STRIPE_PRICE_ID","price_1TFBHf91D0CH9ZxXCpC7iZRV")
+stripe.api_key=STRIPE_SECRET_KEY
+
+# ─── Free tier limits ───
+FREE_RECIPES_PER_DAY=5
+FREE_IMPORTS_PER_DAY=2
 
 logging.basicConfig(level=logging.INFO,format="%(asctime)s [%(levelname)s] %(message)s")
 logger=logging.getLogger(__name__)
@@ -497,19 +507,171 @@ def create_app():
     def config():
         return jsonify({"supabase_url":SUPABASE_URL,"supabase_anon_key":SUPABASE_ANON_KEY})
 
+    # ─── Subscription Helpers ───
+    def is_pro(uid):
+        """Check if user has active PRO subscription."""
+        p=db_get_profile(uid)
+        status=p.get("subscription_status","free")
+        if status=="active": return True
+        # Check expiry for canceled but still valid
+        end=p.get("subscription_end")
+        if end and status in ("canceled","past_due"):
+            try:
+                if datetime.fromisoformat(str(end).replace("Z","+00:00"))>datetime.utcnow().replace(tzinfo=None):
+                    return True
+            except: pass
+        return False
+
+    def check_daily_limit(uid,limit_type="recipes"):
+        """Check if free user exceeded daily limit. Returns (allowed, count, limit)."""
+        p=db_get_profile(uid)
+        if p.get("subscription_status")=="active": return True,0,999
+        stats=p.get("stats",{})
+        if isinstance(stats,str): stats=json.loads(stats) if stats else {}
+        today=datetime.utcnow().strftime("%Y-%m-%d")
+        key=f"daily_{limit_type}"
+        daily=stats.get(key,{})
+        if isinstance(daily,str): daily=json.loads(daily) if daily else {}
+        if daily.get("date")!=today: daily={"date":today,"count":0}
+        limit=FREE_RECIPES_PER_DAY if limit_type=="recipes" else FREE_IMPORTS_PER_DAY
+        return daily["count"]<limit, daily["count"], limit
+
+    def increment_daily(uid,limit_type="recipes"):
+        p=db_get_profile(uid)
+        stats=p.get("stats",{})
+        if isinstance(stats,str): stats=json.loads(stats) if stats else {}
+        today=datetime.utcnow().strftime("%Y-%m-%d")
+        key=f"daily_{limit_type}"
+        daily=stats.get(key,{})
+        if isinstance(daily,str): daily=json.loads(daily) if daily else {}
+        if daily.get("date")!=today: daily={"date":today,"count":0}
+        daily["count"]+=1
+        stats[key]=daily
+        db_update_profile(uid,{"stats":stats})
+
+    # ─── Stripe Endpoints ───
+    @app.route("/api/stripe/checkout",methods=["POST"])
+    @require_auth
+    def create_checkout():
+        if not STRIPE_SECRET_KEY: return jsonify({"error":"Stripe not configured"}),503
+        p=db_get_profile(g.user_id)
+        try:
+            # Get or create Stripe customer
+            customer_id=p.get("stripe_customer_id")
+            if not customer_id:
+                customer=stripe.Customer.create(
+                    metadata={"supabase_uid":g.user_id},
+                    email=None  # Supabase handles email
+                )
+                customer_id=customer.id
+                db_update_profile(g.user_id,{"stripe_customer_id":customer_id})
+
+            session=stripe.checkout.Session.create(
+                customer=customer_id,
+                payment_method_types=["card"],
+                line_items=[{"price":STRIPE_PRICE_ID,"quantity":1}],
+                mode="subscription",
+                success_url=request.host_url.rstrip("/")+"?payment=success",
+                cancel_url=request.host_url.rstrip("/")+"?payment=cancel",
+                metadata={"supabase_uid":g.user_id}
+            )
+            return jsonify({"url":session.url})
+        except Exception as e:
+            logger.error(f"Stripe checkout error: {e}")
+            return jsonify({"error":str(e)}),500
+
+    @app.route("/api/stripe/portal",methods=["POST"])
+    @require_auth
+    def customer_portal():
+        if not STRIPE_SECRET_KEY: return jsonify({"error":"Stripe not configured"}),503
+        p=db_get_profile(g.user_id)
+        customer_id=p.get("stripe_customer_id")
+        if not customer_id: return jsonify({"error":"No subscription"}),400
+        try:
+            session=stripe.billing_portal.Session.create(
+                customer=customer_id,
+                return_url=request.host_url.rstrip("/")
+            )
+            return jsonify({"url":session.url})
+        except Exception as e:
+            return jsonify({"error":str(e)}),500
+
+    @app.route("/api/stripe/status")
+    @require_auth
+    def subscription_status():
+        p=db_get_profile(g.user_id)
+        pro=is_pro(g.user_id)
+        # Get daily usage
+        allowed_r,count_r,limit_r=check_daily_limit(g.user_id,"recipes")
+        allowed_i,count_i,limit_i=check_daily_limit(g.user_id,"imports")
+        return jsonify({
+            "is_pro":pro,
+            "status":p.get("subscription_status","free"),
+            "recipes_today":count_r,"recipes_limit":limit_r,
+            "imports_today":count_i,"imports_limit":limit_i
+        })
+
+    @app.route("/api/stripe/webhook",methods=["POST"])
+    def stripe_webhook():
+        payload=request.get_data()
+        sig=request.headers.get("Stripe-Signature")
+        try:
+            event=stripe.Webhook.construct_event(payload,sig,STRIPE_WEBHOOK_SECRET)
+        except Exception as e:
+            logger.error(f"Webhook signature error: {e}")
+            return jsonify({"error":"Invalid signature"}),400
+
+        etype=event["type"]
+        data=event["data"]["object"]
+        logger.info(f"Stripe webhook: {etype}")
+
+        if etype=="checkout.session.completed":
+            uid=data.get("metadata",{}).get("supabase_uid")
+            customer_id=data.get("customer")
+            if uid:
+                db_update_profile(uid,{
+                    "stripe_customer_id":customer_id,
+                    "subscription_status":"active"
+                })
+                logger.info(f"PRO activated for {uid}")
+
+        elif etype in ("customer.subscription.updated","customer.subscription.deleted"):
+            customer_id=data.get("customer")
+            status=data.get("status","")  # active, canceled, past_due, unpaid
+            period_end=data.get("current_period_end")
+            # Find user by stripe_customer_id
+            try:
+                r=sb.table("profiles").select("id").eq("stripe_customer_id",customer_id).execute()
+                if r.data:
+                    uid=r.data[0]["id"]
+                    updates={"subscription_status":status if status!="canceled" else "canceled"}
+                    if period_end:
+                        updates["subscription_end"]=datetime.utcfromtimestamp(period_end).isoformat()
+                    db_update_profile(uid,updates)
+                    logger.info(f"Subscription {status} for {uid}")
+            except Exception as e:
+                logger.error(f"Webhook user lookup error: {e}")
+
+        return jsonify({"received":True})
+
     # ─── Chat ───
     @app.route("/api/ask",methods=["POST"])
     @require_auth
     def api_ask():
         a=app.config.get("assistant")
         if not a: return jsonify({"error":"Not init"}),503
+        allowed,count,limit=check_daily_limit(g.user_id,"recipes")
+        if not allowed: return jsonify({"error":"limit","message":f"Dzienny limit {limit} przepisów wyczerpany. Przejdź na PRO!","is_limit":True}),429
         d=request.get_json(silent=True) or {}
         q=(d.get("question") or "").strip()
         if not q: return jsonify({"error":"No question"}),400
         p=db_get_profile(g.user_id)
         pr=p.get("bot_profile","guest")
         h=[{"role":m["role"],"content":m["content"]} for m in (d.get("conversation_history") or []) if isinstance(m,dict) and m.get("role") in ("user","assistant")][-MAX_HISTORY:]
-        try: return jsonify({"success":True,**a.ask(q,h,profile=pr,uid=g.user_id)})
+        try:
+            result=a.ask(q,h,profile=pr,uid=g.user_id)
+            increment_daily(g.user_id,"recipes")
+            return jsonify({"success":True,**result})
         except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad serwera."}),500
 
     @app.route("/api/surprise",methods=["POST"])
@@ -517,8 +679,13 @@ def create_app():
     def api_surprise():
         a=app.config.get("assistant")
         if not a: return jsonify({"error":"Not init"}),503
+        allowed,count,limit=check_daily_limit(g.user_id,"recipes")
+        if not allowed: return jsonify({"error":"limit","message":f"Dzienny limit {limit} przepisów wyczerpany. Przejdź na PRO!","is_limit":True}),429
         p=db_get_profile(g.user_id)
-        try: return jsonify({"success":True,**a.surprise(profile=p.get("bot_profile","guest"),uid=g.user_id)})
+        try:
+            result=a.surprise(profile=p.get("bot_profile","guest"),uid=g.user_id)
+            increment_daily(g.user_id,"recipes")
+            return jsonify({"success":True,**result})
         except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad."}),500
 
     @app.route("/api/meal-plan",methods=["POST"])
@@ -537,6 +704,8 @@ def create_app():
         a=app.config.get("assistant")
         if not a: return jsonify({"error":"Not init"}),503
         if not http_requests: return jsonify({"error":"Modul requests niedostepny"}),500
+        allowed,count,limit=check_daily_limit(g.user_id,"imports")
+        if not allowed: return jsonify({"error":"limit","message":f"Dzienny limit {limit} importów wyczerpany. Przejdź na PRO!","is_limit":True}),429
         d=request.get_json(silent=True) or {}
         url=(d.get("url") or "").strip()
         if not url: return jsonify({"error":"Brak URL"}),400
@@ -576,7 +745,9 @@ def create_app():
             if recipe_start: text=text[recipe_start:recipe_start+4000]
             else: text=text[:4000]
             full_text=(ld_text+"\n\nTEKST ZE STRONY:\n"+text) if ld_text else text
-            return jsonify({"success":True,**a.import_url(url,full_text[:7000],p.get("bot_profile","guest"),uid=g.user_id)})
+            result=a.import_url(url,full_text[:7000],p.get("bot_profile","guest"),uid=g.user_id)
+            increment_daily(g.user_id,"imports")
+            return jsonify({"success":True,**result})
         except http_requests.RequestException as e:
             return jsonify({"error":f"Nie udalo sie pobrac strony: {str(e)[:100]}"}),400
         except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad."}),500
@@ -719,5 +890,5 @@ def create_app():
 app=create_app()
 if __name__=="__main__":
     port=int(os.environ.get("PORT",5000))
-    logger.info(f"Culinary AI v10 — http://localhost:{port}")
+    logger.info(f"Chef AI v10 — http://localhost:{port}")
     app.run(host="0.0.0.0",port=port,debug=False)

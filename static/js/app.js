@@ -74,12 +74,33 @@ async function onLogin(){
     const r=await fetch(API+'/api/profile',{headers:authHeaders()});
     userProfile=await r.json();
   }catch{userProfile={}}
-  renderUserInfo();
+  
+  // Check if new user (no equipment = needs onboarding)
+  const eq=userProfile?.equipment||[];
+  const hasEquipment=Array.isArray(eq)?eq.length>0:(typeof eq==='string'&&eq!=='[]'&&eq!=='');
+  if(!hasEquipment){
+    showOnboarding();
+    return;
+  }
+  
+  enterApp();
+}
+
+function enterApp(){
+  document.getElementById('onboardingOverlay').style.display='none';
+  document.getElementById('appMain').style.display='flex';
+  loadSubStatus().then(()=>renderUserInfo());
   renderQuickTags();
   addWelcome();
   checkServer();
   newSession();
   loadProgress();
+  // Check for payment return
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('payment')==='success'){
+    setTimeout(()=>{addMsg('t','🎉 Witaj w Chef AI PRO! Gotujemy bez limitów.');loadSubStatus().then(()=>renderUserInfo())},500);
+    window.history.replaceState({},'','/');
+  }
 }
 
 // ─── Auth Screen ───
@@ -155,11 +176,80 @@ async function socialLogin(provider){
 }
 
 // ─── User Info ───
+let subStatus={is_pro:false,status:'free',recipes_today:0,recipes_limit:5};
+
 function renderUserInfo(){
   const el=document.getElementById('userInfo');
   if(!el) return;
   const name=userProfile?.name||currentUser?.email?.split('@')[0]||'User';
-  el.innerHTML='<span class="user-name">'+esc(name)+'</span><button class="user-logout-btn" onclick="logout()" title="Wyloguj">⏻</button>';
+  let h='<span class="user-name">'+esc(name)+'</span>';
+  if(subStatus.is_pro){
+    h+='<span class="pro-badge">PRO</span>';
+  } else {
+    h+='<button class="upgrade-btn" onclick="openUpgrade()">⭐ PRO</button>';
+  }
+  h+='<button class="user-logout-btn" onclick="logout()" title="Wyloguj">⏻</button>';
+  el.innerHTML=h;
+}
+
+async function loadSubStatus(){
+  try{
+    const r=await fetch(API+'/api/stripe/status',{headers:authHeaders()});
+    subStatus=await r.json();
+  }catch{subStatus={is_pro:false,status:'free',recipes_today:0,recipes_limit:5}}
+}
+
+async function openUpgrade(){
+  if(subStatus.is_pro){
+    // Open customer portal
+    try{
+      const r=await fetch(API+'/api/stripe/portal',{method:'POST',headers:authHeaders()});
+      const d=await r.json();
+      if(d.url) window.location.href=d.url;
+    }catch{}
+    return;
+  }
+  // Show upgrade modal
+  const el=document.getElementById('messages');
+  let h='<div class="upgrade-card">';
+  h+='<div class="upgrade-header"><h2>⭐ Chef AI PRO</h2><p>Gotowanie bez limitów</p></div>';
+  h+='<div class="upgrade-body">';
+  h+='<div class="upgrade-price"><span class="upgrade-amount">€6.99</span><span class="upgrade-period">/miesiąc</span></div>';
+  h+='<div class="upgrade-features">';
+  h+='<div class="upgrade-feat">✓ Nielimitowane przepisy</div>';
+  h+='<div class="upgrade-feat">✓ Nielimitowany import z URL</div>';
+  h+='<div class="upgrade-feat">✓ Live cooking z przyciskiem Problem</div>';
+  h+='<div class="upgrade-feat">✓ Pełne szkolenie (45 modułów)</div>';
+  h+='<div class="upgrade-feat">✓ Personalizacja sprzętu</div>';
+  h+='<div class="upgrade-feat">✓ Porównanie technik</div>';
+  h+='</div>';
+  h+='<button class="auth-submit" onclick="startCheckout()" id="checkoutBtn">Przejdź na PRO →</button>';
+  h+='<div class="upgrade-note">Możesz anulować w każdej chwili</div>';
+  h+='</div></div>';
+  const div=document.createElement('div');div.className='msg';div.innerHTML=h;
+  el.appendChild(div);scrollBottom();
+}
+
+async function startCheckout(){
+  const btn=document.getElementById('checkoutBtn');
+  if(btn){btn.disabled=true;btn.textContent='⏳ Przekierowuję...'}
+  try{
+    const r=await fetch(API+'/api/stripe/checkout',{method:'POST',headers:authHeaders()});
+    const d=await r.json();
+    if(d.url) window.location.href=d.url;
+    else if(btn){btn.disabled=false;btn.textContent='Przejdź na PRO →'}
+  }catch{if(btn){btn.disabled=false;btn.textContent='Przejdź na PRO →'}}
+}
+
+function showLimitMessage(msg){
+  const el=document.getElementById('messages');
+  let h='<div class="limit-card">';
+  h+='<div class="limit-icon">🔒</div>';
+  h+='<div class="limit-text">'+esc(msg)+'</div>';
+  h+='<button class="auth-submit" onclick="openUpgrade()" style="margin-top:12px">⭐ Przejdź na PRO</button>';
+  h+='</div>';
+  const div=document.createElement('div');div.className='msg';div.innerHTML=h;
+  el.appendChild(div);scrollBottom();
 }
 
 function renderQuickTags(){
@@ -205,3 +295,149 @@ function scrollBottom(){const m=document.getElementById('messages');setTimeout((
 function fmtT(s){if(s<0)s=0;return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
 function addMsg(t,text){const d=document.createElement('div');d.className='msg';if(t==='user')d.innerHTML='<div class="msg-user">'+esc(text)+'</div>';else{d.innerHTML='<div class="msg-text">'+esc(text)+'</div>'}document.getElementById('messages').appendChild(d);scrollBottom()}
 function loadingDots(){return'<div class="loading-dots"><span></span><span></span><span></span></div>'}
+
+// ─── Onboarding ───
+let obStep=0;
+const OB_EQUIPMENT={
+  basic:['Piekarnik','Płyta indukcyjna/gazowa','Patelnia nieprzywierająca','Garnek','Waga kuchenna','Nóż szefa kuchni'],
+  advanced:['Piekarnik z termoobiegiem','Płyta indukcyjna','Patelnia stalowa','Patelnia żeliwna','Patelnia nieprzywierająca','Sous-vide cyrkulator','Robot kuchenny','Blender','Waga kuchenna','Termometr sondowy'],
+  pro:['Płyta indukcyjna (poziomy 1-14)','Piekarnik z termosondą','Sous-vide cyrkulator','Płyta stalowa 8mm','Blender (prędkość 1-5)','Robot kuchenny (prędkość 1-7)','Maszynka do makaronu','Maszynka do mielenia','Waga analityczna 0.001g','Waga kuchenna','Syfon iSi (N2O)','Vacuum sealer','Pirometr','Hydrokoloidy']
+};
+const OB_BANS={
+  none:[],
+  lactose:['Mleko','Śmietana','Masło','Ser żółty','Jogurt'],
+  gluten:['Mąka pszenna','Chleb','Makaron pszenny','Panierka'],
+  vegan:['Mięso','Ryby','Nabiał','Jajka','Miód']
+};
+let obData={name:'',level:'mid',equipment:[],bans:[]};
+
+function showOnboarding(){
+  document.getElementById('appMain').style.display='none';
+  document.getElementById('onboardingOverlay').style.display='flex';
+  obStep=0;
+  obData.name=userProfile?.name||currentUser?.user_metadata?.full_name||currentUser?.email?.split('@')[0]||'';
+  renderObStep();
+}
+
+function renderObStep(){
+  const el=document.getElementById('obContent');
+  const dots='<div class="ob-dots">'+[0,1,2].map(i=>'<span class="ob-dot'+(i===obStep?' active':'')+'"></span>').join('')+'</div>';
+  
+  if(obStep===0){
+    el.innerHTML=dots+'<h2 class="ob-title">Cześć! 👋</h2>'
+      +'<p class="ob-sub">Jak masz na imię?</p>'
+      +'<input type="text" class="auth-input" id="obName" value="'+esc(obData.name)+'" placeholder="Twoje imię" autofocus>'
+      +'<p class="ob-sub" style="margin-top:20px">Twój poziom w kuchni:</p>'
+      +'<div class="ob-levels">'
+      +'<button class="ob-level'+(obData.level==='beginner'?' active':'')+'" onclick="obData.level=\'beginner\';renderObStep()"><span class="ob-level-icon">🥚</span><span class="ob-level-name">Początkujący</span><span class="ob-level-desc">Uczę się podstaw</span></button>'
+      +'<button class="ob-level'+(obData.level==='mid'?' active':'')+'" onclick="obData.level=\'mid\';renderObStep()"><span class="ob-level-icon">🍳</span><span class="ob-level-name">Średni</span><span class="ob-level-desc">Gotuję regularnie</span></button>'
+      +'<button class="ob-level'+(obData.level==='pro'?' active':'')+'" onclick="obData.level=\'pro\';renderObStep()"><span class="ob-level-icon">👨‍🍳</span><span class="ob-level-name">Zaawansowany</span><span class="ob-level-desc">Szukam precyzji</span></button>'
+      +'</div>'
+      +'<button class="auth-submit" onclick="obNext()" style="margin-top:20px">Dalej →</button>';
+  }
+  else if(obStep===1){
+    el.innerHTML=dots+'<h2 class="ob-title">Twój sprzęt 🔧</h2>'
+      +'<p class="ob-sub">Wybierz zestaw lub dodaj własny sprzęt</p>'
+      +'<div class="ob-presets">'
+      +'<button class="ob-preset'+(obData.equipmentPreset==='basic'?' active':'')+'" onclick="selectEquipPreset(\'basic\')">🏠 Podstawowy</button>'
+      +'<button class="ob-preset'+(obData.equipmentPreset==='advanced'?' active':'')+'" onclick="selectEquipPreset(\'advanced\')">👨‍🍳 Zaawansowany</button>'
+      +'<button class="ob-preset'+(obData.equipmentPreset==='pro'?' active':'')+'" onclick="selectEquipPreset(\'pro\')">⭐ Profesjonalny</button>'
+      +'</div>'
+      +'<div class="ob-tags" id="obEquipTags"></div>'
+      +'<div class="ob-add-row"><input type="text" class="auth-input" id="obNewEquip" placeholder="Dodaj sprzęt..." style="margin:0;flex:1"><button class="ob-add-btn" onclick="obAddEquip()">+</button></div>'
+      +'<div class="ob-nav"><button class="ob-back" onclick="obStep=0;renderObStep()">← Wstecz</button><button class="auth-submit" onclick="obNext()" style="flex:1">Dalej →</button></div>';
+    renderObEquipTags();
+  }
+  else if(obStep===2){
+    el.innerHTML=dots+'<h2 class="ob-title">Czego nie jesz? 🚫</h2>'
+      +'<p class="ob-sub">Nigdy nie zaproponujemy tych składników</p>'
+      +'<div class="ob-presets">'
+      +'<button class="ob-preset" onclick="addBanPresetOb(\'lactose\')">🥛 Bez laktozy</button>'
+      +'<button class="ob-preset" onclick="addBanPresetOb(\'gluten\')">🌾 Bez glutenu</button>'
+      +'<button class="ob-preset" onclick="addBanPresetOb(\'vegan\')">🌿 Vegan</button>'
+      +'</div>'
+      +'<div class="ob-tags" id="obBanTags"></div>'
+      +'<div class="ob-add-row"><input type="text" class="auth-input" id="obNewBan" placeholder="Dodaj zakaz..." style="margin:0;flex:1"><button class="ob-add-btn" onclick="obAddBan()">+</button></div>'
+      +'<div class="ob-nav"><button class="ob-back" onclick="obStep=1;renderObStep()">← Wstecz</button><button class="auth-submit ob-finish" onclick="finishOnboarding()" style="flex:1">🍳 Gotujemy!</button></div>';
+    renderObBanTags();
+  }
+}
+
+function selectEquipPreset(key){
+  obData.equipmentPreset=key;
+  obData.equipment=[...OB_EQUIPMENT[key]];
+  renderObStep();
+}
+
+function renderObEquipTags(){
+  const el=document.getElementById('obEquipTags');
+  if(!el) return;
+  el.innerHTML=obData.equipment.map((e,i)=>'<span class="ob-tag" onclick="obData.equipment.splice('+i+',1);renderObEquipTags()">'+esc(e)+' ✕</span>').join('');
+}
+
+function obAddEquip(){
+  const inp=document.getElementById('obNewEquip');
+  const v=inp?.value?.trim();
+  if(v&&!obData.equipment.includes(v)){obData.equipment.push(v);inp.value='';renderObEquipTags()}
+}
+
+function addBanPresetOb(key){
+  OB_BANS[key].forEach(b=>{if(!obData.bans.includes(b))obData.bans.push(b)});
+  renderObBanTags();
+}
+
+function renderObBanTags(){
+  const el=document.getElementById('obBanTags');
+  if(!el) return;
+  el.innerHTML=obData.bans.map((b,i)=>'<span class="ob-tag ob-tag-ban" onclick="obData.bans.splice('+i+',1);renderObBanTags()">'+esc(b)+' ✕</span>').join('');
+}
+
+function obAddBan(){
+  const inp=document.getElementById('obNewBan');
+  const v=inp?.value?.trim();
+  if(v&&!obData.bans.includes(v)){obData.bans.push(v);inp.value='';renderObBanTags()}
+}
+
+function obNext(){
+  if(obStep===0){
+    const name=document.getElementById('obName')?.value?.trim();
+    if(name) obData.name=name;
+    if(!obData.equipment.length){
+      // Pre-select based on level
+      if(obData.level==='beginner') obData.equipment=[...OB_EQUIPMENT.basic];
+      else if(obData.level==='mid') obData.equipment=[...OB_EQUIPMENT.advanced];
+      else obData.equipment=[...OB_EQUIPMENT.pro];
+      obData.equipmentPreset=obData.level==='beginner'?'basic':obData.level==='mid'?'advanced':'pro';
+    }
+  }
+  obStep++;
+  renderObStep();
+}
+
+async function finishOnboarding(){
+  const btn=document.querySelector('.ob-finish');
+  if(btn){btn.disabled=true;btn.textContent='⏳ Zapisuję...'}
+  
+  const profile={
+    name:obData.name,
+    equipment:obData.equipment,
+    banned_ingredients:obData.bans,
+    bot_profile:obData.level==='pro'?'lukasz':'guest'
+  };
+  
+  try{
+    await fetch(API+'/api/profile',{method:'POST',headers:authHeaders(),body:JSON.stringify(profile)});
+    userProfile={...userProfile,...profile};
+  }catch{}
+  
+  document.getElementById('onboardingOverlay').style.display='none';
+  enterApp();
+  
+  // Auto-send first suggestion
+  setTimeout(()=>{
+    const q=obData.level==='beginner'?'Zaproponuj 3 proste dania na dobry start':
+            obData.level==='mid'?'Zaproponuj 3 ciekawe dania dopasowane do mojego sprzętu':
+            'Zaproponuj 3 ambitne dania które wykorzystają mój profesjonalny sprzęt';
+    sendQ(q);
+  },500);
+}

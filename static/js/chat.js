@@ -19,7 +19,8 @@ async function send(){
   try{
     const r=await fetch(API+'/api/ask',{method:'POST',headers:authHeaders(),body:JSON.stringify({question:q,conversation_history:chatHistory.slice(-20)})});
     const d=await r.json();document.getElementById(lid)?.remove();
-    if(d.error){addMsg('e',d.error);return}
+    if(d.is_limit){showLimitMessage(d.message);return}
+    if(d.error){addMsg('t',d.error);return}
     handleResponse(d.data);autoSaveSession();
   }catch{document.getElementById(lid)?.remove();addMsg('e','Błąd połączenia.')}
   scrollBottom();
@@ -33,9 +34,10 @@ async function surprise(){
   try{
     const r=await fetch(API+'/api/surprise',{method:'POST',headers:authHeaders(),body:JSON.stringify({})});
     const d=await r.json();document.getElementById(lid)?.remove();
-    if(d.error){addMsg('e',d.error);return}
+    if(d.is_limit){showLimitMessage(d.message);return}
+    if(d.error){addMsg('t',d.error);return}
     handleResponse(d.data);
-  }catch{document.getElementById(lid)?.remove();addMsg('e','Błąd.')}
+  }catch{document.getElementById(lid)?.remove();addMsg('t','Błąd.')}
   scrollBottom();
 }
 
@@ -49,9 +51,10 @@ async function importFromUrl(){
   try{
     const r=await fetch(API+'/api/import-url',{method:'POST',headers:authHeaders(),body:JSON.stringify({url:url.trim()})});
     const d=await r.json();document.getElementById(lid)?.remove();
-    if(d.error){addMsg('e',d.error);return}
+    if(d.is_limit){showLimitMessage(d.message);return}
+    if(d.error){addMsg('t',d.error);return}
     handleResponse(d.data);
-  }catch{document.getElementById(lid)?.remove();addMsg('e','Błąd importu.')}
+  }catch{document.getElementById(lid)?.remove();addMsg('t','Błąd importu.')}
   scrollBottom();
 }
 
