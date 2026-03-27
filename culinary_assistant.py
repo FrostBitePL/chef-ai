@@ -20,6 +20,14 @@ MAX_HISTORY=20; SEARCH_RESULTS=8
 DEEPSEEK_BASE_URL="https://api.deepseek.com"
 DEEPSEEK_MODEL="deepseek-chat"; DEEPSEEK_MAX_TOKENS=8192
 
+GROQ_BASE_URL="https://api.groq.com/openai/v1"
+GROQ_MODEL="llama-3.3-70b-versatile"; GROQ_MAX_TOKENS=4096
+GROQ_API_KEY=os.environ.get("GROQ_API_KEY","")
+
+# Model routing: fast (Groq) vs smart (DeepSeek)
+MODEL_FAST="groq"
+MODEL_SMART="deepseek"
+
 SUPABASE_URL=os.environ.get("SUPABASE_URL","")
 SUPABASE_KEY=os.environ.get("SUPABASE_SERVICE_KEY","")
 SUPABASE_ANON_KEY=os.environ.get("SUPABASE_ANON_KEY","")
@@ -379,13 +387,23 @@ def invalidate_profile_cache(uid):
 
 class CulinaryAssistant:
     def __init__(self,api_key):
-        self.client=OpenAI(api_key=api_key,base_url=DEEPSEEK_BASE_URL)
+        # DeepSeek client (smart, slow)
+        self.client_smart=OpenAI(api_key=api_key,base_url=DEEPSEEK_BASE_URL)
+        # Groq client (fast)
+        self.client_fast=OpenAI(api_key=GROQ_API_KEY,base_url=GROQ_BASE_URL) if GROQ_API_KEY else None
+        
         self.chroma=chromadb.PersistentClient(path=CHROMA_DB_PATH)
         self.ef=embedding_functions.DefaultEmbeddingFunction()
         try: self.col=self.chroma.get_collection("culinary_knowledge",embedding_function=self.ef); logger.info(f"DB: {self.col.count()}")
         except: self.col=self.chroma.create_collection("culinary_knowledge",embedding_function=self.ef)
         self._search_cache={}
         self._CACHE_SIZE=200
+
+    def _get_client(self,mode="fast"):
+        """Return (client, model, max_tokens) based on mode."""
+        if mode=="fast" and self.client_fast:
+            return self.client_fast, GROQ_MODEL, GROQ_MAX_TOKENS
+        return self.client_smart, DEEPSEEK_MODEL, DEEPSEEK_MAX_TOKENS
 
     def search(self,q,n=SEARCH_RESULTS):
         if self.col.count()==0: return []
@@ -410,8 +428,16 @@ class CulinaryAssistant:
                 if k not in seen: seen.add(k); all_c.append(c)
         return all_c
 
-    def _call(self,prompt,msgs):
-        resp=self.client.chat.completions.create(model=DEEPSEEK_MODEL,max_tokens=DEEPSEEK_MAX_TOKENS,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"})
+    def _call(self,prompt,msgs,mode="fast"):
+        client,model,max_tokens=self._get_client(mode)
+        try:
+            resp=client.chat.completions.create(model=model,max_tokens=max_tokens,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"})
+        except Exception as e:
+            # Fallback to other model on error
+            logger.warning(f"Model {mode} failed ({e}), falling back")
+            alt="smart" if mode=="fast" else "fast"
+            client,model,max_tokens=self._get_client(alt)
+            resp=client.chat.completions.create(model=model,max_tokens=max_tokens,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"})
         raw=resp.choices[0].message.content
         try: parsed=json.loads(raw)
         except:
@@ -421,9 +447,16 @@ class CulinaryAssistant:
             except: parsed={"type":"text","content":raw}
         return parsed,resp.usage
 
-    def _call_stream(self,prompt,msgs):
+    def _call_stream(self,prompt,msgs,mode="fast"):
         """Streaming version — yields chunks of text as they arrive."""
-        resp=self.client.chat.completions.create(model=DEEPSEEK_MODEL,max_tokens=DEEPSEEK_MAX_TOKENS,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"},stream=True)
+        client,model,max_tokens=self._get_client(mode)
+        try:
+            resp=client.chat.completions.create(model=model,max_tokens=max_tokens,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"},stream=True)
+        except Exception as e:
+            logger.warning(f"Stream {mode} failed ({e}), falling back")
+            alt="smart" if mode=="fast" else "fast"
+            client,model,max_tokens=self._get_client(alt)
+            resp=client.chat.completions.create(model=model,max_tokens=max_tokens,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"},stream=True)
         full=""
         for chunk in resp:
             if chunk.choices and chunk.choices[0].delta.content:
@@ -460,7 +493,7 @@ class CulinaryAssistant:
         if phase=="theory": msgs.append({"role":"user","content":f"Naucz mnie: {mod['title']}"})
         elif phase=="exercise": msgs.append({"role":"user","content":f"Cwiczenie: {mod['title']}"})
         else: msgs.append({"role":"user","content":question or "Jak mi poszlo?"})
-        parsed,usage=self._call(prompt,msgs)
+        parsed,usage=self._call(prompt,msgs,mode="smart")
         parsed.pop("sources",None); parsed.pop("book_references",None)
         bans=prof_data.get("banned_ingredients",[])
         if isinstance(bans,str): bans=json.loads(bans) if bans else []
@@ -475,7 +508,7 @@ class CulinaryAssistant:
         ctx="\n---\n".join([c['text'] for c in chunks])
         base=PROFILES.get(profile,PROMPT_LUKASZ).replace("{profile_context}",prof_ctx)
         prompt=base+(f"\n\n## KONTEKST WIEDZY:\n{ctx}" if ctx else "")
-        parsed,usage=self._call(prompt,[{"role":"user","content":f"Plan posilkow na {days} dni. {prefs}. JSON type:meal_plan."}])
+        parsed,usage=self._call(prompt,[{"role":"user","content":f"Plan posilkow na {days} dni. {prefs}. JSON type:meal_plan."}],mode="smart")
         parsed.pop("sources",None)
         bans=prof_data.get("banned_ingredients",[])
         if isinstance(bans,str): bans=json.loads(bans) if bans else []
@@ -525,7 +558,7 @@ WZBOGACENIE (dodaj ALE nie zmieniaj oryginalnych skladnikow/krokow):
 - NIE dodawaj pola 'sources' do odpowiedzi"""
         if ctx:
             prompt+=f"\n\n## KONTEKST WIEDZY:\n{ctx}"
-        parsed,usage=self._call(prompt,[{"role":"user","content":f"URL: {url}\n\nTRESC PRZEPISU ZE STRONY (zachowaj WSZYSTKIE kroki wiernie!):\n{page_text[:5000]}"}])
+        parsed,usage=self._call(prompt,[{"role":"user","content":f"URL: {url}\n\nTRESC PRZEPISU ZE STRONY (zachowaj WSZYSTKIE kroki wiernie!):\n{page_text[:5000]}"}],mode="smart")
         parsed.pop("sources",None)
         parsed.pop("book_references",None)
         parsed=enforce_bans(parsed,bans)
