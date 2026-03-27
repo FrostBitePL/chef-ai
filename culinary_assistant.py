@@ -17,16 +17,12 @@ except ImportError:
 
 CHROMA_DB_PATH="./chroma_db"
 MAX_HISTORY=20; SEARCH_RESULTS=8
-DEEPSEEK_BASE_URL="https://api.deepseek.com"
-DEEPSEEK_MODEL="deepseek-chat"; DEEPSEEK_MAX_TOKENS=8192
 
-GROQ_BASE_URL="https://api.groq.com/openai/v1"
-GROQ_MODEL="llama-3.3-70b-versatile"; GROQ_MAX_TOKENS=4096
-GROQ_API_KEY=os.environ.get("GROQ_API_KEY","")
-
-# Model routing: fast (Groq) vs smart (DeepSeek)
-MODEL_FAST="groq"
-MODEL_SMART="deepseek"
+# ─── AI Model ───
+OPENAI_API_KEY=os.environ.get("OPENAI_API_KEY","")
+AI_MODEL="gpt-4o"
+AI_MAX_TOKENS=4096
+AI_BASE_URL="https://api.openai.com/v1"
 
 SUPABASE_URL=os.environ.get("SUPABASE_URL","")
 SUPABASE_KEY=os.environ.get("SUPABASE_SERVICE_KEY","")
@@ -387,10 +383,7 @@ def invalidate_profile_cache(uid):
 
 class CulinaryAssistant:
     def __init__(self,api_key):
-        # DeepSeek client (smart, slow)
-        self.client_smart=OpenAI(api_key=api_key,base_url=DEEPSEEK_BASE_URL)
-        # Groq client (fast)
-        self.client_fast=OpenAI(api_key=GROQ_API_KEY,base_url=GROQ_BASE_URL) if GROQ_API_KEY else None
+        self.client=OpenAI(api_key=api_key,base_url=AI_BASE_URL)
         
         self.chroma=chromadb.PersistentClient(path=CHROMA_DB_PATH)
         self.ef=embedding_functions.DefaultEmbeddingFunction()
@@ -398,12 +391,6 @@ class CulinaryAssistant:
         except: self.col=self.chroma.create_collection("culinary_knowledge",embedding_function=self.ef)
         self._search_cache={}
         self._CACHE_SIZE=200
-
-    def _get_client(self,mode="fast"):
-        """Return (client, model, max_tokens) based on mode."""
-        if mode=="fast" and self.client_fast:
-            return self.client_fast, GROQ_MODEL, GROQ_MAX_TOKENS
-        return self.client_smart, DEEPSEEK_MODEL, DEEPSEEK_MAX_TOKENS
 
     def search(self,q,n=SEARCH_RESULTS):
         if self.col.count()==0: return []
@@ -428,16 +415,8 @@ class CulinaryAssistant:
                 if k not in seen: seen.add(k); all_c.append(c)
         return all_c
 
-    def _call(self,prompt,msgs,mode="fast"):
-        client,model,max_tokens=self._get_client(mode)
-        try:
-            resp=client.chat.completions.create(model=model,max_tokens=max_tokens,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"})
-        except Exception as e:
-            # Fallback to other model on error
-            logger.warning(f"Model {mode} failed ({e}), falling back")
-            alt="smart" if mode=="fast" else "fast"
-            client,model,max_tokens=self._get_client(alt)
-            resp=client.chat.completions.create(model=model,max_tokens=max_tokens,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"})
+    def _call(self,prompt,msgs,mode=None):
+        resp=self.client.chat.completions.create(model=AI_MODEL,max_tokens=AI_MAX_TOKENS,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"})
         raw=resp.choices[0].message.content
         try: parsed=json.loads(raw)
         except:
@@ -447,16 +426,9 @@ class CulinaryAssistant:
             except: parsed={"type":"text","content":raw}
         return parsed,resp.usage
 
-    def _call_stream(self,prompt,msgs,mode="fast"):
+    def _call_stream(self,prompt,msgs,mode=None):
         """Streaming version — yields chunks of text as they arrive."""
-        client,model,max_tokens=self._get_client(mode)
-        try:
-            resp=client.chat.completions.create(model=model,max_tokens=max_tokens,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"},stream=True)
-        except Exception as e:
-            logger.warning(f"Stream {mode} failed ({e}), falling back")
-            alt="smart" if mode=="fast" else "fast"
-            client,model,max_tokens=self._get_client(alt)
-            resp=client.chat.completions.create(model=model,max_tokens=max_tokens,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"},stream=True)
+        resp=self.client.chat.completions.create(model=AI_MODEL,max_tokens=AI_MAX_TOKENS,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"},stream=True)
         full=""
         for chunk in resp:
             if chunk.choices and chunk.choices[0].delta.content:
@@ -569,15 +541,15 @@ WZBOGACENIE (dodaj ALE nie zmieniaj oryginalnych skladnikow/krokow):
 def create_app():
     app=Flask(__name__,static_folder="static",static_url_path="/static")
     CORS(app,resources={r"/api/*":{"origins":"*"}})
-    key=os.environ.get("DEEPSEEK_API_KEY")
+    key=os.environ.get("OPENAI_API_KEY") or os.environ.get("DEEPSEEK_API_KEY")
     app.config["assistant"]=CulinaryAssistant(key) if key else None
-    if key and app.config["assistant"]: logger.info(f"Ready: {app.config['assistant'].col.count()} chunks")
+    if key and app.config["assistant"]: logger.info(f"Ready: {app.config['assistant'].col.count()} chunks, model: {AI_MODEL}")
     init_supabase()
 
     @app.route("/api/health")
     def health():
         a=app.config.get("assistant")
-        return jsonify({"status":"ok","chunks":a.col.count() if a else 0,"model":DEEPSEEK_MODEL,"supabase":sb is not None})
+        return jsonify({"status":"ok","chunks":a.col.count() if a else 0,"model":AI_MODEL,"supabase":sb is not None})
 
     @app.route("/api/config")
     def config():
@@ -1002,7 +974,7 @@ def create_app():
     @app.route("/api/stats")
     def stats():
         a=app.config.get("assistant")
-        return jsonify({"chunks":a.col.count() if a else 0,"model":DEEPSEEK_MODEL})
+        return jsonify({"chunks":a.col.count() if a else 0,"model":AI_MODEL})
 
     @app.route("/")
     def index(): return send_from_directory("static","index.html")
