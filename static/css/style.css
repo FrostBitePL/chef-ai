@@ -108,6 +108,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .msg-user{margin-left:48px;padding:11px 15px;background:var(--gold-soft);border-radius:var(--radius) var(--radius) 4px var(--radius);border:1px solid rgba(201,165,78,0.18);font-size:0.9rem;line-height:1.55}
 .msg-text{padding:13px 17px;background:var(--bg-card);border:1px solid var(--border);border-radius:4px var(--radius) var(--radius) var(--radius);margin-right:48px;font-size:0.9rem;line-height:1.65;white-space:pre-wrap}
+.msg-streaming{color:var(--text-faint);font-size:0.8rem;font-family:monospace;word-break:break-all;max-height:120px;overflow:hidden}
 .recipe-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
 .recipe-header{padding:20px 18px;background:linear-gradient(160deg,rgba(201,165,78,0.08) 0%,transparent 50%);border-bottom:1px solid var(--border)}
 .recipe-header h2{font-family:var(--serif);font-size:1.3rem;margin-bottom:4px;font-weight:600}

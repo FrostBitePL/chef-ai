@@ -357,6 +357,26 @@ def build_training_prompt(mod_id,phase,profile,ctx,profile_ctx):
     return base+extras.get(phase,"")+(f"\n\n## KONTEKST WIEDZY:\n{ctx}" if ctx else "")
 
 # ─── Assistant ───
+import hashlib
+from functools import lru_cache
+import time as _time
+
+# Profile cache (TTL 60s)
+_profile_cache={}
+_PROFILE_TTL=60
+
+def db_get_profile_cached(uid):
+    now=_time.time()
+    if uid in _profile_cache:
+        data,ts=_profile_cache[uid]
+        if now-ts<_PROFILE_TTL: return data
+    data=db_get_profile(uid)
+    _profile_cache[uid]=(data,now)
+    return data
+
+def invalidate_profile_cache(uid):
+    _profile_cache.pop(uid,None)
+
 class CulinaryAssistant:
     def __init__(self,api_key):
         self.client=OpenAI(api_key=api_key,base_url=DEEPSEEK_BASE_URL)
@@ -364,11 +384,23 @@ class CulinaryAssistant:
         self.ef=embedding_functions.DefaultEmbeddingFunction()
         try: self.col=self.chroma.get_collection("culinary_knowledge",embedding_function=self.ef); logger.info(f"DB: {self.col.count()}")
         except: self.col=self.chroma.create_collection("culinary_knowledge",embedding_function=self.ef)
+        self._search_cache={}
+        self._CACHE_SIZE=200
 
     def search(self,q,n=SEARCH_RESULTS):
         if self.col.count()==0: return []
+        # Cache key = query + n
+        cache_key=hashlib.md5((q+str(n)).encode()).hexdigest()
+        if cache_key in self._search_cache:
+            return self._search_cache[cache_key]
         r=self.col.query(query_texts=[q],n_results=min(n,self.col.count()))
-        return [{"text":r["documents"][0][i]} for i in range(len(r["documents"][0]))] if r["documents"] and r["documents"][0] else []
+        result=[{"text":r["documents"][0][i]} for i in range(len(r["documents"][0]))] if r["documents"] and r["documents"][0] else []
+        # Evict old entries if cache too big
+        if len(self._search_cache)>=self._CACHE_SIZE:
+            oldest=next(iter(self._search_cache))
+            del self._search_cache[oldest]
+        self._search_cache[cache_key]=result
+        return result
 
     def multi_search(self,queries,n=3):
         all_c,seen=[],set()
@@ -389,8 +421,19 @@ class CulinaryAssistant:
             except: parsed={"type":"text","content":raw}
         return parsed,resp.usage
 
+    def _call_stream(self,prompt,msgs):
+        """Streaming version — yields chunks of text as they arrive."""
+        resp=self.client.chat.completions.create(model=DEEPSEEK_MODEL,max_tokens=DEEPSEEK_MAX_TOKENS,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"},stream=True)
+        full=""
+        for chunk in resp:
+            if chunk.choices and chunk.choices[0].delta.content:
+                text=chunk.choices[0].delta.content
+                full+=text
+                yield text
+        return full
+
     def ask(self,question,history=None,profile="lukasz",uid=None):
-        prof_data=db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
+        prof_data=db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
         prof_ctx=profile_to_context(prof_data)
         chunks=self.search(question)
         ctx="\n---\n".join([c['text'] for c in chunks])
@@ -611,47 +654,6 @@ def create_app():
             "imports_today":count_i,"imports_limit":limit_i
         })
 
-    @app.route("/api/create-checkout-session",methods=["POST"])
-    @require_auth
-    def create_checkout_session():
-        uid=g.user_id
-        try:
-            # Get or create Stripe customer
-            profile=db_get_profile(uid)
-            customer_id=profile.get("stripe_customer_id")
-            
-            if not customer_id:
-                # Get user email from Supabase Auth
-                try:
-                    user_resp=sb.auth.get_user(request.headers.get("Authorization","").replace("Bearer ",""))
-                    email=user_resp.user.email if user_resp and user_resp.user else "unknown@example.com"
-                except:
-                    email="unknown@example.com"
-                
-                # Create Stripe customer
-                customer=stripe.Customer.create(email=email,metadata={"supabase_uid":uid})
-                customer_id=customer["id"]
-                db_update_profile(uid,{"stripe_customer_id":customer_id})
-            
-            # Create checkout session
-            session=stripe.checkout.Session.create(
-                customer=customer_id,
-                payment_method_types=["card"],
-                line_items=[{
-                    "price":STRIPE_PRICE_ID,
-                    "quantity":1,
-                }],
-                mode="subscription",
-                success_url=request.host_url+"?upgrade=success",
-                cancel_url=request.host_url,
-                metadata={"supabase_uid":uid},
-            )
-            
-            return jsonify({"sessionId":session["id"],"publicKey":os.environ.get("STRIPE_PUBLISHABLE_KEY","")})
-        except Exception as e:
-            logger.error(f"Checkout session error: {e}")
-            return jsonify({"error":str(e)}),500
-
     @app.route("/api/stripe/webhook",methods=["POST"])
     def stripe_webhook():
         payload=request.get_data()
@@ -706,7 +708,7 @@ def create_app():
         d=request.get_json(silent=True) or {}
         q=(d.get("question") or "").strip()
         if not q: return jsonify({"error":"No question"}),400
-        p=db_get_profile(g.user_id)
+        p=db_get_profile_cached(g.user_id)
         pr=p.get("bot_profile","guest")
         h=[{"role":m["role"],"content":m["content"]} for m in (d.get("conversation_history") or []) if isinstance(m,dict) and m.get("role") in ("user","assistant")][-MAX_HISTORY:]
         try:
@@ -714,6 +716,52 @@ def create_app():
             increment_daily(g.user_id,"recipes")
             return jsonify({"success":True,**result})
         except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad serwera."}),500
+
+    @app.route("/api/ask-stream",methods=["POST"])
+    @require_auth
+    def api_ask_stream():
+        from flask import Response,stream_with_context
+        a=app.config.get("assistant")
+        if not a: return jsonify({"error":"Not init"}),503
+        allowed,count,limit=check_daily_limit(g.user_id,"recipes")
+        if not allowed: return jsonify({"error":"limit","message":"Limit wyczerpany","is_limit":True}),429
+        d=request.get_json(silent=True) or {}
+        q=(d.get("question") or "").strip()
+        if not q: return jsonify({"error":"No question"}),400
+        p=db_get_profile_cached(g.user_id)
+        pr=p.get("bot_profile","guest")
+        prof_ctx=profile_to_context(p)
+        chunks=a.search(q)
+        ctx="\n---\n".join([c['text'] for c in chunks])
+        base=PROFILES.get(pr,PROMPT_LUKASZ).replace("{profile_context}",prof_ctx)
+        prompt=base+(f"\n\n## KONTEKST WIEDZY:\n{ctx}" if ctx else "")
+        h=[{"role":m["role"],"content":m["content"]} for m in (d.get("conversation_history") or []) if isinstance(m,dict) and m.get("role") in ("user","assistant")][-MAX_HISTORY:]
+        msgs=list(h)+[{"role":"user","content":q}]
+        uid=g.user_id
+        def generate():
+            full=""
+            try:
+                for chunk_text in a._call_stream(prompt,msgs):
+                    full+=chunk_text
+                    yield f"data: {json.dumps({'chunk':chunk_text})}\n\n"
+                # Parse final result
+                try: parsed=json.loads(full)
+                except:
+                    c=full.strip()
+                    if c.startswith("```"): c=c.split("\n",1)[-1].rsplit("```",1)[0]
+                    try: parsed=json.loads(c)
+                    except: parsed={"type":"text","content":full}
+                parsed.pop("sources",None); parsed.pop("book_references",None)
+                bans=p.get("banned_ingredients",[])
+                if isinstance(bans,str): bans=json.loads(bans) if bans else []
+                parsed=enforce_bans(parsed,bans)
+                auto_update_profile(uid,parsed)
+                increment_daily(uid,"recipes")
+                yield f"data: {json.dumps({'done':True,'data':parsed})}\n\n"
+            except Exception as e:
+                logger.error(f"Stream error: {e}")
+                yield f"data: {json.dumps({'error':str(e)})}\n\n"
+        return Response(stream_with_context(generate()),mimetype='text/event-stream',headers={'Cache-Control':'no-cache','X-Accel-Buffering':'no'})
 
     @app.route("/api/surprise",methods=["POST"])
     @require_auth
@@ -932,4 +980,4 @@ app=create_app()
 if __name__=="__main__":
     port=int(os.environ.get("PORT",5000))
     logger.info(f"Chef AI v10 — http://localhost:{port}")
-    app.run(host="0.0.0.0",port=port,debug=True)
+    app.run(host="0.0.0.0",port=port,debug=False)

@@ -14,15 +14,49 @@ async function send(){
   inp.value='';document.getElementById('sendBtn').disabled=true;inp.style.height='auto';
   document.getElementById('quickTags').style.display='none';
   addMsg('user',q);chatHistory.push({role:'user',content:q});
-  const lid='l'+Date.now(),msgs=document.getElementById('messages'),ld=document.createElement('div');
-  ld.id=lid;ld.className='msg';ld.innerHTML=loadingDots();msgs.appendChild(ld);scrollBottom();
+
+  // Streaming message bubble
+  const streamDiv=document.createElement('div');streamDiv.className='msg';
+  const streamText=document.createElement('div');streamText.className='msg-text msg-streaming';
+  streamText.textContent='⏳ Generuję...';
+  streamDiv.appendChild(streamText);
+  document.getElementById('messages').appendChild(streamDiv);scrollBottom();
+
   try{
-    const r=await fetch(API+'/api/ask',{method:'POST',headers:authHeaders(),body:JSON.stringify({question:q,conversation_history:chatHistory.slice(-20)})});
-    const d=await r.json();document.getElementById(lid)?.remove();
-    if(d.is_limit){showLimitMessage(d.message);return}
-    if(d.error){addMsg('t',d.error);return}
-    handleResponse(d.data);autoSaveSession();
-  }catch{document.getElementById(lid)?.remove();addMsg('e','Błąd połączenia.')}
+    const r=await fetch(API+'/api/ask-stream',{method:'POST',headers:authHeaders(),body:JSON.stringify({question:q,conversation_history:chatHistory.slice(-20)})});
+    
+    if(!r.ok){
+      const d=await r.json();streamDiv.remove();
+      if(d.is_limit){showLimitMessage(d.message);return}
+      if(d.error){addMsg('t',d.error);return}
+      return;
+    }
+
+    const reader=r.body.getReader();
+    const decoder=new TextDecoder();
+    let buffer='',fullText='',finalData=null;
+
+    while(true){
+      const{done,value}=await reader.read();
+      if(done) break;
+      buffer+=decoder.decode(value,{stream:true});
+      const lines=buffer.split('\n');
+      buffer=lines.pop()||'';
+      for(const line of lines){
+        if(!line.startsWith('data: ')) continue;
+        try{
+          const msg=JSON.parse(line.slice(6));
+          if(msg.chunk){fullText+=msg.chunk;streamText.textContent=fullText.slice(0,300)+(fullText.length>300?'...':'');scrollBottom()}
+          if(msg.done&&msg.data) finalData=msg.data;
+          if(msg.error){streamDiv.remove();addMsg('t','Błąd: '+msg.error);return}
+        }catch{}
+      }
+    }
+
+    streamDiv.remove();
+    if(finalData){handleResponse(finalData);autoSaveSession()}
+    else if(fullText){try{handleResponse(JSON.parse(fullText))}catch{addMsg('t',fullText)};autoSaveSession()}
+  }catch{streamDiv.remove();addMsg('t','Błąd połączenia.')}
   scrollBottom();
 }
 
