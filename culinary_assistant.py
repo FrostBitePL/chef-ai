@@ -659,48 +659,79 @@ def create_app():
             "imports_today":count_i,"imports_limit":limit_i
         })
 
-    @app.route("/api/stripe/webhook",methods=["POST"])
+    @app.route("/api/stripe/webhook", methods=["POST"])
     def stripe_webhook():
-        payload=request.get_data()
-        sig=request.headers.get("Stripe-Signature")
+        payload = request.get_data()
+        sig = request.headers.get("Stripe-Signature")
+
         try:
-            event=stripe.Webhook.construct_event(payload,sig,STRIPE_WEBHOOK_SECRET)
+            event = stripe.Webhook.construct_event(
+                payload, sig, STRIPE_WEBHOOK_SECRET
+            )
         except Exception as e:
             logger.error(f"Webhook signature error: {e}")
-            return jsonify({"error":"Invalid signature"}),400
+            return jsonify({"error": "Invalid signature"}), 400
 
-        etype=event["type"]
-        data=event["data"]["object"]
+        etype = event["type"]
+        data = event["data"]["object"]
+
         logger.info(f"Stripe webhook: {etype}")
 
-        if etype=="checkout.session.completed":
-            uid=data.get("metadata",{}).get("supabase_uid")
-            customer_id=data.get("customer")
-            if uid:
-                db_update_profile(uid,{
-                    "stripe_customer_id":customer_id,
-                    "subscription_status":"active"
+        # ✅ CHECKOUT COMPLETED
+        if etype == "checkout.session.completed":
+            try:
+                metadata = data["metadata"] if "metadata" in data else {}
+                uid = metadata.get("supabase_uid")
+
+                customer_id = data["customer"] if "customer" in data else None
+
+                if not uid:
+                    logger.error("No supabase_uid in metadata")
+                    return jsonify({"error": "No UID"}), 200
+
+                db_update_profile(uid, {
+                    "stripe_customer_id": customer_id,
+                    "subscription_status": "active"
                 })
+
                 logger.info(f"PRO activated for {uid}")
 
-        elif etype in ("customer.subscription.updated","customer.subscription.deleted"):
-            customer_id=data.get("customer")
-            status=data.get("status","")  # active, canceled, past_due, unpaid
-            period_end=data.get("current_period_end")
-            # Find user by stripe_customer_id
-            try:
-                r=sb.table("profiles").select("id").eq("stripe_customer_id",customer_id).execute()
-                if r.data:
-                    uid=r.data[0]["id"]
-                    updates={"subscription_status":status if status!="canceled" else "canceled"}
-                    if period_end:
-                        updates["subscription_end"]=datetime.utcfromtimestamp(period_end).isoformat()
-                    db_update_profile(uid,updates)
-                    logger.info(f"Subscription {status} for {uid}")
             except Exception as e:
-                logger.error(f"Webhook user lookup error: {e}")
+                logger.error(f"Checkout webhook error: {e}")
+                return jsonify({"error": "Webhook error"}), 500
 
-        return jsonify({"received":True})
+        # ✅ SUBSCRIPTION UPDATE / DELETE
+        elif etype in ("customer.subscription.updated", "customer.subscription.deleted"):
+            try:
+                customer_id = data["customer"] if "customer" in data else None
+                status = data["status"] if "status" in data else ""
+                period_end = data["current_period_end"] if "current_period_end" in data else None
+
+                if not customer_id:
+                    return jsonify({"error": "No customer_id"}), 200
+
+                # znajdź usera po stripe_customer_id
+                r = sb.table("profiles").select("id").eq("stripe_customer_id", customer_id).execute()
+
+                if r.data:
+                    uid = r.data[0]["id"]
+
+                    updates = {
+                        "subscription_status": status if status != "canceled" else "canceled"
+                    }
+
+                    if period_end:
+                        updates["subscription_end"] = datetime.utcfromtimestamp(period_end).isoformat()
+
+                    db_update_profile(uid, updates)
+
+                    logger.info(f"Subscription {status} for {uid}")
+
+            except Exception as e:
+                logger.error(f"Subscription webhook error: {e}")
+                return jsonify({"error": "Webhook error"}), 500
+
+        return jsonify({"received": True}), 200
 
     # ─── Chat ───
     @app.route("/api/ask",methods=["POST"])
