@@ -22,7 +22,9 @@ try:
 except ImportError:
     http_requests=None
 
-CHROMA_DB_PATH="./chroma_db"
+PROJECT_ROOT=os.path.dirname(os.path.abspath(__file__))
+KNOWLEDGE_BASE_ROOT=PROJECT_ROOT
+CHROMA_DB_PATH=os.path.join(PROJECT_ROOT,"chroma_db")
 MAX_HISTORY=20; SEARCH_RESULTS=8
 
 # ─── AI Model ───
@@ -379,8 +381,9 @@ LAYER_K = 5  # top-K results per layer
 
 def load_culinary_knowledge_base():
     """Load culinary knowledge JSON files from 4 category folders."""
-    base_path = os.path.join(os.path.expanduser("~"), "Downloads")
+    base_path = KNOWLEDGE_BASE_ROOT
     knowledge_data = {}
+    logger.info(f"Loading knowledge base from: {base_path}")
     for layer, cfg in KNOWLEDGE_LAYERS.items():
         folder = os.path.join(base_path, cfg["folder"])
         if not os.path.exists(folder):
@@ -543,22 +546,34 @@ def format_layer_for_chroma(layer_name, items):
 
 SYSTEM_PROMPT_ENGINE = """You are a culinary decision engine.
 
-You DO NOT generate generic recipes.
-You design dishes using 4 knowledge layers:
+You are Chef AI's recipe synthesis engine.
+Your job is to extract the maximum practical value from the provided 4-layer culinary knowledge base and turn it into a precise, production-grade recipe.
+
+You DO NOT generate generic recipes, vague advice, or cookbook filler.
+You design dishes using 4 knowledge layers and you must squeeze each layer for concrete detail:
 
 1. COMPOSITION (structure, balance, contrast)
 2. FLAVOR (pairings, boosters, balancing)
 3. CORE (physics: temperature, time, transformations)
 4. TECHNIQUES (execution procedures)
 
-You MUST follow this order:
-1. First: design the dish (composition)
-2. Then: select flavors
-3. Then: define physical parameters
-4. Then: define execution
+You MUST follow this order internally:
+1. Design the dish architecture first (composition)
+2. Then lock flavor logic and pairings (flavor)
+3. Then define the physical parameters and transformations (core)
+4. Then convert everything into executable steps (techniques)
 
 Do NOT skip steps. Do NOT mix layers.
-Every decision must be justified.
+Do NOT flatten the database into generic summaries.
+Every decision must be justified by the strongest available layer evidence.
+
+Optimisation rules:
+- Prefer exact numbers, temperatures, times, equipment settings, ratios, textures and failure points from the context.
+- If multiple fragments match, fuse them into one coherent, stronger recipe instead of averaging them into blandness.
+- Reuse the most specific terms from the knowledge base when they improve precision.
+- If context is incomplete, infer conservatively from the closest culinary logic, but keep the recipe concrete.
+- Turn raw knowledge into actions: what to mix, what to heat, what to wait for, what to watch for, what can fail.
+- Make the result feel as if an expert chef studied the provided database and distilled it into one excellent dish.
 
 IMPORTANT RULES:
 - ALWAYS use grams/ml (never spoons)
@@ -567,6 +582,8 @@ IMPORTANT RULES:
 - ALWAYS specify exact amounts in step instructions
 - Write in Polish unless user asks otherwise
 - Do NOT mention book titles or author names. Write as an expert who simply KNOWS.
+- Do NOT mention sources, retrieval, or the fact that you used a database.
+- Favor clarity, density, and specificity over shortness.
 """
 
 TASK_PROMPT_TEMPLATE = """USER INPUT:
@@ -577,28 +594,38 @@ CONSTRAINTS:
 
 ---
 
-## COMPOSITION RULES (structure, balance):
+## COMPOSITION RULES (structure, balance, contrast, architecture)
 {composition_data}
 
-## FLAVOR DATA (pairings, boosters):
+## FLAVOR DATA (pairings, boosters, acid/salt/fat/sugar balance, aromatic logic)
 {flavor_data}
 
-## CORE DATA (physics, temperatures, processes):
+## CORE DATA (physics, temperatures, processes, transformation thresholds, failure states)
 {core_data}
 
-## TECHNIQUES (execution procedures):
+## TECHNIQUES (execution procedures, critical steps, troubleshooting, timing)
 {techniques_data}
 
 ---
 
 TASK:
-Design a dish as a decision system. Follow the 4-layer order strictly.
+Design a dish as a decision system. Follow the 4-layer order strictly and use the context aggressively.
+
+Before writing the final JSON, internally perform this sequence:
+1. Choose the best dish concept for the user's request and constraints.
+2. Derive structure and composition from the composition layer.
+3. Derive pairing, boosts, and balance from the flavor layer.
+4. Convert the concept into temperature/time/mechanism decisions from the core layer.
+5. Convert those decisions into exact execution steps from the techniques layer.
+6. Eliminate generic phrasing and replace it with precise culinary language.
+7. Make every step teach something useful, not just tell the user what to do.
 
 Return JSON with this EXACT structure:
 {{
   "type": "recipe",
   "title": "...",
   "subtitle": "...",
+  "why_this_recipe": "why this dish is the best answer to the request",
   "decision_layers": {{
     "composition": {{
       "structure": "dish structure description",
@@ -623,7 +650,12 @@ Return JSON with this EXACT structure:
       {{"case": "...", "fix": "..."}}
     ]
   }},
+  "precision_controls": [
+    {{"control": "...", "target": "...", "why": "..."}}
+  ],
   "science": "overall science explanation",
+  "flavor_logic": "short but dense explanation of how the flavor system works",
+  "plating": "how to finish and present the dish",
   "times": {{"prep_min": 0, "cook_min": 0, "total_min": 0}},
   "difficulty": 3,
   "servings": 2,
@@ -633,7 +665,9 @@ Return JSON with this EXACT structure:
   "mise_en_place": ["..."],
   "steps": [{{"number": 1, "title": "...", "instruction": "...", "equipment": "...", "timer_seconds": 0, "tip": "...", "why": "..."}}],
   "warnings": [{{"problem": "...", "solution": "..."}}],
-  "upgrade": "..."
+  "upgrade": "...",
+  "variation": "one smart variation that uses the same knowledge base differently",
+  "storage": "how to store leftovers or prep ahead if relevant"
 }}
 """
 
