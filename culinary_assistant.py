@@ -1,5 +1,12 @@
-#!/usr/bin/env python3
-"""Chef AI v11 — Supabase Auth + PostgreSQL + Stripe"""
+﻿#!/usr/bin/env python3
+"""Chef AI v11 â€” Supabase Auth + PostgreSQL + Stripe"""
+
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 import os,json,logging,traceback,random,re,functools
 from datetime import datetime
@@ -33,14 +40,14 @@ STRIPE_WEBHOOK_SECRET=os.environ.get("STRIPE_WEBHOOK_SECRET","")
 STRIPE_PRICE_ID=os.environ.get("STRIPE_PRICE_ID","price_1TFBHf91D0CH9ZxXCpC7iZRV")
 stripe.api_key=STRIPE_SECRET_KEY
 
-# ─── Free tier limits ───
+# â”€â”€â”€ Free tier limits â”€â”€â”€
 FREE_RECIPES_PER_DAY=5
 FREE_IMPORTS_PER_DAY=2
 
 logging.basicConfig(level=logging.INFO,format="%(asctime)s [%(levelname)s] %(message)s")
 logger=logging.getLogger(__name__)
 
-# ─── Supabase Client ───
+# â”€â”€â”€ Supabase Client â”€â”€â”€
 sb:Client=None
 def init_supabase():
     global sb
@@ -50,7 +57,7 @@ def init_supabase():
     else:
         logger.warning("Supabase not configured")
 
-# ─── Auth Middleware ───
+# â”€â”€â”€ Auth Middleware â”€â”€â”€
 def get_user_from_token():
     """Extract user_id from Bearer token. Returns None if not authenticated."""
     auth=request.headers.get("Authorization","")
@@ -83,7 +90,7 @@ def optional_auth(f):
         return f(*args,**kwargs)
     return wrapper
 
-# ─── Database Operations ───
+# â”€â”€â”€ Database Operations â”€â”€â”€
 DEFAULT_PROFILE={"equipment":[],"banned_ingredients":[],"favorite_ingredients":[],"favorite_techniques":[],"mastered_skills":[],"discovered_preferences":[],"cooked_recipes":[],"ratings":[],"feedback_history":[],"stats":{"total_recipes":0}}
 
 def db_get_profile(uid):
@@ -153,7 +160,7 @@ def db_remove_favorite(uid,fav_id):
     try: sb.table("favorites").delete().eq("id",fav_id).eq("user_id",uid).execute()
     except Exception as e: logger.error(f"Favorite remove error: {e}")
 
-# ─── Profile Context ───
+# â”€â”€â”€ Profile Context â”€â”€â”€
 def profile_to_context(p):
     parts=[]
     eq=p.get("equipment",[]); bans=p.get("banned_ingredients",[])
@@ -208,7 +215,7 @@ def auto_update_profile(uid,data):
         if "atlas" in eq and "Makaron domowy" not in techs: techs.append("Makaron domowy")
     db_update_profile(uid,{"cooked_recipes":cooked,"favorite_techniques":techs,"stats":{"total_recipes":len(cooked)}})
 
-# ─── Ban Enforcement ───
+# â”€â”€â”€ Ban Enforcement â”€â”€â”€
 def _ban_keywords(ban_list):
     keywords=[]
     for ban in ban_list:
@@ -218,7 +225,7 @@ def _ban_keywords(ban_list):
             inside=ban.split("(")[1].rstrip(")").lower()
             for part in re.split(r'[,;:/]',inside):
                 w=part.strip()
-                if w and w not in ('każda forma','każda','forma','surowa','smażona','proszek','świeża','mielona','i'):
+                if w and w not in ('kaĹĽda forma','kaĹĽda','forma','surowa','smaĹĽona','proszek','Ĺ›wieĹĽa','mielona','i'):
                     keywords.append(w)
     return list(set(keywords))
 
@@ -252,31 +259,31 @@ def enforce_bans(data,banned_ingredients):
         if data.get("mise_en_place"):
             data["mise_en_place"]=[m for m in data["mise_en_place"] if not _matches_ban(m,keywords)]
         if removed:
-            warn={"problem":"Usunięto zakazane składniki: "+", ".join(removed),"solution":"Te składniki zostały automatycznie usunięte z przepisu."}
+            warn={"problem":"UsuniÄ™to zakazane skĹ‚adniki: "+", ".join(removed),"solution":"Te skĹ‚adniki zostaĹ‚y automatycznie usuniÄ™te z przepisu."}
             if not data.get("warnings"): data["warnings"]=[]
             data["warnings"].insert(0,warn)
     return data
 
-# ─── Skill Tree ───
+# â”€â”€â”€ Skill Tree â”€â”€â”€
 SKILL_CATEGORIES=[
-    {"id":"basics","name":"Techniki bazowe","icon":"🔥","color":"#c45050"},
-    {"id":"sousvide","name":"Sous-vide","icon":"🌡","color":"#5cb870"},
-    {"id":"sauces","name":"Sosy","icon":"🥄","color":"#d4a24e"},
-    {"id":"baking","name":"Ciasta i wypieki","icon":"🍰","color":"#c45e8a"},
-    {"id":"pasta","name":"Makaron domowy","icon":"🍝","color":"#d4a24e"},
-    {"id":"italian","name":"Kuchnia włoska","icon":"🇮🇹","color":"#5cb870"},
-    {"id":"asian","name":"Kuchnia azjatycka","icon":"🥢","color":"#c45050"},
-    {"id":"grill","name":"Grillowanie i BBQ","icon":"🔥","color":"#d4a24e"},
-    {"id":"fermentation","name":"Fermentacja","icon":"🫙","color":"#8b3a62"},
-    {"id":"molecular","name":"Hydrokoloidy","icon":"🧪","color":"#5e8ac4"},
-    {"id":"fish","name":"Ryby i krewetki","icon":"🐟","color":"#5cb870"},
-    {"id":"vegetables","name":"Warzywa","icon":"🥬","color":"#5cb870"},
-    {"id":"knives","name":"Noże i cięcie","icon":"🔪","color":"#8a7e84"},
-    {"id":"plating","name":"Platowanie","icon":"🎨","color":"#c45e8a"},
-    {"id":"mealprep","name":"Meal prep","icon":"📦","color":"#5e8ac4"},
+    {"id":"basics","name":"Techniki bazowe","icon":"đź”Ą","color":"#c45050"},
+    {"id":"sousvide","name":"Sous-vide","icon":"đźŚˇ","color":"#5cb870"},
+    {"id":"sauces","name":"Sosy","icon":"đźĄ„","color":"#d4a24e"},
+    {"id":"baking","name":"Ciasta i wypieki","icon":"đźŤ°","color":"#c45e8a"},
+    {"id":"pasta","name":"Makaron domowy","icon":"đźŤť","color":"#d4a24e"},
+    {"id":"italian","name":"Kuchnia wĹ‚oska","icon":"đź‡®đź‡ą","color":"#5cb870"},
+    {"id":"asian","name":"Kuchnia azjatycka","icon":"đźĄ˘","color":"#c45050"},
+    {"id":"grill","name":"Grillowanie i BBQ","icon":"đź”Ą","color":"#d4a24e"},
+    {"id":"fermentation","name":"Fermentacja","icon":"đź«™","color":"#8b3a62"},
+    {"id":"molecular","name":"Hydrokoloidy","icon":"đź§Ş","color":"#5e8ac4"},
+    {"id":"fish","name":"Ryby i krewetki","icon":"đźź","color":"#5cb870"},
+    {"id":"vegetables","name":"Warzywa","icon":"đźĄ¬","color":"#5cb870"},
+    {"id":"knives","name":"NoĹĽe i ciÄ™cie","icon":"đź”Ş","color":"#8a7e84"},
+    {"id":"plating","name":"Platowanie","icon":"đźŽ¨","color":"#c45e8a"},
+    {"id":"mealprep","name":"Meal prep","icon":"đź“¦","color":"#5e8ac4"},
 ]
 SKILL_LEVELS=["basic","intermediate","advanced"]
-SKILL_LEVEL_NAMES={"basic":"Podstawy","intermediate":"Średni","advanced":"Zaawansowany"}
+SKILL_LEVEL_NAMES={"basic":"Podstawy","intermediate":"Ĺšredni","advanced":"Zaawansowany"}
 
 def _mods():
     modules=[]
@@ -302,13 +309,13 @@ def _mods():
         for lvl in SKILL_LEVELS:
             mid=f"{cid}_{lvl}"
             sq=queries.get(cid,{}).get(lvl,["cooking technique"])
-            modules.append({"id":mid,"category":cid,"level":lvl,"title":f"{cat['name']} — {SKILL_LEVEL_NAMES[lvl]}","subtitle":f"{cat['icon']} {SKILL_LEVEL_NAMES[lvl]}","icon":cat["icon"],"search_queries":sq})
+            modules.append({"id":mid,"category":cid,"level":lvl,"title":f"{cat['name']} â€” {SKILL_LEVEL_NAMES[lvl]}","subtitle":f"{cat['icon']} {SKILL_LEVEL_NAMES[lvl]}","icon":cat["icon"],"search_queries":sq})
     return modules
 
 TRAINING_MODULES=_mods()
 SURPRISE_THEMES=["Cos z kurczakiem i cytryna","Comfort food na wieczor","Cos wloskiego","Azjatyckie smaki","Danie jednogarnkowe","Makaron domowy","Meksykanskie smaki","Ryba z sosem","Kremowe risotto","Burger domowy","Steak z sosem","Deser","Salatka na cieplo","Zupa krem","Cos z krewetkami","Sniadanie mistrzow","Pizza domowa","Danie z piekarnika","Warzywa jako gwiazda","Danie z ryzu"]
 
-# ─── Prompts ───
+# â”€â”€â”€ Prompts â”€â”€â”€
 RECIPE_JSON='{"type":"recipe","title":"...","subtitle":"...","times":{"prep_min":0,"cook_min":0,"total_min":0},"difficulty":3,"servings":2,"science":"...","shopping_list":[{"item":"...","amount":"...","section":"..."}],"ingredients":[{"item":"...","amount":"...","note":"..."}],"substitutes":[{"original":"...","substitute":"...","note":"..."}],"mise_en_place":["..."],"steps":[{"number":1,"title":"...","instruction":"...","equipment":"...","timer_seconds":0,"tip":"...","why":"..."}],"warnings":[{"problem":"...","solution":"..."}],"upgrade":"..."}'
 
 RESPONSE_RULES=f"""
@@ -319,14 +326,14 @@ RESPONSE_RULES=f"""
 - FEEDBACK -> {{"type":"training_feedback","analysis":"...","tips":["..."],"next_steps":"..."}}
 - MEAL PLAN -> {{"type":"meal_plan","days":[{{"day":"...","meals":[{{"meal":"...","title":"...","prep_time":0}}]}}],"shopping_list":[{{"item":"...","amount":"...","section":"..."}}]}}
 - POROWNANIE TECHNIK -> {{"type":"comparison","topic":"...","variants":[{{"method":"...","difficulty":2,"time_min":25,"texture":"...","flavor":"...","best_for":"...","steps_summary":"...","pro":"...","con":"...","equipment":"..."}}],"verdict":"..."}}
-Gdy uzytkownik pyta o porownanie, roznice, "na ile sposobow", "co lepsze" — uzyj type:comparison z 2-4 wariantami.
+Gdy uzytkownik pyta o porownanie, roznice, "na ile sposobow", "co lepsze" â€” uzyj type:comparison z 2-4 wariantami.
 Opcjonalne: "kcal_per_serving" jesli user poda limit.
 
 ## ZASADY:
 - ZAWSZE czysty JSON, zero tekstu poza nim
 - ZAWSZE gramy/ml (nigdy lyzki)
 - ZAWSZE C (+F w nawiasie)
-- UZYJ wiedzy z kontekstu do wyjasniania nauki i technik, ale NIGDY nie podawaj tytulow ksiazek ani nazwisk autorow. Pisz jak ekspert ktory po prostu WIE — nie powoluj sie na zrodla.
+- UZYJ wiedzy z kontekstu do wyjasniania nauki i technik, ale NIGDY nie podawaj tytulow ksiazek ani nazwisk autorow. Pisz jak ekspert ktory po prostu WIE â€” nie powoluj sie na zrodla.
 - ZAWSZE timer_seconds w krokach z czekaniem
 - ZAWSZE w instrukcji kroku podawaj DOKLADNA ILOSC skladnika w nawiasie przy kazdym dodaniu
 - NIE dodawaj pola "sources" do odpowiedzi.
@@ -337,14 +344,14 @@ Masz gleboka wiedze kulinarna. Uzywaj jej do wyjasniania nauki za gotowaniem.
 ## PROFIL:
 - Lokalizacja: Zarow (Swidnica, Wroclaw)
 - Nie liczymy kalorii domyslnie
-## ZAKAZY i SPRZET z profilu uzytkownika ponizej — BEZWZGLEDNIE przestrzegaj zakazow! Jesli uzytkownik ma sprzet, podawaj KONKRETNE ustawienia (poziomy, temperatury, tryby).
+## ZAKAZY i SPRZET z profilu uzytkownika ponizej â€” BEZWZGLEDNIE przestrzegaj zakazow! Jesli uzytkownik ma sprzet, podawaj KONKRETNE ustawienia (poziomy, temperatury, tryby).
 ## PAMIEC UZYTKOWNIKA:
 {profile_context}
 """+RESPONSE_RULES
 
 PROMPT_GUEST="""Jestes ekspertem kulinarnym. PRZEDE WSZYSTKIM PYSZNIE.
 Masz gleboka wiedze kulinarna. Ogolne instrukcje, domyslnie 2 porcje.
-Jesli uzytkownik ma zakazy lub sprzet w profilu — BEZWZGLEDNIE przestrzegaj zakazow i podawaj ustawienia sprzetu.
+Jesli uzytkownik ma zakazy lub sprzet w profilu â€” BEZWZGLEDNIE przestrzegaj zakazow i podawaj ustawienia sprzetu.
 ## PAMIEC UZYTKOWNIKA:
 {profile_context}
 """+RESPONSE_RULES
@@ -358,9 +365,290 @@ def build_training_prompt(mod_id,phase,profile,ctx,profile_ctx):
     extras={"theory":f"\n## SZKOLENIE TEORIA: {mod['title']}\nSolidna teoria, uzyj wiedzy z kontekstu ale NIE podawaj tytulow ksiazek ani autorow. Daj key_points i exercise_prompt. JSON type:training_theory. 800-1500 slow.",
             "exercise":f"\n## SZKOLENIE CWICZENIE: {mod['title']}\nPrzepis treningowy z 'why' w kazdym kroku. JSON type:recipe.",
             "feedback":f"\n## SZKOLENIE FEEDBACK: {mod['title']}\nAnalizuj, wskazowki, next_steps. JSON type:training_feedback."}
-    return base+extras.get(phase,"")+(f"\n\n## KONTEKST WIEDZY:\n{ctx}" if ctx else "")
+    return base+extras.get(phase,"")+(f"\n\n## KONTEKST WIEDZY (OBOWIAZKOWO UZYJ TEJ WIEDZY W PRZEPISIE):\n{ctx}" if ctx else "")
 
-# ─── Assistant ───
+# ─── Knowledge Base: 4-Layer System ───
+KNOWLEDGE_LAYERS = {
+    "core":        {"folder": "Dane",       "collection": "kb_core"},
+    "composition": {"folder": "Kompozycja", "collection": "kb_composition"},
+    "flavor":      {"folder": "Smak",       "collection": "kb_flavor"},
+    "techniques":  {"folder": "Techniki",   "collection": "kb_techniques"},
+}
+CULINARY_KNOWLEDGE = {}
+LAYER_K = 5  # top-K results per layer
+
+def load_culinary_knowledge_base():
+    """Load culinary knowledge JSON files from 4 category folders."""
+    base_path = os.path.join(os.path.expanduser("~"), "Downloads")
+    knowledge_data = {}
+    for layer, cfg in KNOWLEDGE_LAYERS.items():
+        folder = os.path.join(base_path, cfg["folder"])
+        if not os.path.exists(folder):
+            logger.warning(f"Knowledge folder not found: {folder}")
+            continue
+        knowledge_data[layer] = []
+        for fn in sorted(os.listdir(folder)):
+            if not fn.endswith('.json'):
+                continue
+            try:
+                with open(os.path.join(folder, fn), 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                if isinstance(data, list):
+                    knowledge_data[layer].extend(data)
+                else:
+                    knowledge_data[layer].append(data)
+                logger.info(f"  [{layer}] +{len(data) if isinstance(data,list) else 1} from {fn}")
+            except Exception as e:
+                logger.error(f"  [{layer}] error in {fn}: {e}")
+    global CULINARY_KNOWLEDGE
+    CULINARY_KNOWLEDGE = knowledge_data
+    total = sum(len(v) for v in knowledge_data.values())
+    logger.info(f"Knowledge base loaded: {total} items across {len(knowledge_data)} layers")
+    return knowledge_data
+
+# ─── Per-layer document formatters (rich text for vector search) ───
+def _fmt_core(item):
+    """Format a CORE (Dane) item into rich searchable text."""
+    parts = []
+    parts.append(f"INGREDIENT: {item.get('ingredient','')}")
+    parts.append(f"STATE: {item.get('ingredient_state','')}")
+    parts.append(f"INTENT: {item.get('intent','')}")
+    parts.append(f"PROCESS: {item.get('process','')}")
+    parts.append(f"MECHANISM: {item.get('mechanism','')}")
+    t = item.get('target', {})
+    if t:
+        parts.append(f"TARGET: {t.get('temperature_c','')}C / {t.get('time_minutes','')} min")
+    tol = item.get('tolerance', {})
+    if tol:
+        parts.append(f"TOLERANCE: temp {tol.get('temperature_c','')}, time {tol.get('time_minutes','')}")
+    lim = item.get('limits', {})
+    for bound in ('lower', 'upper'):
+        b = lim.get(bound, {})
+        if b:
+            parts.append(f"LIMIT_{bound.upper()}: {b.get('temperature_c','')}C -> {b.get('effect','')}")
+    parts.append(f"EQUIPMENT: {item.get('equipment','')}")
+    parts.append(f"CONDITION: {item.get('condition','')}")
+    parts.append(f"DECISION: {item.get('decision','')}")
+    fs = item.get('failure_state')
+    if fs and isinstance(fs, list):
+        for f in fs:
+            parts.append(f"FAILURE: {f.get('case','')} -> {f.get('result','')}")
+    parts.append(f"EFFECT: {item.get('effect','')}")
+    s = item.get('sensory')
+    if s and isinstance(s, dict):
+        parts.append(f"SENSORY: texture={s.get('texture','')}, juiciness={s.get('juiciness','')}, appearance={s.get('appearance','')}")
+    return "\n".join(p for p in parts if p.split(": ",1)[-1].strip())
+
+def _fmt_composition(item):
+    """Format a COMPOSITION (Kompozycja) item."""
+    parts = []
+    parts.append(f"RULE: {item.get('rule','')}")
+    parts.append(f"CATEGORY: {item.get('category','')}")
+    parts.append(f"APPLIES TO: {', '.join(item.get('applies_to',[]))}")
+    parts.append(f"DESCRIPTION: {item.get('description','')}")
+    st = item.get('structure', [])
+    if st:
+        parts.append(f"STRUCTURE: {' -> '.join(st)}")
+    roles = item.get('roles', {})
+    for k, v in roles.items():
+        parts.append(f"  ROLE [{k}]: {v}")
+    parts.append(f"BALANCE: {item.get('balance_logic','')}")
+    parts.append(f"CONTRAST: {item.get('contrast_logic','')}")
+    for ex in item.get('examples', []):
+        parts.append(f"EXAMPLE: {ex}")
+    for fm in item.get('failure_modes', []):
+        parts.append(f"FAILURE: {fm.get('case','')} -> {fm.get('result','')}")
+    return "\n".join(p for p in parts if p.split(": ",1)[-1].strip())
+
+def _fmt_flavor(item):
+    """Format a FLAVOR (Smak) item."""
+    parts = []
+    parts.append(f"INGREDIENT: {item.get('ingredient','')}")
+    parts.append(f"CATEGORY: {item.get('category','')}")
+    fp = item.get('flavor_profile', {})
+    if fp:
+        parts.append(f"TASTES: {', '.join(fp.get('primary_tastes',[]))}")
+        parts.append(f"AROMA: {', '.join(fp.get('aroma',[]))}")
+        parts.append(f"INTENSITY: {fp.get('intensity','')}")
+        parts.append(f"FAT: {fp.get('fat_content','')}")
+    parts.append(f"PAIRS WITH: {', '.join(item.get('pairs_with',[]))}")
+    parts.append(f"CONTRAST WITH: {', '.join(item.get('contrast_with',[]))}")
+    parts.append(f"BOOSTERS: {', '.join(item.get('boosters',[]))}")
+    parts.append(f"BALANCING: {', '.join(item.get('balancing_elements',[]))}")
+    parts.append(f"AVOID: {', '.join(item.get('avoid_combinations',[]))}")
+    ac = item.get('aroma_compounds', [])
+    if ac:
+        parts.append(f"AROMA COMPOUNDS: {', '.join(ac)}")
+    return "\n".join(p for p in parts if p.split(": ",1)[-1].strip())
+
+def _fmt_technique(item):
+    """Format a TECHNIQUES (Techniki) item."""
+    parts = []
+    parts.append(f"TECHNIQUE: {item.get('technique','')}")
+    parts.append(f"CATEGORY: {item.get('category','')}")
+    parts.append(f"GOAL: {item.get('goal','')}")
+    parts.append(f"WHEN TO USE: {item.get('when_to_use','')}")
+    parts.append(f"INPUTS: {', '.join(item.get('inputs',[]))}")
+    parts.append(f"EQUIPMENT: {', '.join(item.get('equipment',[]))}")
+    for i, step in enumerate(item.get('steps', []), 1):
+        parts.append(f"STEP {i}: {step}")
+    for cp in item.get('critical_control_points', []):
+        parts.append(f"CRITICAL: {cp}")
+    cv = item.get('control_variables', {})
+    if cv:
+        parts.append(f"CONTROLS: {', '.join(f'{k}={v}' for k,v in cv.items())}")
+    for fm in item.get('failure_modes', []):
+        parts.append(f"FAILURE: {fm.get('case','')} -> {fm.get('result','')}")
+    sig = item.get('signals', {})
+    if sig:
+        parts.append(f"SIGNALS: visual={sig.get('visual','')}, touch={sig.get('touch','')}, sound={sig.get('sound','')}")
+    out = item.get('output', {})
+    if out:
+        parts.append(f"OUTPUT: texture={out.get('texture','')}, appearance={out.get('appearance','')}, flavor={out.get('flavor','')}")
+    return "\n".join(p for p in parts if p.split(": ",1)[-1].strip())
+
+_LAYER_FORMATTERS = {
+    "core": _fmt_core,
+    "composition": _fmt_composition,
+    "flavor": _fmt_flavor,
+    "techniques": _fmt_technique,
+}
+
+def format_layer_for_chroma(layer_name, items):
+    """Format items for a single ChromaDB collection. Returns (docs, metas, ids)."""
+    fmt = _LAYER_FORMATTERS.get(layer_name)
+    if not fmt:
+        return [], [], []
+    docs, metas, ids = [], [], []
+    for i, item in enumerate(items):
+        try:
+            text = fmt(item)
+            if not text.strip():
+                continue
+            meta = {"layer": layer_name}
+            for key in ("ingredient", "technique", "rule", "category", "intent", "process"):
+                if key in item:
+                    val = item[key]
+                    if isinstance(val, str):
+                        meta[key] = val
+            docs.append(text)
+            metas.append(meta)
+            ids.append(f"{layer_name}_{i}")
+        except Exception as e:
+            logger.error(f"Error formatting {layer_name} item {i}: {e}")
+            continue
+    return docs, metas, ids
+
+# ─── 4-Stage Decision Engine Prompts ───
+
+SYSTEM_PROMPT_ENGINE = """You are a culinary decision engine.
+
+You DO NOT generate generic recipes.
+You design dishes using 4 knowledge layers:
+
+1. COMPOSITION (structure, balance, contrast)
+2. FLAVOR (pairings, boosters, balancing)
+3. CORE (physics: temperature, time, transformations)
+4. TECHNIQUES (execution procedures)
+
+You MUST follow this order:
+1. First: design the dish (composition)
+2. Then: select flavors
+3. Then: define physical parameters
+4. Then: define execution
+
+Do NOT skip steps. Do NOT mix layers.
+Every decision must be justified.
+
+IMPORTANT RULES:
+- ALWAYS use grams/ml (never spoons)
+- ALWAYS Celsius (+Fahrenheit in parentheses)
+- ALWAYS timer_seconds in steps that require waiting
+- ALWAYS specify exact amounts in step instructions
+- Write in Polish unless user asks otherwise
+- Do NOT mention book titles or author names. Write as an expert who simply KNOWS.
+"""
+
+TASK_PROMPT_TEMPLATE = """USER INPUT:
+{user_input}
+
+CONSTRAINTS:
+{constraints}
+
+---
+
+## COMPOSITION RULES (structure, balance):
+{composition_data}
+
+## FLAVOR DATA (pairings, boosters):
+{flavor_data}
+
+## CORE DATA (physics, temperatures, processes):
+{core_data}
+
+## TECHNIQUES (execution procedures):
+{techniques_data}
+
+---
+
+TASK:
+Design a dish as a decision system. Follow the 4-layer order strictly.
+
+Return JSON with this EXACT structure:
+{{
+  "type": "recipe",
+  "title": "...",
+  "subtitle": "...",
+  "decision_layers": {{
+    "composition": {{
+      "structure": "dish structure description",
+      "hero": "main ingredient",
+      "elements": ["element1", "element2"],
+      "balance": "balance logic",
+      "contrast": "contrast logic"
+    }},
+    "flavor": {{
+      "pairings": ["pairing1", "pairing2"],
+      "boosters": ["booster1"],
+      "balancing": ["acid/sweet/etc"]
+    }},
+    "core": {{
+      "key_processes": [{{"process": "...", "target_temp_c": 0, "time_min": 0, "mechanism": "..."}}],
+      "critical_points": ["point1"]
+    }},
+    "techniques": [
+      {{"name": "...", "why": "...", "critical_steps": ["step1"]}}
+    ],
+    "failure_analysis": [
+      {{"case": "...", "fix": "..."}}
+    ]
+  }},
+  "science": "overall science explanation",
+  "times": {{"prep_min": 0, "cook_min": 0, "total_min": 0}},
+  "difficulty": 3,
+  "servings": 2,
+  "shopping_list": [{{"item": "...", "amount": "...", "section": "..."}}],
+  "ingredients": [{{"item": "...", "amount": "...", "note": "..."}}],
+  "substitutes": [{{"original": "...", "substitute": "...", "note": "..."}}],
+  "mise_en_place": ["..."],
+  "steps": [{{"number": 1, "title": "...", "instruction": "...", "equipment": "...", "timer_seconds": 0, "tip": "...", "why": "..."}}],
+  "warnings": [{{"problem": "...", "solution": "..."}}],
+  "upgrade": "..."
+}}
+"""
+
+def build_pipeline_prompt(user_input, constraints, composition_ctx, flavor_ctx, core_ctx, techniques_ctx):
+    """Build the full task prompt with all 4 knowledge layers injected."""
+    return TASK_PROMPT_TEMPLATE.format(
+        user_input=user_input,
+        constraints=constraints,
+        composition_data=composition_ctx or "(no composition data found)",
+        flavor_data=flavor_ctx or "(no flavor data found)",
+        core_data=core_ctx or "(no core data found)",
+        techniques_data=techniques_ctx or "(no techniques data found)",
+    )
+
+# ─── Assistant ───â”€â”€â”€
 import hashlib
 from functools import lru_cache
 import time as _time
@@ -382,180 +670,354 @@ def invalidate_profile_cache(uid):
     _profile_cache.pop(uid,None)
 
 class CulinaryAssistant:
-    def __init__(self,api_key):
-        self.client=OpenAI(api_key=api_key,base_url=AI_BASE_URL)
-        
-        self.chroma=chromadb.PersistentClient(path=CHROMA_DB_PATH)
-        self.ef=embedding_functions.DefaultEmbeddingFunction()
-        try: self.col=self.chroma.get_collection("culinary_knowledge",embedding_function=self.ef); logger.info(f"DB: {self.col.count()}")
-        except: self.col=self.chroma.create_collection("culinary_knowledge",embedding_function=self.ef)
-        self._search_cache={}
-        self._CACHE_SIZE=200
+    _CACHE_SIZE = 128
 
-    def search(self,q,n=SEARCH_RESULTS):
-        if self.col.count()==0: return []
-        # Cache key = query + n
-        cache_key=hashlib.md5((q+str(n)).encode()).hexdigest()
+    def __init__(self, api_key):
+        self.client = OpenAI(api_key=api_key, base_url=AI_BASE_URL)
+        self.embedding_function = embedding_functions.DefaultEmbeddingFunction()
+        self._search_cache = {}
+
+        # 4 separate ChromaDB collections — one per knowledge layer
+        db = chromadb.PersistentClient(path=CHROMA_DB_PATH)
+        self.collections = {}
+        for layer, cfg in KNOWLEDGE_LAYERS.items():
+            self.collections[layer] = db.get_or_create_collection(
+                cfg["collection"], embedding_function=self.embedding_function
+            )
+
+        # Legacy single collection for backward compat (training, meal_plan)
+        self.col = db.get_or_create_collection(
+            "culinary_knowledge", embedding_function=self.embedding_function
+        )
+
+        self._load_knowledge_base()
+
+    def _load_knowledge_base(self):
+        """Load JSON files and index into 4 separate ChromaDB collections."""
+        try:
+            knowledge_data = load_culinary_knowledge_base()
+            all_docs, all_metas, all_ids = [], [], []
+
+            for layer, items in knowledge_data.items():
+                col = self.collections.get(layer)
+                if not col or not items:
+                    continue
+                docs, metas, ids = format_layer_for_chroma(layer, items)
+                if not docs:
+                    continue
+
+                # Delete old data in this layer collection
+                try:
+                    existing = col.get()
+                    if existing and existing["ids"]:
+                        col.delete(ids=existing["ids"])
+                except Exception:
+                    pass
+
+                col.add(documents=docs, metadatas=metas, ids=ids)
+                logger.info(f"  [{layer}] indexed {len(docs)} documents")
+
+                # Also add to legacy combined collection
+                all_docs.extend(docs)
+                all_metas.extend(metas)
+                all_ids.extend(ids)
+
+            # Update legacy combined collection
+            if all_docs:
+                try:
+                    existing = self.col.get()
+                    if existing and existing["ids"]:
+                        self.col.delete(ids=existing["ids"])
+                except Exception:
+                    pass
+                self.col.add(documents=all_docs, metadatas=all_metas, ids=all_ids)
+                logger.info(f"  [combined] indexed {len(all_docs)} total documents")
+
+        except Exception as e:
+            logger.error(f"Knowledge base load error: {e}")
+
+    # ─── Layer-specific search (TOP-K per layer) ───
+
+    def search_layer(self, layer, query, k=LAYER_K):
+        """Search a single knowledge layer. Returns list of text strings."""
+        col = self.collections.get(layer)
+        if not col or col.count() == 0:
+            return []
+        cache_key = hashlib.md5(f"{layer}:{query}:{k}".encode()).hexdigest()
         if cache_key in self._search_cache:
             return self._search_cache[cache_key]
-        r=self.col.query(query_texts=[q],n_results=min(n,self.col.count()))
-        result=[{"text":r["documents"][0][i]} for i in range(len(r["documents"][0]))] if r["documents"] and r["documents"][0] else []
-        # Evict old entries if cache too big
-        if len(self._search_cache)>=self._CACHE_SIZE:
-            oldest=next(iter(self._search_cache))
-            del self._search_cache[oldest]
-        self._search_cache[cache_key]=result
+        r = col.query(query_texts=[query], n_results=min(k, col.count()))
+        texts = r["documents"][0] if r["documents"] and r["documents"][0] else []
+        if len(self._search_cache) >= self._CACHE_SIZE:
+            del self._search_cache[next(iter(self._search_cache))]
+        self._search_cache[cache_key] = texts
+        return texts
+
+    def search_all_layers(self, query, k=LAYER_K):
+        """Search all 4 layers separately. Returns dict {layer: [texts]}."""
+        return {layer: self.search_layer(layer, query, k) for layer in KNOWLEDGE_LAYERS}
+
+    # Legacy search methods (for training, meal_plan, import)
+    def search(self, q, n=SEARCH_RESULTS):
+        if self.col.count() == 0:
+            return []
+        cache_key = hashlib.md5((q + str(n)).encode()).hexdigest()
+        if cache_key in self._search_cache:
+            return self._search_cache[cache_key]
+        r = self.col.query(query_texts=[q], n_results=min(n, self.col.count()))
+        result = [{"text": r["documents"][0][i]} for i in range(len(r["documents"][0]))] if r["documents"] and r["documents"][0] else []
+        if len(self._search_cache) >= self._CACHE_SIZE:
+            del self._search_cache[next(iter(self._search_cache))]
+        self._search_cache[cache_key] = result
         return result
 
-    def multi_search(self,queries,n=3):
-        all_c,seen=[],set()
+    def multi_search(self, queries, n=3):
+        all_c, seen = [], set()
         for q in queries:
-            for c in self.search(q,n):
-                k=c["text"][:100]
-                if k not in seen: seen.add(k); all_c.append(c)
+            for c in self.search(q, n):
+                k = c["text"][:100]
+                if k not in seen:
+                    seen.add(k)
+                    all_c.append(c)
         return all_c
 
-    def _call(self,prompt,msgs,mode=None):
-        resp=self.client.chat.completions.create(model=AI_MODEL,max_tokens=AI_MAX_TOKENS,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"})
-        raw=resp.choices[0].message.content
-        try: parsed=json.loads(raw)
-        except:
-            c=raw.strip()
-            if c.startswith("```"): c=c.split("\n",1)[-1].rsplit("```",1)[0]
-            try: parsed=json.loads(c)
-            except: parsed={"type":"text","content":raw}
-        return parsed,resp.usage
+    # ─── LLM calls ───
 
-    def _call_stream(self,prompt,msgs,mode=None):
+    def _call(self, prompt, msgs, mode=None):
+        resp = self.client.chat.completions.create(
+            model=AI_MODEL, max_tokens=AI_MAX_TOKENS,
+            messages=[{"role": "system", "content": prompt}] + msgs,
+            temperature=0.7, response_format={"type": "json_object"}
+        )
+        raw = resp.choices[0].message.content
+        try:
+            parsed = json.loads(raw)
+        except Exception:
+            c = raw.strip()
+            if c.startswith("```"):
+                c = c.split("\n", 1)[-1].rsplit("```", 1)[0]
+            try:
+                parsed = json.loads(c)
+            except Exception:
+                parsed = {"type": "text", "content": raw}
+        return parsed, resp.usage
+
+    def _call_stream(self, prompt, msgs, mode=None):
         """Streaming version — yields chunks of text as they arrive."""
-        resp=self.client.chat.completions.create(model=AI_MODEL,max_tokens=AI_MAX_TOKENS,messages=[{"role":"system","content":prompt}]+msgs,temperature=0.7,response_format={"type":"json_object"},stream=True)
-        full=""
+        resp = self.client.chat.completions.create(
+            model=AI_MODEL, max_tokens=AI_MAX_TOKENS,
+            messages=[{"role": "system", "content": prompt}] + msgs,
+            temperature=0.7, response_format={"type": "json_object"}, stream=True
+        )
+        full = ""
         for chunk in resp:
             if chunk.choices and chunk.choices[0].delta.content:
-                text=chunk.choices[0].delta.content
-                full+=text
+                text = chunk.choices[0].delta.content
+                full += text
                 yield text
         return full
 
-    def ask(self,question,history=None,profile="lukasz",uid=None):
-        prof_data=db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
-        prof_ctx=profile_to_context(prof_data)
-        chunks=self.search(question)
-        ctx="\n---\n".join([c['text'] for c in chunks])
-        base=PROFILES.get(profile,PROMPT_LUKASZ).replace("{profile_context}",prof_ctx)
-        prompt=base+(f"\n\n## KONTEKST WIEDZY:\n{ctx}" if ctx else "")
-        msgs=list(history or [])+[{"role":"user","content":question}]
-        parsed,usage=self._call(prompt,msgs)
-        parsed.pop("sources",None); parsed.pop("book_references",None)
-        bans=prof_data.get("banned_ingredients",[])
-        if isinstance(bans,str): bans=json.loads(bans) if bans else []
-        parsed=enforce_bans(parsed,bans)
-        auto_update_profile(uid,parsed)
-        return {"data":parsed,"profile":profile,"usage":{"prompt_tokens":usage.prompt_tokens if usage else 0,"completion_tokens":usage.completion_tokens if usage else 0}}
+    # ─── 4-STAGE PIPELINE: ask() ───
 
-    def train(self,mod_id,phase,question="",history=None,profile="lukasz",uid=None):
-        mod=next((m for m in TRAINING_MODULES if m["id"]==mod_id),None)
-        if not mod: return {"data":{"type":"text","content":"Nieznany modul."},"profile":profile,"usage":{}}
-        prof_data=db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
-        prof_ctx=profile_to_context(prof_data)
-        chunks=self.multi_search(mod["search_queries"]) if phase in ("theory","exercise") else (self.search(question) if question else self.multi_search(mod["search_queries"][:2]))
-        ctx="\n---\n".join([c['text'] for c in chunks])
-        prompt=build_training_prompt(mod_id,phase,profile,ctx,prof_ctx)
-        msgs=list(history or [])
-        if phase=="theory": msgs.append({"role":"user","content":f"Naucz mnie: {mod['title']}"})
-        elif phase=="exercise": msgs.append({"role":"user","content":f"Cwiczenie: {mod['title']}"})
-        else: msgs.append({"role":"user","content":question or "Jak mi poszlo?"})
-        parsed,usage=self._call(prompt,msgs,mode="smart")
-        parsed.pop("sources",None); parsed.pop("book_references",None)
-        bans=prof_data.get("banned_ingredients",[])
-        if isinstance(bans,str): bans=json.loads(bans) if bans else []
-        parsed=enforce_bans(parsed,bans)
-        auto_update_profile(uid,parsed)
-        return {"data":parsed,"profile":profile,"usage":{"prompt_tokens":usage.prompt_tokens if usage else 0,"completion_tokens":usage.completion_tokens if usage else 0}}
+    def ask(self, question, history=None, profile="lukasz", uid=None):
+        """Main pipeline: 4-layer retrieval → structured prompt → decision engine."""
+        prof_data = db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
+        prof_ctx = profile_to_context(prof_data)
+        bans = prof_data.get("banned_ingredients", [])
+        if isinstance(bans, str):
+            bans = json.loads(bans) if bans else []
 
-    def meal_plan(self,days=7,prefs="",profile="lukasz",uid=None):
-        prof_data=db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
-        prof_ctx=profile_to_context(prof_data)
-        chunks=self.multi_search(["weekly meal plan","quick dinner","batch cooking","balanced meals"])
-        ctx="\n---\n".join([c['text'] for c in chunks])
-        base=PROFILES.get(profile,PROMPT_LUKASZ).replace("{profile_context}",prof_ctx)
-        prompt=base+(f"\n\n## KONTEKST WIEDZY:\n{ctx}" if ctx else "")
-        parsed,usage=self._call(prompt,[{"role":"user","content":f"Plan posilkow na {days} dni. {prefs}. JSON type:meal_plan."}],mode="smart")
-        parsed.pop("sources",None)
-        bans=prof_data.get("banned_ingredients",[])
-        if isinstance(bans,str): bans=json.loads(bans) if bans else []
-        parsed=enforce_bans(parsed,bans)
-        return {"data":parsed,"profile":profile,"usage":{"prompt_tokens":usage.prompt_tokens if usage else 0,"completion_tokens":usage.completion_tokens if usage else 0}}
+        # STAGE 1: Layer-specific retrieval (top-K per layer)
+        layers = self.search_all_layers(question, k=LAYER_K)
 
-    def surprise(self,profile="lukasz",uid=None):
-        return self.ask(random.choice(SURPRISE_THEMES),profile=profile,uid=uid)
+        composition_ctx = "\n---\n".join(layers.get("composition", []))
+        flavor_ctx = "\n---\n".join(layers.get("flavor", []))
+        core_ctx = "\n---\n".join(layers.get("core", []))
+        techniques_ctx = "\n---\n".join(layers.get("techniques", []))
 
-    def import_url(self,url,page_text,profile="guest",uid=None):
-        prof_data=db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
-        prof_ctx=profile_to_context(prof_data)
-        bans=prof_data.get("banned_ingredients",[])
-        if isinstance(bans,str): bans=json.loads(bans) if bans else []
-        ban_text=""
+        # Build constraints from user profile
+        constraints_parts = []
+        if prof_ctx:
+            constraints_parts.append(prof_ctx)
         if bans:
-            ban_text="\n\n## !!! ABSOLUTNE ZAKAZY — KRYTYCZNE !!!\nNastepujace skladniki sa ZAKAZANE. NIGDY ich nie uzywaj, nawet jesli sa w oryginalnym przepisie!\nZAKAZANE: "+", ".join(bans)+"\nJesli oryginalny przepis zawiera zakazany skladnik — USUN go i zaproponuj zamiennik w polu 'substitutes'. W steps uzyj ZAMIENNIKA, nie oryginalu."
-        search_text=page_text[:500]
-        chunks=self.multi_search([search_text[:80],search_text[80:160]],n=4)
-        ctx="\n---\n".join([c['text'] for c in chunks])
-        base=PROFILES.get(profile,PROMPT_LUKASZ).replace("{profile_context}",prof_ctx)
-        prompt=base+ban_text+"""
+            constraints_parts.append("BANNED INGREDIENTS: " + ", ".join(bans))
+        constraints = "\n".join(constraints_parts) if constraints_parts else "none"
+
+        # STAGE 2-4: Build layered prompt (composition → flavor → core → techniques)
+        task_prompt = build_pipeline_prompt(
+            user_input=question,
+            constraints=constraints,
+            composition_ctx=composition_ctx,
+            flavor_ctx=flavor_ctx,
+            core_ctx=core_ctx,
+            techniques_ctx=techniques_ctx,
+        )
+
+        system_prompt = SYSTEM_PROMPT_ENGINE
+        msgs = list(history or []) + [{"role": "user", "content": task_prompt}]
+
+        # FINAL: LLM call with decision engine
+        parsed, usage = self._call(system_prompt, msgs)
+        parsed.pop("sources", None)
+        parsed.pop("book_references", None)
+        parsed = enforce_bans(parsed, bans)
+        auto_update_profile(uid, parsed)
+
+        return {
+            "data": parsed,
+            "profile": profile,
+            "usage": {
+                "prompt_tokens": usage.prompt_tokens if usage else 0,
+                "completion_tokens": usage.completion_tokens if usage else 0,
+            },
+        }
+
+    def ask_stream_prompt(self, question, history=None, profile="lukasz", uid=None):
+        """Build prompt for streaming — returns (system_prompt, messages, prof_data)."""
+        prof_data = db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
+        prof_ctx = profile_to_context(prof_data)
+        bans = prof_data.get("banned_ingredients", [])
+        if isinstance(bans, str):
+            bans = json.loads(bans) if bans else []
+
+        layers = self.search_all_layers(question, k=LAYER_K)
+        composition_ctx = "\n---\n".join(layers.get("composition", []))
+        flavor_ctx = "\n---\n".join(layers.get("flavor", []))
+        core_ctx = "\n---\n".join(layers.get("core", []))
+        techniques_ctx = "\n---\n".join(layers.get("techniques", []))
+
+        constraints_parts = []
+        if prof_ctx:
+            constraints_parts.append(prof_ctx)
+        if bans:
+            constraints_parts.append("BANNED INGREDIENTS: " + ", ".join(bans))
+        constraints = "\n".join(constraints_parts) if constraints_parts else "none"
+
+        task_prompt = build_pipeline_prompt(
+            user_input=question,
+            constraints=constraints,
+            composition_ctx=composition_ctx,
+            flavor_ctx=flavor_ctx,
+            core_ctx=core_ctx,
+            techniques_ctx=techniques_ctx,
+        )
+
+        msgs = list(history or []) + [{"role": "user", "content": task_prompt}]
+        return SYSTEM_PROMPT_ENGINE, msgs, prof_data
+
+    # ─── Other methods (training, meal plan, surprise, import) ───
+
+    def train(self, mod_id, phase, question="", history=None, profile="lukasz", uid=None):
+        mod = next((m for m in TRAINING_MODULES if m["id"] == mod_id), None)
+        if not mod:
+            return {"data": {"type": "text", "content": "Nieznany modul."}, "profile": profile, "usage": {}}
+        prof_data = db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
+        prof_ctx = profile_to_context(prof_data)
+        chunks = self.multi_search(mod["search_queries"]) if phase in ("theory", "exercise") else (self.search(question) if question else self.multi_search(mod["search_queries"][:2]))
+        ctx = "\n---\n".join([c['text'] for c in chunks])
+        prompt = build_training_prompt(mod_id, phase, profile, ctx, prof_ctx)
+        msgs = list(history or [])
+        if phase == "theory":
+            msgs.append({"role": "user", "content": f"Naucz mnie: {mod['title']}"})
+        elif phase == "exercise":
+            msgs.append({"role": "user", "content": f"Cwiczenie: {mod['title']}"})
+        else:
+            msgs.append({"role": "user", "content": question or "Jak mi poszlo?"})
+        parsed, usage = self._call(prompt, msgs, mode="smart")
+        parsed.pop("sources", None)
+        parsed.pop("book_references", None)
+        bans = prof_data.get("banned_ingredients", [])
+        if isinstance(bans, str):
+            bans = json.loads(bans) if bans else []
+        parsed = enforce_bans(parsed, bans)
+        auto_update_profile(uid, parsed)
+        return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
+
+    def meal_plan(self, days=7, prefs="", profile="lukasz", uid=None):
+        prof_data = db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
+        prof_ctx = profile_to_context(prof_data)
+        # Use layer search for meal planning
+        layers = self.search_all_layers("meal plan balanced dinner lunch", k=3)
+        ctx = "\n---\n".join(layers.get("composition", []) + layers.get("flavor", []))
+        base = PROFILES.get(profile, PROMPT_LUKASZ).replace("{profile_context}", prof_ctx)
+        prompt = base + (f"\n\n## KONTEKST WIEDZY:\n{ctx}" if ctx else "")
+        parsed, usage = self._call(prompt, [{"role": "user", "content": f"Plan posilkow na {days} dni. {prefs}. JSON type:meal_plan."}], mode="smart")
+        parsed.pop("sources", None)
+        bans = prof_data.get("banned_ingredients", [])
+        if isinstance(bans, str):
+            bans = json.loads(bans) if bans else []
+        parsed = enforce_bans(parsed, bans)
+        return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
+
+    def surprise(self, profile="lukasz", uid=None):
+        return self.ask(random.choice(SURPRISE_THEMES), profile=profile, uid=uid)
+
+    def import_url(self, url, page_text, profile="guest", uid=None):
+        prof_data = db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
+        prof_ctx = profile_to_context(prof_data)
+        bans = prof_data.get("banned_ingredients", [])
+        if isinstance(bans, str):
+            bans = json.loads(bans) if bans else []
+        ban_text = ""
+        if bans:
+            ban_text = "\n\n## !!! ABSOLUTNE ZAKAZY !!!\nZAKAZANE: " + ", ".join(bans) + "\nUsun zakazane i zaproponuj zamiennik w 'substitutes'."
+        # Layer search for import context
+        search_text = page_text[:300]
+        layers = self.search_all_layers(search_text, k=3)
+        core_ctx = "\n---\n".join(layers.get("core", []))
+        tech_ctx = "\n---\n".join(layers.get("techniques", []))
+        import_knowledge = ""
+        if core_ctx or tech_ctx:
+            import_knowledge = f"\n\n## CORE DATA:\n{core_ctx}\n\n## TECHNIQUES:\n{tech_ctx}"
+        base = PROFILES.get(profile, PROMPT_LUKASZ).replace("{profile_context}", prof_ctx)
+        prompt = base + ban_text + import_knowledge + """
 
 ## ZADANIE: WIERNY IMPORT PRZEPISU Z INTERNETU
 Przeksztalc ponizszy przepis na JSON type:recipe.
 
 NAJWAZNIEJSZA ZASADA: WIERNOSC ORYGINALOWI!
 - Uzyj DOKLADNIE tych samych skladnikow co oryginal. NIE usuwaj, NIE zamieniaj, NIE dodawaj skladnikow od siebie!
-- Jedyny wyjątek: skladniki z listy ZAKAZANYCH — te usun i zaproponuj zamiennik.
-- Jesli oryginal ma ketchup, sos chili, ocet — TY TEZ je masz. Nie "ulepszaj" przepisu.
-
-KOLEJNOSC KROKOW:
+- Jedyny wyjatek: skladniki z listy ZAKAZANYCH.
 - Zachowaj IDENTYCZNA kolejnosc i sposob przygotowania co oryginal!
-- Jesli oryginal mowi "obtocz w skrobi, potem w jajku, potem w mace" — TY TEZ robisz DOKLADNIE tak, w ODDZIELNYCH krokach.
 - NIE LACZ krokow. NIE UPRASZCZAJ. Odtwarzaj procedury 1:1.
-- Jesli oryginal smazy w glebokym tlustczy — ty tez. Jesli piecze — ty tez.
+- Przelicz na gramy/ml: lyzka=15ml, lyzeczka=5ml, szklanka=250ml, szczypta=1g.
+- Dodaj 'science', 'why', 'tip', 'warnings', 'upgrade' ale NIE zmieniaj oryginalnych skladnikow/krokow.
+- ZAWSZE podawaj ilosci w nawiasach w instrukcjach krokow.
+- NIE dodawaj pola 'sources' do odpowiedzi."""
+        parsed, usage = self._call(prompt, [{"role": "user", "content": f"URL: {url}\n\nTRESC PRZEPISU:\n{page_text[:5000]}"}], mode="smart")
+        parsed.pop("sources", None)
+        parsed.pop("book_references", None)
+        parsed = enforce_bans(parsed, bans)
+        auto_update_profile(uid, parsed)
+        return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
 
-PRZELICZENIA:
-- Przelicz na gramy/ml: lyzka = 15ml/15g, lyzeczka = 5ml/5g, szklanka = 250ml, szczypta = 1g.
+    def total_chunks(self):
+        """Total chunks across all 4 layer collections."""
+        return sum(col.count() for col in self.collections.values())
 
-WZBOGACENIE (dodaj ALE nie zmieniaj oryginalnych skladnikow/krokow):
-- Dodaj 'science' — uzyj wiedzy z kontekstu ale NIE podawaj tytulow ksiazek ani autorow. Pisz jak ekspert ktory WIE.
-- W kazdym kroku: 'why' z nauka, 'tip' ze wskazowka, 'equipment' ze sprzetem uzytkownika
-- Dodaj 'warnings' i 'upgrade' (jako sugestie, nie jako zmiany w przepisie)
-- W 'substitutes' dodaj SUGESTIE ULEPSZEN — jesli jakis skladnik mozna zastapic lepszym, zaproponuj to z wyjasnieniem DLACZEGO to lepsze. Ale oryginalny skladnik ZOSTAJE w przepisie.
-- ZAWSZE podawaj ilosci w nawiasach w instrukcjach krokow
-- NIE dodawaj pola 'sources' do odpowiedzi"""
-        if ctx:
-            prompt+=f"\n\n## KONTEKST WIEDZY:\n{ctx}"
-        parsed,usage=self._call(prompt,[{"role":"user","content":f"URL: {url}\n\nTRESC PRZEPISU ZE STRONY (zachowaj WSZYSTKIE kroki wiernie!):\n{page_text[:5000]}"}],mode="smart")
-        parsed.pop("sources",None)
-        parsed.pop("book_references",None)
-        parsed=enforce_bans(parsed,bans)
-        auto_update_profile(uid,parsed)
-        return {"data":parsed,"profile":profile,"usage":{"prompt_tokens":usage.prompt_tokens if usage else 0,"completion_tokens":usage.completion_tokens if usage else 0}}
-
-# ─── Flask ───
+# â”€â”€â”€ Flask â”€â”€â”€
 def create_app():
     app=Flask(__name__,static_folder="static",static_url_path="/static")
     CORS(app,resources={r"/api/*":{"origins":"*"}})
-    key=os.environ.get("OPENAI_API_KEY") or os.environ.get("DEEPSEEK_API_KEY")
+    key=os.environ.get("OPENAI_API_KEY") or os.environ.get("GROQ_API_KEY") or os.environ.get("DEEPSEEK_API_KEY")
     app.config["assistant"]=CulinaryAssistant(key) if key else None
-    if key and app.config["assistant"]: logger.info(f"Ready: {app.config['assistant'].col.count()} chunks, model: {AI_MODEL}")
+    if key and app.config["assistant"]:
+        a=app.config["assistant"]
+        layer_info = " | ".join(f"{l}:{a.collections[l].count()}" for l in KNOWLEDGE_LAYERS)
+        logger.info(f"Ready: {a.total_chunks()} chunks [{layer_info}], model: {AI_MODEL}")
     init_supabase()
 
     @app.route("/api/health")
     def health():
         a=app.config.get("assistant")
-        return jsonify({"status":"ok","chunks":a.col.count() if a else 0,"model":AI_MODEL,"supabase":sb is not None})
+        layers_info = {l: a.collections[l].count() for l in KNOWLEDGE_LAYERS} if a else {}
+        return jsonify({"status":"ok","chunks":a.total_chunks() if a else 0,"layers":layers_info,"model":AI_MODEL,"supabase":sb is not None})
 
     @app.route("/api/config")
     def config():
         return jsonify({"supabase_url":SUPABASE_URL,"supabase_anon_key":SUPABASE_ANON_KEY})
 
-    # ─── Subscription Helpers ───
+    # â”€â”€â”€ Subscription Helpers â”€â”€â”€
     def is_pro(uid):
         """Check if user has active PRO subscription."""
         p=db_get_profile(uid)
@@ -597,7 +1059,7 @@ def create_app():
         stats[key]=daily
         db_update_profile(uid,{"stats":stats})
 
-    # ─── Stripe Endpoints ───
+    # â”€â”€â”€ Stripe Endpoints â”€â”€â”€
     @app.route("/api/stripe/checkout",methods=["POST"])
     @require_auth
     def create_checkout():
@@ -659,57 +1121,88 @@ def create_app():
             "imports_today":count_i,"imports_limit":limit_i
         })
 
-    @app.route("/api/stripe/webhook",methods=["POST"])
+    @app.route("/api/stripe/webhook", methods=["POST"])
     def stripe_webhook():
-        payload=request.get_data()
-        sig=request.headers.get("Stripe-Signature")
+        payload = request.get_data()
+        sig = request.headers.get("Stripe-Signature")
+
         try:
-            event=stripe.Webhook.construct_event(payload,sig,STRIPE_WEBHOOK_SECRET)
+            event = stripe.Webhook.construct_event(
+                payload, sig, STRIPE_WEBHOOK_SECRET
+            )
         except Exception as e:
             logger.error(f"Webhook signature error: {e}")
-            return jsonify({"error":"Invalid signature"}),400
+            return jsonify({"error": "Invalid signature"}), 400
 
-        etype=event["type"]
-        data=event["data"]["object"]
+        etype = event["type"]
+        data = event["data"]["object"]
+
         logger.info(f"Stripe webhook: {etype}")
 
-        if etype=="checkout.session.completed":
-            uid=data.get("metadata",{}).get("supabase_uid")
-            customer_id=data.get("customer")
-            if uid:
-                db_update_profile(uid,{
-                    "stripe_customer_id":customer_id,
-                    "subscription_status":"active"
+        # âś… CHECKOUT COMPLETED
+        if etype == "checkout.session.completed":
+            try:
+                metadata = data["metadata"] if "metadata" in data else {}
+                uid = metadata.get("supabase_uid")
+
+                customer_id = data["customer"] if "customer" in data else None
+
+                if not uid:
+                    logger.error("No supabase_uid in metadata")
+                    return jsonify({"error": "No UID"}), 200
+
+                db_update_profile(uid, {
+                    "stripe_customer_id": customer_id,
+                    "subscription_status": "active"
                 })
+
                 logger.info(f"PRO activated for {uid}")
 
-        elif etype in ("customer.subscription.updated","customer.subscription.deleted"):
-            customer_id=data.get("customer")
-            status=data.get("status","")  # active, canceled, past_due, unpaid
-            period_end=data.get("current_period_end")
-            # Find user by stripe_customer_id
-            try:
-                r=sb.table("profiles").select("id").eq("stripe_customer_id",customer_id).execute()
-                if r.data:
-                    uid=r.data[0]["id"]
-                    updates={"subscription_status":status if status!="canceled" else "canceled"}
-                    if period_end:
-                        updates["subscription_end"]=datetime.utcfromtimestamp(period_end).isoformat()
-                    db_update_profile(uid,updates)
-                    logger.info(f"Subscription {status} for {uid}")
             except Exception as e:
-                logger.error(f"Webhook user lookup error: {e}")
+                logger.error(f"Checkout webhook error: {e}")
+                return jsonify({"error": "Webhook error"}), 500
 
-        return jsonify({"received":True})
+        # âś… SUBSCRIPTION UPDATE / DELETE
+        elif etype in ("customer.subscription.updated", "customer.subscription.deleted"):
+            try:
+                customer_id = data["customer"] if "customer" in data else None
+                status = data["status"] if "status" in data else ""
+                period_end = data["current_period_end"] if "current_period_end" in data else None
 
-    # ─── Chat ───
+                if not customer_id:
+                    return jsonify({"error": "No customer_id"}), 200
+
+                # znajdĹş usera po stripe_customer_id
+                r = sb.table("profiles").select("id").eq("stripe_customer_id", customer_id).execute()
+
+                if r.data:
+                    uid = r.data[0]["id"]
+
+                    updates = {
+                        "subscription_status": status if status != "canceled" else "canceled"
+                    }
+
+                    if period_end:
+                        updates["subscription_end"] = datetime.utcfromtimestamp(period_end).isoformat()
+
+                    db_update_profile(uid, updates)
+
+                    logger.info(f"Subscription {status} for {uid}")
+
+            except Exception as e:
+                logger.error(f"Subscription webhook error: {e}")
+                return jsonify({"error": "Webhook error"}), 500
+
+        return jsonify({"received": True}), 200
+
+    # â”€â”€â”€ Chat â”€â”€â”€
     @app.route("/api/ask",methods=["POST"])
     @require_auth
     def api_ask():
         a=app.config.get("assistant")
         if not a: return jsonify({"error":"Not init"}),503
         allowed,count,limit=check_daily_limit(g.user_id,"recipes")
-        if not allowed: return jsonify({"error":"limit","message":f"Dzienny limit {limit} przepisów wyczerpany. Przejdź na PRO!","is_limit":True}),429
+        if not allowed: return jsonify({"error":"limit","message":f"Dzienny limit {limit} przepisĂłw wyczerpany. PrzejdĹş na PRO!","is_limit":True}),429
         d=request.get_json(silent=True) or {}
         q=(d.get("question") or "").strip()
         if not q: return jsonify({"error":"No question"}),400
@@ -735,18 +1228,14 @@ def create_app():
         if not q: return jsonify({"error":"No question"}),400
         p=db_get_profile_cached(g.user_id)
         pr=p.get("bot_profile","guest")
-        prof_ctx=profile_to_context(p)
-        chunks=a.search(q)
-        ctx="\n---\n".join([c['text'] for c in chunks])
-        base=PROFILES.get(pr,PROMPT_LUKASZ).replace("{profile_context}",prof_ctx)
-        prompt=base+(f"\n\n## KONTEKST WIEDZY:\n{ctx}" if ctx else "")
         h=[{"role":m["role"],"content":m["content"]} for m in (d.get("conversation_history") or []) if isinstance(m,dict) and m.get("role") in ("user","assistant")][-MAX_HISTORY:]
-        msgs=list(h)+[{"role":"user","content":q}]
+        # Use 4-layer pipeline for streaming
+        system_prompt,msgs,prof_data=a.ask_stream_prompt(q,h,profile=pr,uid=g.user_id)
         uid=g.user_id
         def generate():
             full=""
             try:
-                for chunk_text in a._call_stream(prompt,msgs):
+                for chunk_text in a._call_stream(system_prompt,msgs):
                     full+=chunk_text
                     yield f"data: {json.dumps({'chunk':chunk_text})}\n\n"
                 # Parse final result
@@ -757,7 +1246,7 @@ def create_app():
                     try: parsed=json.loads(c)
                     except: parsed={"type":"text","content":full}
                 parsed.pop("sources",None); parsed.pop("book_references",None)
-                bans=p.get("banned_ingredients",[])
+                bans=prof_data.get("banned_ingredients",[])
                 if isinstance(bans,str): bans=json.loads(bans) if bans else []
                 parsed=enforce_bans(parsed,bans)
                 auto_update_profile(uid,parsed)
@@ -774,7 +1263,7 @@ def create_app():
         a=app.config.get("assistant")
         if not a: return jsonify({"error":"Not init"}),503
         allowed,count,limit=check_daily_limit(g.user_id,"recipes")
-        if not allowed: return jsonify({"error":"limit","message":f"Dzienny limit {limit} przepisów wyczerpany. Przejdź na PRO!","is_limit":True}),429
+        if not allowed: return jsonify({"error":"limit","message":f"Dzienny limit {limit} przepisĂłw wyczerpany. PrzejdĹş na PRO!","is_limit":True}),429
         p=db_get_profile(g.user_id)
         try:
             result=a.surprise(profile=p.get("bot_profile","guest"),uid=g.user_id)
@@ -799,7 +1288,7 @@ def create_app():
         if not a: return jsonify({"error":"Not init"}),503
         if not http_requests: return jsonify({"error":"Modul requests niedostepny"}),500
         allowed,count,limit=check_daily_limit(g.user_id,"imports")
-        if not allowed: return jsonify({"error":"limit","message":f"Dzienny limit {limit} importów wyczerpany. Przejdź na PRO!","is_limit":True}),429
+        if not allowed: return jsonify({"error":"limit","message":f"Dzienny limit {limit} importĂłw wyczerpany. PrzejdĹş na PRO!","is_limit":True}),429
         d=request.get_json(silent=True) or {}
         url=(d.get("url") or "").strip()
         if not url: return jsonify({"error":"Brak URL"}),400
@@ -833,7 +1322,7 @@ def create_app():
             text=_re.sub(r'<[^>]+>',' ',text)
             text=_re.sub(r'\s+',' ',text).strip()
             recipe_start=None
-            for marker in ['Składniki','Ingredients','Przygotowanie','Preparation','Instrukcje']:
+            for marker in ['SkĹ‚adniki','Ingredients','Przygotowanie','Preparation','Instrukcje']:
                 pos=text.find(marker)
                 if pos>0: recipe_start=max(0,pos-200); break
             if recipe_start: text=text[recipe_start:recipe_start+4000]
@@ -971,10 +1460,42 @@ def create_app():
         db_remove_favorite(g.user_id,fav_id)
         return jsonify({"success":True})
 
+    @app.route("/api/knowledge/reload", methods=["POST"])
+    @require_auth
+    def reload_knowledge():
+        """Reload culinary knowledge base into 4 layer collections."""
+        try:
+            a=app.config.get("assistant")
+            if not a: return jsonify({"error":"Assistant not initialized"}),503
+            a._load_knowledge_base()
+            layers_info = {l: a.collections[l].count() for l in KNOWLEDGE_LAYERS}
+            return jsonify({"success": True, "message": "Knowledge base reloaded", "total_chunks": a.total_chunks(), "layers": layers_info})
+        except Exception as e:
+            logger.error(f"Knowledge reload error: {e}")
+            return jsonify({"error": str(e)}), 500
+
+    @app.route("/api/knowledge/stats")
+    @require_auth
+    def knowledge_stats():
+        """Get 4-layer knowledge base statistics."""
+        try:
+            a=app.config.get("assistant")
+            if not a: return jsonify({"error":"Assistant not initialized"}),503
+            layers = {}
+            for layer in KNOWLEDGE_LAYERS:
+                layers[layer] = {
+                    "indexed_chunks": a.collections[layer].count(),
+                    "raw_items": len(CULINARY_KNOWLEDGE.get(layer, [])),
+                }
+            return jsonify({"total_chunks": a.total_chunks(), "layers": layers})
+        except Exception as e:
+            logger.error(f"Knowledge stats error: {e}")
+            return jsonify({"error": str(e)}), 500
+
     @app.route("/api/stats")
     def stats():
         a=app.config.get("assistant")
-        return jsonify({"chunks":a.col.count() if a else 0,"model":AI_MODEL})
+        return jsonify({"chunks":a.total_chunks() if a else 0,"model":AI_MODEL})
 
     @app.route("/")
     def index(): return send_from_directory("static","index.html")
@@ -984,5 +1505,8 @@ def create_app():
 app=create_app()
 if __name__=="__main__":
     port=int(os.environ.get("PORT",5000))
-    logger.info(f"Chef AI v10 — http://localhost:{port}")
+    a=app.config.get("assistant")
+    chunks=a.total_chunks() if a else 0
+    logger.info(f"Chef AI v11 — http://localhost:{port} | {chunks} chunks | {AI_MODEL} | 4-layer pipeline")
     app.run(host="0.0.0.0",port=port,debug=False)
+
