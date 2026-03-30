@@ -1,0 +1,1475 @@
+[
+  {
+    "rule": "grand_sauce_derivative_system",
+    "category": "structure",
+    "applies_to": [
+      "sauce"
+    ],
+    "description": "Five mother sauces (béchamel, velouté, espagnole, tomato, hollandaise) serve as foundations for unlimited derivative sauces by adding specific ingredients.",
+    "structure": [
+      "mother sauce",
+      "flavor addition",
+      "finishing ingredient",
+      "garnish"
+    ],
+    "roles": {
+      "mother sauce": "structural and flavor base",
+      "flavor addition": "defines derivative (e.g., cheese for Mornay)",
+      "finishing ingredient": "final enrichment (butter, cream)",
+      "garnish": "textural or visual accent"
+    },
+    "balance_logic": "Derivative must respect mother sauce's character – adding without overwhelming.",
+    "contrast_logic": "Not applicable – building on base, not contrasting.",
+    "examples": [
+      "béchamel + Gruyère + Parmesan = Mornay sauce",
+      "hollandaise + tarragon reduction = Béarnaise"
+    ],
+    "failure_modes": [
+      {
+        "case": "too many additions",
+        "result": "muddled, unrecognizable sauce"
+      },
+      {
+        "case": "adding acid to béchamel",
+        "result": "curdling"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "brown_sauce_fond_development",
+    "category": "flavor_logic",
+    "applies_to": [
+      "brown sauce",
+      "pan sauce"
+    ],
+    "description": "Brown sauce flavor comes from properly caramelized bones, mirepoix, and tomato paste – not from burning.",
+    "structure": [
+      "bones (roasted to deep brown)",
+      "mirepoix (caramelized)",
+      "tomato paste (cooked to 'rusty brown')",
+      "stock",
+      "thickener (roux or starch)"
+    ],
+    "roles": {
+      "bones": "primary umami and body",
+      "mirepoix": "sweetness and aromatic depth",
+      "tomato paste": "acidity and color",
+      "stock": "liquid base",
+      "thickener": "texture"
+    },
+    "balance_logic": "Deep brown color = rich flavor; burnt = bitter. Roast until mahogany, not black.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "espagnole sauce",
+      "demi-glace"
+    ],
+    "failure_modes": [
+      {
+        "case": "bones or mirepoix burned",
+        "result": "bitter, acrid sauce"
+      },
+      {
+        "case": "tomato paste not cooked enough",
+        "result": "raw, metallic flavor"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "white_sauce_gentle_simmer",
+    "category": "technique",
+    "applies_to": [
+      "béchamel",
+      "velouté"
+    ],
+    "description": "White sauces must be simmered gently (not boiled) and stirred frequently to prevent scorching and skin formation.",
+    "structure": [
+      "roux",
+      "cold liquid (added gradually)",
+      "aromatics",
+      "seasoning"
+    ],
+    "roles": {
+      "roux": "thickener",
+      "cold liquid": "prevents lumps",
+      "aromatics": "flavor",
+      "seasoning": "final adjustment"
+    },
+    "balance_logic": "Simmer 30+ minutes to cook out raw flour taste; pull pot off-center to collect impurities for skimming.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "béchamel sauce",
+      "chicken velouté"
+    ],
+    "failure_modes": [
+      {
+        "case": "sauce boiled",
+        "result": "scorched bottom, broken texture"
+      },
+      {
+        "case": "not stirred",
+        "result": "skin forms, lumps develop"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "tomato_sauce_nonreactive_pan",
+    "category": "technique",
+    "applies_to": [
+      "tomato sauce"
+    ],
+    "description": "Tomato sauce must be cooked in nonreactive pans (stainless steel, enamel, anodized aluminum) to prevent discoloration and metallic taste.",
+    "structure": [
+      "sweated aromatics",
+      "tomatoes (fresh or canned)",
+      "herbs",
+      "optional: meat or bones"
+    ],
+    "roles": {
+      "aromatics": "flavor base",
+      "tomatoes": "primary ingredient",
+      "herbs": "aromatic support",
+      "meat/bones": "depth and umami"
+    },
+    "balance_logic": "Short cooking time (45 min) preserves fresh tomato flavor; long cooking develops deeper flavor but risks bitterness.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "fresh tomato sauce",
+      "Sunday gravy"
+    ],
+    "failure_modes": [
+      {
+        "case": "aluminum pan used",
+        "result": "gray color, metallic taste"
+      },
+      {
+        "case": "sugar added to fix acidity",
+        "result": "unnatural sweetness, masked flavor"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "hollandaise_emulsion_temperature",
+    "category": "technique",
+    "applies_to": [
+      "hollandaise",
+      "béarnaise"
+    ],
+    "description": "Hollandaise requires warm (not hot) butter, gentle heat, and constant whisking to maintain emulsion without scrambling eggs.",
+    "structure": [
+      "vinegar reduction (or lemon juice)",
+      "egg yolks",
+      "warm melted butter",
+      "seasoning"
+    ],
+    "roles": {
+      "reduction": "acidity and flavor",
+      "egg yolks": "emulsifier and body",
+      "butter": "richness and volume",
+      "seasoning": "final balance"
+    },
+    "balance_logic": "1 yolk per 2-3 oz butter; too much butter = sauce breaks.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "eggs Benedict with hollandaise",
+      "steak with béarnaise"
+    ],
+    "failure_modes": [
+      {
+        "case": "butter too hot",
+        "result": "scrambled eggs"
+      },
+      {
+        "case": "butter added too fast",
+        "result": "broken emulsion"
+      },
+      {
+        "case": "held too long (>2 hours)",
+        "result": "food safety risk"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "broad"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "beurre_blanc_cold_butter_emulsion",
+    "category": "technique",
+    "applies_to": [
+      "beurre blanc"
+    ],
+    "description": "Beurre blanc is made by whisking cold butter cubes into a hot acidic reduction – the temperature contrast creates the emulsion.",
+    "structure": [
+      "acidic reduction (wine + vinegar + shallots)",
+      "cold butter cubes",
+      "optional: reduced cream (stabilizer)"
+    ],
+    "roles": {
+      "reduction": "flavor base and heat source",
+      "cold butter": "emulsifies as it melts",
+      "cream": "stabilizes emulsion for longer holding"
+    },
+    "balance_logic": "More butter = thicker, richer sauce. Cream stabilizes but can mask delicate flavors.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "beurre blanc with fish",
+      "beurre blanc with asparagus"
+    ],
+    "failure_modes": [
+      {
+        "case": "butter too warm",
+        "result": "sauce separates (oily)"
+      },
+      {
+        "case": "sauce too hot",
+        "result": "emulsion breaks"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "broad"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "vinaigrette_emulsion_temporary",
+    "category": "structure",
+    "applies_to": [
+      "vinaigrette"
+    ],
+    "description": "Vinaigrette is a temporary emulsion (3 parts oil : 1 part acid) that separates quickly and must be re-emulsified before use.",
+    "structure": [
+      "acid (vinegar or citrus)",
+      "oil",
+      "emulsifier (optional: mustard, garlic)",
+      "seasonings"
+    ],
+    "roles": {
+      "acid": "brightness and balance",
+      "oil": "richness and mouthfeel",
+      "emulsifier": "stability (optional)",
+      "seasonings": "flavor complexity"
+    },
+    "balance_logic": "3:1 oil to acid is baseline; adjust based on oil strength and acid intensity.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "red wine vinaigrette",
+      "lemon-herb vinaigrette"
+    ],
+    "failure_modes": [
+      {
+        "case": "too much acid",
+        "result": "harsh, sour dressing"
+      },
+      {
+        "case": "too little acid",
+        "result": "greasy, flat dressing"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "mayonnaise_stable_emulsion",
+    "category": "structure",
+    "applies_to": [
+      "mayonnaise",
+      "aïoli"
+    ],
+    "description": "Mayonnaise is a stable emulsion where egg yolk lecithin suspends oil droplets – oil must be added slowly at first, then faster.",
+    "structure": [
+      "egg yolks (pasteurized)",
+      "acid (vinegar or lemon)",
+      "mustard (optional, for flavor)",
+      "oil",
+      "water (adjusts consistency)"
+    ],
+    "roles": {
+      "egg yolks": "primary emulsifier (lecithin)",
+      "acid": "flavor and thins emulsion",
+      "mustard": "flavor and secondary emulsifier",
+      "oil": "body and richness",
+      "water": "prevents sauce from becoming too thick"
+    },
+    "balance_logic": "6-8 oz oil per yolk. Add water when sauce becomes too thick to absorb more oil.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "classic mayonnaise",
+      "garlic aïoli"
+    ],
+    "failure_modes": [
+      {
+        "case": "oil added too fast initially",
+        "result": "sauce breaks (oil pools)"
+      },
+      {
+        "case": "sauce becomes too thick",
+        "result": "cannot absorb more oil, will break"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "pan_sauce_fond_deglazing",
+    "category": "technique",
+    "applies_to": [
+      "pan sauce",
+      "sautéed dish",
+      "roasted dish"
+    ],
+    "description": "Pan sauce starts with deglazing the fond (browned drippings) – the color of the fond determines sauce color and flavor intensity.",
+    "structure": [
+      "fond (pan drippings)",
+      "aromatics (shallots, garlic)",
+      "deglazing liquid (wine, stock)",
+      "thickener (optional)",
+      "finishing butter"
+    ],
+    "roles": {
+      "fond": "concentrated flavor from Maillard reaction",
+      "aromatics": "fresh flavor layer",
+      "deglazing liquid": "dissolves fond, adds moisture",
+      "thickener": "body (roux or starch)",
+      "finishing butter": "sheen and richness (monter au beurre)"
+    },
+    "balance_logic": "Golden brown fond = good sauce; black fond = bitter, discard.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "pan sauce after searing steak",
+      "roast chicken pan gravy"
+    ],
+    "failure_modes": [
+      {
+        "case": "fond is burnt (black)",
+        "result": "bitter, unusable sauce"
+      },
+      {
+        "case": "not enough liquid to deglaze",
+        "result": "fond re-solidifies, flavor lost"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "sauce_pairing_logic",
+    "category": "flavor_logic",
+    "applies_to": [
+      "all dishes with sauce"
+    ],
+    "description": "Sauce must match the main ingredient's cooking method, flavor intensity, and intended service style.",
+    "structure": [
+      "main ingredient",
+      "cooking method",
+      "sauce",
+      "service style"
+    ],
+    "roles": {
+      "main ingredient": "determines sauce weight",
+      "cooking method": "determines if drippings are available",
+      "sauce": "complements or contrasts",
+      "service style": "determines if sauce can be pre-made"
+    },
+    "balance_logic": "Delicate fish = light sauce (beurre blanc). Robust meat = bold sauce (demi-glace).",
+    "contrast_logic": "Sauce can contrast (acid with fatty meat) or complement (mushroom sauce with veal).",
+    "examples": [
+      "Dover sole with cream sauce (complement)",
+      "grilled tuna with tomato vinaigrette (contrast)"
+    ],
+    "failure_modes": [
+      {
+        "case": "heavy sauce on delicate fish",
+        "result": "fish flavor lost"
+      },
+      {
+        "case": "sauce doesn't match cooking method",
+        "result": "missed opportunity (e.g., no pan sauce after roasting)"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "grilling_marking_technique",
+    "category": "technique",
+    "applies_to": [
+      "grilled dish"
+    ],
+    "description": "Presentation side goes down first on clean, hot grill; rotate 90 degrees for crosshatch marks before flipping once.",
+    "structure": [
+      "preheated, cleaned grill",
+      "oiled grates",
+      "food (presentation side down)",
+      "90-degree rotation (optional)",
+      "single flip"
+    ],
+    "roles": {
+      "clean grill": "prevents sticking and off-flavors",
+      "oiled grates": "release and marks",
+      "presentation side down first": "best visual result",
+      "90-degree rotation": "crosshatch pattern",
+      "single flip": "even cooking"
+    },
+    "balance_logic": "Don't move food until it releases naturally – indicates proper browning.",
+    "contrast_logic": "Charred exterior vs. moist interior.",
+    "examples": [
+      "grilled steak with diamond marks",
+      "grilled chicken breast"
+    ],
+    "failure_modes": [
+      {
+        "case": "food moved too early",
+        "result": "tears, poor marks"
+      },
+      {
+        "case": "dirty grill",
+        "result": "sticking, burnt bits on food"
+      }
+    ],
+    "meta": {
+      "priority": "medium",
+      "universality": "broad"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "roasting_resting_period",
+    "category": "technique",
+    "applies_to": [
+      "roasted meat",
+      "roasted poultry"
+    ],
+    "description": "Roasted meats must rest after cooking to allow juices to redistribute – 5 min for small items, 15-20 min for medium, up to 45 min for large roasts.",
+    "structure": [
+      "roasted item",
+      "resting time",
+      "loose foil cover",
+      "warm spot"
+    ],
+    "roles": {
+      "roasted item": "carryover cooking continues",
+      "resting time": "juices reabsorb",
+      "loose foil": "prevents cooling while allowing steam escape",
+      "warm spot": "maintains temperature"
+    },
+    "balance_logic": "Remove from oven 5-10°F below target temperature; carryover completes cooking.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "prime rib rested 20 minutes before carving",
+      "roast chicken rested 15 minutes"
+    ],
+    "failure_modes": [
+      {
+        "case": "no resting",
+        "result": "juices run out, meat dry"
+      },
+      {
+        "case": "tight foil cover",
+        "result": "steam softens crust"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "barding_larding_lean_meat",
+    "category": "structure",
+    "applies_to": [
+      "roasted game",
+      "roasted lean meat"
+    ],
+    "description": "Lean meats (venison, game birds) require barding (wrapping in fat) or larding (inserting fat) to prevent drying during roasting.",
+    "structure": [
+      "lean meat",
+      "fat (bacon, fatback, or pork fat)",
+      "butcher's twine (for barding)"
+    ],
+    "roles": {
+      "lean meat": "protein that would otherwise dry out",
+      "fat": "moisture, flavor, and heat conductor",
+      "twine": "holds fat in place"
+    },
+    "balance_logic": "Fat should cover exposed lean areas but not overwhelm the meat's flavor.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "venison loin barded with bacon",
+      "pheasant barded with fatback"
+    ],
+    "failure_modes": [
+      {
+        "case": "no barding on lean roast",
+        "result": "dry, tough meat"
+      },
+      {
+        "case": "fat too thick",
+        "result": "meat steams instead of roasts"
+      }
+    ],
+    "meta": {
+      "priority": "medium",
+      "universality": "contextual"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "sauté_pan_capacity",
+    "category": "technique",
+    "applies_to": [
+      "sautéed dish"
+    ],
+    "description": "Sauté pan must not be overcrowded – food should be in a single layer with space between pieces to ensure browning, not steaming.",
+    "structure": [
+      "sauté pan",
+      "cooking fat",
+      "food (single layer, not touching)"
+    ],
+    "roles": {
+      "pan": "heat conductor",
+      "fat": "heat transfer and release",
+      "food spacing": "allows moisture evaporation"
+    },
+    "balance_logic": "If pan is crowded, temperature drops, moisture pools, and food steams instead of browning.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "sautéed mushrooms – work in batches",
+      "seared scallops – leave space between"
+    ],
+    "failure_modes": [
+      {
+        "case": "overcrowded pan",
+        "result": "gray, steamed food, no browning"
+      },
+      {
+        "case": "pan too large for amount",
+        "result": "fat scorches, fond burns"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "pan_frying_coating_adhesion",
+    "category": "technique",
+    "applies_to": [
+      "pan-fried dish",
+      "breaded dish"
+    ],
+    "description": "Standard breading procedure (flour → egg wash → bread crumbs) must be applied in sequence with dry hands/wet hands separation for adhesion.",
+    "structure": [
+      "dry food",
+      "flour (dry hand)",
+      "egg wash (wet hand)",
+      "bread crumbs (dry hand)",
+      "rack for resting"
+    ],
+    "roles": {
+      "flour": "dries surface, helps egg adhere",
+      "egg wash": "binds crumbs to food",
+      "bread crumbs": "crisp crust",
+      "rack": "allows coating to set before frying"
+    },
+    "balance_logic": "Rest breaded items 20-25 minutes before frying to allow coating to set.",
+    "contrast_logic": "Crisp exterior vs. moist interior.",
+    "examples": [
+      "schnitzel",
+      "fried chicken cutlet"
+    ],
+    "failure_modes": [
+      {
+        "case": "same hand used for wet and dry",
+        "result": "clumpy, uneven coating"
+      },
+      {
+        "case": "no resting time",
+        "result": "coating falls off during frying"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "deep_fry_two_stage",
+    "category": "technique",
+    "applies_to": [
+      "deep-fried potatoes",
+      "deep-fried thick items"
+    ],
+    "description": "Thick or starchy items (like French fries) require two-stage frying: first at lower temp (300-325°F) to cook through, then at higher temp (350-375°F) to crisp and brown.",
+    "structure": [
+      "cut food",
+      "first fry (blanch): 300-325°F",
+      "rest/drain",
+      "second fry: 350-375°F",
+      "drain and season"
+    ],
+    "roles": {
+      "first fry": "cooks interior without browning",
+      "rest": "allows moisture to escape",
+      "second fry": "creates crisp crust and color",
+      "drain": "removes excess oil"
+    },
+    "balance_logic": "First fry until tender but not colored; second fry until golden brown.",
+    "contrast_logic": "Crisp exterior vs. fluffy interior.",
+    "examples": [
+      "French fries",
+      "croquettes"
+    ],
+    "failure_modes": [
+      {
+        "case": "single fry at high temp",
+        "result": "burnt outside, raw inside"
+      },
+      {
+        "case": "oil temperature too low",
+        "result": "greasy, soggy product"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "broad"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "steaming_liquid_aromatics",
+    "category": "flavor_logic",
+    "applies_to": [
+      "steamed dish"
+    ],
+    "description": "Steaming liquid can be infused with herbs, spices, citrus, or wine to add subtle flavor to the food without direct contact.",
+    "structure": [
+      "steaming liquid (water, stock, wine)",
+      "aromatics (herbs, spices, citrus, ginger)",
+      "food (on rack above liquid)"
+    ],
+    "roles": {
+      "liquid": "produces steam",
+      "aromatics": "infuse steam with flavor",
+      "food": "absorbs aromatic steam"
+    },
+    "balance_logic": "Subtle flavors work best – steam carries delicate notes without overpowering.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "fish steamed with lemongrass and ginger",
+      "vegetables steamed with thyme and bay"
+    ],
+    "failure_modes": [
+      {
+        "case": "liquid boils away",
+        "result": "burned pot, no steam"
+      },
+      {
+        "case": "too many aromatics",
+        "result": "muddled, bitter flavor"
+      }
+    ],
+    "meta": {
+      "priority": "medium",
+      "universality": "broad"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "en_papillote_self_saucing",
+    "category": "structure",
+    "applies_to": [
+      "en papillote dish"
+    ],
+    "description": "Food cooked en papillote steams in its own juices, creating a self-contained sauce – no additional liquid needed beyond aromatics and a small amount of wine/butter.",
+    "structure": [
+      "parchment paper (heart shape)",
+      "main protein",
+      "vegetables (thinly sliced)",
+      "aromatics",
+      "small amount of liquid (wine, butter, stock)"
+    ],
+    "roles": {
+      "parchment": "traps steam",
+      "protein": "releases juices",
+      "vegetables": "add moisture and flavor",
+      "aromatics": "flavor infusion",
+      "liquid": "steam source and sauce base"
+    },
+    "balance_logic": "Seal tightly to trap steam; don't overfill. Cook until paper is puffed and browned.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "snapper en papillote with vegetables",
+      "salmon en papillote with leeks and wine"
+    ],
+    "failure_modes": [
+      {
+        "case": "package not sealed",
+        "result": "steam escapes, food dries out"
+      },
+      {
+        "case": "too much liquid",
+        "result": "soup inside, diluted flavor"
+      }
+    ],
+    "meta": {
+      "priority": "medium",
+      "universality": "broad"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "braising_liquid_level",
+    "category": "technique",
+    "applies_to": [
+      "braised dish"
+    ],
+    "description": "Braising liquid should cover the food by one-third to one-half – not fully submerged – to allow both moist and dry heat cooking.",
+    "structure": [
+      "seared main item",
+      "aromatics",
+      "braising liquid",
+      "tight-fitting lid"
+    ],
+    "roles": {
+      "seared item": "browned exterior for flavor",
+      "aromatics": "flavor base",
+      "liquid": "moist heat and sauce base",
+      "lid": "traps steam"
+    },
+    "balance_logic": "Partial submersion allows exposed top to brown while bottom braises.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "braised short ribs",
+      "osso buco"
+    ],
+    "failure_modes": [
+      {
+        "case": "fully submerged",
+        "result": "steamed, not braised – no browning"
+      },
+      {
+        "case": "too little liquid",
+        "result": "scorched bottom, dry meat"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "stew_thickening_options",
+    "category": "structure",
+    "applies_to": [
+      "stew"
+    ],
+    "description": "Stews can be thickened by roux added at the beginning, by reducing the cooking liquid, or by puréeing some of the vegetables.",
+    "structure": [
+      "main ingredients",
+      "cooking liquid",
+      "thickening method (roux, reduction, purée)"
+    ],
+    "roles": {
+      "main ingredients": "flavor and texture",
+      "cooking liquid": "base",
+      "thickening method": "determines final texture"
+    },
+    "balance_logic": "Roux-thickened stews are opaque and heavy; reduction-thickened are glossy and concentrated; purée-thickened are rustic.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "beef stew (roux-thickened)",
+      "coq au vin (reduction-thickened)",
+      "ratatouille (purée-thickened)"
+    ],
+    "failure_modes": [
+      {
+        "case": "roux added at end",
+        "result": "raw flour taste"
+      },
+      {
+        "case": "over-reduced",
+        "result": "too salty, too thick"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "pilaf_parching",
+    "category": "technique",
+    "applies_to": [
+      "pilaf",
+      "rice dish"
+    ],
+    "description": "Rice for pilaf is first 'parched' in hot fat until translucent before adding liquid – this gelatinizes surface starch and keeps grains separate.",
+    "structure": [
+      "rice",
+      "fat (butter or oil)",
+      "aromatics (sweated first)",
+      "hot liquid (stock or broth)"
+    ],
+    "roles": {
+      "rice": "primary grain",
+      "fat": "coats grains, prevents sticking",
+      "aromatics": "flavor base",
+      "hot liquid": "shortens cooking time"
+    },
+    "balance_logic": "Parch until rice is coated and slightly translucent, not browned.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "rice pilaf",
+      "bulgur pilaf"
+    ],
+    "failure_modes": [
+      {
+        "case": "rice not parched",
+        "result": "sticky, clumped grains"
+      },
+      {
+        "case": "cold liquid added",
+        "result": "longer cooking time, uneven texture"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "broad"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "risotto_gradual_liquid_addition",
+    "category": "technique",
+    "applies_to": [
+      "risotto"
+    ],
+    "description": "Risotto requires gradual addition of simmering liquid while stirring constantly – this releases starch slowly for creamy texture with al dente grains.",
+    "structure": [
+      "rice (Arborio, Carnaroli, Vialone Nano)",
+      "sweated aromatics",
+      "hot stock",
+      "wine (optional)",
+      "butter and cheese (finish)"
+    ],
+    "roles": {
+      "rice": "high-starch variety essential",
+      "aromatics": "flavor base",
+      "hot stock": "maintains cooking temperature",
+      "wine": "acidity and depth",
+      "butter/cheese": "creamy finish (mantecatura)"
+    },
+    "balance_logic": "Add stock in 3-4 additions; each addition absorbed before next. Total cooking time ~20 min for Arborio.",
+    "contrast_logic": "Creamy exterior vs. al dente center.",
+    "examples": [
+      "risotto Milanese",
+      "mushroom risotto"
+    ],
+    "failure_modes": [
+      {
+        "case": "cold stock added",
+        "result": "cooking stops, uneven texture"
+      },
+      {
+        "case": "not stirred constantly",
+        "result": "starchy, gluey texture"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "broad"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "pasta_al_dente",
+    "category": "technique",
+    "applies_to": [
+      "pasta dish"
+    ],
+    "description": "Pasta should be cooked al dente ('to the tooth') – tender but with slight resistance – and finished in the sauce, not just topped with it.",
+    "structure": [
+      "pasta",
+      "abundant salted water",
+      "sauce",
+      "pasta water (for finishing)"
+    ],
+    "roles": {
+      "pasta": "primary carbohydrate",
+      "salted water": "flavors pasta from within",
+      "sauce": "flavor and moisture",
+      "pasta water": "starch helps sauce adhere"
+    },
+    "balance_logic": "Cook pasta 1-2 minutes less than package time; finish in sauce with pasta water.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "spaghetti alla carbonara",
+      "fettuccine Alfredo"
+    ],
+    "failure_modes": [
+      {
+        "case": "pasta overcooked",
+        "result": "mushy, sauce won't adhere"
+      },
+      {
+        "case": "pasta rinsed after cooking",
+        "result": "starch removed, sauce slides off"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "egg_frying_temperature",
+    "category": "technique",
+    "applies_to": [
+      "fried egg"
+    ],
+    "description": "Fried eggs require medium heat (255-280°F/124-138°C) – butter should sizzle without browning, and whites should set before edges brown.",
+    "structure": [
+      "pan (nonstick or seasoned)",
+      "fat (butter or oil)",
+      "egg",
+      "optional: cover for steam-set top"
+    ],
+    "roles": {
+      "fat": "lubrication and flavor",
+      "pan temperature": "determines white texture",
+      "cover": "steams top for 'sunny side up'"
+    },
+    "balance_logic": "Too hot = crispy, browned edges with undercooked whites. Too low = sticking, pale, greasy.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "sunny side up egg",
+      "over easy egg"
+    ],
+    "failure_modes": [
+      {
+        "case": "pan too hot",
+        "result": "brown, blistered edges, raw white"
+      },
+      {
+        "case": "pan too cold",
+        "result": "egg sticks, absorbs fat"
+      }
+    ],
+    "meta": {
+      "priority": "medium",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "omelet_french_vs_american",
+    "category": "structure",
+    "applies_to": [
+      "omelet"
+    ],
+    "description": "French omelet is rolled, creamy inside, no browning; American omelet is folded, fully cooked, often browned – different techniques for different results.",
+    "structure": [
+      "eggs",
+      "butter",
+      "filling (added at different times)"
+    ],
+    "roles": {
+      "eggs": "base",
+      "butter": "flavor and release",
+      "filling": "flavor center"
+    },
+    "balance_logic": "French: stir constantly, remove while still creamy, roll. American: cook until set, fold, allow browning.",
+    "contrast_logic": "Creamy interior (French) vs. fully cooked (American).",
+    "examples": [
+      "French omelet with fines herbes",
+      "Denver omelet (American)"
+    ],
+    "failure_modes": [
+      {
+        "case": "French omelet browned",
+        "result": "dry, not classic"
+      },
+      {
+        "case": "American omelet undercooked",
+        "result": "runny interior, unsafe"
+      }
+    ],
+    "meta": {
+      "priority": "medium",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "sandwich_four_elements",
+    "category": "structure",
+    "applies_to": [
+      "sandwich"
+    ],
+    "description": "Every sandwich has four elements: bread, spread, filling, garnish – each must be chosen to support the others.",
+    "structure": [
+      "bread",
+      "spread",
+      "filling",
+      "garnish"
+    ],
+    "roles": {
+      "bread": "structure and flavor base",
+      "spread": "moisture barrier and flavor",
+      "filling": "primary substance",
+      "garnish": "texture and freshness"
+    },
+    "balance_logic": "Spread protects bread from moisture; filling should be proportionate to bread thickness.",
+    "contrast_logic": "Crisp bread vs. soft filling; cool vs. warm (in hot sandwiches).",
+    "examples": [
+      "club sandwich (toast, mayo, turkey, lettuce)",
+      "Reuben (rye, Russian dressing, corned beef, sauerkraut)"
+    ],
+    "failure_modes": [
+      {
+        "case": "no spread on bread",
+        "result": "soggy bottom from filling moisture"
+      },
+      {
+        "case": "bread too thick or too thin",
+        "result": "structural failure or flavor imbalance"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "salad_dressing_ratio",
+    "category": "balance",
+    "applies_to": [
+      "green salad"
+    ],
+    "description": "Properly dressed salad has 1-2 fl oz dressing per 3 oz greens – just enough to coat each leaf without pooling on the plate.",
+    "structure": [
+      "dried greens",
+      "dressing",
+      "toss (not drown)"
+    ],
+    "roles": {
+      "greens": "must be completely dry for adhesion",
+      "dressing": "light coating, not heavy",
+      "tossing": "even distribution"
+    },
+    "balance_logic": "Dress immediately before serving; once dressed, salad wilts within minutes.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "Caesar salad",
+      "mixed green salad"
+    ],
+    "failure_modes": [
+      {
+        "case": "greens wet",
+        "result": "dressing slides off, diluted flavor"
+      },
+      {
+        "case": "too much dressing",
+        "result": "pooling, soggy greens"
+      },
+      {
+        "case": "dressed too early",
+        "result": "wilted, unappealing"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "pie_dough_flakiness",
+    "category": "structure",
+    "applies_to": [
+      "pie",
+      "tart"
+    ],
+    "description": "Flaky pie dough requires fat (butter or shortening) to remain in visible chunks when mixed – mealy dough requires fat worked in until mixture resembles cornmeal.",
+    "structure": [
+      "flour",
+      "cold fat",
+      "cold liquid",
+      "resting period"
+    ],
+    "roles": {
+      "flour": "structure",
+      "cold fat": "creates layers when rolled",
+      "cold liquid": "binds without melting fat",
+      "resting": "relaxes gluten"
+    },
+    "balance_logic": "Larger fat chunks = flakier crust. Smaller fat particles = mealier, sturdier crust for liquid fillings.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "flaky pie dough for apple pie",
+      "mealy dough for custard pie"
+    ],
+    "failure_modes": [
+      {
+        "case": "fat too warm",
+        "result": "fat incorporates, crust tough"
+      },
+      {
+        "case": "overworked dough",
+        "result": "gluten develops, crust tough"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "cake_creaming_air_incorporation",
+    "category": "technique",
+    "applies_to": [
+      "creamed cake",
+      "cookie"
+    ],
+    "description": "Creaming butter and sugar until light and pale incorporates air – this mechanical leavening is essential for cake structure before chemical leaveners activate.",
+    "structure": [
+      "butter (65-70°F/18-21°C)",
+      "sugar",
+      "eggs (room temperature)",
+      "flour (added last, mixed minimally)"
+    ],
+    "roles": {
+      "butter": "traps air",
+      "sugar": "abrades butter to create air pockets",
+      "eggs": "adds moisture and structure",
+      "flour": "stabilizes after minimal mixing"
+    },
+    "balance_logic": "Overmixing after flour addition develops gluten → tough cake.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "pound cake",
+      "chocolate chip cookies"
+    ],
+    "failure_modes": [
+      {
+        "case": "butter too cold",
+        "result": "no air incorporation, dense cake"
+      },
+      {
+        "case": "butter too warm",
+        "result": "butter melts, no structure"
+      },
+      {
+        "case": "flour overmixed",
+        "result": "tough, chewy texture"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "foamed_cake_structure",
+    "category": "structure",
+    "applies_to": [
+      "sponge cake",
+      "angel food cake",
+      "chiffon"
+    ],
+    "description": "Foamed cakes rely on whipped eggs (whole, yolks, or whites) for structure and leavening – no chemical leavener or minimal, and fat is limited.",
+    "structure": [
+      "eggs (room temperature for volume)",
+      "sugar",
+      "flour (folded gently)",
+      "optional: melted butter or oil"
+    ],
+    "roles": {
+      "eggs": "primary leavening and structure",
+      "sugar": "stabilizes foam",
+      "flour": "adds structure",
+      "fat": "tenderizes (optional)"
+    },
+    "balance_logic": "Warm foaming method (heating eggs and sugar to 110°F/43°C) creates more stable foam.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "genoise",
+      "angel food cake"
+    ],
+    "failure_modes": [
+      {
+        "case": "egg whites have any yolk",
+        "result": "won't whip to full volume"
+      },
+      {
+        "case": "flour folded too aggressively",
+        "result": "deflated, dense cake"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "pate_a_choux_steam_leavening",
+    "category": "technique",
+    "applies_to": [
+      "cream puff",
+      "éclair",
+      "gougère"
+    ],
+    "description": "Pâte à choux rises from steam trapped in the dough – high initial oven temperature (375-400°F) creates steam; lower temperature (325°F) dries the shell.",
+    "structure": [
+      "liquid (water or milk)",
+      "butter",
+      "flour",
+      "eggs (added gradually)"
+    ],
+    "roles": {
+      "liquid": "creates steam",
+      "butter": "flavor and tenderness",
+      "flour": "provides structure to trap steam",
+      "eggs": "coagulate to form hollow shell"
+    },
+    "balance_logic": "Dough must be cooked on stovetop until it pulls from pan – this gelatinizes starch for maximum steam trapping.",
+    "contrast_logic": "Crisp exterior vs. hollow interior.",
+    "examples": [
+      "profiteroles",
+      "éclairs"
+    ],
+    "failure_modes": [
+      {
+        "case": "oven temperature too low",
+        "result": "pâte à choux doesn't puff"
+      },
+      {
+        "case": "oven opened during baking",
+        "result": "collapsed shells"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "broad"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "laminated_dough_layering",
+    "category": "structure",
+    "applies_to": [
+      "puff pastry",
+      "croissant",
+      "Danish"
+    ],
+    "description": "Laminated dough creates hundreds of alternating layers of dough and butter through repeated folding (turns) – steam separates layers during baking.",
+    "structure": [
+      "dough (detrempe)",
+      "butter block (roll-in)",
+      "folds (turns)",
+      "resting periods between folds"
+    ],
+    "roles": {
+      "dough": "structural layers",
+      "butter": "separates layers, creates steam",
+      "folds": "multiplies layers",
+      "resting": "relaxes gluten, chills butter"
+    },
+    "balance_logic": "Each fold quadruples or triples layer count. Too few folds = poor rise. Too many = butter incorporates into dough.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "puff pastry",
+      "croissant"
+    ],
+    "failure_modes": [
+      {
+        "case": "butter too hard",
+        "result": "butter shatters, layers uneven"
+      },
+      {
+        "case": "butter too soft",
+        "result": "butter squishes out, layers lost"
+      },
+      {
+        "case": "dough not rested",
+        "result": "gluten tight, shrinkage during baking"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "broad"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "sugar_caramelization_stages",
+    "category": "technique",
+    "applies_to": [
+      "caramel",
+      "confection",
+      "dessert"
+    ],
+    "description": "Sugar cooked to specific temperatures (thread → soft ball → firm ball → hard ball → soft crack → hard crack) determines final texture when cooled.",
+    "structure": [
+      "sugar",
+      "water (for wet method)",
+      "thermometer"
+    ],
+    "roles": {
+      "sugar": "primary ingredient",
+      "water": "controls crystallization (wet method)",
+      "temperature": "determines final texture"
+    },
+    "balance_logic": "Dry method (no water) for caramel; wet method for precise stage cooking.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "caramel sauce (dry method)",
+      "marshmallow (soft ball stage)"
+    ],
+    "failure_modes": [
+      {
+        "case": "crystals on pan sides not washed down",
+        "result": "entire batch crystallizes"
+      },
+      {
+        "case": "stirred after boiling starts",
+        "result": "crystallization"
+      }
+    ],
+    "meta": {
+      "priority": "medium",
+      "universality": "broad"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "chocolate_tempering",
+    "category": "technique",
+    "applies_to": [
+      "chocolate work",
+      "confection"
+    ],
+    "description": "Tempering chocolate creates stable beta crystals – results in glossy finish, firm snap, and no blooming (white streaks).",
+    "structure": [
+      "melted chocolate (not overheated)",
+      "cooling to working temperature",
+      "agitation during cooling"
+    ],
+    "roles": {
+      "temperature": "controls crystal formation",
+      "agitation": "promotes proper crystal growth",
+      "seed chocolate": "introduces stable crystals"
+    },
+    "balance_logic": "Different chocolates have different tempering curves – follow specific temperatures for dark, milk, white.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "chocolate-dipped strawberries",
+      "chocolate molds"
+    ],
+    "failure_modes": [
+      {
+        "case": "chocolate overheated",
+        "result": "cocoa butter damaged, won't temper"
+      },
+      {
+        "case": "water contacts chocolate",
+        "result": "seized, grainy, unusable"
+      }
+    ],
+    "meta": {
+      "priority": "medium",
+      "universality": "contextual"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "souffle_two_component_structure",
+    "category": "structure",
+    "applies_to": [
+      "soufflé"
+    ],
+    "description": "Soufflé has two components: flavorful base (béchamel or purée) and beaten egg whites – base provides flavor, whites provide lift.",
+    "structure": [
+      "base (béchamel or purée)",
+      "egg yolks (optional, for richness)",
+      "egg whites (beaten to soft peaks)",
+      "flavorings"
+    ],
+    "roles": {
+      "base": "flavor and structure",
+      "egg yolks": "richness and color",
+      "egg whites": "leavening",
+      "flavorings": "character"
+    },
+    "balance_logic": "Base must be highly flavored – egg whites dilute flavor significantly.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "cheese soufflé",
+      "spinach soufflé"
+    ],
+    "failure_modes": [
+      {
+        "case": "egg whites overbeaten",
+        "result": "dry, won't fold smoothly"
+      },
+      {
+        "case": "base too thin",
+        "result": "soufflé collapses"
+      },
+      {
+        "case": "oven opened during baking",
+        "result": "soufflé falls"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "broad"
+    },
+    "confidence": 0.95
+  }
+]

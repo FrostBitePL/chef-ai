@@ -1,0 +1,893 @@
+[
+  {
+    "ingredient": "rice",
+    "ingredient_state": "dry grains, unwashed",
+    "intent": "set_texture",
+    "process": "starch gelatinization",
+    "mechanism": "amylopectin swelling and amylose leaching",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 18
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-2, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "rice remains hard, chalky center"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "rice becomes mushy, grains burst"
+      }
+    },
+    "equipment": "pot with lid or rice cooker",
+    "condition": "when cooking white rice for fluffy separate grains",
+    "decision": "Simmer rice covered without stirring until liquid absorbed",
+    "failure_state": [
+      {
+        "case": "stirring_during_cooking",
+        "result": "starchy, gummy texture from excess starch release"
+      },
+      {
+        "case": "insufficient_liquid",
+        "result": "undercooked, hard grains"
+      }
+    ],
+    "effect": "Starch granules absorb water and swell; amylose leaches and sets upon cooling, creating separate grains",
+    "sensory": {
+      "texture": "tender, separate grains",
+      "juiciness": "moist but not wet",
+      "appearance": "opaque white, distinct kernels"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "risotto rice",
+    "ingredient_state": "dry arborio or carnaroli grains",
+    "intent": "set_texture",
+    "process": "starch release",
+    "mechanism": "amylopectin surface abrasion",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 18
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-3, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "rice remains hard; no creamy texture"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "rice becomes mushy; grains lose shape"
+      }
+    },
+    "equipment": "heavy-bottomed pot, wooden spoon",
+    "condition": "when making creamy risotto",
+    "decision": "Toast rice in fat, add wine, then add hot stock gradually while stirring constantly",
+    "failure_state": [
+      {
+        "case": "washing_rice",
+        "result": "surface starch removed; risotto will not become creamy"
+      },
+      {
+        "case": "cold_stock",
+        "result": "temperature drops; starch release disrupted"
+      }
+    ],
+    "effect": "Constant stirring abrades surface starch, creating creamy texture; high-amylopectin rice releases starch readily",
+    "sensory": {
+      "texture": "creamy, al dente center",
+      "appearance": "saucy, grains distinct"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "paella rice",
+    "ingredient_state": "dry bomba or calasparra grains",
+    "intent": "set_texture",
+    "process": "starch gelatinization",
+    "mechanism": "starch swelling without agitation",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 18
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-3, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "rice undercooked"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "rice overcooked, mushy"
+      }
+    },
+    "equipment": "paella pan or wide skillet",
+    "condition": "when making paella with socarrat (crispy bottom)",
+    "decision": "Do not stir after adding liquid; cook until liquid absorbed and bottom forms crust",
+    "failure_state": [
+      {
+        "case": "stirring",
+        "result": "no socarrat; starch released prematurely"
+      }
+    ],
+    "effect": "Bomba rice absorbs liquid without stirring; undisturbed bottom forms caramelized crust (socarrat)",
+    "sensory": {
+      "texture": "tender grains, crispy bottom",
+      "appearance": "golden crust underneath"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "polenta",
+    "ingredient_state": "dry cornmeal",
+    "intent": "gelatinize_starch",
+    "process": "starch gelatinization",
+    "mechanism": "corn starch granule swelling",
+    "target": {
+      "temperature_c": 90,
+      "time_minutes": 40
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-10, 20]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 75,
+        "effect": "gritty texture; undercooked"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "vigorous boiling causes splattering; risk of burns"
+      }
+    },
+    "equipment": "heavy pot, whisk",
+    "condition": "when making creamy polenta",
+    "decision": "Add cornmeal to boiling salted liquid in thin stream while whisking constantly; reduce heat and simmer, stirring frequently",
+    "failure_state": [
+      {
+        "case": "adding_cornmeal_to_cold_liquid",
+        "result": "lumps form"
+      },
+      {
+        "case": "insufficient_stirring",
+        "result": "uneven cooking; bottom scorches"
+      }
+    ],
+    "effect": "Corn starch gelatinizes at 70-90°C; constant stirring prevents lumps and scorching",
+    "sensory": {
+      "texture": "smooth, creamy",
+      "appearance": "golden, uniform"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "polenta",
+    "ingredient_state": "dry cornmeal with liquid",
+    "intent": "pressure_cook",
+    "process": "starch gelatinization under pressure",
+    "mechanism": "elevated boiling point and rapid hydration",
+    "target": {
+      "temperature_c": 120,
+      "time_minutes": 15
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-3, 5]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 10,
+        "effect": "undercooked, grainy"
+      },
+      "upper": {
+        "time_minutes": 20,
+        "effect": "overcooked, mushy"
+      }
+    },
+    "equipment": "pressure cooker",
+    "condition": "when making polenta quickly",
+    "decision": "Cook under pressure for 15 minutes; natural release",
+    "failure_state": [
+      {
+        "case": "overfilling",
+        "result": "polenta expands and may clog valve"
+      }
+    ],
+    "effect": "Pressure cooking increases boiling point to 120°C, accelerating starch gelatinization from 40 minutes to 15 minutes",
+    "sensory": {
+      "texture": "smooth, creamy",
+      "appearance": "golden"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "grits",
+    "ingredient_state": "dry corn grits",
+    "intent": "gelatinize_starch",
+    "process": "starch gelatinization",
+    "mechanism": "corn starch granule swelling",
+    "target": {
+      "temperature_c": 90,
+      "time_minutes": 30
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-10, 20]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 75,
+        "effect": "gritty texture"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "splattering; scorching risk"
+      }
+    },
+    "equipment": "heavy pot",
+    "condition": "when making creamy grits",
+    "decision": "Simmer in liquid, stirring frequently, until tender and creamy",
+    "failure_state": [
+      {
+        "case": "insufficient_liquid",
+        "result": "grits become thick and pasty"
+      }
+    ],
+    "effect": "Grits absorb liquid and release starch; longer cooking produces creamier texture",
+    "sensory": {
+      "texture": "creamy, smooth",
+      "appearance": "pale yellow"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "tamales",
+    "ingredient_state": "masa dough filled, wrapped in corn husks",
+    "intent": "steam",
+    "process": "starch gelatinization",
+    "mechanism": "steam cooking",
+    "target": {
+      "temperature_c": 100,
+      "time_minutes": 90
+    },
+    "tolerance": {
+      "temperature_c": [-5, 0],
+      "time_minutes": [-15, 30]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 85,
+        "effect": "undercooked; dough remains raw"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "drying out if overcooked"
+      }
+    },
+    "equipment": "steamer or pressure cooker",
+    "condition": "when making tamales",
+    "decision": "Steam until masa pulls away from husk easily",
+    "failure_state": [
+      {
+        "case": "insufficient_water",
+        "result": "steamer runs dry; tamales scorch"
+      }
+    ],
+    "effect": "Steam cooks tamales gently and evenly, hydrating masa and cooking filling",
+    "sensory": {
+      "texture": "tender, moist, pulls from husk",
+      "appearance": "smooth masa"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.85
+  },
+  {
+    "ingredient": "hush puppies",
+    "ingredient_state": "cornmeal batter",
+    "intent": "crisp",
+    "process": "deep frying",
+    "mechanism": "moisture evaporation and starch gelatinization",
+    "target": {
+      "temperature_c": 180,
+      "time_minutes": 3
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-1, 1]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 160,
+        "effect": "batter absorbs oil; greasy, soggy"
+      },
+      "upper": {
+        "temperature_c": 200,
+        "effect": "browns too quickly; raw interior"
+      }
+    },
+    "equipment": "deep fryer or heavy pot",
+    "condition": "when frying hush puppies",
+    "decision": "Drop batter into 180°C oil; fry until golden brown and cooked through",
+    "failure_state": [
+      {
+        "case": "oil_too_cool",
+        "result": "greasy, heavy texture"
+      },
+      {
+        "case": "overcrowding",
+        "result": "temperature drops; uneven cooking"
+      }
+    ],
+    "effect": "Hot oil rapidly gelatinizes starch and sets crust before interior absorbs oil; steam pressure keeps interior moist",
+    "sensory": {
+      "texture": "crisp exterior, tender interior",
+      "appearance": "golden brown"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "microwave food",
+    "ingredient_state": "any",
+    "intent": "cook_evenly",
+    "process": "dielectric heating",
+    "mechanism": "water molecule rotation",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": null,
+        "effect": null
+      }
+    },
+    "equipment": "microwave oven",
+    "condition": "when cooking or reheating in microwave",
+    "decision": "Arrange food in a ring shape; cover with vented lid; stir or rotate halfway through",
+    "failure_state": [
+      {
+        "case": "food_center_dense",
+        "result": "uneven heating; cold center"
+      }
+    ],
+    "effect": "Microwaves penetrate from edges, creating hot spots; ring shape allows even penetration; stirring redistributes heat",
+    "sensory": null,
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "microwave food",
+    "ingredient_state": "any",
+    "intent": "prevent_overcooking",
+    "process": "carryover cooking",
+    "mechanism": "residual heat",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": 2
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 0,
+        "effect": "food continues cooking after removal"
+      },
+      "upper": {
+        "time_minutes": 5,
+        "effect": "food cools too much"
+      }
+    },
+    "equipment": "microwave oven",
+    "condition": "when cooking in microwave",
+    "decision": "Stop microwave slightly before food is fully cooked; let stand 1-3 minutes",
+    "failure_state": [
+      {
+        "case": "no_standing_time",
+        "result": "overcooked edges, uneven doneness"
+      }
+    ],
+    "effect": "Heat continues to distribute after microwave stops; standing time equalizes temperature",
+    "sensory": null,
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.85
+  },
+  {
+    "ingredient": "eggplant",
+    "ingredient_state": "sliced",
+    "intent": "cook_microwave",
+    "process": "dielectric heating",
+    "mechanism": "water molecule rotation",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": 8
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-2, 3]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 5,
+        "effect": "undercooked; still raw"
+      },
+      "upper": {
+        "time_minutes": 12,
+        "effect": "overcooked; mushy"
+      }
+    },
+    "equipment": "microwave-safe dish",
+    "condition": "when making Microwave Eggplant Parmesan",
+    "decision": "Layer eggplant with sauce and cheese; microwave until tender",
+    "failure_state": [
+      {
+        "case": "no_venting",
+        "result": "steam buildup; soggy texture"
+      }
+    ],
+    "effect": "Microwave cooks eggplant quickly without frying; trapped steam helps tenderize",
+    "sensory": {
+      "texture": "tender, not fried",
+      "appearance": "soft"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "low"
+    },
+    "confidence": 0.7
+  },
+  {
+    "ingredient": "bok choy",
+    "ingredient_state": "whole or halved",
+    "intent": "cook_microwave",
+    "process": "dielectric heating",
+    "mechanism": "water molecule rotation",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": 3
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-1, 1]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 2,
+        "effect": "crisp-tender"
+      },
+      "upper": {
+        "time_minutes": 5,
+        "effect": "overcooked, wilted"
+      }
+    },
+    "equipment": "microwave-safe dish, cover",
+    "condition": "when making Microwave Bok Choy",
+    "decision": "Place bok choy in dish with small amount of liquid, cover, microwave until wilted",
+    "failure_state": [
+      {
+        "case": "no_liquid",
+        "result": "dries out"
+      }
+    ],
+    "effect": "Steam cooks vegetables quickly; minimal liquid prevents steaming",
+    "sensory": {
+      "texture": "tender-crisp",
+      "appearance": "bright green"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "low"
+    },
+    "confidence": 0.7
+  },
+  {
+    "ingredient": "beef",
+    "ingredient_state": "thin strips",
+    "intent": "make_jerky",
+    "process": "dehydration",
+    "mechanism": "moisture evaporation",
+    "target": {
+      "temperature_c": 65,
+      "time_minutes": 240
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-60, 120]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 50,
+        "effect": "dehydration too slow; risk of spoilage"
+      },
+      "upper": {
+        "temperature_c": 75,
+        "effect": "cooks meat; jerky becomes brittle"
+      }
+    },
+    "equipment": "dehydrator or oven",
+    "condition": "when making beef jerky",
+    "decision": "Slice lean beef thinly (3-6 mm), marinate, dehydrate at 65°C until leathery but pliable",
+    "failure_state": [
+      {
+        "case": "fatty_meat",
+        "result": "rancidity; off-flavors"
+      }
+    ],
+    "effect": "Dehydration removes water (below 0.85 water activity), preventing bacterial growth; fat oxidizes and becomes rancid",
+    "sensory": {
+      "texture": "leathery, chewy",
+      "appearance": "dark, dried"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "beef",
+    "ingredient_state": "thin strips",
+    "intent": "make_jerky_microwave",
+    "process": "dielectric heating",
+    "mechanism": "water evaporation",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": 8
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-2, 2]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 5,
+        "effect": "under-dried; spoilage risk"
+      },
+      "upper": {
+        "time_minutes": 10,
+        "effect": "over-dried; brittle, burnt edges"
+      }
+    },
+    "equipment": "microwave oven",
+    "condition": "when making quick jerky",
+    "decision": "Arrange strips on paper towels; microwave in short bursts until dried",
+    "failure_state": [
+      {
+        "case": "continuous_cooking",
+        "result": "uneven drying; burnt spots"
+      }
+    ],
+    "effect": "Microwave heats water molecules directly, rapidly evaporating moisture; short bursts allow even distribution",
+    "sensory": {
+      "texture": "chewy",
+      "appearance": "dark"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "low"
+    },
+    "confidence": 0.7
+  },
+  {
+    "ingredient": "shallots",
+    "ingredient_state": "thinly sliced",
+    "intent": "crisp",
+    "process": "deep frying",
+    "mechanism": "moisture evaporation",
+    "target": {
+      "temperature_c": 160,
+      "time_minutes": 3
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-1, 1]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 140,
+        "effect": "oil absorption; soggy"
+      },
+      "upper": {
+        "temperature_c": 180,
+        "effect": "burns before drying"
+      }
+    },
+    "equipment": "small pot, oil",
+    "condition": "when making crispy shallots for garnish",
+    "decision": "Fry shallots in oil at 160°C until golden and crisp; drain on paper towels",
+    "failure_state": [
+      {
+        "case": "oil_too_hot",
+        "result": "burned exterior, raw interior"
+      }
+    ],
+    "effect": "Low-temperature frying removes moisture slowly, allowing full dehydration before browning",
+    "sensory": {
+      "texture": "crisp, fragile",
+      "appearance": "golden brown"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "medium"
+    },
+    "confidence": 0.85
+  },
+  {
+    "ingredient": "parsley",
+    "ingredient_state": "leaves, dry",
+    "intent": "crisp",
+    "process": "microwave dehydration",
+    "mechanism": "dielectric heating",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": 1
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-0.25, 0.25]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 0.5,
+        "effect": "not crisp"
+      },
+      "upper": {
+        "time_minutes": 1.5,
+        "effect": "burns"
+      }
+    },
+    "equipment": "microwave oven, paper towel",
+    "condition": "when making Microwave-Fried Parsley",
+    "decision": "Place parsley between paper towels; microwave in short bursts until crisp",
+    "failure_state": [
+      {
+        "case": "too_long",
+        "result": "burnt, bitter"
+      }
+    ],
+    "effect": "Microwave rapidly evaporates moisture without oil; paper towels absorb steam",
+    "sensory": {
+      "texture": "crisp, fragile",
+      "appearance": "bright green if done correctly"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "low"
+    },
+    "confidence": 0.7
+  },
+  {
+    "ingredient": "cake batter",
+    "ingredient_state": "liquid",
+    "intent": "make_sponge",
+    "process": "microwave cooking",
+    "mechanism": "steam leavening",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": 1.5
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-0.25, 0.25]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 1,
+        "effect": "underdone; wet center"
+      },
+      "upper": {
+        "time_minutes": 2,
+        "effect": "overcooked; rubbery, dry"
+      }
+    },
+    "equipment": "microwave oven, microwave-safe cup",
+    "condition": "when making Instant Chocolate Sponge",
+    "decision": "Pour batter into cup; microwave until puffed and set",
+    "failure_state": [
+      {
+        "case": "overcooking",
+        "result": "tough, rubbery texture"
+      }
+    ],
+    "effect": "Steam generates rapidly in microwave, creating airy structure; short cooking time prevents gluten development",
+    "sensory": {
+      "texture": "light, airy, spongy",
+      "appearance": "puffed"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "low"
+    },
+    "confidence": 0.7
+  },
+  {
+    "ingredient": "custard",
+    "ingredient_state": "liquid mixture",
+    "intent": "set_texture",
+    "process": "protein coagulation",
+    "mechanism": "ovalbumin and casein denaturation",
+    "target": {
+      "temperature_c": 82,
+      "time_minutes": 30
+    },
+    "tolerance": {
+      "temperature_c": [-2, 2],
+      "time_minutes": [-10, 15]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 75,
+        "effect": "custard does not set; liquid"
+      },
+      "upper": {
+        "temperature_c": 90,
+        "effect": "curdling; weeping; grainy texture"
+      }
+    },
+    "equipment": "oven, water bath",
+    "condition": "when baking custard (flan, crème brûlée)",
+    "decision": "Bake in water bath at 82°C until edges are set but center still slightly jiggly",
+    "failure_state": [
+      {
+        "case": "no_water_bath",
+        "result": "uneven cooking; curdled edges"
+      }
+    ],
+    "effect": "Water bath insulates, maintaining gentle, even heat; proteins coagulate slowly, creating smooth gel",
+    "sensory": {
+      "texture": "smooth, set, creamy",
+      "appearance": "uniform, no bubbles"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "pie dough",
+    "ingredient_state": "mixed, chilled",
+    "intent": "blind_bake",
+    "process": "baking with weights",
+    "mechanism": "structural support",
+    "target": {
+      "temperature_c": 190,
+      "time_minutes": 20
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-5, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 170,
+        "effect": "dough bakes slowly; may slump"
+      },
+      "upper": {
+        "temperature_c": 210,
+        "effect": "edges burn before center sets"
+      }
+    },
+    "equipment": "oven, pie weights, parchment",
+    "condition": "when pre-baking pie crust for custard pies",
+    "decision": "Line crust with parchment, fill with pie weights, bake until edges set, remove weights, continue baking",
+    "failure_state": [
+      {
+        "case": "no_weights",
+        "result": "crust slumps and shrinks"
+      }
+    ],
+    "effect": "Weights prevent crust from puffing or shrinking during initial baking",
+    "sensory": {
+      "texture": "crisp, stable",
+      "appearance": "golden brown"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "meringue",
+    "ingredient_state": "whipped egg whites with sugar",
+    "intent": "bake",
+    "process": "protein coagulation and drying",
+    "mechanism": "ovalbumin denaturation",
+    "target": {
+      "temperature_c": 95,
+      "time_minutes": 90
+    },
+    "tolerance": {
+      "temperature_c": [-10, 15],
+      "time_minutes": [-30, 60]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 80,
+        "effect": "meringue dries but does not set; remains soft"
+      },
+      "upper": {
+        "temperature_c": 120,
+        "effect": "browning; may crack"
+      }
+    },
+    "equipment": "oven",
+    "condition": "when making meringue cookies or pavlova",
+    "decision": "Bake at low temperature (90-100°C) until dry and crisp",
+    "failure_state": [
+      {
+        "case": "high_temperature",
+        "result": "browns outside; soft inside"
+      }
+    ],
+    "effect": "Low temperature dries meringue without browning; sugar stabilizes protein structure",
+    "sensory": {
+      "texture": "crisp, dry, melts on tongue",
+      "appearance": "white to pale cream"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  }
+]

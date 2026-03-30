@@ -1,0 +1,872 @@
+[
+  {
+    "ingredient": "sugar",
+    "ingredient_state": "granulated",
+    "intent": "caramelize",
+    "process": "caramelization",
+    "mechanism": "thermal decomposition and polymerization",
+    "target": {
+      "temperature_c": 170,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-2, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 150,
+        "effect": "sugar melts but minimal caramelization"
+      },
+      "upper": {
+        "temperature_c": 190,
+        "effect": "caramel burns, becomes bitter and black"
+      }
+    },
+    "equipment": "heavy-bottomed pot, thermometer",
+    "condition": "when making caramel sauce or candy",
+    "decision": "Heat sugar without stirring until melted and amber-colored; add liquid carefully",
+    "failure_state": [
+      {
+        "case": "stirring_after_melting",
+        "result": "crystallization, grainy texture"
+      },
+      {
+        "case": "temperature_too_high",
+        "result": "burnt, bitter caramel"
+      }
+    ],
+    "effect": "Sucrose decomposes above 150°C, creating hundreds of flavor compounds; crystallization occurs if crystals seed the melt",
+    "sensory": {
+      "texture": "fluid when hot, brittle when cool",
+      "appearance": "amber to deep brown",
+      "flavor": "complex, bittersweet"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "cream",
+    "ingredient_state": "liquid, cold",
+    "intent": "stabilize_caramel",
+    "process": "emulsification",
+    "mechanism": "fat and protein stabilization",
+    "target": {
+      "temperature_c": 80,
+      "time_minutes": 1
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 60,
+        "effect": "cream does not incorporate smoothly"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "cream curdles from excessive heat"
+      }
+    },
+    "equipment": "saucepan",
+    "condition": "when making caramel sauce",
+    "decision": "Warm cream before adding to hot caramel; stir gently to combine",
+    "failure_state": [
+      {
+        "case": "cold_cream_added",
+        "result": "caramel seizes; sugar crystallizes"
+      },
+      {
+        "case": "rapid_stirring",
+        "result": "splattering; burns risk"
+      }
+    ],
+    "effect": "Fat and proteins in cream emulsify with caramel, creating smooth sauce; temperature differential prevents crystallization",
+    "sensory": {
+      "texture": "smooth, pourable",
+      "appearance": "opaque, caramel-colored",
+      "flavor": "creamy caramel"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "chocolate",
+    "ingredient_state": "solid",
+    "intent": "melt",
+    "process": "phase change",
+    "mechanism": "cocoa butter melting",
+    "target": {
+      "temperature_c": 45,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-2, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 30,
+        "effect": "chocolate softens but does not fully melt"
+      },
+      "upper": {
+        "temperature_c": 55,
+        "effect": "chocolate overheats; seizes if moisture contacts"
+      }
+    },
+    "equipment": "double boiler or microwave",
+    "condition": "when melting chocolate for coating or baking",
+    "decision": "Heat gently to 45°C; do not exceed 50°C; avoid any moisture",
+    "failure_state": [
+      {
+        "case": "water_contact",
+        "result": "chocolate seizes; becomes grainy"
+      },
+      {
+        "case": "overheating",
+        "result": "fat separates; chocolate burns"
+      }
+    ],
+    "effect": "Cocoa butter melts at 30-35°C; higher temperatures risk fat separation and protein denaturation",
+    "sensory": {
+      "texture": "smooth, fluid",
+      "appearance": "glossy"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "chocolate",
+    "ingredient_state": "melted",
+    "intent": "temper",
+    "process": "crystallization",
+    "mechanism": "beta V crystal formation",
+    "target": {
+      "temperature_c": 31.5,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-0.5, 0.5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 28,
+        "effect": "beta V crystals do not form; chocolate blooms"
+      },
+      "upper": {
+        "temperature_c": 34,
+        "effect": "beta V crystals melt; temper lost"
+      }
+    },
+    "equipment": "thermometer, marble slab or sous vide",
+    "condition": "when making chocolate coatings or molded chocolates",
+    "decision": "Heat dark chocolate to 45-50°C to melt all crystals, cool to 27-28°C while stirring to form beta V crystals, reheat to 31-32°C for working",
+    "failure_state": [
+      {
+        "case": "improper_temperature",
+        "result": "bloom (white streaks), poor snap, difficulty unmolding"
+      }
+    ],
+    "effect": "Cocoa butter forms six crystal types; only beta V gives proper snap, gloss, and shrinkage for unmolding",
+    "sensory": {
+      "texture": "snaps cleanly, melts smoothly",
+      "appearance": "glossy, no streaks"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "egg yolk",
+    "ingredient_state": "liquid",
+    "intent": "emulsify",
+    "process": "emulsification",
+    "mechanism": "lecithin interfacial stabilization",
+    "target": {
+      "temperature_c": 65,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-2, 3]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 55,
+        "effect": "emulsion forms but less stable"
+      },
+      "upper": {
+        "temperature_c": 75,
+        "effect": "yolk coagulates; emulsion breaks"
+      }
+    },
+    "equipment": "double boiler or saucepan",
+    "condition": "when making hollandaise, sabayon, or custard-based sauces",
+    "decision": "Whisk egg yolk with liquid over gentle heat until thickened; do not boil",
+    "failure_state": [
+      {
+        "case": "boiling",
+        "result": "scrambled eggs; sauce curdles"
+      },
+      {
+        "case": "insufficient_stirring",
+        "result": "uneven cooking; lumps"
+      }
+    ],
+    "effect": "Lecithin in yolk emulsifies fat; gentle heat thickens without coagulation; temperature must stay below 70°C",
+    "sensory": {
+      "texture": "thick, creamy",
+      "appearance": "smooth, pale yellow"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "butter",
+    "ingredient_state": "cold, cubed",
+    "intent": "emulsify_into_sauce",
+    "process": "emulsification",
+    "mechanism": "fat droplet suspension",
+    "target": {
+      "temperature_c": 60,
+      "time_minutes": 2
+    },
+    "tolerance": {
+      "temperature_c": [-10, 5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 45,
+        "effect": "butter does not melt fully"
+      },
+      "upper": {
+        "temperature_c": 70,
+        "effect": "emulsion breaks; sauce separates"
+      }
+    },
+    "equipment": "saucepan, whisk",
+    "condition": "when finishing sauces with butter (monter au beurre)",
+    "decision": "Remove sauce from heat; whisk in cold butter cubes one at a time",
+    "failure_state": [
+      {
+        "case": "sauce_too_hot",
+        "result": "butter melts too quickly; emulsion breaks"
+      }
+    ],
+    "effect": "Cold butter emulsifies into sauce as it melts; proteins in butter help stabilize emulsion; heat causes separation",
+    "sensory": {
+      "texture": "smooth, silky",
+      "appearance": "glossy",
+      "flavor": "rich, buttery"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "wine",
+    "ingredient_state": "liquid",
+    "intent": "reduce",
+    "process": "evaporation and concentration",
+    "mechanism": "alcohol evaporation and flavor concentration",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-5, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "evaporation too slow"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "boiling can make wine bitter"
+      }
+    },
+    "equipment": "wide saucepan",
+    "condition": "when making wine reductions for sauces",
+    "decision": "Simmer wine until reduced by half or to syrup consistency",
+    "failure_state": [
+      {
+        "case": "boiling_too_vigorous",
+        "result": "bitter, harsh flavor"
+      }
+    ],
+    "effect": "Alcohol evaporates at 78°C; water evaporates more slowly; flavors concentrate; gentle heat prevents scorching",
+    "sensory": {
+      "texture": "syrupy",
+      "appearance": "darker, concentrated",
+      "flavor": "intense, complex"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "stock",
+    "ingredient_state": "liquid",
+    "intent": "clarify",
+    "process": "coagulation and filtration",
+    "mechanism": "protein coagulation trapping particles",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 30
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-10, 30]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "raft does not form; stock remains cloudy"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "boiling breaks raft; re-suspends particles"
+      }
+    },
+    "equipment": "pot, egg whites",
+    "condition": "when making consommé",
+    "decision": "Add beaten egg whites to cold stock; slowly heat to 85°C without stirring",
+    "failure_state": [
+      {
+        "case": "stirring",
+        "result": "raft breaks; particles re-enter stock"
+      }
+    ],
+    "effect": "Egg whites coagulate, trapping suspended particles and rising to surface as raft; slow heating ensures even coagulation",
+    "sensory": {
+      "texture": "clear liquid",
+      "appearance": "crystal clear, amber"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "sauce",
+    "ingredient_state": "liquid",
+    "intent": "strain",
+    "process": "filtration",
+    "mechanism": "particle size separation",
+    "target": {
+      "temperature_c": 60,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": [-10, 20],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 40,
+        "effect": "fat solidifies; clogs strainer"
+      },
+      "upper": {
+        "temperature_c": 80,
+        "effect": "risk of burns"
+      }
+    },
+    "equipment": "fine-mesh strainer or chinois",
+    "condition": "when removing solids from sauces and stocks",
+    "decision": "Strain while warm through fine-mesh strainer; press solids gently",
+    "failure_state": [
+      {
+        "case": "pressing_hard",
+        "result": "cloudy sauce from forced particles"
+      }
+    ],
+    "effect": "Warm liquid flows easily; gentle pressing prevents forcing particles through strainer",
+    "sensory": {
+      "texture": "smooth",
+      "appearance": "clear or uniform"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "egg white",
+    "ingredient_state": "liquid",
+    "intent": "whip",
+    "process": "foaming",
+    "mechanism": "protein denaturation at air-water interface",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-5, 10],
+      "time_minutes": [-2, 3]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 4,
+        "effect": "slower foaming; smaller volume"
+      },
+      "upper": {
+        "temperature_c": 35,
+        "effect": "proteins denature prematurely; foam unstable"
+      }
+    },
+    "equipment": "stand mixer, clean bowl",
+    "condition": "when making meringue or soufflé",
+    "decision": "Whip egg whites at room temperature until soft or stiff peaks form",
+    "failure_state": [
+      {
+        "case": "fat_present",
+        "result": "foam will not form"
+      },
+      {
+        "case": "over_whipping",
+        "result": "proteins over-coagulate; foam collapses"
+      }
+    ],
+    "effect": "Whipping denatures proteins, which form stable film around air bubbles; fat disrupts this film",
+    "sensory": {
+      "texture": "light, airy, stable peaks",
+      "appearance": "white, glossy"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "sugar",
+    "ingredient_state": "granulated",
+    "intent": "stabilize_meringue",
+    "process": "protein stabilization",
+    "mechanism": "viscosity increase and water binding",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": null,
+        "effect": null
+      }
+    },
+    "equipment": "mixer",
+    "condition": "when making stable meringue",
+    "decision": "Add sugar gradually after soft peaks form",
+    "failure_state": [
+      {
+        "case": "sugar_added_too_early",
+        "result": "reduced volume; slower foaming"
+      }
+    ],
+    "effect": "Sugar dissolves, increasing viscosity and stabilizing protein film around air bubbles",
+    "sensory": {
+      "texture": "stable, glossy",
+      "appearance": "smooth, white"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "egg yolk",
+    "ingredient_state": "liquid",
+    "intent": "pasteurize",
+    "process": "heat treatment",
+    "mechanism": "salmonella inactivation",
+    "target": {
+      "temperature_c": 65,
+      "time_minutes": 3
+    },
+    "tolerance": {
+      "temperature_c": [-1, 2],
+      "time_minutes": [-0.5, 1]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 60,
+        "effect": "pathogens may survive"
+      },
+      "upper": {
+        "temperature_c": 70,
+        "effect": "egg yolk coagulates"
+      }
+    },
+    "equipment": "sous vide or double boiler",
+    "condition": "when using raw egg yolk in mayonnaise or dressings for vulnerable populations",
+    "decision": "Hold egg yolk at 65°C for 3 minutes to pasteurize without cooking",
+    "failure_state": [
+      {
+        "case": "temperature_too_high",
+        "result": "yolk cooks; texture changes"
+      }
+    ],
+    "effect": "Salmonella is inactivated at 60°C over time; egg yolk coagulates at 65-70°C; precise temperature is critical",
+    "sensory": {
+      "texture": "slightly thicker but still fluid",
+      "appearance": "unchanged"
+    },
+    "meta": {
+      "category": "safety",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "flour",
+    "ingredient_state": "dry powder",
+    "intent": "toast",
+    "process": "maillard reaction",
+    "mechanism": "protein and starch browning",
+    "target": {
+      "temperature_c": 160,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-20, 10],
+      "time_minutes": [-3, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 120,
+        "effect": "flour dries but does not brown"
+      },
+      "upper": {
+        "temperature_c": 180,
+        "effect": "burns quickly; bitter flavor"
+      }
+    },
+    "equipment": "dry skillet or oven",
+    "condition": "when making brown butter or nutty-flavored baked goods",
+    "decision": "Toast flour in dry skillet over medium heat, stirring constantly, until nutty and lightly browned",
+    "failure_state": [
+      {
+        "case": "no_stirring",
+        "result": "uneven browning; scorching"
+      }
+    ],
+    "effect": "Heat triggers Maillard reaction in flour proteins, creating nutty, toasty flavor; stirring ensures even browning",
+    "sensory": {
+      "texture": "unchanged",
+      "appearance": "light tan",
+      "flavor": "nutty, toasty"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "medium"
+    },
+    "confidence": 0.85
+  },
+  {
+    "ingredient": "roux",
+    "ingredient_state": "flour and fat mixture",
+    "intent": "cook",
+    "process": "starch gelatinization and maillard",
+    "mechanism": "starch coating and browning",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-15, 15],
+      "time_minutes": [-2, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "starch not fully cooked; raw flour taste"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "begins browning"
+      }
+    },
+    "equipment": "saucepan, whisk",
+    "condition": "when making white roux for béchamel or velouté",
+    "decision": "Cook roux over medium heat, stirring constantly, until flour taste is gone but no color develops",
+    "failure_state": [
+      {
+        "case": "browning",
+        "result": "changes flavor profile; not appropriate for white sauces"
+      }
+    ],
+    "effect": "Cooking gelatinizes starch and eliminates raw flour taste; higher temperature causes Maillard browning",
+    "sensory": {
+      "texture": "smooth paste",
+      "appearance": "pale, no color"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "roux",
+    "ingredient_state": "flour and fat mixture",
+    "intent": "brown",
+    "process": "maillard reaction",
+    "mechanism": "protein and starch browning",
+    "target": {
+      "temperature_c": 120,
+      "time_minutes": 15
+    },
+    "tolerance": {
+      "temperature_c": [-15, 15],
+      "time_minutes": [-5, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 100,
+        "effect": "no browning; raw flour taste"
+      },
+      "upper": {
+        "temperature_c": 150,
+        "effect": "burns quickly"
+      }
+    },
+    "equipment": "saucepan, whisk",
+    "condition": "when making brown roux for gumbo or espagnole",
+    "decision": "Cook roux over medium-low heat, stirring constantly, until desired brown color is achieved",
+    "failure_state": [
+      {
+        "case": "high_heat",
+        "result": "burns before developing depth"
+      }
+    ],
+    "effect": "Slow cooking allows Maillard reaction to develop complex nutty flavors without burning",
+    "sensory": {
+      "texture": "smooth",
+      "appearance": "brown to dark brown",
+      "flavor": "nutty, toasty"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "sauce",
+    "ingredient_state": "roux-based liquid",
+    "intent": "thicken",
+    "process": "starch gelatinization",
+    "mechanism": "amylose and amylopectin swelling",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 2
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-1, 3]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "sauce remains thin"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "risk of scorching"
+      }
+    },
+    "equipment": "saucepan, whisk",
+    "condition": "when finishing roux-thickened sauces",
+    "decision": "Simmer sauce until thickened, stirring constantly to prevent lumps",
+    "failure_state": [
+      {
+        "case": "insufficient_simmering",
+        "result": "starch not fully gelatinized; sauce thin"
+      }
+    ],
+    "effect": "Starch granules swell at 70-90°C, absorbing liquid and increasing viscosity; stirring ensures even hydration",
+    "sensory": {
+      "texture": "smooth, thickened",
+      "appearance": "opaque"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "custard",
+    "ingredient_state": "egg and milk mixture",
+    "intent": "set_texture",
+    "process": "protein coagulation",
+    "mechanism": "ovalbumin and casein denaturation",
+    "target": {
+      "temperature_c": 82,
+      "time_minutes": 30
+    },
+    "tolerance": {
+      "temperature_c": [-2, 2],
+      "time_minutes": [-10, 15]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 75,
+        "effect": "custard does not set; liquid"
+      },
+      "upper": {
+        "temperature_c": 90,
+        "effect": "curdling; weeping; grainy texture"
+      }
+    },
+    "equipment": "oven, water bath",
+    "condition": "when baking custard (flan, crème brûlée, cheesecake)",
+    "decision": "Bake in water bath at 82°C until edges are set but center still slightly jiggly",
+    "failure_state": [
+      {
+        "case": "no_water_bath",
+        "result": "uneven cooking; curdled edges"
+      },
+      {
+        "case": "overbaking",
+        "result": "curdled, grainy texture"
+      }
+    ],
+    "effect": "Water bath insulates, maintaining gentle, even heat; egg proteins coagulate slowly, creating smooth gel",
+    "sensory": {
+      "texture": "smooth, set, creamy",
+      "appearance": "uniform, no bubbles"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "ice cream base",
+    "ingredient_state": "liquid custard",
+    "intent": "cool",
+    "process": "rapid cooling",
+    "mechanism": "heat transfer",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": 60
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-30, 60]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 0,
+        "effect": "base freezes"
+      },
+      "upper": {
+        "temperature_c": 10,
+        "effect": "base not cold enough for churning"
+      }
+    },
+    "equipment": "ice bath, refrigerator",
+    "condition": "after cooking ice cream base",
+    "decision": "Chill base rapidly over ice bath, then refrigerate until completely cold (minimum 4 hours)",
+    "failure_state": [
+      {
+        "case": "chilling_warm_base",
+        "result": "large ice crystals; grainy texture"
+      }
+    ],
+    "effect": "Rapid cooling prevents bacterial growth; cold base produces smaller ice crystals during churning; aging allows fat crystallization",
+    "sensory": {
+      "texture": "smooth after churning",
+      "appearance": "viscous liquid"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "sugar",
+    "ingredient_state": "granulated",
+    "intent": "control_freezing_point",
+    "process": "freezing point depression",
+    "mechanism": "colligative property",
+    "target": {
+      "temperature_c": -6,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "sugar_percentage": 10,
+        "effect": "ice cream too hard"
+      },
+      "upper": {
+        "sugar_percentage": 25,
+        "effect": "ice cream won't freeze properly"
+      }
+    },
+    "equipment": "none",
+    "condition": "when formulating ice cream",
+    "decision": "Use 15-20% sugar for proper freezing point and texture",
+    "failure_state": [
+      {
+        "case": "too_little_sugar",
+        "result": "ice cream rock-hard when frozen"
+      },
+      {
+        "case": "too_much_sugar",
+        "result": "ice cream never freezes solid; icy"
+      }
+    ],
+    "effect": "Sugar lowers freezing point, keeping ice cream scoopable at freezer temperatures; optimal range is 15-20%",
+    "sensory": {
+      "texture": "scoopable, creamy",
+      "appearance": "smooth"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  }
+]

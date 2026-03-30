@@ -1,0 +1,692 @@
+[
+  {
+    "technique": "folding",
+    "category": "mechanical",
+    "goal": "Gently combine a light, aerated mixture (such as whipped cream or egg whites) with a heavier mixture without deflating the incorporated air.",
+    "when_to_use": "When incorporating whipped cream, meringue, or whipped egg whites into cake batters, mousses, soufflé bases, or other mixtures where maintaining volume is critical.",
+    "inputs": [
+      "light, aerated mixture (whipped cream, egg whites, meringue)",
+      "heavier base mixture (batter, custard, puree)"
+    ],
+    "equipment": [
+      "large bowl",
+      "rubber spatula",
+      "optional: balloon whisk"
+    ],
+    "steps": [
+      "Place the heavier base mixture in a large bowl.",
+      "Add about one-quarter to one-third of the aerated mixture to the base.",
+      "Use a rubber spatula to stir vigorously to lighten the base; this initial incorporation can be aggressive without significant deflation.",
+      "Add the remaining aerated mixture to the bowl.",
+      "Cut the spatula vertically down through the center of the mixture to the bottom of the bowl.",
+      "Draw the spatula across the bottom of the bowl toward you, then lift up and fold the mixture over onto itself.",
+      "Rotate the bowl a quarter turn and repeat the cut, scrape, fold motion.",
+      "Continue folding until the mixture is just combined with no streaks of the separate components. Do not overfold."
+    ],
+    "critical_control_points": [
+      "Use a large bowl to give the mixture room to move.",
+      "Work quickly but deliberately; prolonged folding will cause deflation.",
+      "Stop folding as soon as the mixture is homogenous; overfolding collapses air bubbles.",
+      "The spatula should scrape the bottom and sides of the bowl to ensure even incorporation."
+    ],
+    "control_variables": {
+      "heat_level": "ambient",
+      "temperature_control": "none",
+      "moisture_level": "wet",
+      "agitation": "gentle, intermittent",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Stirring instead of folding",
+        "result": "Aggressive motion collapses air bubbles; final product will be dense and heavy."
+      },
+      {
+        "case": "Overfolding",
+        "result": "Loss of volume; mixture becomes runny or dense."
+      },
+      {
+        "case": "Underfolding",
+        "result": "Streaks remain; uneven texture and inconsistent rise in baked goods."
+      },
+      {
+        "case": "Using a small bowl",
+        "result": "Mixture spills over; difficult to fold effectively without losing volume."
+      }
+    ],
+    "signals": {
+      "visual": "Mixture becomes uniformly colored with no streaks of the separate components. Volume remains high and texture appears airy.",
+      "touch": "Mixture feels light and billowy; when lifted with a spatula, it holds its shape without collapsing."
+    },
+    "output": {
+      "texture": "light, airy, and uniform",
+      "appearance": "homogenous, with no streaks",
+      "flavor": "unchanged from components"
+    },
+    "links_to_intents": [
+      "preserve_aeration",
+      "combine_gently"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "medium"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "whipping_egg_whites",
+    "category": "mechanical",
+    "goal": "Incorporate air into egg whites to create a stable foam that provides structure and volume to meringues, soufflés, and cakes.",
+    "when_to_use": "When a light, airy foam is needed for meringues, soufflés, angel food cake, or as a leavening agent in batters.",
+    "inputs": [
+      "egg whites (room temperature)",
+      "optional: cream of tartar or lemon juice",
+      "optional: sugar"
+    ],
+    "equipment": [
+      "clean, dry bowl (copper, stainless steel, or glass)",
+      "whisk or stand mixer with whisk attachment",
+      "optional: cream of tartar"
+    ],
+    "steps": [
+      "Ensure the bowl and whisk are completely clean and free of any grease or fat residue.",
+      "Separate eggs carefully, ensuring no yolk contaminates the whites.",
+      "Allow egg whites to come to room temperature (about 30 minutes).",
+      "Add cream of tartar or lemon juice (about 1/8 teaspoon per white) if using.",
+      "Begin whipping at low speed until whites become frothy with small bubbles.",
+      "Increase speed to medium-high and continue whipping.",
+      "For soft peaks: whip until peaks curl over when the whisk is lifted. Add sugar gradually if making a meringue.",
+      "For stiff peaks: continue whipping until peaks stand upright and the foam is glossy but not dry.",
+      "Stop immediately at desired consistency; do not over-whip."
+    ],
+    "critical_control_points": [
+      "No trace of fat, oil, or egg yolk; any fat will prevent foam formation.",
+      "Bowl and whisk must be completely clean and dry.",
+      "Room temperature whites whip faster and to greater volume than cold whites.",
+      "Add sugar slowly after soft peaks form; adding too early or too quickly reduces volume.",
+      "Stop at stiff peaks; over-whipped whites become dry, grainy, and will collapse."
+    ],
+    "control_variables": {
+      "heat_level": "ambient",
+      "temperature_control": "none",
+      "moisture_level": "dry",
+      "agitation": "constant",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Fat or yolk contamination",
+        "result": "Whites will not foam properly; volume will be low and foam unstable."
+      },
+      {
+        "case": "Over-whipping",
+        "result": "Foam becomes dry, grainy, and starts to separate; will not incorporate smoothly into other mixtures."
+      },
+      {
+        "case": "Adding sugar too early",
+        "result": "Reduced volume; foam may not reach stiff peaks."
+      },
+      {
+        "case": "Cold whites",
+        "result": "Slower whipping; lower maximum volume."
+      }
+    ],
+    "signals": {
+      "visual": "Whites transition from clear liquid to frothy, then to soft peaks that curl, and finally to stiff, glossy peaks that stand upright.",
+      "sound": "Whipping sound changes from liquid sloshing to a softer, more muffled sound as foam thickens.",
+      "touch": "Foam clings to whisk; at soft peaks it falls in soft mounds; at stiff peaks it holds its shape firmly."
+    },
+    "output": {
+      "texture": "light, airy, and stable foam",
+      "appearance": "white, glossy, with defined peaks",
+      "flavor": "neutral, slightly sweet if sugar added"
+    },
+    "links_to_intents": [
+      "aerate",
+      "create_structure"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.98
+  },
+  {
+    "technique": "making_vinaigrette",
+    "category": "emulsion",
+    "goal": "Create a temporary emulsion of oil and vinegar (or other acid) for dressing salads and vegetables.",
+    "when_to_use": "When a simple, tangy dressing is needed for salads, vegetables, or as a sauce base.",
+    "inputs": [
+      "oil (3 parts)",
+      "vinegar or acid (1 part)",
+      "salt",
+      "optional: mustard, shallots, herbs, pepper"
+    ],
+    "equipment": [
+      "bowl or jar with lid",
+      "whisk (for bowl method)",
+      "measuring spoons"
+    ],
+    "steps": [
+      "In a bowl or jar, combine the acid (vinegar, lemon juice, etc.) with salt and any other water-soluble flavorings (shallots, herbs, mustard).",
+      "Let the mixture sit briefly to dissolve the salt and allow flavors to meld.",
+      "Add the oil.",
+      "If using a bowl: whisk vigorously until the oil and acid are emulsified into a cloudy, homogenous mixture.",
+      "If using a jar: seal tightly and shake vigorously until emulsified.",
+      "Taste and adjust seasoning. Use immediately or within a few hours; vinaigrette will separate over time."
+    ],
+    "critical_control_points": [
+      "Mustard acts as an emulsifier and helps stabilize the vinaigrette; include it if a more stable emulsion is desired.",
+      "Whisk or shake vigorously to break oil into small droplets.",
+      "The classic ratio is 3 parts oil to 1 part acid, but this can be adjusted to taste.",
+      "Acid should be added to salt first to help dissolve it before oil is incorporated."
+    ],
+    "control_variables": {
+      "heat_level": "ambient",
+      "temperature_control": "none",
+      "moisture_level": "wet",
+      "agitation": "vigorous, brief",
+      "time_sensitivity": "low (emulsion is temporary)"
+    },
+    "failure_modes": [
+      {
+        "case": "Insufficient whisking or shaking",
+        "result": "Oil and acid remain separate; dressing is thin and uneven."
+      },
+      {
+        "case": "Salt not dissolved",
+        "result": "Gritty texture; uneven seasoning."
+      },
+      {
+        "case": "Using low-quality oil or vinegar",
+        "result": "Flat or off flavors."
+      },
+      {
+        "case": "Making too far in advance",
+        "result": "Emulsion separates; requires re-emulsification before use."
+      }
+    ],
+    "signals": {
+      "visual": "Mixture becomes cloudy, uniform, and thick enough to coat the back of a spoon briefly before separating.",
+      "sound": "Sloshing sound when shaking a jar; whisking sound changes as emulsion forms."
+    },
+    "output": {
+      "texture": "temporary emulsion; fluid and pourable",
+      "appearance": "cloudy and uniform when freshly made",
+      "flavor": "bright, tangy, balanced by oil richness"
+    },
+    "links_to_intents": [
+      "emulsify",
+      "balance_flavor"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "low"
+    },
+    "confidence": 0.98
+  },
+  {
+    "technique": "steaming_vegetables",
+    "category": "water_based",
+    "goal": "Cook vegetables using steam to preserve color, texture, and nutrients while avoiding leaching into water.",
+    "when_to_use": "When a clean, pure vegetable flavor with crisp-tender texture is desired, especially for delicate vegetables like asparagus, broccoli, and leafy greens.",
+    "inputs": [
+      "vegetables (cut into uniform pieces)",
+      "water",
+      "optional: salt, aromatics in steaming water"
+    ],
+    "equipment": [
+      "steamer basket or insert",
+      "pot with tight-fitting lid",
+      "tongs"
+    ],
+    "steps": [
+      "Fill the pot with about 1–2 inches (2.5–5 cm) of water; water level should be below the steamer basket.",
+      "Bring water to a rolling boil.",
+      "Place vegetables in the steamer basket in a single layer or loose pile to allow steam to circulate.",
+      "Place the basket in the pot and cover with a tight-fitting lid.",
+      "Steam until vegetables are crisp-tender, typically 2–8 minutes depending on size and density.",
+      "Remove vegetables immediately to prevent overcooking from residual heat."
+    ],
+    "critical_control_points": [
+      "Water must be boiling before adding vegetables to ensure immediate cooking.",
+      "Do not overcrowd the steamer; vegetables should be in a single layer or loosely piled to allow steam to reach all surfaces.",
+      "The lid must fit tightly to trap steam and maintain temperature.",
+      "Steaming time varies by vegetable; check frequently to avoid overcooking."
+    ],
+    "control_variables": {
+      "heat_level": "high",
+      "temperature_control": "approximate",
+      "moisture_level": "humid",
+      "agitation": "none",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Overcrowding the steamer",
+        "result": "Uneven cooking; vegetables may steam unevenly or become mushy."
+      },
+      {
+        "case": "Lid not tight-fitting",
+        "result": "Steam escapes; cooking time increases; vegetables may dry out."
+      },
+      {
+        "case": "Overcooking",
+        "result": "Loss of bright color; vegetables become mushy and nutrients are degraded."
+      },
+      {
+        "case": "Water level too high",
+        "result": "Vegetables sit in water rather than steaming; become waterlogged."
+      }
+    ],
+    "signals": {
+      "visual": "Vegetables become brighter in color (especially greens). Steam rises vigorously when lid is lifted. Vegetables are tender when pierced with a knife or fork.",
+      "sound": "Gentle hissing of steam; lid may rattle slightly if steam pressure builds."
+    },
+    "output": {
+      "texture": "crisp-tender, firm but easily pierced",
+      "appearance": "bright, vibrant color",
+      "flavor": "pure, clean, and concentrated vegetable flavor"
+    },
+    "links_to_intents": [
+      "preserve_color",
+      "preserve_nutrients"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "making_hollandaise",
+    "category": "emulsion",
+    "goal": "Create a warm, stable emulsion of butter and egg yolks, flavored with lemon juice, to serve as a rich sauce for eggs, fish, and vegetables.",
+    "when_to_use": "When a rich, buttery, and tangy warm sauce is needed, classically for eggs Benedict, asparagus, or poached fish.",
+    "inputs": [
+      "egg yolks (2–3 per cup of sauce)",
+      "butter (unsalted, 1 stick per 2–3 yolks)",
+      "acid (lemon juice or vinegar)",
+      "water (1–2 tablespoons)",
+      "salt",
+      "optional: cayenne pepper"
+    ],
+    "equipment": [
+      "heatproof bowl (stainless steel or glass)",
+      "saucepan (for double boiler)",
+      "whisk",
+      "thermometer (optional)"
+    ],
+    "steps": [
+      "Cut butter into small pieces and set aside.",
+      "In a heatproof bowl, combine egg yolks, water, and lemon juice. Whisk until well combined.",
+      "Place the bowl over a saucepan of barely simmering water (water should not touch the bowl).",
+      "Whisk continuously as the mixture heats. It will thicken and become pale and foamy.",
+      "When the yolks are thickened to the consistency of heavy cream (about 160–170°F / 70–75°C), remove from heat.",
+      "Begin whisking in butter one piece at a time, ensuring each piece is fully incorporated before adding the next.",
+      "Once all butter is incorporated, whisk in salt and cayenne.",
+      "If the sauce is too thick, whisk in a few drops of warm water. If too thin, continue whisking over gentle heat until desired consistency."
+    ],
+    "critical_control_points": [
+      "Yolks must be heated slowly and whisked constantly to prevent scrambling.",
+      "Water temperature should be barely simmering; direct heat or boiling water will cook the yolks too quickly.",
+      "Add butter gradually; adding too much at once can break the emulsion.",
+      "If the sauce begins to separate (looks greasy or curdled), whisk in a teaspoon of cold water to bring it back together.",
+      "Hold the sauce at 140–150°F (60–65°C); higher temperatures will cause it to break."
+    ],
+    "control_variables": {
+      "heat_level": "low",
+      "temperature_control": "critical",
+      "moisture_level": "wet",
+      "agitation": "constant",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Yolks cooked too quickly or too hot",
+        "result": "Yolks scramble; sauce becomes grainy and will not emulsify."
+      },
+      {
+        "case": "Butter added too quickly",
+        "result": "Emulsion breaks; sauce separates into oily and watery phases."
+      },
+      {
+        "case": "Sauce held at too high a temperature",
+        "result": "Eggs continue to cook; sauce curdles and separates."
+      },
+      {
+        "case": "Insufficient whisking",
+        "result": "Emulsion does not form; sauce remains thin and separated."
+      }
+    ],
+    "signals": {
+      "visual": "Yolks thicken to a pale, creamy consistency. Sauce becomes smooth, thick, and glossy. It coats the back of a spoon and holds its shape briefly.",
+      "touch": "Sauce feels warm and thick; leaves a trail when dripped from a spoon.",
+      "sound": "Quiet simmer from the water bath; whisking sound becomes more muffled as sauce thickens."
+    },
+    "output": {
+      "texture": "smooth, thick, and creamy",
+      "appearance": "pale yellow, glossy, and uniform",
+      "flavor": "rich, buttery, with bright tang from lemon"
+    },
+    "links_to_intents": [
+      "emulsify",
+      "thicken"
+    ],
+    "meta": {
+      "difficulty": "advanced",
+      "precision": "critical"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "glazing_vegetables",
+    "category": "finishing",
+    "goal": "Coat cooked vegetables with a thin, glossy, flavorful syrup to enhance appearance and add a touch of sweetness and richness.",
+    "when_to_use": "When presenting vegetables (especially root vegetables, carrots, pearl onions) as an elegant side dish where appearance and concentrated flavor matter.",
+    "inputs": [
+      "cooked vegetables (par-cooked or fully cooked)",
+      "butter",
+      "sugar or honey",
+      "liquid (stock, water, or vegetable cooking liquid)",
+      "salt",
+      "optional: herbs"
+    ],
+    "equipment": [
+      "sauté pan or skillet",
+      "spatula or spoon"
+    ],
+    "steps": [
+      "Place cooked vegetables in a sauté pan in a single layer.",
+      "Add butter, sugar, and enough liquid to come about one-quarter of the way up the vegetables.",
+      "Bring to a simmer over medium heat.",
+      "Cook, shaking the pan occasionally, until the liquid reduces to a syrupy glaze that coats the vegetables.",
+      "The butter will emulsify with the reduced liquid, creating a glossy coating.",
+      "Adjust seasoning with salt and finish with fresh herbs if desired."
+    ],
+    "critical_control_points": [
+      "Vegetables should be cooked before glazing; this technique is for finishing, not primary cooking.",
+      "Shake the pan rather than stirring to avoid breaking up delicate vegetables.",
+      "Monitor closely as the liquid reduces; it can burn quickly once it becomes syrupy.",
+      "The glaze should just coat the vegetables; too much reduction will make it sticky and overly sweet."
+    ],
+    "control_variables": {
+      "heat_level": "medium",
+      "temperature_control": "approximate",
+      "moisture_level": "wet to dry",
+      "agitation": "gentle shaking",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Glaze reduced too much",
+        "result": "Syrup becomes sticky, caramelizes excessively, and may burn; vegetables become dry."
+      },
+      {
+        "case": "Too much sugar",
+        "result": "Overly sweet; glaze may be too thick and cloying."
+      },
+      {
+        "case": "Stirring instead of shaking",
+        "result": "Delicate vegetables break apart; glaze may not coat evenly."
+      }
+    ],
+    "signals": {
+      "visual": "Liquid thickens and becomes syrupy; vegetables take on a glossy, shiny appearance. Pan bottom shows a thin, bubbling glaze.",
+      "sound": "Bubbling sound becomes slower and more concentrated as liquid reduces."
+    },
+    "output": {
+      "texture": "tender vegetables with a thin, clinging glaze",
+      "appearance": "glossy, shiny, and evenly coated",
+      "flavor": "lightly sweet, buttery, with concentrated vegetable flavor"
+    },
+    "links_to_intents": [
+      "add_gloss",
+      "concentrate_flavor"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "technique": "marinating",
+    "category": "prep",
+    "goal": "Soak food in a seasoned liquid to add flavor, tenderize, or both before cooking.",
+    "when_to_use": "When preparing meats, poultry, seafood, or vegetables that would benefit from added flavor, moisture, or tenderness before cooking.",
+    "inputs": [
+      "protein or vegetable",
+      "acid (vinegar, citrus juice, wine, yogurt, buttermilk)",
+      "oil",
+      "salt",
+      "aromatics (herbs, spices, garlic, shallots)",
+      "optional: sweetener (sugar, honey)"
+    ],
+    "equipment": [
+      "non-reactive container (glass, stainless steel, or plastic)",
+      "plastic wrap or lid",
+      "refrigerator"
+    ],
+    "steps": [
+      "Combine marinade ingredients in a bowl or directly in the container.",
+      "Place the food in the container and pour marinade over to coat evenly.",
+      "Cover tightly and refrigerate.",
+      "Turn or massage the food periodically to ensure even exposure.",
+      "Marinate for the appropriate time:",
+      "  - Delicate fish: 15–30 minutes",
+      "  - Poultry and pork: 2–8 hours",
+      "  - Beef and lamb: 4–24 hours",
+      "  - Vegetables: 30 minutes to 2 hours",
+      "Remove food from marinade and pat dry before cooking (unless the marinade is to be used as a sauce, in which case boil it first)."
+    ],
+    "critical_control_points": [
+      "Use a non-reactive container (glass, stainless steel, plastic) to avoid metallic flavors from acid interaction.",
+      "Refrigerate during marinating to prevent bacterial growth.",
+      "Do not over-marinate; prolonged exposure to acid can make meat mushy or fish ceviche-like.",
+      "Pat food dry before cooking to ensure proper browning; excess marinade causes steaming."
+    ],
+    "control_variables": {
+      "heat_level": "cold",
+      "temperature_control": "refrigerated",
+      "moisture_level": "wet",
+      "agitation": "occasional turning",
+      "time_sensitivity": "medium"
+    },
+    "failure_modes": [
+      {
+        "case": "Marinating too long",
+        "result": "Meat becomes mushy (acid breaks down fibers excessively); fish may become tough and dry."
+      },
+      {
+        "case": "Using reactive container (aluminum, copper)",
+        "result": "Metallic taste; discoloration of food."
+      },
+      {
+        "case": "Not refrigerating",
+        "result": "Bacterial growth; food safety risk."
+      },
+      {
+        "case": "Not drying before cooking",
+        "result": "Steaming instead of searing; poor browning."
+      }
+    ],
+    "signals": {
+      "visual": "No visual change during marinating; after marinating, food may appear darker or have visible herb/spice coating.",
+      "touch": "Meat may feel slightly softer if acid was present; vegetables may be slightly wilted."
+    },
+    "output": {
+      "texture": "varies; acid-tenderized proteins may be more tender",
+      "appearance": "seasoned surface; may have color from marinade ingredients",
+      "flavor": "infused with marinade flavors; balanced seasoning"
+    },
+    "links_to_intents": [
+      "add_flavor",
+      "tenderize"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "low"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "flambé",
+    "category": "finishing",
+    "goal": "Ignite alcohol vapors from a spirit added to a dish to burn off alcohol, add a lightly caramelized flavor, and create a dramatic presentation.",
+    "when_to_use": "When a dish (sauces, desserts, some savory preparations) benefits from the flavor of spirits with minimal alcohol, and when tableside presentation is desired.",
+    "inputs": [
+      "spirit (brandy, cognac, rum, whiskey, liqueur)",
+      "warm dish or sauce (in a pan)",
+      "long-handled match or lighter"
+    ],
+    "equipment": [
+      "long-handled match or butane lighter",
+      "sauté pan or flambé pan",
+      "optional: ladle"
+    ],
+    "steps": [
+      "Warm the spirit slightly in a small pan or ladle (optional, but helps ignition).",
+      "Pour the spirit into the hot pan containing the food or sauce.",
+      "Tilt the pan slightly toward the heat source or bring the flame of a long match to the edge of the pan.",
+      "The alcohol vapors will ignite with a blue flame.",
+      "Gently shake the pan to distribute the flame and allow the alcohol to burn off.",
+      "Allow the flames to subside naturally (usually 30–60 seconds).",
+      "Serve immediately."
+    ],
+    "critical_control_points": [
+      "The pan and food must be hot for the alcohol to vaporize and ignite properly.",
+      "Use a long-handled match or lighter to keep hands safely away from flames.",
+      "Do not pour directly from a bottle near an open flame; the flame can travel back into the bottle.",
+      "Stand back when tilting the pan; flames can flare up unexpectedly.",
+      "Ensure all alcohol burns off; lingering alcohol can impart a harsh taste."
+    ],
+    "control_variables": {
+      "heat_level": "hot",
+      "temperature_control": "approximate",
+      "moisture_level": "dry surface",
+      "agitation": "gentle shaking",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Spirit too cold",
+        "result": "Vapors do not ignite; flame is weak or nonexistent."
+      },
+      {
+        "case": "Pouring from bottle over open flame",
+        "result": "Flame can travel into bottle; serious fire hazard."
+      },
+      {
+        "case": "Insufficient alcohol vapor",
+        "result": "No ignition; alcohol remains in dish."
+      },
+      {
+        "case": "Flames extinguished too soon",
+        "result": "Residual alcohol leaves harsh, medicinal flavor."
+      }
+    ],
+    "signals": {
+      "visual": "Blue flames rise from the surface of the dish; flames subside after 30–60 seconds.",
+      "sound": "Whoosh sound as vapors ignite; gentle crackling as alcohol burns."
+    },
+    "output": {
+      "texture": "unchanged from base dish",
+      "appearance": "dramatic blue flame during preparation; finished dish may have slightly caramelized edges",
+      "flavor": "spirit flavor remains but alcohol harshness is gone; lightly caramelized notes"
+    },
+    "links_to_intents": [
+      "add_drama",
+      "remove_alcohol",
+      "add_caramel_flavor"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "technique": "brining",
+    "category": "prep",
+    "goal": "Soak meat or poultry in a salt solution to increase moisture retention, add flavor, and tenderize.",
+    "when_to_use": "When preparing lean meats (chicken breast, pork chops, turkey) that tend to dry out during cooking and would benefit from added moisture and seasoning.",
+    "inputs": [
+      "protein (poultry, pork, lean meats)",
+      "water",
+      "salt (3–6% of water weight, approx. 2–4 tablespoons per quart/liter)",
+      "optional: sugar (brown sugar, honey, maple syrup)",
+      "optional: aromatics (herbs, spices, garlic, citrus peel)"
+    ],
+    "equipment": [
+      "non-reactive container (glass, stainless steel, plastic)",
+      "refrigerator",
+      "optional: sous vide bag for vacuum brining"
+    ],
+    "steps": [
+      "Combine water, salt, and any sugar or aromatics in a pot.",
+      "Heat the mixture, stirring until salt and sugar are fully dissolved.",
+      "Allow brine to cool completely to refrigerator temperature.",
+      "Place the protein in a non-reactive container.",
+      "Pour cooled brine over the protein until fully submerged.",
+      "Cover and refrigerate.",
+      "Brine for the appropriate time:",
+      "  - Chicken pieces: 1–4 hours",
+      "  - Whole chicken: 4–12 hours",
+      "  - Pork chops: 2–6 hours",
+      "  - Turkey breast: 6–12 hours",
+      "  - Whole turkey: 12–24 hours",
+      "Remove from brine, rinse thoroughly, and pat dry before cooking."
+    ],
+    "critical_control_points": [
+      "Brine must be completely cold before adding protein to prevent bacterial growth and partial cooking.",
+      "Salt concentration should be 3–6% (2–4 tablespoons per quart/liter); too much salt makes meat inedibly salty.",
+      "Rinse after brining to remove surface salt; residual salt can over-season the final dish.",
+      "Pat dry thoroughly before cooking to ensure proper browning.",
+      "Do not over-brine; extended times can make meat mushy and overly salty."
+    ],
+    "control_variables": {
+      "heat_level": "cold",
+      "temperature_control": "refrigerated",
+      "moisture_level": "wet",
+      "agitation": "none",
+      "time_sensitivity": "medium"
+    },
+    "failure_modes": [
+      {
+        "case": "Brining too long",
+        "result": "Meat becomes mushy; texture breaks down; overly salty."
+      },
+      {
+        "case": "Brine not fully cooled",
+        "result": "Partial cooking of surface; bacterial growth risk."
+      },
+      {
+        "case": "Not rinsing after brining",
+        "result": "Final dish too salty; surface may burn during cooking."
+      },
+      {
+        "case": "Salt concentration too high",
+        "result": "Inedibly salty; meat may become tough."
+      }
+    ],
+    "signals": {
+      "visual": "No dramatic visual change; meat may appear slightly plumper after brining.",
+      "touch": "Meat feels firmer and more resilient; when cooked, it retains noticeably more moisture."
+    },
+    "output": {
+      "texture": "moist, tender, and juicy after cooking",
+      "appearance": "may be slightly paler after brining; cooks to a more evenly browned surface",
+      "flavor": "well-seasoned throughout, not just on the surface"
+    },
+    "links_to_intents": [
+      "retain_moisture",
+      "add_flavor"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.97
+  }
+]

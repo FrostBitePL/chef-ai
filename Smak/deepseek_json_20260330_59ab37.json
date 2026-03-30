@@ -1,0 +1,596 @@
+[
+  {
+    "ingredient": "alliums",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["pungent", "sweet (when cooked)"],
+      "aroma": ["sulfurous", "pungent", "sweet (roasted)"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "brandy",
+      "vinegar",
+      "wine",
+      "citrus",
+      "toasted nuts",
+      "cheese",
+      "apple",
+      "cocoa",
+      "honey"
+    ],
+    "contrast_with": [
+      "rich dairy",
+      "fatty meats",
+      "sweet fruits"
+    ],
+    "boosters": [
+      "heat (cooking)",
+      "fat (butter, oil)",
+      "salt"
+    ],
+    "balancing_elements": [
+      "acid (vinegar, wine)",
+      "sweetness",
+      "dairy"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "sulfur compounds (alliin, allicin)",
+      "pyruvic acid"
+    ],
+    "confidence": 0.92,
+    "priority": "high"
+  },
+  {
+    "ingredient": "artichoke",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "bitter (trace)"],
+      "aroma": ["earthy", "sulfurous", "herbal", "citrus"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "citrus",
+      "mint",
+      "basil",
+      "mushroom",
+      "sesame",
+      "wine",
+      "cheese",
+      "cocoa",
+      "plum",
+      "yogurt",
+      "cilantro"
+    ],
+    "contrast_with": [
+      "rich cream",
+      "butter",
+      "olive oil"
+    ],
+    "boosters": [
+      "lemon juice",
+      "olive oil",
+      "salt"
+    ],
+    "balancing_elements": [
+      "acid (lemon)",
+      "fat (butter, oil)",
+      "sweetness"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "cynarine (affects sweetness perception)",
+      "sesquiterpenes"
+    ],
+    "confidence": 0.88,
+    "priority": "high"
+  },
+  {
+    "ingredient": "asparagus",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "bitter"],
+      "aroma": ["earthy", "sulfurous", "green"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "beer",
+      "bread",
+      "seafood",
+      "butter",
+      "cheese",
+      "egg",
+      "ham",
+      "vinegar",
+      "coconut",
+      "potato chips",
+      "fish sauce"
+    ],
+    "contrast_with": [
+      "rich meats",
+      "cream",
+      "citrus"
+    ],
+    "boosters": [
+      "butter",
+      "salt",
+      "lemon juice",
+      "egg yolk"
+    ],
+    "balancing_elements": [
+      "fat",
+      "acid",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "sulfur compounds (dimethyl sulfide, methanethiol)",
+      "pyrazines"
+    ],
+    "confidence": 0.85,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "avocado",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["umami", "sweet", "fatty"],
+      "aroma": ["nutty", "creamy", "herbal"],
+      "intensity": "medium",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "lime",
+      "beans",
+      "basil",
+      "tomato",
+      "tropical fruit",
+      "mushroom",
+      "caramel",
+      "nuts",
+      "coconut",
+      "vanilla",
+      "apple",
+      "red wine"
+    ],
+    "contrast_with": [
+      "acidic fruits",
+      "citrus",
+      "vinegar"
+    ],
+    "boosters": [
+      "salt",
+      "lime juice",
+      "chile"
+    ],
+    "balancing_elements": [
+      "acid",
+      "salt",
+      "pungency"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "unsaturated fatty acids",
+      "terpenes"
+    ],
+    "confidence": 0.88,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "beef",
+    "category": "protein",
+    "flavor_profile": {
+      "primary_tastes": ["umami", "salty"],
+      "aroma": ["meaty", "roasted", "rich"],
+      "intensity": "high",
+      "fat_content": "medium"
+    },
+    "pairs_with": [
+      "garlic",
+      "butter",
+      "thyme",
+      "rosemary",
+      "onion",
+      "mushroom",
+      "red wine",
+      "cocoa",
+      "grapes",
+      "dried currants",
+      "mustard",
+      "alliums"
+    ],
+    "contrast_with": [
+      "vinegar",
+      "lemon",
+      "pickled vegetables",
+      "fresh herbs"
+    ],
+    "boosters": [
+      "salt",
+      "umami (soy sauce, anchovy, mushroom)",
+      "fat",
+      "browning (Maillard reaction)"
+    ],
+    "balancing_elements": [
+      "acid",
+      "fresh herbs",
+      "bitterness (bitter greens)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "pyrazines",
+      "glutamates",
+      "sulfur compounds"
+    ],
+    "confidence": 0.95,
+    "priority": "high"
+  },
+  {
+    "ingredient": "beet",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "earthy"],
+      "aroma": ["earthy", "sweet", "green"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "citrus",
+      "goat cheese",
+      "nuts",
+      "horseradish",
+      "yogurt",
+      "dill",
+      "apple",
+      "caraway"
+    ],
+    "contrast_with": [
+      "bitter greens",
+      "sharp cheese"
+    ],
+    "boosters": [
+      "roasting",
+      "butter",
+      "acid (lemon, vinegar)"
+    ],
+    "balancing_elements": [
+      "acid",
+      "fat",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "geosmin (earthy)",
+      "pyrazines"
+    ],
+    "confidence": 0.85,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "broccoli_cauliflower",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["sulfur", "bitter", "sweet (trace)"],
+      "aroma": ["sulfurous", "vegetal", "herbal", "citrus"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "lemon",
+      "garlic",
+      "anchovy",
+      "Parmesan",
+      "olive oil",
+      "chile",
+      "toasted nuts",
+      "capers"
+    ],
+    "contrast_with": [
+      "rich cream",
+      "butter",
+      "egg"
+    ],
+    "boosters": [
+      "roasting",
+      "salt",
+      "fat",
+      "acid"
+    ],
+    "balancing_elements": [
+      "acid (lemon)",
+      "fat",
+      "umami (anchovy, cheese)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "sulfur compounds (glucosinolates)",
+      "isothiocyanates"
+    ],
+    "confidence": 0.88,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "caramel",
+    "category": "flavor",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "bitter (trace)"],
+      "aroma": ["toasted", "roasted", "nutty", "buttery"],
+      "intensity": "high",
+      "fat_content": "low (unless added)"
+    },
+    "pairs_with": [
+      "citrus",
+      "vinegar",
+      "wine",
+      "roasted meat",
+      "bacon",
+      "chocolate",
+      "nuts",
+      "fish sauce",
+      "tamarind",
+      "miso"
+    ],
+    "contrast_with": [
+      "salt",
+      "acid",
+      "bitter"
+    ],
+    "boosters": [
+      "salt",
+      "butter",
+      "vanilla",
+      "bourbon"
+    ],
+    "balancing_elements": [
+      "salt",
+      "acid",
+      "bitterness"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "Maillard reaction products",
+      "furans",
+      "pyrazines"
+    ],
+    "confidence": 0.9,
+    "priority": "high"
+  },
+  {
+    "ingredient": "carrot",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "earthy"],
+      "aroma": ["earthy", "green", "herbal", "citrus"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "citrus",
+      "wine",
+      "vinegar",
+      "radish",
+      "olive",
+      "cilantro",
+      "coriander seed",
+      "cardamom",
+      "star anise",
+      "coffee",
+      "basil",
+      "mint",
+      "tarragon",
+      "balsamic",
+      "eucalyptus"
+    ],
+    "contrast_with": [
+      "rich meats",
+      "butter"
+    ],
+    "boosters": [
+      "roasting",
+      "butter",
+      "honey",
+      "ginger"
+    ],
+    "balancing_elements": [
+      "acid (citrus, vinegar)",
+      "herbs"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "terpenes",
+      "carotenoid breakdown products"
+    ],
+    "confidence": 0.87,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "chile",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": ["pungent (pain)", "sweet", "fruity"],
+      "aroma": ["fruity", "floral", "smoky", "earthy"],
+      "intensity": "varies by variety",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "stone fruit",
+      "aromatic spices",
+      "citrus",
+      "mint",
+      "wine",
+      "cheese",
+      "sour cream",
+      "yogurt",
+      "pumpkin",
+      "peach",
+      "dill",
+      "cinnamon",
+      "rhubarb",
+      "chocolate"
+    ],
+    "contrast_with": [
+      "rich dairy",
+      "sweet fruits",
+      "fatty meats"
+    ],
+    "boosters": [
+      "fat",
+      "acid",
+      "sugar"
+    ],
+    "balancing_elements": [
+      "fat (dairy, oil)",
+      "sugar",
+      "acid"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "capsaicin (pungency)",
+      "capsanthin",
+      "carotenoids"
+    ],
+    "confidence": 0.93,
+    "priority": "high"
+  },
+  {
+    "ingredient": "chocolate",
+    "category": "sweet",
+    "flavor_profile": {
+      "primary_tastes": ["bitter", "sweet", "umami"],
+      "aroma": ["roasted", "earthy", "fruity", "floral"],
+      "intensity": "high",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "citrus",
+      "chile",
+      "coffee",
+      "nuts",
+      "caramel",
+      "sea salt",
+      "red wine",
+      "raspberry",
+      "orange",
+      "mint",
+      "coconut",
+      "vanilla"
+    ],
+    "contrast_with": [
+      "salt",
+      "acidic fruits"
+    ],
+    "boosters": [
+      "salt",
+      "coffee",
+      "chile",
+      "vanilla"
+    ],
+    "balancing_elements": [
+      "sugar",
+      "salt",
+      "fat (cream, milk)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "pyrazines",
+      "theobromine",
+      "vanillin",
+      "phenolic compounds"
+    ],
+    "confidence": 0.96,
+    "priority": "high"
+  },
+  {
+    "ingredient": "corn",
+    "category": "grain",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "starchy"],
+      "aroma": ["sulfurous", "buttery", "toasted", "green"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "lime",
+      "avocado",
+      "beans",
+      "basil",
+      "tomato",
+      "tropical fruit",
+      "mushroom",
+      "caramel",
+      "nuts",
+      "coconut",
+      "vanilla",
+      "apple",
+      "red wine"
+    ],
+    "contrast_with": [
+      "smoky flavors",
+      "pungent cheese"
+    ],
+    "boosters": [
+      "butter",
+      "salt",
+      "lime",
+      "chile"
+    ],
+    "balancing_elements": [
+      "acid",
+      "fat",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "sulfur compounds",
+      "pyrazines (popcorn)",
+      "furans"
+    ],
+    "confidence": 0.84,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "cress",
+    "category": "herb",
+    "flavor_profile": {
+      "primary_tastes": ["pungent", "peppery", "bitter"],
+      "aroma": ["sulfurous", "terpene", "vegetal"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "mustard",
+      "seafood",
+      "eggs",
+      "citrus",
+      "apple",
+      "strawberry",
+      "lychee",
+      "oyster",
+      "rich meats"
+    ],
+    "contrast_with": [
+      "sweet fruits",
+      "rich dairy"
+    ],
+    "boosters": [
+      "acid",
+      "salt",
+      "fat"
+    ],
+    "balancing_elements": [
+      "fat",
+      "sugar",
+      "acid"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "isothiocyanates",
+      "sulfur compounds"
+    ],
+    "confidence": 0.82,
+    "priority": "low"
+  }
+]

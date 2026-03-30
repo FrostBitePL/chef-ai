@@ -1,0 +1,1025 @@
+[
+  {
+    "ingredient": "eggplant",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["bitter", "earthy", "sweet (trace)"],
+      "aroma": ["earthy", "sulfurous", "herbal"],
+      "intensity": "medium",
+      "fat_content": "low (absorbs fat when cooked)"
+    },
+    "pairs_with": [
+      "garlic",
+      "olive oil",
+      "tomato",
+      "basil",
+      "mint",
+      "yogurt",
+      "tahini",
+      "lemon",
+      "cumin",
+      "coriander",
+      "chile",
+      "pomegranate",
+      "walnut",
+      "soy sauce",
+      "miso"
+    ],
+    "contrast_with": [
+      "acidic ingredients",
+      "bright herbs",
+      "yogurt"
+    ],
+    "boosters": [
+      "salt (draws out bitterness)",
+      "roasting",
+      "fat (olive oil)",
+      "umami (soy sauce, miso)"
+    ],
+    "balancing_elements": [
+      "salt",
+      "acid",
+      "fat",
+      "sweetness"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "chlorogenic acid",
+      "nasunin (anthocyanin)",
+      "sesquiterpenes"
+    ],
+    "confidence": 0.85,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "garlic",
+    "category": "herb",
+    "flavor_profile": {
+      "primary_tastes": ["pungent", "sweet (roasted)"],
+      "aroma": ["sulfurous", "pungent", "sweet (cooked)"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "beef",
+      "chicken",
+      "pork",
+      "lamb",
+      "seafood",
+      "tomato",
+      "olive oil",
+      "butter",
+      "lemon",
+      "parsley",
+      "basil",
+      "rosemary",
+      "thyme",
+      "ginger",
+      "chile",
+      "soy sauce",
+      "mushroom",
+      "potato",
+      "bread"
+    ],
+    "contrast_with": [
+      "sweet fruits",
+      "delicate herbs",
+      "dairy"
+    ],
+    "boosters": [
+      "heat (roasting mellows)",
+      "fat (butter, oil)",
+      "salt"
+    ],
+    "balancing_elements": [
+      "acid (lemon, vinegar)",
+      "fat",
+      "sweetness",
+      "dairy"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "allicin",
+      "diallyl disulfide",
+      "ajoene",
+      "sulfur compounds"
+    ],
+    "confidence": 0.97,
+    "priority": "high"
+  },
+  {
+    "ingredient": "ginger",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": ["pungent", "sweet", "citrus"],
+      "aroma": ["citrus", "spicy", "woody", "floral"],
+      "intensity": "medium-high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "garlic",
+      "soy sauce",
+      "scallion",
+      "chile",
+      "citrus",
+      "honey",
+      "sesame",
+      "coconut",
+      "carrot",
+      "pumpkin",
+      "apple",
+      "pear",
+      "duck",
+      "pork",
+      "seafood",
+      "turmeric",
+      "cinnamon",
+      "star anise"
+    ],
+    "contrast_with": [
+      "rich fatty meats",
+      "sweet fruits"
+    ],
+    "boosters": [
+      "heat (fresh ginger is more pungent)",
+      "acid (lemon, lime)",
+      "sugar"
+    ],
+    "balancing_elements": [
+      "sweetness",
+      "acid",
+      "fat"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "gingerol",
+      "shogaol",
+      "zingerone",
+      "citral",
+      "terpenes"
+    ],
+    "confidence": 0.94,
+    "priority": "high"
+  },
+  {
+    "ingredient": "honey",
+    "category": "sweetener",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "slightly acidic"],
+      "aroma": ["floral", "fruity", "caramel", "herbal (varies by source)"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "cheese",
+      "nuts",
+      "fruit",
+      "tea",
+      "yogurt",
+      "mustard",
+      "garlic",
+      "ginger",
+      "chile",
+      "pork",
+      "poultry",
+      "lamb",
+      "bread",
+      "butter",
+      "vinegar",
+      "whiskey"
+    ],
+    "contrast_with": [
+      "salt",
+      "acid",
+      "bitter",
+      "pungent"
+    ],
+    "boosters": [
+      "warmth (melts)",
+      "acid",
+      "salt",
+      "spices"
+    ],
+    "balancing_elements": [
+      "salt",
+      "acid",
+      "bitterness",
+      "pungency"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "phenylacetic acid",
+      "methyl anthranilate",
+      "terpenes",
+      "floral esters"
+    ],
+    "confidence": 0.9,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "lamb",
+    "category": "protein",
+    "flavor_profile": {
+      "primary_tastes": ["umami", "fatty"],
+      "aroma": ["gamy", "earthy", "herbal", "rich"],
+      "intensity": "high",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "garlic",
+      "rosemary",
+      "thyme",
+      "mint",
+      "oregano",
+      "cumin",
+      "coriander",
+      "cinnamon",
+      "clove",
+      "yogurt",
+      "lemon",
+      "olive oil",
+      "eggplant",
+      "potato",
+      "red wine",
+      "anchovy"
+    ],
+    "contrast_with": [
+      "bright herbs (mint)",
+      "acidic fruits",
+      "yogurt"
+    ],
+    "boosters": [
+      "salt",
+      "fat",
+      "roasting",
+      "herbs"
+    ],
+    "balancing_elements": [
+      "acid (lemon, wine)",
+      "fresh herbs",
+      "yogurt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "branched-chain fatty acids (4-methyloctanoic, 4-ethyloctanoic)",
+      "skatole",
+      "phenols"
+    ],
+    "confidence": 0.93,
+    "priority": "high"
+  },
+  {
+    "ingredient": "mushroom",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["umami", "earthy"],
+      "aroma": ["earthy", "mushroomy", "woody", "savory"],
+      "intensity": "medium-high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "garlic",
+      "thyme",
+      "parsley",
+      "butter",
+      "cream",
+      "wine",
+      "beef",
+      "pork",
+      "poultry",
+      "egg",
+      "cheese",
+      "truffle",
+      "soy sauce",
+      "lemon",
+      "shallot"
+    ],
+    "contrast_with": [
+      "bright citrus",
+      "fresh herbs"
+    ],
+    "boosters": [
+      "roasting",
+      "butter",
+      "umami (soy sauce, Parmesan)",
+      "salt"
+    ],
+    "balancing_elements": [
+      "acid",
+      "fresh herbs",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "1-octen-3-ol (mushroom)",
+      "glutamates",
+      "guanosine monophosphate (GMP)"
+    ],
+    "confidence": 0.92,
+    "priority": "high"
+  },
+  {
+    "ingredient": "mustard",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": ["pungent", "bitter", "sour (prepared)"],
+      "aroma": ["sulfurous", "pungent", "nutty"],
+      "intensity": "high",
+      "fat_content": "medium (seeds), low (prepared)"
+    },
+    "pairs_with": [
+      "beef",
+      "pork",
+      "sausage",
+      "cheese",
+      "eggs",
+      "vinegar",
+      "honey",
+      "maple",
+      "dill",
+      "tarragon",
+      "horseradish",
+      "cabbage",
+      "pretzel",
+      "seafood"
+    ],
+    "contrast_with": [
+      "sweet",
+      "fat",
+      "acid"
+    ],
+    "boosters": [
+      "cold liquid (activates enzymes)",
+      "acid (stabilizes)",
+      "honey",
+      "vinegar"
+    ],
+    "balancing_elements": [
+      "sweetness",
+      "fat",
+      "acid"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "sinigrin",
+      "isothiocyanates",
+      "allyl isothiocyanate"
+    ],
+    "confidence": 0.91,
+    "priority": "high"
+  },
+  {
+    "ingredient": "olive",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["salty", "bitter", "fatty"],
+      "aroma": ["fruity", "briny", "earthy", "herbal"],
+      "intensity": "medium-high",
+      "fat_content": "high (olive oil)"
+    },
+    "pairs_with": [
+      "lemon",
+      "garlic",
+      "oregano",
+      "rosemary",
+      "anchovy",
+      "tomato",
+      "feta",
+      "red wine",
+      "bread",
+      "pasta",
+      "lamb",
+      "chicken",
+      "artichoke",
+      "capers"
+    ],
+    "contrast_with": [
+      "sweet fruits",
+      "mild dairy"
+    ],
+    "boosters": [
+      "salt",
+      "acid (lemon)",
+      "herbs"
+    ],
+    "balancing_elements": [
+      "acid",
+      "fresh herbs",
+      "sweetness"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "oleuropein (bitter)",
+      "phenolic compounds",
+      "esters"
+    ],
+    "confidence": 0.87,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "onion",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["pungent", "sweet (cooked)"],
+      "aroma": ["sulfurous", "pungent", "sweet (caramelized)"],
+      "intensity": "medium-high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "beef",
+      "pork",
+      "poultry",
+      "garlic",
+      "thyme",
+      "rosemary",
+      "butter",
+      "wine",
+      "vinegar",
+      "cheese",
+      "mushroom",
+      "potato",
+      "carrot",
+      "celery",
+      "apple",
+      "honey"
+    ],
+    "contrast_with": [
+      "sweet fruits",
+      "rich cream"
+    ],
+    "boosters": [
+      "slow cooking (caramelization)",
+      "fat (butter, oil)",
+      "salt"
+    ],
+    "balancing_elements": [
+      "acid (vinegar, wine)",
+      "sweetness",
+      "fat"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "sulfur compounds (thiosulfinates)",
+      "lacrimatory factor (syn-propanethial-S-oxide)"
+    ],
+    "confidence": 0.95,
+    "priority": "high"
+  },
+  {
+    "ingredient": "pork",
+    "category": "protein",
+    "flavor_profile": {
+      "primary_tastes": ["umami", "sweet", "fatty"],
+      "aroma": ["meaty", "sweet", "rich", "slightly gamy"],
+      "intensity": "medium-high",
+      "fat_content": "medium-high"
+    },
+    "pairs_with": [
+      "apple",
+      "garlic",
+      "sage",
+      "rosemary",
+      "thyme",
+      "fennel",
+      "mustard",
+      "honey",
+      "maple",
+      "soy sauce",
+      "ginger",
+      "chile",
+      "cinnamon",
+      "clove",
+      "pork",
+      "cabbage",
+      "potato"
+    ],
+    "contrast_with": [
+      "acidic fruits",
+      "pickled vegetables"
+    ],
+    "boosters": [
+      "salt",
+      "sweetness",
+      "fat",
+      "smoking",
+      "roasting"
+    ],
+    "balancing_elements": [
+      "acid",
+      "sweetness",
+      "herbs",
+      "spices"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "thiamin-derived compounds",
+      "fatty acids",
+      "lactones"
+    ],
+    "confidence": 0.94,
+    "priority": "high"
+  },
+  {
+    "ingredient": "potato",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["starchy", "earthy", "sweet"],
+      "aroma": ["earthy", "nutty", "buttery", "green"],
+      "intensity": "low-medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "butter",
+      "cream",
+      "sour cream",
+      "cheese",
+      "garlic",
+      "onion",
+      "rosemary",
+      "thyme",
+      "bacon",
+      "chive",
+      "parsley",
+      "eggs",
+      "beef",
+      "pork",
+      "truffle"
+    ],
+    "contrast_with": [
+      "acidic ingredients",
+      "bright herbs"
+    ],
+    "boosters": [
+      "fat (butter, cream, oil)",
+      "salt",
+      "roasting",
+      "frying"
+    ],
+    "balancing_elements": [
+      "fat",
+      "salt",
+      "acid",
+      "herbs"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "pyrazines",
+      "methional",
+      "lipoxygenase products"
+    ],
+    "confidence": 0.89,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "rosemary",
+    "category": "herb",
+    "flavor_profile": {
+      "primary_tastes": ["bitter", "herbal"],
+      "aroma": ["pine", "camphor", "eucalyptus", "woody", "floral"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "lamb",
+      "beef",
+      "pork",
+      "chicken",
+      "potato",
+      "olive oil",
+      "garlic",
+      "lemon",
+      "tomato",
+      "bread",
+      "mushroom",
+      "thyme",
+      "sage",
+      "wine"
+    ],
+    "contrast_with": [
+      "delicate fish",
+      "sweet desserts"
+    ],
+    "boosters": [
+      "fat (oil, butter)",
+      "heat (releases oils)",
+      "roasting"
+    ],
+    "balancing_elements": [
+      "fat",
+      "acid",
+      "sweetness"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "1,8-cineole (eucalyptus)",
+      "camphor",
+      "pinene",
+      "bornyl acetate"
+    ],
+    "confidence": 0.95,
+    "priority": "high"
+  },
+  {
+    "ingredient": "saffron",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": ["bitter", "honey-like"],
+      "aroma": ["floral", "hay-like", "honey", "earthy"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "rice",
+      "seafood",
+      "chicken",
+      "tomato",
+      "olive oil",
+      "lemon",
+      "garlic",
+      "orange",
+      "almond",
+      "honey",
+      "saffron",
+      "white wine"
+    ],
+    "contrast_with": [
+      "strong spices",
+      "heavy meats"
+    ],
+    "boosters": [
+      "warm liquid (extracts flavor)",
+      "fat",
+      "acid"
+    ],
+    "balancing_elements": [
+      "sweetness",
+      "acid",
+      "fat"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "safranal",
+      "picrocrocin",
+      "crocin (color)"
+    ],
+    "confidence": 0.88,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "soy_sauce",
+    "category": "condiment",
+    "flavor_profile": {
+      "primary_tastes": ["umami", "salty", "sweet", "slightly bitter"],
+      "aroma": ["savory", "fermented", "roasted", "nutty"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "beef",
+      "pork",
+      "chicken",
+      "seafood",
+      "tofu",
+      "mushroom",
+      "ginger",
+      "garlic",
+      "scallion",
+      "sesame",
+      "rice",
+      "noodles",
+      "vegetables",
+      "sugar",
+      "mirin",
+      "rice vinegar"
+    ],
+    "contrast_with": [
+      "sweet",
+      "rich dairy"
+    ],
+    "boosters": [
+      "umami synergy (with mushrooms, tomatoes)",
+      "heat (cooking develops flavor)",
+      "sugar"
+    ],
+    "balancing_elements": [
+      "sweetness",
+      "acid",
+      "fat"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "glutamates",
+      "pyrazines",
+      "furans",
+      "alcohols",
+      "esters"
+    ],
+    "confidence": 0.96,
+    "priority": "high"
+  },
+  {
+    "ingredient": "thyme",
+    "category": "herb",
+    "flavor_profile": {
+      "primary_tastes": ["herbal", "bitter", "slightly sweet"],
+      "aroma": ["herbal", "woody", "floral", "lemony", "earthy"],
+      "intensity": "medium-high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "beef",
+      "lamb",
+      "pork",
+      "chicken",
+      "mushroom",
+      "tomato",
+      "potato",
+      "egg",
+      "cheese",
+      "olive oil",
+      "garlic",
+      "lemon",
+      "wine",
+      "rosemary",
+      "sage",
+      "bay"
+    ],
+    "contrast_with": [
+      "delicate fish",
+      "sweet desserts"
+    ],
+    "boosters": [
+      "fat (oil, butter)",
+      "heat (releases oils)",
+      "slow cooking"
+    ],
+    "balancing_elements": [
+      "fat",
+      "acid",
+      "sweetness"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "thymol",
+      "carvacrol",
+      "p-cymene",
+      "linalool"
+    ],
+    "confidence": 0.94,
+    "priority": "high"
+  },
+  {
+    "ingredient": "tomato",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "acid", "umami"],
+      "aroma": ["green", "fruity", "earthy", "savory"],
+      "intensity": "medium-high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "basil",
+      "garlic",
+      "onion",
+      "olive oil",
+      "mozzarella",
+      "Parmesan",
+      "oregano",
+      "chile",
+      "beef",
+      "pork",
+      "seafood",
+      "balsamic vinegar",
+      "wine",
+      "bread",
+      "eggplant",
+      "mushroom"
+    ],
+    "contrast_with": [
+      "rich cream",
+      "fatty meats"
+    ],
+    "boosters": [
+      "salt",
+      "cooking (concentrates flavor)",
+      "sugar (balances acid)",
+      "umami (anchovy, Parmesan)"
+    ],
+    "balancing_elements": [
+      "sweetness",
+      "salt",
+      "fat"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "glutamates",
+      "citric acid",
+      "malic acid",
+      "hexanal",
+      "terpenes",
+      "lycopene"
+    ],
+    "confidence": 0.96,
+    "priority": "high"
+  },
+  {
+    "ingredient": "vanilla",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "slightly bitter"],
+      "aroma": ["floral", "sweet", "woody", "creamy", "fruity"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "chocolate",
+      "cream",
+      "butter",
+      "egg",
+      "caramel",
+      "fruit (berry, peach, apricot)",
+      "coffee",
+      "rum",
+      "bourbon",
+      "cinnamon",
+      "nutmeg",
+      "saffron",
+      "lobster",
+      "pork"
+    ],
+    "contrast_with": [
+      "savory herbs",
+      "strong spices"
+    ],
+    "boosters": [
+      "fat (cream, butter)",
+      "heat (extracts flavor)",
+      "alcohol",
+      "sugar"
+    ],
+    "balancing_elements": [
+      "salt",
+      "acid"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "vanillin",
+      "vanillyl alcohol",
+      "p-hydroxybenzaldehyde",
+      "heliotropin"
+    ],
+    "confidence": 0.95,
+    "priority": "high"
+  },
+  {
+    "ingredient": "walnut",
+    "category": "nut",
+    "flavor_profile": {
+      "primary_tastes": ["bitter", "earthy", "sweet (trace)"],
+      "aroma": ["nutty", "earthy", "woody", "slightly astringent"],
+      "intensity": "medium-high",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "blue cheese",
+      "Parmesan",
+      "honey",
+      "apple",
+      "pear",
+      "fig",
+      "coffee",
+      "chocolate",
+      "cinnamon",
+      "rosemary",
+      "olive oil",
+      "balsamic vinegar",
+      "poultry",
+      "pork",
+      "pasta",
+      "bread"
+    ],
+    "contrast_with": [
+      "acidic fruits",
+      "sharp cheese"
+    ],
+    "boosters": [
+      "toasting",
+      "salt",
+      "honey"
+    ],
+    "balancing_elements": [
+      "sweetness",
+      "acid",
+      "fat (from other sources)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "unsaturated fatty acids",
+      "aldehydes",
+      "phenolic compounds"
+    ],
+    "confidence": 0.88,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "wine_red",
+    "category": "beverage",
+    "flavor_profile": {
+      "primary_tastes": ["acid", "bitter", "sweet (residual)", "umami"],
+      "aroma": ["fruity", "tannic", "oaky", "floral", "earthy"],
+      "intensity": "varies",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "beef",
+      "lamb",
+      "pork",
+      "game",
+      "mushroom",
+      "tomato",
+      "garlic",
+      "rosemary",
+      "thyme",
+      "cheese (hard, aged)",
+      "chocolate",
+      "berries",
+      "herbs"
+    ],
+    "contrast_with": [
+      "delicate fish",
+      "light poultry",
+      "cream sauces"
+    ],
+    "boosters": [
+      "cooking (reduces, concentrates)",
+      "herbs",
+      "garlic",
+      "shallot"
+    ],
+    "balancing_elements": [
+      "fat",
+      "sweetness",
+      "salt",
+      "cream"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "tannins",
+      "anthocyanins",
+      "esters",
+      "terpenes",
+      "pyrazines"
+    ],
+    "confidence": 0.92,
+    "priority": "high"
+  },
+  {
+    "ingredient": "yogurt",
+    "category": "dairy",
+    "flavor_profile": {
+      "primary_tastes": ["sour", "creamy", "slightly sweet"],
+      "aroma": ["tangy", "milky", "fresh"],
+      "intensity": "medium",
+      "fat_content": "varies (low to high)"
+    },
+    "pairs_with": [
+      "garlic",
+      "cucumber",
+      "mint",
+      "lamb",
+      "chicken",
+      "curry spices",
+      "honey",
+      "fruit",
+      "nuts",
+      "olive oil",
+      "lemon",
+      "dill",
+      "coriander",
+      "cumin"
+    ],
+    "contrast_with": [
+      "sweet fruits",
+      "spicy foods"
+    ],
+    "boosters": [
+      "acid (already present)",
+      "herbs",
+      "garlic",
+      "salt"
+    ],
+    "balancing_elements": [
+      "fat (olive oil)",
+      "sweetness",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "lactic acid",
+      "diacetyl",
+      "acetaldehyde"
+    ],
+    "confidence": 0.9,
+    "priority": "medium"
+  }
+]

@@ -1,0 +1,726 @@
+[
+  {
+    "technique": "deep_frying",
+    "category": "fat_based",
+    "goal": "Cook food by completely submerging it in hot oil to achieve a crisp, golden-brown exterior while cooking the interior.",
+    "when_to_use": "When a uniformly crispy, golden crust is desired, especially for battered or breaded foods like tempura, fried chicken, doughnuts, and french fries.",
+    "inputs": [
+      "food (cut into uniform pieces)",
+      "high smoke point oil (peanut, canola, vegetable)",
+      "optional: batter or breading",
+      "salt for finishing"
+    ],
+    "equipment": [
+      "deep pot or Dutch oven",
+      "thermometer (deep-fry or infrared)",
+      "spider or slotted spoon",
+      "wire rack with paper towels or sheet pan",
+      "optional: fryer basket"
+    ],
+    "steps": [
+      "Pour oil into a deep pot to a depth of at least 3 inches (7.5 cm), leaving at least 3 inches of space from the top of the pot to prevent overflow.",
+      "Heat oil to the target temperature:",
+      "  - 325–350°F (160–175°C) for larger pieces, dense foods",
+      "  - 350–375°F (175–190°C) for smaller pieces, battered foods",
+      "Prepare food: pat dry, season, and apply batter or breading if using.",
+      "Test oil temperature with a small piece of food; it should bubble vigorously and rise to the surface.",
+      "Add food in small batches, being careful not to overcrowd.",
+      "Maintain oil temperature by adjusting heat; temperature will drop when food is added.",
+      "Cook until golden brown and cooked through; timing depends on size and type of food.",
+      "Remove with a spider or slotted spoon and drain on a wire rack over paper towels.",
+      "Season immediately with salt or other seasonings while still hot.",
+      "Allow oil to cool completely before straining and storing (if reusing)."
+    ],
+    "critical_control_points": [
+      "Maintain consistent oil temperature; too low causes greasy food, too high burns exterior before interior cooks.",
+      "Do not overcrowd the pot; adding too much food at once drops oil temperature significantly.",
+      "Food must be dry before adding to oil to prevent dangerous splattering.",
+      "Use a thermometer; relying on visual cues alone is unreliable.",
+      "Drain fried foods on a wire rack, not directly on paper towels, to prevent steam from making the crust soggy."
+    ],
+    "control_variables": {
+      "heat_level": "medium-high to high",
+      "temperature_control": "critical",
+      "moisture_level": "dry surface",
+      "agitation": "occasional stirring for even cooking",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Oil temperature too low",
+        "result": "Food absorbs excess oil; greasy, heavy texture; pale color."
+      },
+      {
+        "case": "Oil temperature too high",
+        "result": "Exterior burns before interior cooks; bitter flavor; oil may smoke and degrade."
+      },
+      {
+        "case": "Overcrowding",
+        "result": "Temperature drops; food steams instead of fries; uneven cooking; soggy crust."
+      },
+      {
+        "case": "Wet food added",
+        "result": "Violent splattering; oil may overflow; dangerous burns; poor crust formation."
+      },
+      {
+        "case": "Using low smoke point oil",
+        "result": "Oil smokes and burns before reaching proper frying temperature; off-flavors."
+      }
+    ],
+    "signals": {
+      "visual": "Food bubbles vigorously upon addition; rises to surface as it cooks; turns golden to deep brown. Oil surface should be relatively still with bubbles around food.",
+      "sound": "Loud sizzling when food is added; sizzle subsides as cooking completes.",
+      "touch": "Crust feels crisp and firm; interior (for proteins) should feel done when tested."
+    },
+    "output": {
+      "texture": "crisp, crunchy exterior; moist, cooked interior",
+      "appearance": "golden to deep brown, uniform color",
+      "flavor": "rich, savory, with characteristic fried flavor"
+    },
+    "links_to_intents": [
+      "crisp",
+      "create_crust"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "critical"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "sautéing",
+    "category": "heat_application",
+    "goal": "Cook food quickly in a small amount of fat over relatively high heat, often with tossing or stirring, to brown the surface while preserving interior moisture.",
+    "when_to_use": "When cooking tender cuts of meat, fish fillets, vegetables, or aromatics that benefit from rapid cooking and browning.",
+    "inputs": [
+      "food (cut into uniform, relatively small pieces or thin cuts)",
+      "fat (butter, oil, or combination)",
+      "salt, pepper",
+      "optional: aromatics (garlic, shallots, herbs)"
+    ],
+    "equipment": [
+      "sauté pan or skillet (preferably with sloping sides)",
+      "heat source",
+      "tongs or spatula"
+    ],
+    "steps": [
+      "Pat food dry and season with salt and pepper.",
+      "Heat the pan over medium-high to high heat.",
+      "Add enough fat to coat the bottom of the pan (about 1–2 tablespoons).",
+      "When fat is shimmering but not smoking, add food in a single layer, leaving space between pieces.",
+      "Cook undisturbed for 1–3 minutes to develop browning.",
+      "Flip or toss the food to cook the second side.",
+      "For vegetables or aromatics, stir or toss frequently to ensure even cooking.",
+      "Add aromatics near the end of cooking if they would burn.",
+      "Remove food from pan when cooked through (or slightly before, as residual heat will finish cooking).",
+      "Optional: deglaze the pan with liquid to make a sauce."
+    ],
+    "critical_control_points": [
+      "Pan must be hot before adding food to ensure browning rather than steaming.",
+      "Do not overcrowd the pan; food should be in a single layer with space between pieces.",
+      "Food must be dry; excess moisture causes steaming and prevents browning.",
+      "Use high smoke point oil if using high heat; butter can burn unless clarified.",
+      "Flip only once for proteins; frequent flipping prevents crust formation."
+    ],
+    "control_variables": {
+      "heat_level": "medium-high to high",
+      "temperature_control": "approximate",
+      "moisture_level": "dry surface",
+      "agitation": "minimal for proteins, frequent for vegetables",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Pan not hot enough",
+        "result": "Food steams instead of searing; pale color; no crust."
+      },
+      {
+        "case": "Overcrowding",
+        "result": "Temperature drops; food steams; uneven cooking; no browning."
+      },
+      {
+        "case": "Moving food too early",
+        "result": "Crust tears; food sticks to pan; poor browning."
+      },
+      {
+        "case": "Wet food",
+        "result": "Steaming; oil may splatter; poor crust formation."
+      }
+    ],
+    "signals": {
+      "visual": "Food browns on contact; edges become golden to dark brown. Pan bottom shows browning (fond).",
+      "sound": "Loud, continuous sizzling sound throughout cooking.",
+      "touch": "Food releases easily from pan when ready to flip; feels firm when done."
+    },
+    "output": {
+      "texture": "crisp, browned exterior; tender, moist interior",
+      "appearance": "golden to dark brown on cooked surfaces",
+      "flavor": "intense, savory, with caramelized notes"
+    },
+    "links_to_intents": [
+      "brown",
+      "create_crust"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "pressure_cooking",
+    "category": "water_based",
+    "goal": "Cook food rapidly by using pressurized steam to raise the boiling point of water above 212°F (100°C).",
+    "when_to_use": "When significantly reducing cooking time for tough meats, beans, grains, and stocks, or when cooking at high altitudes.",
+    "inputs": [
+      "food (meat, beans, grains, vegetables)",
+      "liquid (water, stock, etc.)",
+      "seasonings"
+    ],
+    "equipment": [
+      "pressure cooker (stovetop or electric)",
+      "heat source",
+      "tongs or long-handled spoon"
+    ],
+    "steps": [
+      "Place food and required liquid in the pressure cooker; do not exceed the maximum fill line (usually 2/3 full for most foods, 1/2 full for beans and grains that expand).",
+      "Ensure the sealing ring is clean and properly seated.",
+      "Close the lid and lock according to manufacturer's instructions.",
+      "Set the pressure regulator to the sealed position (or select high/low pressure on electric models).",
+      "Heat on high until the cooker reaches pressure; indicated by a hissing sound or pressure indicator rising.",
+      "Reduce heat to maintain a steady, gentle hiss (stovetop) or allow electric model to cycle.",
+      "Cook for the specified time; timing starts when full pressure is reached.",
+      "Release pressure using one of three methods:",
+      "  - Natural release: let pressure drop on its own (for stocks, large meats, beans)",
+      "  - Quick release: open valve to release steam rapidly (for vegetables, delicate foods)",
+      "  - Cold water release: run cold water over the lid (stovetop only; fastest)",
+      "Open lid carefully, away from face, once pressure is fully released."
+    ],
+    "critical_control_points": [
+      "Never exceed the maximum fill line; overfilling can block valves and cause dangerous pressure buildup.",
+      "Ensure the sealing ring is in good condition; worn rings prevent pressure buildup.",
+      "Do not open the cooker until pressure is fully released; sudden release can cause burns and food eruptions.",
+      "Always add sufficient liquid; most pressure cookers require at least 1/2 to 1 cup of liquid to generate steam.",
+      "Quick release causes rapid boiling; use for foods that would overcook with natural release."
+    ],
+    "control_variables": {
+      "heat_level": "high to build pressure, then low to maintain",
+      "temperature_control": "critical",
+      "moisture_level": "wet",
+      "agitation": "none",
+      "time_sensitivity": "critical"
+    },
+    "failure_modes": [
+      {
+        "case": "Overfilling",
+        "result": "Food may block pressure valve; dangerous pressure buildup; risk of explosion."
+      },
+      {
+        "case": "Insufficient liquid",
+        "result": "Cooker may not reach pressure; food burns; pressure release mechanism may fail."
+      },
+      {
+        "case": "Opening before pressure released",
+        "result": "Hot contents erupt; severe burns."
+      },
+      {
+        "case": "Worn sealing ring",
+        "result": "Steam leaks; cooker does not reach pressure; extended cooking times."
+      }
+    ],
+    "signals": {
+      "visual": "Pressure indicator rises; steam hisses rhythmically from valve. When pressure is released, indicator drops and hissing stops.",
+      "sound": "Hissing sound when pressure is reached; gentle hiss when maintaining pressure; silence when pressure is fully released.",
+      "touch": "Lid is locked and cannot be opened until pressure is released."
+    },
+    "output": {
+      "texture": "tender, fully cooked in significantly reduced time",
+      "appearance": "similar to conventionally cooked foods",
+      "flavor": "concentrated, well-developed, especially for stocks and braises"
+    },
+    "links_to_intents": [
+      "reduce_cooking_time",
+      "tenderize"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "critical"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "stewing",
+    "category": "water_based",
+    "goal": "Cook tough cuts of meat or vegetables slowly in a relatively large amount of liquid until tender, with the liquid served as part of the dish.",
+    "when_to_use": "When preparing hearty, one-pot meals with tough meats (beef chuck, lamb shoulder) and root vegetables that benefit from long, slow cooking.",
+    "inputs": [
+      "tough meat (cut into uniform pieces)",
+      "aromatic vegetables (onions, carrots, celery)",
+      "liquid (stock, wine, water, tomatoes)",
+      "oil or fat",
+      "herbs, seasonings"
+    ],
+    "equipment": [
+      "Dutch oven or heavy pot with lid",
+      "tongs",
+      "slotted spoon"
+    ],
+    "steps": [
+      "Pat meat dry and season with salt and pepper.",
+      "Heat oil in a Dutch oven over medium-high heat.",
+      "Brown meat in batches, being careful not to overcrowd. Set aside.",
+      "Add aromatic vegetables; cook until softened and beginning to brown.",
+      "Optional: Add tomato paste and cook briefly to develop flavor.",
+      "Deglaze the pan with a small amount of liquid, scraping up browned bits.",
+      "Return meat to the pot.",
+      "Add enough liquid to barely cover the meat and vegetables.",
+      "Bring to a simmer, then reduce heat to low.",
+      "Cover partially or fully and simmer gently until meat is fork-tender, typically 1.5–3 hours depending on cut.",
+      "Add quick-cooking vegetables (peas, mushrooms) toward the end of cooking.",
+      "Optional: Thicken the stew by simmering uncovered, adding a slurry, or finishing with butter."
+    ],
+    "critical_control_points": [
+      "Brown meat in batches; overcrowding causes steaming, not browning.",
+      "Maintain a gentle simmer, not a boil; boiling toughens meat and clouds the liquid.",
+      "Meat should be cut into uniform pieces for even cooking.",
+      "Taste and adjust seasoning near the end; flavors concentrate as liquid reduces.",
+      "Skim excess fat periodically for a cleaner flavor."
+    ],
+    "control_variables": {
+      "heat_level": "medium-high for browning, low for simmering",
+      "temperature_control": "approximate",
+      "moisture_level": "wet",
+      "agitation": "occasional stirring",
+      "time_sensitivity": "low"
+    },
+    "failure_modes": [
+      {
+        "case": "Cooking at a boil",
+        "result": "Meat becomes tough and stringy; liquid becomes cloudy; vegetables disintegrate."
+      },
+      {
+        "case": "Insufficient browning",
+        "result": "Stew lacks depth of flavor; pale color."
+      },
+      {
+        "case": "Not cooking long enough",
+        "result": "Meat remains tough; collagen not fully broken down."
+      },
+      {
+        "case": "Adding quick-cooking vegetables too early",
+        "result": "Vegetables become mushy or disintegrate."
+      }
+    ],
+    "signals": {
+      "visual": "Meat pulls apart easily with a fork; liquid has reduced and thickened; vegetables are tender.",
+      "sound": "Gentle bubbling sound; no vigorous boiling.",
+      "touch": "Fork slides into meat with little resistance."
+    },
+    "output": {
+      "texture": "fall-apart tender meat; tender vegetables; rich, thickened sauce",
+      "appearance": "deep, dark color; thick, cohesive sauce",
+      "flavor": "deeply savory, concentrated, with developed complexity"
+    },
+    "links_to_intents": [
+      "tenderize",
+      "dissolve_collagen",
+      "concentrate_flavor"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "low"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "julienne",
+    "category": "prep",
+    "goal": "Cut vegetables into thin, matchstick-sized strips for uniform cooking and attractive presentation.",
+    "when_to_use": "When a delicate, uniform cut is needed for stir-fries, salads, garnishes, or when precise, even cooking is desired.",
+    "inputs": [
+      "firm vegetable (carrot, bell pepper, zucchini, celery)",
+      "sharp chef's knife or mandoline",
+      "cutting board"
+    ],
+    "equipment": [
+      "sharp chef's knife (8–10 inches)",
+      "cutting board",
+      "optional: mandoline with julienne blade",
+      "optional: bench scraper"
+    ],
+    "steps": [
+      "Wash and peel vegetables if necessary.",
+      "Square off the vegetable by trimming ends and cutting a flat surface on one side to stabilize it.",
+      "Cut the vegetable into manageable lengths (2–3 inches / 5–7.5 cm).",
+      "Slice the vegetable lengthwise into even planks, about 1/8 inch (3 mm) thick.",
+      "Stack the planks and slice lengthwise again into matchsticks, also 1/8 inch (3 mm) thick.",
+      "The resulting pieces should be uniform in length and thickness.",
+      "If using a mandoline: set to julienne setting and pass the vegetable over the blade in a smooth motion."
+    ],
+    "critical_control_points": [
+      "All pieces must be uniform for even cooking and professional appearance.",
+      "Keep fingers tucked in the claw position when using a knife to prevent cuts.",
+      "When using a mandoline, always use a guard or cut-resistant glove.",
+      "Start with square, stable pieces; rounding the vegetable makes consistent cuts difficult."
+    ],
+    "control_variables": {
+      "heat_level": "ambient",
+      "temperature_control": "none",
+      "moisture_level": "dry",
+      "agitation": "none",
+      "time_sensitivity": "none"
+    },
+    "failure_modes": [
+      {
+        "case": "Inconsistent thickness",
+        "result": "Uneven cooking; some pieces burn while others remain undercooked; unattractive presentation."
+      },
+      {
+        "case": "Dull knife",
+        "result": "Ragged cuts; crushed edges; difficulty maintaining consistent size."
+      },
+      {
+        "case": "Rounded vegetables",
+        "result": "Wobbly cutting surface; uneven, unsafe cuts."
+      },
+      {
+        "case": "Pieces too long",
+        "result": "Unwieldy for final dish; may not fit pan properly."
+      }
+    ],
+    "signals": {
+      "visual": "Uniform, thin matchsticks of consistent length and thickness. Clean, straight edges with no crushing.",
+      "touch": "Pieces feel firm and uniform; no ragged edges."
+    },
+    "output": {
+      "texture": "delicate, uniform pieces",
+      "appearance": "elegant, professional matchstick cut",
+      "flavor": "unchanged"
+    },
+    "links_to_intents": [
+      "create_uniformity",
+      "presentation"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "high"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "chiffonade",
+    "category": "prep",
+    "goal": "Cut leafy greens or herbs into thin, delicate ribbons for use as garnish or in cooking.",
+    "when_to_use": "When preparing basil for pesto, garnishing soups with herbs, or cutting leafy greens (spinach, kale) for sautéing or salads.",
+    "inputs": [
+      "leafy greens or herbs (basil, spinach, kale, mint)",
+      "sharp chef's knife",
+      "cutting board"
+    ],
+    "equipment": [
+      "sharp chef's knife",
+      "cutting board",
+      "optional: herb stripper"
+    ],
+    "steps": [
+      "Wash and thoroughly dry the leaves; excess moisture causes sticking and ragged cuts.",
+      "Remove any tough stems or ribs.",
+      "Stack leaves of similar size on top of each other.",
+      "Roll the stack tightly from one end to the other, like a cigar.",
+      "Place the rolled leaves seam-side down on the cutting board.",
+      "Using a sharp knife, slice crosswise into thin ribbons (1/8 to 1/4 inch / 3–6 mm wide).",
+      "Gently fluff the ribbons with your fingers to separate."
+    ],
+    "critical_control_points": [
+      "Leaves must be completely dry to prevent sticking and ensure clean cuts.",
+      "Use a very sharp knife; a dull knife crushes leaves rather than cuts cleanly.",
+      "Roll tightly for even, consistent ribbons.",
+      "Cut with a single, smooth motion; sawing tears leaves.",
+      "For basil, chiffonade immediately before use to prevent browning."
+    ],
+    "control_variables": {
+      "heat_level": "ambient",
+      "temperature_control": "none",
+      "moisture_level": "dry",
+      "agitation": "none",
+      "time_sensitivity": "low"
+    },
+    "failure_modes": [
+      {
+        "case": "Wet leaves",
+        "result": "Leaves stick together; cuts are ragged; herbs may bruise and discolor."
+      },
+      {
+        "case": "Dull knife",
+        "result": "Crushed, bruised edges; uneven ribbons; loss of color and flavor."
+      },
+      {
+        "case": "Roll too loose",
+        "result": "Uneven ribbon widths; leaves may separate during cutting."
+      },
+      {
+        "case": "Cutting too wide",
+        "result": "Ribbons too thick; not true chiffonade; may not integrate well into dish."
+      }
+    ],
+    "signals": {
+      "visual": "Thin, even ribbons of consistent width; clean, straight edges.",
+      "touch": "Ribbons feel light and separate easily; no bruising or crushing."
+    },
+    "output": {
+      "texture": "delicate, fine ribbons",
+      "appearance": "uniform, attractive strips that maintain leaf color",
+      "flavor": "unchanged, with minimal bruising"
+    },
+    "links_to_intents": [
+      "create_uniformity",
+      "presentation"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.98
+  },
+  {
+    "technique": "laminating_dough",
+    "category": "mechanical",
+    "goal": "Create alternating layers of dough and butter through a series of folds and rolls to produce a flaky, layered pastry.",
+    "when_to_use": "When making croissants, puff pastry, Danish pastries, and other laminated doughs where distinct, flaky layers are desired.",
+    "inputs": [
+      "dough (détrempe)",
+      "butter block (beurrage)",
+      "flour for dusting"
+    ],
+    "equipment": [
+      "rolling pin",
+      "bench scraper",
+      "ruler (optional)",
+      "refrigerator",
+      "parchment paper or plastic wrap"
+    ],
+    "steps": [
+      "Prepare the dough and chill thoroughly.",
+      "Shape the butter block into a square or rectangle about half the size of the dough.",
+      "Place the butter block on the dough at a 45-degree angle, or centered depending on method.",
+      "Fold the dough over to enclose the butter completely, sealing edges.",
+      "Roll the dough into a long rectangle, about three times as long as it is wide, maintaining even thickness.",
+      "Fold the rectangle into thirds (business letter fold). This is one \"turn\" or \"fold.\"",
+      "Wrap and chill the dough for 30–60 minutes to relax gluten and re-chill butter.",
+      "Repeat the rolling and folding process for a total of 4–6 turns, chilling between each turn.",
+      "After the final turn, chill the dough for at least 2 hours before shaping and baking."
+    ],
+    "critical_control_points": [
+      "Dough and butter must have similar consistency; if butter is too hard, it shatters; too soft, it squeezes out.",
+      "Maintain cool temperatures throughout; warm butter melts into dough, ruining layers.",
+      "Roll evenly and gently; uneven pressure creates uneven layers.",
+      "Chill between turns to relax gluten and prevent butter from warming.",
+      "Dust lightly with flour as needed, but excess flour prevents layers from adhering properly."
+    ],
+    "control_variables": {
+      "heat_level": "cold",
+      "temperature_control": "critical",
+      "moisture_level": "dry",
+      "agitation": "during rolling only",
+      "time_sensitivity": "medium"
+    },
+    "failure_modes": [
+      {
+        "case": "Butter too warm",
+        "result": "Butter melts into dough; layers are lost; pastry will not puff."
+      },
+      {
+        "case": "Butter too cold",
+        "result": "Butter shatters during rolling; creates uneven, broken layers."
+      },
+      {
+        "case": "Insufficient chilling between turns",
+        "result": "Gluten too elastic; butter softens; layers become indistinct."
+      },
+      {
+        "case": "Rolling unevenly",
+        "result": "Uneven layers; some areas may not puff; others may be too thin."
+      }
+    ],
+    "signals": {
+      "visual": "Distinct layers visible at cut edges; dough surface is smooth and not greasy.",
+      "touch": "Dough feels cool, firm, and pliable; when rolled, it moves evenly without resistance."
+    },
+    "output": {
+      "texture": "flaky, layered, and crisp when baked",
+      "appearance": "distinct, separate layers that puff dramatically",
+      "flavor": "rich, buttery"
+    },
+    "links_to_intents": [
+      "create_flakiness",
+      "create_layers"
+    ],
+    "meta": {
+      "difficulty": "advanced",
+      "precision": "critical"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "making_beurre_blanc",
+    "category": "emulsion",
+    "goal": "Create a rich, tangy, warm emulsion of butter and a reduction of wine, vinegar, and shallots.",
+    "when_to_use": "When serving delicate fish, seafood, poultry, or vegetables with a classic French butter sauce.",
+    "inputs": [
+      "unsalted butter (cold, cut into small cubes)",
+      "shallots (finely minced)",
+      "white wine",
+      "vinegar (white wine or champagne)",
+      "salt, white pepper",
+      "optional: cream (for stability)"
+    ],
+    "equipment": [
+      "small saucepan",
+      "whisk",
+      "fine-mesh strainer"
+    ],
+    "steps": [
+      "In a small saucepan, combine minced shallots, white wine, and vinegar.",
+      "Bring to a simmer over medium heat and reduce until the liquid is almost completely evaporated and the shallots are moist but not swimming (about 2–3 tablespoons remaining). This is the \"au sec\" stage.",
+      "Remove from heat and allow to cool slightly (about 30 seconds).",
+      "Whisk in a few cubes of cold butter until emulsified.",
+      "Return pan to very low heat and continue whisking in butter one or two cubes at a time.",
+      "Maintain the sauce at a warm temperature (120–135°F / 50–57°C); do not let it get hot enough to break.",
+      "Once all butter is incorporated, strain through a fine-mesh strainer to remove shallots (optional).",
+      "Season with salt and white pepper.",
+      "Hold in a warm spot (not over direct heat) and use within 30–60 minutes."
+    ],
+    "critical_control_points": [
+      "Keep the sauce warm, not hot; exceeding 140°F (60°C) will cause the emulsion to break.",
+      "Add butter gradually; adding too much at once overwhelms the emulsion.",
+      "Use cold butter; it helps maintain the emulsion and prevents overheating.",
+      "If the sauce starts to separate, whisk in a tablespoon of cold water or cream to bring it back together.",
+      "The reduction should be concentrated but not burned; burnt shallots create bitterness."
+    ],
+    "control_variables": {
+      "heat_level": "low",
+      "temperature_control": "critical",
+      "moisture_level": "wet",
+      "agitation": "constant whisking",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Sauce gets too hot",
+        "result": "Butter separates; sauce becomes oily and thin; emulsion breaks."
+      },
+      {
+        "case": "Butter added too quickly",
+        "result": "Emulsion fails; sauce separates."
+      },
+      {
+        "case": "Reduction not sufficient",
+        "result": "Too much liquid; sauce will be thin and may not emulsify properly."
+      },
+      {
+        "case": "Reduction too far (burnt)",
+        "result": "Bitter, burnt flavor; sauce is ruined."
+      }
+    ],
+    "signals": {
+      "visual": "Sauce becomes thick, creamy, and pale yellow. It coats the back of a spoon. Should be smooth and uniform.",
+      "touch": "Sauce feels warm but not hot; thick enough to cling.",
+      "sound": "Quiet; no bubbling; gentle whisking sound."
+    },
+    "output": {
+      "texture": "smooth, creamy, and thick",
+      "appearance": "pale yellow, glossy, uniform emulsion",
+      "flavor": "rich, buttery, with bright acidity from wine and vinegar, savory from shallots"
+    },
+    "links_to_intents": [
+      "emulsify",
+      "create_sauce"
+    ],
+    "meta": {
+      "difficulty": "advanced",
+      "precision": "critical"
+    },
+    "confidence": 0.95
+  },
+  {
+    "technique": "plating",
+    "category": "finishing",
+    "goal": "Arrange food on a plate in an aesthetically pleasing manner that enhances the dining experience and highlights the dish's components.",
+    "when_to_use": "When presenting any finished dish where visual appeal is important, especially in restaurant or fine dining contexts.",
+    "inputs": [
+      "cooked main component (protein, pasta, etc.)",
+      "sauce",
+      "vegetables or garnishes",
+      "plate (appropriate size, color, shape)"
+    ],
+    "equipment": [
+      "clean, warm or chilled plates as appropriate",
+      "tweezers or tongs (for precise placement)",
+      "spoons (for sauces)",
+      "ring mold (optional)",
+      "squeeze bottles (for sauces)",
+      "paper towels (for clean-up)"
+    ],
+    "steps": [
+      "Select an appropriate plate: size should frame the food, color should contrast or complement.",
+      "Warm plates for hot dishes, chill for cold dishes to maintain temperature.",
+      "Place the main component first, usually at the center or slightly off-center.",
+      "Add sauce: pool under the main component, drizzle around, or use as dots or swooshes.",
+      "Arrange vegetable components and garnishes with intention, creating height and visual interest.",
+      "Use odd numbers of elements (3, 5) for natural, asymmetrical composition.",
+      "Consider negative space; not every part of the plate needs to be covered.",
+      "Wipe plate rim clean of any drips or smudges before serving.",
+      "Add final touches: microgreens, herbs, finishing salt, or oil."
+    ],
+    "critical_control_points": [
+      "Plate temperature must match dish; hot food on cold plates cools too quickly.",
+      "All components should be edible; avoid non-edible garnishes.",
+      "Sauce placement should be intentional, not accidental drips.",
+      "Maintain consistent style; each plate in a service should look similar.",
+      "Work quickly to ensure food is served at the proper temperature."
+    ],
+    "control_variables": {
+      "heat_level": "temperature of plates",
+      "temperature_control": "intentional",
+      "moisture_level": "dry plate surface",
+      "agitation": "none",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Overcrowding the plate",
+        "result": "Cluttered appearance; components compete visually; difficult to eat."
+      },
+      {
+        "case": "Using cold plates for hot food",
+        "result": "Food cools rapidly; fat congeals; flavor diminished."
+      },
+      {
+        "case": "Sloppy sauce application",
+        "result": "Unprofessional appearance; sauce may drip off plate."
+      },
+      {
+        "case": "Inconsistent plating",
+        "result": "Unprofessional; reflects poorly on the kitchen."
+      }
+    ],
+    "signals": {
+      "visual": "Clean, intentional arrangement with balanced composition. Plate rim clean. Colors complement or contrast. Height and asymmetry create visual interest.",
+      "touch": "Plate is appropriate temperature; components are stable and not sliding."
+    },
+    "output": {
+      "texture": "preserved from cooking",
+      "appearance": "aesthetically pleasing, professional, appetizing",
+      "flavor": "unchanged from cooking"
+    },
+    "links_to_intents": [
+      "present",
+      "enhance_appearance"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "high"
+    },
+    "confidence": 0.94
+  }
+]

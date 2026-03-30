@@ -1,0 +1,516 @@
+[
+  {
+    "technique": "tempering_chocolate",
+    "category": "heat_application",
+    "goal": "Stabilize cocoa butter crystals to produce a glossy, snappy chocolate with a smooth texture.",
+    "when_to_use": "When melting chocolate for coating, molding, or dipping where a professional, stable finish is required.",
+    "inputs": [
+      "chopped chocolate",
+      "optional: seed chocolate (already tempered)"
+    ],
+    "equipment": [
+      "accurate thermometer",
+      "heat source (e.g., water bath, microwave)",
+      "spatula",
+      "bowl",
+      "marble slab (optional)"
+    ],
+    "steps": [
+      "Finely chop the chocolate for even melting.",
+      "Heat the chocolate to a specific melting temperature to melt all crystals: 45–50°C (113–122°F) for dark chocolate, 40–45°C (104–113°F) for milk and white chocolate.",
+      "Cool the chocolate to a specific cooling temperature to form stable crystals: 28–29°C (82–84°F) for dark, 27–28°C (80–82°F) for milk, 24–25°C (74–76°F) for white.",
+      "While cooling, stir or work the chocolate on a cool surface to encourage the formation of stable crystals. This can be done by seeding with solid tempered chocolate or by stirring/working until it thickens.",
+      "Gently reheat the chocolate to the final tempering range to melt any unstable crystals: 31–32°C (88–90°F) for dark, 30–31°C (86–88°F) for milk, 27–28°C (80–82°F) for white. Stir well to ensure an even temperature."
+    ],
+    "critical_control_points": [
+      "Do not exceed the melting temperature, or all crystals will be destroyed.",
+      "Maintain the chocolate within the tempering range after it has been tempered.",
+      "If using the seed method, ensure the seed chocolate is itself in temper.",
+      "Avoid introducing any moisture, which will cause the chocolate to seize."
+    ],
+    "control_variables": {
+      "heat_level": "controlled, low",
+      "temperature_control": "critical",
+      "moisture_level": "dry",
+      "agitation": "constant during cooling and reheating",
+      "time_sensitivity": "medium"
+    },
+    "failure_modes": [
+      {
+        "case": "Chocolate not properly tempered",
+        "result": "Mottled, grey appearance; soft texture; lacks snap; difficult to unmold."
+      },
+      {
+        "case": "Overheating during tempering",
+        "result": "Loss of all stable crystals; chocolate will be out of temper."
+      },
+      {
+        "case": "Moisture introduced",
+        "result": "Chocolate seizes into a stiff, grainy paste."
+      }
+    ],
+    "signals": {
+      "visual": "When testing on a cool surface, properly tempered chocolate sets in a few minutes with a clean, silky, shiny surface. The side in contact with the surface is glossy.",
+      "touch": "Hardens with a firm snap at room temperature, not soft or greasy.",
+      "sound": "Makes a sharp 'snap' when broken."
+    },
+    "output": {
+      "texture": "hard, snappy, smooth",
+      "appearance": "glossy, uniform, with a clean shine",
+      "flavor": "clean chocolate flavor, no dulling"
+    },
+    "links_to_intents": [
+      "set_texture",
+      "crisp"
+    ],
+    "meta": {
+      "difficulty": "advanced",
+      "precision": "critical"
+    },
+    "confidence": 0.98
+  },
+  {
+    "technique": "making_ganache",
+    "category": "emulsion",
+    "goal": "Create a smooth, stable mixture of chocolate and cream that can be used as a filling, glaze, or sauce.",
+    "when_to_use": "When preparing fillings for truffles, cakes, or pastries, or as a sauce for desserts.",
+    "inputs": [
+      "chocolate (chopped)",
+      "heavy cream",
+      "optional: butter, flavorings (e.g., liqueur)"
+    ],
+    "equipment": [
+      "heatproof bowl",
+      "saucepan",
+      "whisk",
+      "spatula",
+      "thermometer (optional)"
+    ],
+    "steps": [
+      "Finely chop the chocolate and place it in a heatproof bowl.",
+      "In a saucepan, bring the cream just to a simmer (scalding).",
+      "Pour the hot cream over the chopped chocolate.",
+      "Let the mixture stand for 30–60 seconds to allow the chocolate to melt.",
+      "Gently stir from the center outwards with a whisk or spatula until the mixture is smooth and emulsified.",
+      "If using butter or other flavorings, incorporate them at this stage while the ganache is still warm."
+    ],
+    "critical_control_points": [
+      "Do not let the cream boil vigorously, as this can cause the emulsion to break.",
+      "If the chocolate is not fully melted by the residual heat, warm the mixture briefly in a double boiler, stirring constantly.",
+      "Do not stir aggressively, especially in the initial stages, to avoid incorporating air and creating bubbles.",
+      "Do not add cold liquid to the warm ganache, as this can cause the emulsion to separate."
+    ],
+    "control_variables": {
+      "heat_level": "medium for cream",
+      "temperature_control": "approximate",
+      "moisture_level": "wet",
+      "agitation": "gentle",
+      "time_sensitivity": "low"
+    },
+    "failure_modes": [
+      {
+        "case": "Ganache is overheated or cooled too quickly",
+        "result": "Oil separates and the mixture becomes greasy or grainy."
+      },
+      {
+        "case": "Too much liquid added to warm chocolate",
+        "result": "The emulsion can break, leading to separation."
+      },
+      {
+        "case": "Cream is too hot",
+        "result": "Can cause the chocolate to overheat and the fat to separate."
+      }
+    ],
+    "signals": {
+      "visual": "Smooth, homogenous mixture that is thick and glossy.",
+      "touch": "Warm and fluid, thickens as it cools.",
+      "sound": "Quiet, no spattering."
+    },
+    "output": {
+      "texture": "smooth, thick, and creamy (soft or firm depending on chocolate-to-cream ratio)",
+      "appearance": "glossy and homogenous",
+      "flavor": "rich, concentrated chocolate flavor"
+    },
+    "links_to_intents": [
+      "emulsify",
+      "set_texture"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "pan_searing",
+    "category": "heat_application",
+    "goal": "Create a browned crust via Maillard reaction on meats, fish, or vegetables.",
+    "when_to_use": "When cooking protein or vegetables where a flavorful, crispy surface is desired and a quick cooking time is appropriate.",
+    "inputs": [
+      "protein or vegetable",
+      "dry surface",
+      "high smoke point oil"
+    ],
+    "equipment": [
+      "heavy pan (steel or cast iron)",
+      "heat source",
+      "tongs or spatula"
+    ],
+    "steps": [
+      "Preheat pan until very hot (surface temperature approx. 200°C).",
+      "Add a small amount of high smoke point oil to the pan.",
+      "Place food in the pan without moving it.",
+      "Allow crust to form undisturbed for 60–120 seconds, depending on thickness.",
+      "Flip the food once and repeat the process on the other side.",
+      "Optional: Baste with butter and aromatics in the last minute of cooking."
+    ],
+    "critical_control_points": [
+      "Pan must be fully preheated before adding food.",
+      "Surface of the food must be dry; pat with a paper towel if necessary.",
+      "Do not overcrowd the pan; leave space between pieces to avoid steaming.",
+      "Do not move the food during the initial sear; it will release naturally when the crust is formed."
+    ],
+    "control_variables": {
+      "heat_level": "high",
+      "temperature_control": "approximate",
+      "moisture_level": "dry",
+      "agitation": "none",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Pan not hot enough",
+        "result": "Meat will steam, resulting in a grey color and no crust."
+      },
+      {
+        "case": "Food too wet",
+        "result": "Moisture will cool the pan and cause steaming instead of searing."
+      },
+      {
+        "case": "Overcrowding the pan",
+        "result": "Temperature drops, causing steaming and uneven browning."
+      },
+      {
+        "case": "Moving food too early",
+        "result": "Crust will tear and food will stick to the pan."
+      }
+    ],
+    "signals": {
+      "visual": "Deep golden to dark brown crust forms on the contact surface. Maillard browning is visible.",
+      "sound": "Loud, continuous sizzling sound. If the sizzle weakens, the pan temperature has dropped too much.",
+      "touch": "Food releases easily from the pan when the crust is properly formed."
+    },
+    "output": {
+      "texture": "crisp exterior, tender interior",
+      "appearance": "golden to dark brown crust",
+      "flavor": "intense, roasted, umami-rich flavor"
+    },
+    "links_to_intents": [
+      "crisp",
+      "set_texture"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "technique": "blanching",
+    "category": "water_based",
+    "goal": "Partially cook vegetables or fruit to inactivate enzymes, set color, or loosen skins.",
+    "when_to_use": "Before freezing vegetables, before peeling tomatoes or stone fruits, or to par-cook vegetables for stir-fries or salads.",
+    "inputs": [
+      "vegetables or fruit",
+      "water (large volume)",
+      "salt (optional)"
+    ],
+    "equipment": [
+      "large pot",
+      "colander or spider",
+      "ice water bath (bowl and ice)"
+    ],
+    "steps": [
+      "Bring a large pot of water to a rolling boil.",
+      "Add salt to the water if desired (approx. 2 tablespoons per quart).",
+      "Prepare an ice water bath in a large bowl.",
+      "Add the vegetables or fruit to the boiling water.",
+      "Cook for a short, specified time (e.g., 1–3 minutes for most vegetables, 15–60 seconds for peeling fruits).",
+      "Immediately remove the food from the boiling water and plunge it into the ice water bath to stop the cooking process.",
+      "Once cooled, drain and dry the blanched food."
+    ],
+    "critical_control_points": [
+      "Use a large volume of water to maintain a boil when food is added.",
+      "Cook time is critical and depends on the size and type of food.",
+      "Shocking in ice water is essential to stop the cooking immediately and preserve color, texture, and flavor.",
+      "If blanching for freezing, ensure the food is thoroughly dried before packaging to prevent ice crystal formation."
+    ],
+    "control_variables": {
+      "heat_level": "high",
+      "temperature_control": "precise",
+      "moisture_level": "wet",
+      "agitation": "none",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Blanching too long",
+        "result": "Overcooked, mushy vegetables; loss of nutrients and flavor; skins of fruits may break down."
+      },
+      {
+        "case": "Water volume too small",
+        "result": "Temperature drops when food is added, leading to uneven cooking."
+      },
+      {
+        "case": "Not shocking in ice water",
+        "result": "Vegetables continue to cook from residual heat, resulting in loss of bright color and crisp texture."
+      }
+    ],
+    "signals": {
+      "visual": "Color becomes brighter and more vivid (for green vegetables). The food may become slightly translucent. Skins of fruits will start to split or wrinkle.",
+      "sound": "Rapid bubbling resumes shortly after food is added, indicating the water has returned to a boil.",
+      "touch": "Vegetables become slightly tender but still firm."
+    },
+    "output": {
+      "texture": "tender-crisp",
+      "appearance": "bright, vibrant color",
+      "flavor": "fresh, slightly cooked, with enhanced sweetness in some vegetables"
+    },
+    "links_to_intents": [
+      "set_texture",
+      "remove_skin"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "technique": "emulsifying_mayonnaise",
+    "category": "emulsion",
+    "goal": "Create a stable emulsion of oil in water (or acid) using egg yolk as an emulsifier.",
+    "when_to_use": "When making a stable, thick, creamy sauce or dressing from oil, acid, and egg yolks.",
+    "inputs": [
+      "egg yolk(s)",
+      "oil (neutral or flavorful)",
+      "acid (lemon juice or vinegar)",
+      "salt",
+      "optional: mustard"
+    ],
+    "equipment": [
+      "bowl (preferably metal or glass)",
+      "whisk or immersion blender",
+      "measuring spoons",
+      "dropper or small pitcher for oil (optional)"
+    ],
+    "steps": [
+      "Ensure all ingredients are at room temperature.",
+      "In a bowl, combine the egg yolk(s), a small amount of the acid, salt, and mustard if using.",
+      "Whisk the mixture until it is well combined and slightly thickened.",
+      "Start adding the oil very slowly, drop by drop, while whisking constantly.",
+      "As the mixture thickens and the emulsion forms, the oil can be added in a thin, steady stream while continuing to whisk.",
+      "Once a thick, stable emulsion is formed, whisk in the remaining acid and any other flavorings. Adjust seasoning."
+    ],
+    "critical_control_points": [
+      "All ingredients should be at room temperature.",
+      "Start with a small amount of the water phase (acid and yolk) and add oil very slowly at the beginning.",
+      "Add oil gradually; adding too much oil too quickly will cause the emulsion to break.",
+      "If using a whisk, whisk constantly to ensure the oil is sheared into small droplets."
+    ],
+    "control_variables": {
+      "heat_level": "ambient",
+      "temperature_control": "none",
+      "moisture_level": "wet",
+      "agitation": "constant during oil addition",
+      "time_sensitivity": "medium"
+    },
+    "failure_modes": [
+      {
+        "case": "Oil added too quickly",
+        "result": "Mayonnaise will break (separate into liquid and oily phases)."
+      },
+      {
+        "case": "Ingredients too cold",
+        "result": "Emulsion may not form properly or will be less stable."
+      },
+      {
+        "case": "Too much water phase relative to oil",
+        "result": "Mayonnaise will be thin and runny."
+      },
+      {
+        "case": "Over-whipping with too much oil",
+        "result": "Mayonnaise can become too thick, or the emulsion can break from shear."
+      }
+    ],
+    "signals": {
+      "visual": "Mixture becomes thick, creamy, and pale yellow. When stable, it will hold its shape.",
+      "sound": "Whisking sound becomes muffled as mixture thickens.",
+      "touch": "Thick and viscous, coats the back of a spoon without running off."
+    },
+    "output": {
+      "texture": "smooth, thick, and creamy",
+      "appearance": "opaque and pale yellow to white",
+      "flavor": "rich, tangy, savory"
+    },
+    "links_to_intents": [
+      "emulsify",
+      "thicken"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "medium"
+    },
+    "confidence": 0.98
+  },
+  {
+    "technique": "making_puff_pastry",
+    "category": "mechanical",
+    "goal": "Create a laminated dough with many alternating layers of dough and butter that will expand dramatically when baked.",
+    "when_to_use": "When making a delicate, flaky, and very light pastry for items like palmiers, vol-au-vents, or mille-feuille.",
+    "inputs": [
+      "flour",
+      "water",
+      "butter (for the dough and for the butter block)",
+      "salt",
+      "optional: lemon juice or vinegar"
+    ],
+    "equipment": [
+      "rolling pin",
+      "bench scraper",
+      "refrigerator",
+      "plastic wrap",
+      "ruler (optional)"
+    ],
+    "steps": [
+      "Prepare a dough (détrempe) by mixing flour, water, salt, and a small amount of butter. Mix minimally, form into a square, and chill.",
+      "Prepare a butter block by shaping cold butter into a square slab about half the size of the dough square.",
+      "Place the butter block on the chilled dough square at a 45-degree angle, then fold the dough flaps over the butter to enclose it completely.",
+      "Roll the dough-butter package into a long rectangle, about 3 times as long as it is wide.",
+      "Fold the rectangle into thirds, like a business letter (this is one 'turn'). Wrap and chill for 30 minutes.",
+      "Repeat the rolling and folding process, giving the dough 5-6 total turns, chilling for 30 minutes between each turn.",
+      "After the final turn, chill the dough for at least an hour before shaping and baking."
+    ],
+    "critical_control_points": [
+      "Keep the dough and butter at a cool temperature throughout the process; if they get too warm, the butter will melt into the dough, ruining the layers.",
+      "The consistency of the dough and butter block must be similar; if the butter is too hard, it will shatter, and if too soft, it will squeeze out.",
+      "Roll evenly to ensure uniform layers.",
+      "Chill the dough between turns to relax the gluten and re-chill the butter.",
+      "Do not let the dough rest too long between turns, as this can allow the gluten to set and make rolling difficult."
+    ],
+    "control_variables": {
+      "heat_level": "cold",
+      "temperature_control": "critical",
+      "moisture_level": "dry",
+      "agitation": "during rolling",
+      "time_sensitivity": "medium"
+    },
+    "failure_modes": [
+      {
+        "case": "Dough or butter gets too warm",
+        "result": "Butter melts into the dough, layers are lost, and the pastry will not puff."
+      },
+      {
+        "case": "Butter block is too hard",
+        "result": "Butter will break through the dough layers during rolling, creating an uneven texture."
+      },
+      {
+        "case": "Not enough turns or chilling",
+        "result": "Insufficient layering, leading to poor rise and flakiness."
+      },
+      {
+        "case": "Rolling too aggressively",
+        "result": "Dough may tear, exposing the butter and ruining the lamination."
+      }
+    ],
+    "signals": {
+      "visual": "Dough should have distinct, even layers visible at the cut edge. It should be smooth and not greasy.",
+      "touch": "Dough should feel cool and firm to the touch, but pliable enough to roll.",
+      "sound": "No signal."
+    },
+    "output": {
+      "texture": "extremely flaky, light, and crisp when baked",
+      "appearance": "many distinct layers that puff up dramatically in the oven",
+      "flavor": "rich, buttery, and delicate"
+    },
+    "links_to_intents": [
+      "create_flakiness",
+      "create_structure"
+    ],
+    "meta": {
+      "difficulty": "advanced",
+      "precision": "critical"
+    },
+    "confidence": 0.98
+  },
+  {
+    "technique": "roasting_vegetables",
+    "category": "heat_application",
+    "goal": "Concentrate flavor and create a tender, caramelized exterior through dry heat.",
+    "when_to_use": "For a wide variety of root vegetables and hardy squashes to bring out their natural sweetness and add depth of flavor.",
+    "inputs": [
+      "vegetables (root vegetables, squashes, cauliflower, etc.)",
+      "oil",
+      "salt",
+      "optional: herbs, spices"
+    ],
+    "equipment": [
+      "baking sheet",
+      "parchment paper or foil (optional)",
+      "mixing bowl"
+    ],
+    "steps": [
+      "Preheat oven to between 375°F and 425°F (190–220°C).",
+      "Cut vegetables into uniform-sized pieces to ensure even cooking.",
+      "Toss the vegetables with oil, salt, and any herbs or spices in a mixing bowl until evenly coated.",
+      "Spread vegetables in a single layer on a baking sheet, leaving space between pieces to allow for browning and to prevent steaming.",
+      "Roast in the preheated oven, flipping or stirring halfway through, until tender and caramelized."
+    ],
+    "critical_control_points": [
+      "Cut vegetables into uniform sizes to ensure even cooking.",
+      "Do not overcrowd the pan; this will cause them to steam instead of roast.",
+      "A high enough oven temperature is needed to achieve browning before the vegetables dry out.",
+      "Flip or stir once to promote even browning on all sides."
+    ],
+    "control_variables": {
+      "heat_level": "medium-high to high",
+      "temperature_control": "approximate",
+      "moisture_level": "dry",
+      "agitation": "once",
+      "time_sensitivity": "medium"
+    },
+    "failure_modes": [
+      {
+        "case": "Overcrowding the pan",
+        "result": "Vegetables steam, becoming soft and pale instead of brown and crisp."
+      },
+      {
+        "case": "Oven temperature too low",
+        "result": "Vegetables dry out before browning or become mushy."
+      },
+      {
+        "case": "Uneven cutting",
+        "result": "Some pieces overcook while others remain undercooked."
+      }
+    ],
+    "signals": {
+      "visual": "Vegetables have golden-brown, caramelized edges and are tender when pierced with a fork.",
+      "sound": "Gentle sizzling sound from the pan when the door is opened.",
+      "touch": "Vegetables are easily pierced with a fork or paring knife."
+    },
+    "output": {
+      "texture": "tender interior with a crisp, caramelized exterior",
+      "appearance": "golden to dark brown edges, deeper color than raw",
+      "flavor": "concentrated, sweet, and nutty"
+    },
+    "links_to_intents": [
+      "crisp",
+      "set_texture"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "low"
+    },
+    "confidence": 0.95
+  }
+]

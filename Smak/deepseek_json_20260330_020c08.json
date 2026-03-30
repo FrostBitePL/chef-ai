@@ -1,0 +1,1091 @@
+[
+  {
+    "ingredient": "mango",
+    "category": "fruit",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "tropical", "slightly acidic"],
+      "aroma": ["tropical", "fruity", "floral", "peach-like"],
+      "intensity": "medium-high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "chile",
+      "lime",
+      "coconut",
+      "ginger",
+      "cilantro",
+      "mint",
+      "vanilla",
+      "rum",
+      "seafood",
+      "pork",
+      "chicken",
+      "avocado",
+      "sticky rice",
+      "passion fruit"
+    ],
+    "contrast_with": [
+      "rich meats",
+      "spicy foods"
+    ],
+    "boosters": [
+      "lime juice",
+      "chile",
+      "salt",
+      "grilling"
+    ],
+    "balancing_elements": [
+      "acid (lime)",
+      "spice (chile)",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "terpenes",
+      "esters",
+      "lactones",
+      "myrcene"
+    ],
+    "confidence": 0.92,
+    "priority": "high"
+  },
+  {
+    "ingredient": "pineapple",
+    "category": "fruit",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "acid", "tropical"],
+      "aroma": ["tropical", "fruity", "floral", "sweet"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "coconut",
+      "rum",
+      "ham",
+      "pork",
+      "chicken",
+      "shrimp",
+      "chile",
+      "mint",
+      "cilantro",
+      "ginger",
+      "vanilla",
+      "brown sugar",
+      "jalapeño",
+      "soy sauce",
+      "teriyaki"
+    ],
+    "contrast_with": [
+      "rich dairy",
+      "strong cheese"
+    ],
+    "boosters": [
+      "grilling",
+      "caramelization",
+      "rum",
+      "chile",
+      "salt"
+    ],
+    "balancing_elements": [
+      "sweetness (brown sugar)",
+      "salt",
+      "spice"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "ethyl butyrate",
+      "allyl hexanoate",
+      "furaneol",
+      "vanillin"
+    ],
+    "confidence": 0.93,
+    "priority": "high"
+  },
+  {
+    "ingredient": "papaya",
+    "category": "fruit",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "tropical", "slightly musky"],
+      "aroma": ["tropical", "musky", "floral", "melon-like"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "lime",
+      "chile",
+      "coconut",
+      "mint",
+      "ginger",
+      "vanilla",
+      "seafood",
+      "pork",
+      "chicken",
+      "avocado",
+      "passion fruit",
+      "rum"
+    ],
+    "contrast_with": [
+      "heavy creams",
+      "strong cheese"
+    ],
+    "boosters": [
+      "lime juice",
+      "chile",
+      "salt",
+      "grilling"
+    ],
+    "balancing_elements": [
+      "acid (lime)",
+      "spice",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "esters",
+      "terpenes",
+      "linalool",
+      "benzyl isothiocyanate (green)"
+    ],
+    "confidence": 0.88,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "passion_fruit",
+    "category": "fruit",
+    "flavor_profile": {
+      "primary_tastes": ["sweet", "tart", "intense"],
+      "aroma": ["tropical", "floral", "citrus", "musky"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "coconut",
+      "mango",
+      "vanilla",
+      "champagne",
+      "rum",
+      "lime",
+      "ginger",
+      "chile",
+      "seafood",
+      "poultry",
+      "yogurt",
+      "cream"
+    ],
+    "contrast_with": [
+      "rich fatty foods"
+    ],
+    "boosters": [
+      "sugar",
+      "vanilla",
+      "champagne"
+    ],
+    "balancing_elements": [
+      "sweetness",
+      "cream",
+      "vanilla"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "esters",
+      "terpenes",
+      "sulfur compounds"
+    ],
+    "confidence": 0.89,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "cod",
+    "category": "seafood",
+    "flavor_profile": {
+      "primary_tastes": ["mild", "umami", "delicate"],
+      "aroma": ["clean", "mild", "ocean"],
+      "intensity": "low",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "lemon",
+      "butter",
+      "parsley",
+      "garlic",
+      "white wine",
+      "tomato",
+      "olive oil",
+      "potato",
+      "mushroom",
+      "dill",
+      "capers",
+      "anchovy",
+      "breadcrumbs"
+    ],
+    "contrast_with": [
+      "strong spices",
+      "heavy sauces"
+    ],
+    "boosters": [
+      "butter",
+      "lemon",
+      "salt",
+      "poaching",
+      "baking"
+    ],
+    "balancing_elements": [
+      "acid (lemon)",
+      "fat (butter)",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "TMAO (trimethylamine oxide)",
+      "aldehydes"
+    ],
+    "confidence": 0.91,
+    "priority": "high"
+  },
+  {
+    "ingredient": "halibut",
+    "category": "seafood",
+    "flavor_profile": {
+      "primary_tastes": ["mild", "umami", "sweet"],
+      "aroma": ["clean", "mild", "ocean"],
+      "intensity": "low",
+      "fat_content": "low-medium"
+    },
+    "pairs_with": [
+      "lemon",
+      "butter",
+      "olive oil",
+      "white wine",
+      "caper",
+      "herbs (dill, parsley, tarragon)",
+      "tomato",
+      "garlic",
+      "asparagus",
+      "potato",
+      "cream"
+    ],
+    "contrast_with": [
+      "strong spices",
+      "heavy meats"
+    ],
+    "boosters": [
+      "butter",
+      "lemon",
+      "grilling",
+      "poaching",
+      "salt"
+    ],
+    "balancing_elements": [
+      "acid",
+      "fat",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "TMAO",
+      "aldehydes"
+    ],
+    "confidence": 0.9,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "lobster",
+    "category": "seafood",
+    "flavor_profile": {
+      "primary_tastes": ["umami", "sweet", "briny"],
+      "aroma": ["sweet", "ocean", "nutty", "rich"],
+      "intensity": "medium-high",
+      "fat_content": "low (meat), high (tomalley, roe)"
+    },
+    "pairs_with": [
+      "butter",
+      "lemon",
+      "garlic",
+      "tarragon",
+      "champagne",
+      "white wine",
+      "cognac",
+      "cream",
+      "tomato",
+      "corn",
+      "caviar",
+      "scallion",
+      "vanilla"
+    ],
+    "contrast_with": [
+      "strong spices",
+      "acidic fruits"
+    ],
+    "boosters": [
+      "butter",
+      "lemon",
+      "grilling",
+      "steaming",
+      "salt"
+    ],
+    "balancing_elements": [
+      "acid (lemon)",
+      "fat (butter)",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "pyrazines (cooked)",
+      "TMAO",
+      "amino acids",
+      "bromophenols"
+    ],
+    "confidence": 0.93,
+    "priority": "high"
+  },
+  {
+    "ingredient": "crab",
+    "category": "seafood",
+    "flavor_profile": {
+      "primary_tastes": ["umami", "sweet", "briny"],
+      "aroma": ["sweet", "ocean", "nutty", "delicate"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "butter",
+      "lemon",
+      "garlic",
+      "chive",
+      "mayonnaise",
+      "old bay seasoning",
+      "white wine",
+      "avocado",
+      "corn",
+      "cilantro",
+      "chile",
+      "pasta"
+    ],
+    "contrast_with": [
+      "strong red wines",
+      "heavy cream sauces"
+    ],
+    "boosters": [
+      "butter",
+      "lemon",
+      "old bay",
+      "steaming",
+      "salt"
+    ],
+    "balancing_elements": [
+      "acid",
+      "fat",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "pyrazines",
+      "TMAO",
+      "amino acids"
+    ],
+    "confidence": 0.92,
+    "priority": "high"
+  },
+  {
+    "ingredient": "mussel",
+    "category": "seafood",
+    "flavor_profile": {
+      "primary_tastes": ["umami", "briny", "sweet"],
+      "aroma": ["ocean", "sweet", "seaweed"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "garlic",
+      "white wine",
+      "parsley",
+      "shallot",
+      "cream",
+      "saffron",
+      "tomato",
+      "chorizo",
+      "fennel",
+      "lemon",
+      "butter",
+      "fries"
+    ],
+    "contrast_with": [
+      "strong spices",
+      "sweet fruits"
+    ],
+    "boosters": [
+      "white wine",
+      "garlic",
+      "butter",
+      "steaming",
+      "salt"
+    ],
+    "balancing_elements": [
+      "acid (wine)",
+      "fat (butter, cream)",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "dimethyl sulfide",
+      "TMAO",
+      "amino acids"
+    ],
+    "confidence": 0.91,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "clam",
+    "category": "seafood",
+    "flavor_profile": {
+      "primary_tastes": ["umami", "briny", "sweet"],
+      "aroma": ["ocean", "briny", "clean", "mineral"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "garlic",
+      "white wine",
+      "parsley",
+      "butter",
+      "lemon",
+      "pasta",
+      "chorizo",
+      "potato",
+      "cream",
+      "tomato",
+      "bacon",
+      "thyme"
+    ],
+    "contrast_with": [
+      "sweet fruits"
+    ],
+    "boosters": [
+      "white wine",
+      "garlic",
+      "butter",
+      "steaming",
+      "salt"
+    ],
+    "balancing_elements": [
+      "acid",
+      "fat",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "dimethyl sulfide",
+      "TMAO",
+      "amino acids"
+    ],
+    "confidence": 0.92,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "oregano",
+    "category": "herb",
+    "flavor_profile": {
+      "primary_tastes": ["herbal", "bitter", "pungent"],
+      "aroma": ["herbal", "earthy", "minty", "slightly spicy"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "tomato",
+      "olive oil",
+      "garlic",
+      "lamb",
+      "pork",
+      "chicken",
+      "pizza",
+      "pasta",
+      "lemon",
+      "eggplant",
+      "zucchini",
+      "feta",
+      "olives",
+      "red wine"
+    ],
+    "contrast_with": [
+      "delicate fish",
+      "sweet desserts"
+    ],
+    "boosters": [
+      "dried (concentrates flavor)",
+      "olive oil",
+      "garlic",
+      "roasting"
+    ],
+    "balancing_elements": [
+      "acid (tomato, lemon)",
+      "fat (olive oil)",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "carvacrol",
+      "thymol",
+      "terpenes",
+      "cymene"
+    ],
+    "confidence": 0.94,
+    "priority": "high"
+  },
+  {
+    "ingredient": "sage",
+    "category": "herb",
+    "flavor_profile": {
+      "primary_tastes": ["herbal", "slightly bitter", "camphor-like"],
+      "aroma": ["herbal", "earthy", "camphor", "minty", "woody"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "pork",
+      "poultry",
+      "butter",
+      "sage",
+      "onion",
+      "apple",
+      "pear",
+      "sausage",
+      "stuffing",
+      "risotto",
+      "pumpkin",
+      "winter squash"
+    ],
+    "contrast_with": [
+      "delicate fish",
+      "sweet desserts"
+    ],
+    "boosters": [
+      "butter",
+      "frying (crisps)",
+      "roasting",
+      "salt"
+    ],
+    "balancing_elements": [
+      "fat (butter)",
+      "sweetness (apple, squash)",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "thujone",
+      "camphor",
+      "cineole",
+      "borneol"
+    ],
+    "confidence": 0.93,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "dill",
+    "category": "herb",
+    "flavor_profile": {
+      "primary_tastes": ["herbal", "fresh", "slightly sweet"],
+      "aroma": ["fresh", "herbal", "anise-like", "green"],
+      "intensity": "medium-high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "salmon",
+      "cucumber",
+      "yogurt",
+      "potato",
+      "seafood",
+      "lemon",
+      "mustard",
+      "sour cream",
+      "pickles",
+      "eggs",
+      "beets"
+    ],
+    "contrast_with": [
+      "strong red meats",
+      "heavy cream sauces"
+    ],
+    "boosters": [
+      "fresh",
+      "yogurt",
+      "lemon",
+      "salmon"
+    ],
+    "balancing_elements": [
+      "acid",
+      "fat (yogurt, sour cream)",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "carvone (dill ether)",
+      "limonene",
+      "terpenes"
+    ],
+    "confidence": 0.92,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "tarragon",
+    "category": "herb",
+    "flavor_profile": {
+      "primary_tastes": ["herbal", "anise-like", "slightly sweet"],
+      "aroma": ["anise", "licorice", "herbal", "sweet"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "chicken",
+      "seafood",
+      "egg",
+      "béarnaise sauce",
+      "shallot",
+      "white wine",
+      "vinegar",
+      "lobster",
+      "mushroom",
+      "mustard"
+    ],
+    "contrast_with": [
+      "strong red meats",
+      "sweet desserts"
+    ],
+    "boosters": [
+      "fresh",
+      "butter",
+      "shallot",
+      "vinegar"
+    ],
+    "balancing_elements": [
+      "fat (butter)",
+      "acid (vinegar)",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "estragole (methyl chavicol)",
+      "anethole"
+    ],
+    "confidence": 0.91,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "coriander_seed",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": ["citrus", "floral", "slightly sweet"],
+      "aroma": ["citrus", "floral", "woody", "warm"],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "cumin",
+      "garlic",
+      "citrus",
+      "lamb",
+      "pork",
+      "poultry",
+      "beans",
+      "lentils",
+      "curry",
+      "carrot",
+      "beets",
+      "sausage",
+      "pickling"
+    ],
+    "contrast_with": [
+      "sweet desserts"
+    ],
+    "boosters": [
+      "toasting",
+      "grinding fresh",
+      "cumin"
+    ],
+    "balancing_elements": [
+      "acid",
+      "fat",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "linalool",
+      "geraniol",
+      "terpenes"
+    ],
+    "confidence": 0.92,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "cardamom",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": ["floral", "spicy", "slightly sweet", "camphor-like"],
+      "aroma": ["floral", "citrus", "pine", "spicy"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "coffee",
+      "chai tea",
+      "orange",
+      "cinnamon",
+      "saffron",
+      "rose",
+      "lamb",
+      "pork",
+      "rice",
+      "baked goods",
+      "cream",
+      "honey"
+    ],
+    "contrast_with": [
+      "strong savory meats",
+      "sweet desserts (balances)"
+    ],
+    "boosters": [
+      "toasting",
+      "grinding fresh",
+      "warm liquids"
+    ],
+    "balancing_elements": [
+      "sweetness",
+      "fat (cream)",
+      "acid"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "cineole",
+      "terpenes",
+      "linalool",
+      "terpinyl acetate"
+    ],
+    "confidence": 0.91,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "nutmeg",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": ["warm", "sweet", "nutty", "slightly bitter"],
+      "aroma": ["nutty", "warm", "woody", "sweet"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "cream",
+      "milk",
+      "egg",
+      "pumpkin",
+      "spinach",
+      "potato",
+      "pasta",
+      "cheese (Parmesan)",
+      "béchamel",
+      "eggnog",
+      "apple",
+      "pear",
+      "rum"
+    ],
+    "contrast_with": [
+      "strong spices",
+      "delicate fish"
+    ],
+    "boosters": [
+      "fresh grating",
+      "warm liquids",
+      "cream"
+    ],
+    "balancing_elements": [
+      "fat (cream, butter)",
+      "sweetness",
+      "acid"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "myristicin",
+      "sabinene",
+      "terpenes"
+    ],
+    "confidence": 0.94,
+    "priority": "high"
+  },
+  {
+    "ingredient": "zucchini",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["mild", "slightly sweet", "vegetal"],
+      "aroma": ["green", "mild", "fresh"],
+      "intensity": "low",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "garlic",
+      "olive oil",
+      "tomato",
+      "basil",
+      "mint",
+      "lemon",
+      "Parmesan",
+      "eggplant",
+      "onion",
+      "summer squash",
+      "pasta"
+    ],
+    "contrast_with": [
+      "heavy meats",
+      "strong spices"
+    ],
+    "boosters": [
+      "grilling",
+      "roasting",
+      "garlic",
+      "olive oil",
+      "salt"
+    ],
+    "balancing_elements": [
+      "fat (olive oil)",
+      "salt",
+      "acid"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "aldehydes",
+      "pyrazines"
+    ],
+    "confidence": 0.88,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "cucumber",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": ["refreshing", "mild", "slightly sweet"],
+      "aroma": ["green", "fresh", "melon-like"],
+      "intensity": "low",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "dill",
+      "yogurt",
+      "mint",
+      "lemon",
+      "lime",
+      "salmon",
+      "shrimp",
+      "vodka",
+      "tomato",
+      "onion",
+      "cucumber",
+      "sour cream"
+    ],
+    "contrast_with": [
+      "heavy meats",
+      "strong spices"
+    ],
+    "boosters": [
+      "chilling",
+      "salt (draws out water)",
+      "yogurt",
+      "dill"
+    ],
+    "balancing_elements": [
+      "acid",
+      "fat (yogurt)",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "aldehydes (nonenal)",
+      "alcohols"
+    ],
+    "confidence": 0.9,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "almond",
+    "category": "nut",
+    "flavor_profile": {
+      "primary_tastes": ["nutty", "sweet", "slightly bitter (skin)"],
+      "aroma": ["nutty", "sweet", "floral (marzipan)"],
+      "intensity": "medium",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "chocolate",
+      "vanilla",
+      "orange",
+      "cherry",
+      "apricot",
+      "honey",
+      "butter",
+      "cream",
+      "coffee",
+      "peach",
+      "lamb",
+      "fish",
+      "green beans"
+    ],
+    "contrast_with": [
+      "strong savory flavors"
+    ],
+    "boosters": [
+      "toasting",
+      "roasting",
+      "salt",
+      "vanilla"
+    ],
+    "balancing_elements": [
+      "sweetness",
+      "salt",
+      "fat (from other sources)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "benzaldehyde",
+      "pyrazines"
+    ],
+    "confidence": 0.92,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "hazelnut",
+    "category": "nut",
+    "flavor_profile": {
+      "primary_tastes": ["nutty", "sweet", "rich"],
+      "aroma": ["nutty", "roasted", "sweet", "woody"],
+      "intensity": "medium-high",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "chocolate",
+      "coffee",
+      "caramel",
+      "vanilla",
+      "pear",
+      "fig",
+      "apple",
+      "cheese (blue, goat)",
+      "pork",
+      "mushroom",
+      "truffle"
+    ],
+    "contrast_with": [
+      "strong savory spices"
+    ],
+    "boosters": [
+      "roasting",
+      "toasting",
+      "salt",
+      "chocolate"
+    ],
+    "balancing_elements": [
+      "sweetness",
+      "salt",
+      "acid"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "filbertone (heptenone)",
+      "pyrazines"
+    ],
+    "confidence": 0.91,
+    "priority": "medium"
+  },
+  {
+    "ingredient": "coffee",
+    "category": "beverage",
+    "flavor_profile": {
+      "primary_tastes": ["bitter", "acidic", "slightly sweet"],
+      "aroma": ["roasted", "nutty", "chocolate", "caramel", "fruity"],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "chocolate",
+      "cream",
+      "vanilla",
+      "cinnamon",
+      "cardamom",
+      "nuts",
+      "caramel",
+      "beef",
+      "pork",
+      "lamb",
+      "chile",
+      "citrus",
+      "rum",
+      "bourbon"
+    ],
+    "contrast_with": [
+      "delicate fish",
+      "light vegetables"
+    ],
+    "boosters": [
+      "roasting (beans)",
+      "fresh grinding",
+      "cream",
+      "sugar"
+    ],
+    "balancing_elements": [
+      "sweetness (sugar)",
+      "fat (cream)",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "pyrazines",
+      "furans",
+      "phenols",
+      "thiols"
+    ],
+    "confidence": 0.95,
+    "priority": "high"
+  },
+  {
+    "ingredient": "beer",
+    "category": "beverage",
+    "flavor_profile": {
+      "primary_tastes": ["bitter", "slightly sweet", "carbonated"],
+      "aroma": ["malty", "hoppy", "fruity", "yeasty", "roasted (dark beer)"],
+      "intensity": "varies by style",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "beef",
+      "pork",
+      "sausage",
+      "cheese",
+      "pretzel",
+      "mustard",
+      "bratwurst",
+      "onion",
+      "mushroom",
+      "seafood (beer battered)",
+      "chile",
+      "barbecue"
+    ],
+    "contrast_with": [
+      "delicate desserts",
+      "light fish"
+    ],
+    "boosters": [
+      "cooking (stews, batters)",
+      "bitterness (hops)",
+      "carbonation"
+    ],
+    "balancing_elements": [
+      "fat",
+      "sweetness",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "myrcene (hops)",
+      "humulene",
+      "esters",
+      "pyrazines"
+    ],
+    "confidence": 0.91,
+    "priority": "medium"
+  }
+]

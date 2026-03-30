@@ -1,0 +1,479 @@
+[
+  {
+    "ingredient": "egg",
+    "ingredient_state": "whole in shell",
+    "intent": "set_texture",
+    "process": "protein coagulation",
+    "mechanism": "ovalbumin and ovotransferrin denaturation",
+    "target": {
+      "temperature_c": 63,
+      "time_minutes": 45
+    },
+    "tolerance": {
+      "temperature_c": [-1, 1],
+      "time_minutes": [-5, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 60,
+        "effect": "white remains runny and partially translucent"
+      },
+      "upper": {
+        "temperature_c": 65,
+        "effect": "yolk begins to set, becomes creamy but not liquid"
+      }
+    },
+    "equipment": "sous vide",
+    "condition": "when you want fully set white with liquid, runny yolk",
+    "decision": "Cook egg at exactly 63°C for 45 minutes",
+    "failure_state": [
+      {
+        "case": "temperature_below_60",
+        "result": "white not set, unsafe for consumption"
+      },
+      {
+        "case": "temperature_above_65",
+        "result": "yolk partially set, loses runny texture"
+      }
+    ],
+    "effect": "Ovotransferrin denatures at 61-62°C setting white; ovalbumin requires higher temperature, allowing yolk to remain liquid at 63°C",
+    "sensory": {
+      "texture": "set white, liquid yolk",
+      "juiciness": "high",
+      "appearance": "opaque white, golden flowing yolk"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.98
+  },
+  {
+    "ingredient": "beef",
+    "ingredient_state": "whole muscle, tender cut (steak)",
+    "intent": "set_texture",
+    "process": "protein coagulation",
+    "mechanism": "myosin denaturation and myoglobin redox state",
+    "target": {
+      "temperature_c": 55,
+      "time_minutes": 120
+    },
+    "tolerance": {
+      "temperature_c": [-1, 1],
+      "time_minutes": [-30, 120]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 52,
+        "effect": "rare: deep red, very soft, myosin minimally denatured"
+      },
+      "upper": {
+        "temperature_c": 57,
+        "effect": "medium: pink center, firmer, collagen begins contraction"
+      }
+    },
+    "equipment": "sous vide",
+    "condition": "when aiming for medium-rare steak with pink center and high juiciness",
+    "decision": "Cook beef at 55°C for 1-4 hours depending on thickness",
+    "failure_state": [
+      {
+        "case": "temperature_below_52",
+        "result": "rare or blue rare; may be too soft for preference"
+      },
+      {
+        "case": "temperature_above_57",
+        "result": "loss of pink color; moisture loss increases significantly"
+      }
+    ],
+    "effect": "Myosin denatures around 50-55°C; myoglobin denatures at higher temperatures, determining color; collagen begins contracting above 55°C",
+    "sensory": {
+      "texture": "tender with slight resistance",
+      "juiciness": "high",
+      "appearance": "pink center, brown edges after searing"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "beef",
+    "ingredient_state": "tough cut with high collagen (brisket, short ribs)",
+    "intent": "break_down_collagen",
+    "process": "collagen hydrolysis",
+    "mechanism": "collagen to gelatin conversion",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 480
+    },
+    "tolerance": {
+      "temperature_c": [-3, 3],
+      "time_minutes": [-120, 240]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "collagen breakdown extremely slow; meat remains tough"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "risk of meat becoming mushy as muscle fibers completely break down"
+      }
+    },
+    "equipment": "sous vide or pressure cooker",
+    "condition": "when cooking tough cuts to achieve shreddable, fork-tender texture",
+    "decision": "Cook at 85°C for 8-24 hours until collagen fully converts",
+    "failure_state": [
+      {
+        "case": "too_low_temperature",
+        "result": "meat remains tough and chewy"
+      },
+      {
+        "case": "too_long_time",
+        "result": "meat becomes mushy, loses structure"
+      }
+    ],
+    "effect": "Collagen hydrolyzes to gelatin at 70-90°C; conversion rate doubles every 10°C increase; gelatin adds mouthfeel and perceived moisture",
+    "sensory": {
+      "texture": "shreddable, fork-tender",
+      "juiciness": "high from rendered fat and gelatin",
+      "appearance": "brown, fibers separate easily"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "salmon",
+    "ingredient_state": "fish fillet",
+    "intent": "set_texture",
+    "process": "protein coagulation",
+    "mechanism": "myosin denaturation and muscle fiber separation",
+    "target": {
+      "temperature_c": 50,
+      "time_minutes": 25
+    },
+    "tolerance": {
+      "temperature_c": [-1, 1],
+      "time_minutes": [-5, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 45,
+        "effect": "rare: translucent, custard-like, very soft"
+      },
+      "upper": {
+        "temperature_c": 52,
+        "effect": "firmer, flakes more distinctly, less silky"
+      }
+    },
+    "equipment": "sous vide",
+    "condition": "when aiming for medium-rare salmon with silky, custard-like texture",
+    "decision": "Cook salmon at 50°C for 20-30 minutes",
+    "failure_state": [
+      {
+        "case": "temperature_below_48",
+        "result": "texture too raw for preference"
+      },
+      {
+        "case": "temperature_above_52",
+        "result": "fish becomes flaky and loses silky texture"
+      }
+    ],
+    "effect": "Myosin denatures at 45-50°C; higher temperatures cause actin denaturation and moisture expulsion",
+    "sensory": {
+      "texture": "tender, silky, barely flaking",
+      "juiciness": "high",
+      "appearance": "opaque exterior, slightly translucent center"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "chicken breast",
+    "ingredient_state": "whole muscle, lean",
+    "intent": "set_texture",
+    "process": "protein coagulation",
+    "mechanism": "myosin and actin denaturation",
+    "target": {
+      "temperature_c": 60,
+      "time_minutes": 60
+    },
+    "tolerance": {
+      "temperature_c": [-1, 1],
+      "time_minutes": [-15, 30]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 57,
+        "effect": "texture is very soft, almost raw-like, safety concerns"
+      },
+      "upper": {
+        "temperature_c": 64,
+        "effect": "fibers become dry and stringy, moisture loss accelerates"
+      }
+    },
+    "equipment": "sous vide",
+    "condition": "when aiming for tender, juicy chicken breast",
+    "decision": "Cook chicken breast at 60°C for 1-2 hours",
+    "failure_state": [
+      {
+        "case": "temperature_above_64",
+        "result": "dry, stringy, chalky texture"
+      }
+    ],
+    "effect": "Myosin denatures at 50-55°C; actin denatures at 66-70°C; cooking at 60°C sets myosin while actin remains undenatured, preserving moisture",
+    "sensory": {
+      "texture": "tender, moist, slices cleanly",
+      "juiciness": "high",
+      "appearance": "opaque white throughout"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "starch",
+    "ingredient_state": "suspended in liquid (cornstarch, flour)",
+    "intent": "gelatinize_starch",
+    "process": "starch gelatinization",
+    "mechanism": "hydrogen bond disruption and granule swelling",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 2
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-1, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 60,
+        "effect": "partial gelatinization; sauce remains thin"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "full gelatinization; risk of scorching if not stirred"
+      }
+    },
+    "equipment": "pot, whisk",
+    "condition": "when thickening sauces, gravies, or puddings with starch",
+    "decision": "Heat starch-liquid mixture to 85°C while stirring until thickened",
+    "failure_state": [
+      {
+        "case": "insufficient_temperature",
+        "result": "sauce remains thin, starchy taste"
+      },
+      {
+        "case": "no_stirring",
+        "result": "lumps form, uneven thickening"
+      }
+    ],
+    "effect": "Starch granules absorb water and swell between 60-90°C, releasing amylose and creating viscosity; cornstarch gelatinizes at lower temperature than flour",
+    "sensory": {
+      "texture": "smooth, thickened",
+      "appearance": "translucent to opaque depending on starch type"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "cream or oil",
+    "ingredient_state": "liquid fat with water",
+    "intent": "emulsify",
+    "process": "emulsification",
+    "mechanism": "surfactant stabilization of fat-water interface",
+    "target": {
+      "temperature_c": 30,
+      "time_minutes": 1
+    },
+    "tolerance": {
+      "temperature_c": [-10, 20],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 4,
+        "effect": "fats too solid; emulsification difficult"
+      },
+      "upper": {
+        "temperature_c": 70,
+        "effect": "proteins denature; emulsion breaks"
+      }
+    },
+    "equipment": "blender or whisk",
+    "condition": "when making mayonnaise, hollandaise, or vinaigrette",
+    "decision": "Add oil slowly to water phase while mixing vigorously; use emulsifier (egg yolk, mustard, lecithin)",
+    "failure_state": [
+      {
+        "case": "oil_added_too_quickly",
+        "result": "emulsion breaks; mixture separates"
+      },
+      {
+        "case": "temperature_too_high",
+        "result": "proteins coagulate; sauce curdles"
+      }
+    ],
+    "effect": "Emulsifiers reduce surface tension, allowing fat droplets to remain suspended in water; slow incorporation creates smaller droplets for more stable emulsion",
+    "sensory": {
+      "texture": "creamy, homogeneous",
+      "appearance": "opaque, uniform"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "potatoes",
+    "ingredient_state": "cut into pieces",
+    "intent": "gelatinize_starch",
+    "process": "starch gelatinization",
+    "mechanism": "granule swelling and cell wall rupture",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 20
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-5, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "starch not fully gelatinized; potatoes remain firm"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "cell walls rupture; potatoes become mushy"
+      }
+    },
+    "equipment": "pot of water or sous vide",
+    "condition": "when cooking potatoes for mashing or tender texture",
+    "decision": "Cook potatoes in water at 85°C until fork-tender",
+    "failure_state": [
+      {
+        "case": "too_low_temperature",
+        "result": "potatoes remain hard, waxy interior"
+      },
+      {
+        "case": "boiling_too_vigorous",
+        "result": "potatoes break apart, waterlogged"
+      }
+    ],
+    "effect": "Starch gelatinizes at 60-80°C; pectin in cell walls breaks down at higher temperatures; cooking at 85°C balances tenderness with structure",
+    "sensory": {
+      "texture": "tender, fluffy when mashed",
+      "appearance": "opaque throughout"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "sugar",
+    "ingredient_state": "dry crystals",
+    "intent": "caramelize",
+    "process": "caramelization",
+    "mechanism": "thermal decomposition and polymerization",
+    "target": {
+      "temperature_c": 170,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-2, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 150,
+        "effect": "sugar melts but minimal caramelization"
+      },
+      "upper": {
+        "temperature_c": 190,
+        "effect": "caramel burns, becomes bitter and black"
+      }
+    },
+    "equipment": "heavy-bottomed pot",
+    "condition": "when making caramel sauce or candy",
+    "decision": "Heat sugar without stirring until melted and amber-colored; add liquid carefully",
+    "failure_state": [
+      {
+        "case": "stirring_after_melting",
+        "result": "crystallization, grainy texture"
+      },
+      {
+        "case": "temperature_too_high",
+        "result": "burnt, bitter caramel"
+      }
+    ],
+    "effect": "Sugar decomposes above 150°C, creating hundreds of flavor compounds; crystallization occurs if crystals seed the melt",
+    "sensory": {
+      "texture": "fluid when hot, brittle when cool",
+      "appearance": "amber to deep brown"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "chocolate",
+    "ingredient_state": "solid, unmelted",
+    "intent": "temper",
+    "process": "crystallization",
+    "mechanism": "beta V crystal formation",
+    "target": {
+      "temperature_c": 31.5,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-0.5, 0.5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 28,
+        "effect": "beta V crystals do not form; chocolate blooms"
+      },
+      "upper": {
+        "temperature_c": 34,
+        "effect": "beta V crystals melt; temper lost"
+      }
+    },
+    "equipment": "thermometer, marble or sous vide",
+    "condition": "when making chocolate coatings or molded chocolates",
+    "decision": "Heat dark chocolate to 45-50°C to melt all crystals, cool to 27-28°C while stirring to form beta V crystals, reheat to 31-32°C for working",
+    "failure_state": [
+      {
+        "case": "improper_temperature",
+        "result": "bloom (white streaks), poor snap, difficulty unmolding"
+      }
+    ],
+    "effect": "Cocoa butter forms six crystal types; only beta V gives proper snap, gloss, and shrinkage for unmolding",
+    "sensory": {
+      "texture": "snaps cleanly, melts smoothly",
+      "appearance": "glossy, no streaks"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  }
+]

@@ -1,0 +1,678 @@
+[
+  {
+    "technique": "poaching_eggs",
+    "category": "water_based",
+    "goal": "Cook eggs out of the shell in simmering water to produce a tender, cohesive white with a runny yolk.",
+    "when_to_use": "When a soft-cooked, containerless egg is desired for serving on toast, salads, or as a component of dishes like eggs Benedict.",
+    "inputs": [
+      "fresh Grade AA eggs",
+      "water",
+      "optional: vinegar, salt"
+    ],
+    "equipment": [
+      "saucepan or deep skillet",
+      "slotted spoon",
+      "small bowl or ramekin",
+      "thermometer (optional)"
+    ],
+    "steps": [
+      "Fill a saucepan with about 3 inches (7.5 cm) of water and bring to a gentle simmer (180–190°F / 82–88°C).",
+      "Optional: Add 1 tablespoon of vinegar per quart of water to help coagulate the whites faster.",
+      "Crack each egg into a separate small bowl or ramekin.",
+      "Create a gentle vortex in the water by stirring in a circular motion with a spoon.",
+      "Slide the egg from the bowl into the center of the vortex. The swirling water helps the white wrap around the yolk.",
+      "Cook for 3–4 minutes for a runny yolk and set white.",
+      "Remove the egg with a slotted spoon and drain on a paper towel or clean kitchen towel. Trim any ragged edges if desired."
+    ],
+    "critical_control_points": [
+      "Use the freshest eggs possible; older eggs have thinner whites that spread more.",
+      "Water temperature should be below a boil; bubbles should be gentle, not rolling.",
+      "Adding vinegar helps set the whites but can affect flavor; use sparingly.",
+      "Do not overcrowd the pan; cook no more than 3–4 eggs at a time."
+    ],
+    "control_variables": {
+      "heat_level": "low-medium",
+      "temperature_control": "approximate",
+      "moisture_level": "wet",
+      "agitation": "initial vortex only",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Water boiling vigorously",
+        "result": "Eggs will break apart and become ragged; whites may become tough and rubbery."
+      },
+      {
+        "case": "Using old eggs",
+        "result": "Whites will spread excessively, resulting in a flat, unappealing shape with many streamers."
+      },
+      {
+        "case": "Cooking too long",
+        "result": "Yolk will set and become hard, losing the desired runny texture."
+      },
+      {
+        "case": "Overcrowding",
+        "result": "Eggs will stick together and water temperature will drop, leading to uneven cooking."
+      }
+    ],
+    "signals": {
+      "visual": "White turns opaque and sets around the yolk. Yolk remains soft and round.",
+      "sound": "Water should be at a quiet simmer with occasional bubbles, not a loud boil.",
+      "touch": "White feels firm when gently prodded with a spoon; yolk gives slightly without feeling hard."
+    },
+    "output": {
+      "texture": "tender, set white with a soft, runny yolk",
+      "appearance": "compact, oval shape with a smooth white and intact yolk",
+      "flavor": "delicate, clean egg flavor"
+    },
+    "links_to_intents": [
+      "set_texture",
+      "preserve_delicacy"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "technique": "braising",
+    "category": "water_based",
+    "goal": "Toughen cuts of meat by cooking them slowly in a small amount of liquid, converting collagen to gelatin and tenderizing the tissue.",
+    "when_to_use": "When cooking tough, collagen-rich cuts of meat (e.g., brisket, short ribs, shoulder) to achieve a tender, succulent result.",
+    "inputs": [
+      "tough cut of meat",
+      "aromatic vegetables (onions, carrots, celery)",
+      "braising liquid (stock, wine, water)",
+      "oil or fat",
+      "salt, pepper, herbs"
+    ],
+    "equipment": [
+      "Dutch oven or heavy pot with tight-fitting lid",
+      "tongs",
+      "stove",
+      "oven (optional)"
+    ],
+    "steps": [
+      "Pat meat dry and season generously with salt and pepper.",
+      "Heat oil in a Dutch oven over medium-high heat.",
+      "Sear meat on all sides until well browned, working in batches if necessary to avoid overcrowding.",
+      "Remove meat and set aside.",
+      "Add aromatic vegetables and cook until softened and beginning to brown.",
+      "Optional: Deglaze the pan with a small amount of braising liquid, scraping up browned bits.",
+      "Return meat to the pot. Add enough braising liquid to come about one-third to halfway up the meat (not fully submerged).",
+      "Add herbs and bring liquid to a simmer.",
+      "Cover the pot and transfer to an oven preheated to 300–325°F (150–160°C).",
+      "Cook until meat is fork-tender, typically 2–4 hours depending on size and cut."
+    ],
+    "critical_control_points": [
+      "Searing the meat properly develops deep flavor through the Maillard reaction.",
+      "Do not submerge the meat fully; braising is a combination of steaming and simmering.",
+      "Maintain a low, steady simmer; boiling will toughen proteins and dry out the meat.",
+      "Cook until meat is fork-tender, not just until it reaches a specific temperature."
+    ],
+    "control_variables": {
+      "heat_level": "medium-high for searing, low for cooking",
+      "temperature_control": "approximate",
+      "moisture_level": "humid",
+      "agitation": "none",
+      "time_sensitivity": "low"
+    },
+    "failure_modes": [
+      {
+        "case": "Meat fully submerged in liquid",
+        "result": "Meat will boil rather than braise, resulting in dry, tough texture."
+      },
+      {
+        "case": "Cooking at too high a temperature",
+        "result": "Meat fibers will contract and squeeze out moisture, becoming dry and stringy."
+      },
+      {
+        "case": "Not cooking long enough",
+        "result": "Collagen will not fully break down into gelatin; meat remains tough and chewy."
+      },
+      {
+        "case": "Insufficient browning",
+        "result": "Lack of depth and complexity in the final flavor of both meat and sauce."
+      }
+    ],
+    "signals": {
+      "visual": "Meat pulls apart easily with a fork. Liquid has reduced slightly and may be darker. Meat may be glistening with rendered fat.",
+      "sound": "Gentle bubbling sound from the pot; no vigorous boiling.",
+      "touch": "Fork slides into meat with little resistance; meat feels tender and yields to pressure."
+    },
+    "output": {
+      "texture": "fall-apart tender, moist, and succulent",
+      "appearance": "dark, browned exterior; meat may have a deep, rich color throughout",
+      "flavor": "deep, savory, and complex, with concentrated meat and vegetable flavors"
+    },
+    "links_to_intents": [
+      "dissolve_collagen",
+      "tenderize",
+      "extract_flavor"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "low"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "making_roux",
+    "category": "prep",
+    "goal": "Create a cooked mixture of flour and fat used as a thickening agent for sauces, soups, and stews.",
+    "when_to_use": "When preparing béchamel, velouté, espagnole, or any dish that requires a stable, smooth-thickened sauce base.",
+    "inputs": [
+      "fat (butter, oil, or animal fat)",
+      "flour (equal parts by weight)"
+    ],
+    "equipment": [
+      "heavy-bottomed saucepan",
+      "whisk",
+      "heat source"
+    ],
+    "steps": [
+      "Melt the fat in a heavy-bottomed saucepan over medium heat.",
+      "Add the flour all at once and whisk to combine.",
+      "Cook the mixture, whisking constantly, to the desired color:",
+      "  - White roux: cook for 2–3 minutes until raw flour smell dissipates but no color develops.",
+      "  - Blond roux: cook for 5–8 minutes until mixture turns pale yellow and smells nutty.",
+      "  - Brown roux: cook for 10–15 minutes or longer until mixture is a deep brown and has a pronounced nutty, toasted aroma.",
+      "Remove from heat and allow to cool slightly before adding liquid."
+    ],
+    "critical_control_points": [
+      "Whisk constantly to prevent burning, especially when making brown roux.",
+      "Heat level should be medium to medium-low; high heat will burn the flour before it browns properly.",
+      "The darker the roux, the less thickening power it has; adjust quantity accordingly.",
+      "Allow roux to cool slightly before adding liquid to prevent splattering."
+    ],
+    "control_variables": {
+      "heat_level": "medium to medium-low",
+      "temperature_control": "approximate",
+      "moisture_level": "dry",
+      "agitation": "constant",
+      "time_sensitivity": "high for brown roux"
+    },
+    "failure_modes": [
+      {
+        "case": "Roux cooked too fast on high heat",
+        "result": "Flour burns; sauce will have a bitter, acrid flavor."
+      },
+      {
+        "case": "Not whisking constantly",
+        "result": "Flour will stick and burn on the bottom; lumps will form when liquid is added."
+      },
+      {
+        "case": "Insufficient cooking of white roux",
+        "result": "Sauce will taste of raw flour."
+      }
+    ],
+    "signals": {
+      "visual": "White: opaque, no color. Blond: pale yellow. Brown: deep brown, resembling milk chocolate.",
+      "sound": "Sizzling sound when flour is added; quiet, steady cooking with occasional popping as moisture evaporates.",
+      "smell": "White: raw flour smell dissipates. Blond: nutty aroma. Brown: intense, toasty, nutty aroma."
+    },
+    "output": {
+      "texture": "smooth paste that flows easily when warm",
+      "appearance": "uniform color from white to deep brown depending on cooking time",
+      "flavor": "neutral (white) to nutty, toasty (brown)"
+    },
+    "links_to_intents": [
+      "thicken",
+      "add_flavor"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.98
+  },
+  {
+    "technique": "kneading_dough",
+    "category": "mechanical",
+    "goal": "Develop gluten structure in bread dough to create a strong, elastic network capable of trapping gas and producing a well-risen loaf.",
+    "when_to_use": "When making yeasted breads, pizza dough, and some enriched doughs where structure and elasticity are desired.",
+    "inputs": [
+      "bread dough (flour, water, yeast, salt, optional fat/sugar)"
+    ],
+    "equipment": [
+      "work surface",
+      "bench scraper",
+      "optional: stand mixer with dough hook"
+    ],
+    "steps": [
+      "Form the dough into a ball on a lightly floured work surface.",
+      "Using the heels of your hands, push the dough away from you, stretching it.",
+      "Fold the dough back over itself.",
+      "Rotate the dough 90 degrees.",
+      "Repeat the push, fold, rotate motion rhythmically and consistently.",
+      "Continue kneading until the dough becomes smooth, elastic, and passes the windowpane test: stretch a small piece of dough thin enough to see light through it without tearing.",
+      "Shape the dough into a smooth ball and place in a lightly oiled bowl for fermentation."
+    ],
+    "critical_control_points": [
+      "Add flour sparingly during kneading; too much will make the dough stiff and dry.",
+      "Use the heels of your hands, not fingertips, to push the dough effectively.",
+      "For wet doughs, use a bench scraper to gather and fold the dough instead of adding excess flour.",
+      "Kneading time varies by dough hydration and gluten strength; use the windowpane test to determine doneness, not time."
+    ],
+    "control_variables": {
+      "heat_level": "ambient",
+      "temperature_control": "none",
+      "moisture_level": "moderate",
+      "agitation": "constant",
+      "time_sensitivity": "low"
+    },
+    "failure_modes": [
+      {
+        "case": "Under-kneading",
+        "result": "Weak gluten structure; dough will not hold gas, resulting in a dense, flat loaf."
+      },
+      {
+        "case": "Over-kneading (by hand)",
+        "result": "Gluten structure breaks down; dough becomes sticky and slack; bread will be dense."
+      },
+      {
+        "case": "Adding too much flour",
+        "result": "Dough becomes stiff and dry; bread will be heavy with a tight crumb."
+      }
+    ],
+    "signals": {
+      "visual": "Dough transforms from a rough, shaggy mass into a smooth, satiny ball. When stretched, it forms a thin, translucent membrane without tearing.",
+      "touch": "Dough feels supple, elastic, and springs back when pressed gently. It no longer feels sticky.",
+      "sound": "Quiet; no specific sound signal."
+    },
+    "output": {
+      "texture": "smooth, elastic, and extensible",
+      "appearance": "satin-smooth surface, uniform in color",
+      "flavor": "neutral at this stage"
+    },
+    "links_to_intents": [
+      "create_structure",
+      "develop_gluten"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "reducing_sauce",
+    "category": "reduction",
+    "goal": "Concentrate flavors and thicken a liquid by evaporating water through gentle simmering.",
+    "when_to_use": "When a sauce or stock needs to be thickened and its flavors intensified without adding thickeners like flour or starch.",
+    "inputs": [
+      "liquid (stock, wine, pan juices, cream)",
+      "optional: aromatics, butter for finishing"
+    ],
+    "equipment": [
+      "saucepan or skillet (wide surface area for faster reduction)",
+      "wooden spoon or whisk",
+      "heat source"
+    ],
+    "steps": [
+      "Pour the liquid into a saucepan or skillet.",
+      "Bring the liquid to a simmer over medium heat.",
+      "Reduce heat to maintain a gentle, consistent simmer.",
+      "Allow the liquid to simmer, uncovered, until it has reduced to the desired volume and consistency.",
+      "Skim any foam or impurities that rise to the surface.",
+      "Optional: Finish by swirling in cold butter off the heat to add richness and shine."
+    ],
+    "critical_control_points": [
+      "Do not boil vigorously; a gentle simmer prevents scorching and emulsion breakdown.",
+      "A wider pan increases surface area and speeds evaporation.",
+      "Taste frequently to avoid over-reducing, which can concentrate salt and bitterness.",
+      "For cream-based reductions, watch closely as they can scorch easily."
+    ],
+    "control_variables": {
+      "heat_level": "medium-low",
+      "temperature_control": "approximate",
+      "moisture_level": "dry (evaporating)",
+      "agitation": "occasional stirring",
+      "time_sensitivity": "medium"
+    },
+    "failure_modes": [
+      {
+        "case": "Boiling too vigorously",
+        "result": "Sauce may become cloudy, emulsions may break, and flavor may become harsh."
+      },
+      {
+        "case": "Over-reducing",
+        "result": "Sauce becomes too salty, bitter, or syrupy; may scorch and burn."
+      },
+      {
+        "case": "Not skimming impurities",
+        "result": "Sauce will be cloudy and may have off-flavors."
+      }
+    ],
+    "signals": {
+      "visual": "Volume decreases visibly; bubbles become larger as liquid thickens. Sauce coats the back of a spoon without running off immediately (nappe).",
+      "sound": "Simmering sound; bubbling becomes more concentrated as liquid reduces.",
+      "smell": "Flavors become more concentrated and pronounced."
+    },
+    "output": {
+      "texture": "thickened, from lightly syrupy to heavily glazing",
+      "appearance": "darker and more concentrated in color; glossy if finished with butter",
+      "flavor": "intensified and concentrated"
+    },
+    "links_to_intents": [
+      "thicken",
+      "concentrate_flavor"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "grilling",
+    "category": "heat_application",
+    "goal": "Cook food over direct, high-intensity radiant heat to achieve a charred exterior with smoky flavors while preserving interior moisture.",
+    "when_to_use": "When cooking tender cuts of meat, fish, vegetables, and some fruits to impart a smoky, charred flavor and attractive grill marks.",
+    "inputs": [
+      "protein or vegetable",
+      "oil (for brushing)",
+      "salt, pepper, marinade (optional)"
+    ],
+    "equipment": [
+      "grill (charcoal or gas)",
+      "tongs",
+      "grill brush",
+      "instant-read thermometer",
+      "optional: grill basket for vegetables, smoking chips"
+    ],
+    "steps": [
+      "Clean and oil the grill grates to prevent sticking.",
+      "Preheat the grill to the appropriate temperature: high for searing (450–550°F / 230–290°C), medium for cooking through.",
+      "Pat food dry and brush lightly with oil. Season with salt and pepper.",
+      "Place food on the grill at a 45-degree angle to the grates for crosshatch marks.",
+      "Cook without moving for 2–4 minutes to achieve browning and grill marks.",
+      "Rotate 90 degrees and cook for another 2–4 minutes for crosshatch marks.",
+      "Flip and repeat on the second side.",
+      "Move to a cooler zone of the grill or reduce heat to finish cooking through.",
+      "Remove from grill and let rest before serving."
+    ],
+    "critical_control_points": [
+      "Preheat grill thoroughly; a hot grill prevents sticking and ensures good browning.",
+      "Oil the food, not the grates, to prevent sticking and flare-ups.",
+      "Do not move food until it releases easily from the grates; this indicates a proper crust has formed.",
+      "Use a two-zone fire: one hot zone for searing, one cooler zone for gentle finishing.",
+      "Manage flare-ups by moving food away from flames or closing the lid to reduce oxygen."
+    ],
+    "control_variables": {
+      "heat_level": "high for searing, medium for finishing",
+      "temperature_control": "approximate",
+      "moisture_level": "dry surface",
+      "agitation": "minimal (flip once, rotate once)",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Grill not hot enough",
+        "result": "Food sticks, lacks grill marks, and steams rather than sears."
+      },
+      {
+        "case": "Frequent flipping",
+        "result": "Poor crust development; grill marks may be faint or absent."
+      },
+      {
+        "case": "Fat dripping causing flare-ups",
+        "result": "Uneven charring, burnt exterior, and acrid smoke flavor."
+      },
+      {
+        "case": "Overcrowding",
+        "result": "Steaming instead of grilling; poor browning."
+      }
+    ],
+    "signals": {
+      "visual": "Deep brown, slightly charred grill marks; meat juices rise to the surface; desired doneness achieved.",
+      "sound": "Loud sizzling when food hits the grates; quieting as cooking progresses.",
+      "touch": "Food releases easily from grates when ready to flip; firm to the touch when done (for proteins)."
+    },
+    "output": {
+      "texture": "charred, crisp exterior with moist interior",
+      "appearance": "distinct grill marks (crosshatch), slightly blackened edges",
+      "flavor": "smoky, charred, intensely savory from Maillard browning"
+    },
+    "links_to_intents": [
+      "crisp",
+      "add_smoke_flavor"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "high"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "whipping_cream",
+    "category": "mechanical",
+    "goal": "Incorporate air into heavy cream to create a stable, light, and aerated foam for toppings and fillings.",
+    "when_to_use": "When a light, fluffy, and stable cream topping or filling is needed for desserts, pastries, or beverages.",
+    "inputs": [
+      "heavy cream (at least 30% milk fat)",
+      "sugar (optional)",
+      "vanilla or other flavorings (optional)",
+      "optional: stabilizer (e.g., gelatin, mascarpone)"
+    ],
+    "equipment": [
+      "chilled bowl",
+      "chilled beaters or whisk",
+      "stand mixer or hand mixer",
+      "optional: hand whisk"
+    ],
+    "steps": [
+      "Chill the bowl, beaters, and cream thoroughly (at least 12 hours for cream, 30 minutes for equipment).",
+      "Pour cold cream into the chilled bowl.",
+      "Start whipping at low speed to avoid splashing, then increase to medium-high.",
+      "When the cream begins to thicken, add sugar and flavorings if using.",
+      "Continue whipping until soft peaks form: peaks curl over when the beater is lifted.",
+      "For stiffer peaks, continue whipping until peaks stand upright but still look glossy.",
+      "Stop immediately to avoid over-whipping."
+    ],
+    "critical_control_points": [
+      "Cream and equipment must be thoroughly chilled; warm cream will not whip properly.",
+      "Use cream with at least 30% butterfat; lower fat content will not whip or will collapse quickly.",
+      "Stop at the desired consistency; over-whipping leads to grainy, butter-like texture.",
+      "If adding sugar, add it after the cream has begun to thicken to avoid destabilizing the foam."
+    ],
+    "control_variables": {
+      "heat_level": "cold",
+      "temperature_control": "critical",
+      "moisture_level": "dry",
+      "agitation": "constant during whipping",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Over-whipping",
+        "result": "Cream separates into butter and buttermilk; grainy, greasy texture."
+      },
+      {
+        "case": "Cream not cold enough",
+        "result": "Cream will not whip properly; may remain liquid or become soupy."
+      },
+      {
+        "case": "Using cream with insufficient fat",
+        "result": "Foam will be unstable and will collapse quickly; may not hold peaks at all."
+      },
+      {
+        "case": "Adding sugar too early",
+        "result": "Sugar interferes with fat globule coalescence; cream will whip slower and may have lower volume."
+      }
+    ],
+    "signals": {
+      "visual": "Cream transitions from liquid to thickened, then to soft peaks that curl, and finally to stiff, glossy peaks.",
+      "sound": "Whipping sound becomes muffled as cream thickens; when over-whipped, the sound becomes slapping as the mass separates.",
+      "touch": "Cream clings to the whisk; at soft peak stage it falls in soft mounds; at stiff peak it holds its shape firmly."
+    },
+    "output": {
+      "texture": "light, airy, and smooth",
+      "appearance": "white, fluffy, with defined peaks",
+      "flavor": "clean, creamy, and sweet (if sugar added)"
+    },
+    "links_to_intents": [
+      "aerate",
+      "create_structure"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.98
+  },
+  {
+    "technique": "deglazing",
+    "category": "prep",
+    "goal": "Dissolve browned food residues (fond) from the bottom of a pan to incorporate their flavor into a sauce or cooking liquid.",
+    "when_to_use": "After searing meat, poultry, or vegetables when a flavorful sauce or base is desired.",
+    "inputs": [
+      "hot pan with browned residue (fond)",
+      "liquid (wine, stock, water, vinegar, juice)"
+    ],
+    "equipment": [
+      "wooden spoon or spatula",
+      "heat source",
+      "optional: whisk"
+    ],
+    "steps": [
+      "After searing meat, remove the meat from the pan and pour off excess fat, leaving the browned bits.",
+      "Return the pan to medium-high heat.",
+      "Pour a small amount of cold or room-temperature liquid into the hot pan (about 1/4 to 1/2 cup per pan).",
+      "Use a wooden spoon or spatula to scrape the bottom of the pan vigorously, loosening the browned residue.",
+      "Allow the liquid to bubble and reduce, incorporating the fond.",
+      "Once the fond is fully dissolved, proceed with building the sauce or use the deglazed liquid as a base."
+    ],
+    "critical_control_points": [
+      "Pan must be hot when liquid is added to ensure rapid evaporation and effective scraping.",
+      "Use enough liquid to cover the bottom of the pan but not so much that it cools the pan excessively.",
+      "Scrape vigorously to release all browned bits; they are the source of flavor.",
+      "If deglazing with wine or alcohol, allow the alcohol to cook off for a few seconds before adding other liquids."
+    ],
+    "control_variables": {
+      "heat_level": "medium-high",
+      "temperature_control": "approximate",
+      "moisture_level": "dry pan initially, then wet",
+      "agitation": "vigorous scraping",
+      "time_sensitivity": "low"
+    },
+    "failure_modes": [
+      {
+        "case": "Pan not hot enough",
+        "result": "Liquid will not reduce quickly; fond may not release effectively; sauce will be thin and lack flavor."
+      },
+      {
+        "case": "Adding cold liquid to a very hot glass or ceramic pan",
+        "result": "Thermal shock may crack the pan."
+      },
+      {
+        "case": "Not scraping thoroughly",
+        "result": "Lost flavor; sauce will be less complex."
+      },
+      {
+        "case": "Excess fat left in pan",
+        "result": "Sauce may be greasy and emulsion may be unstable."
+      }
+    ],
+    "signals": {
+      "visual": "Browned bits release from the pan bottom and dissolve into the liquid; liquid bubbles and reduces; color becomes darker.",
+      "sound": "Loud sizzling and bubbling when liquid hits the hot pan; sound subsides as liquid reduces.",
+      "smell": "Aromatic, savory steam releases; alcohol evaporates if wine is used."
+    },
+    "output": {
+      "texture": "thin to slightly thickened liquid depending on reduction",
+      "appearance": "dark, translucent, often glossy",
+      "flavor": "intensely savory, concentrated meat and browned flavor"
+    },
+    "links_to_intents": [
+      "extract_flavor",
+      "create_sauce_base"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "low"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "confit",
+    "category": "fat_based",
+    "goal": "Preserve and tenderize food (traditionally duck, goose, or pork) by cooking it slowly and completely submerged in fat at a low temperature.",
+    "when_to_use": "When a rich, succulent texture and deeply savory flavor are desired, especially for duck legs, goose, or as a preservation method.",
+    "inputs": [
+      "meat (traditionally duck or goose legs)",
+      "fat (duck fat, goose fat, or olive oil)",
+      "salt",
+      "optional: garlic, herbs, spices"
+    ],
+    "equipment": [
+      "Dutch oven or deep heavy pot",
+      "thermometer",
+      "tongs",
+      "storage container (for long-term storage)"
+    ],
+    "steps": [
+      "Cure the meat: generously salt the meat and refrigerate for 12–24 hours to draw out moisture and season deeply.",
+      "Rinse the meat thoroughly and pat completely dry.",
+      "Place the meat in a single layer in a Dutch oven.",
+      "Cover completely with fat (duck fat, goose fat, or olive oil).",
+      "Add aromatics like garlic, thyme, or bay leaves if desired.",
+      "Heat the pot over low heat until the fat reaches 200–225°F (90–110°C).",
+      "Maintain this temperature, uncovered, for 2–4 hours (for duck) until the meat is very tender and pulls easily from the bone.",
+      "Remove the meat from the fat and allow to cool.",
+      "For storage, pack the confit in a clean container, cover with strained cooking fat, and refrigerate."
+    ],
+    "critical_control_points": [
+      "Maintain a low, consistent temperature (200–225°F / 90–110°C); higher temperatures will fry the meat rather than confit it.",
+      "Meat must be completely submerged in fat to ensure even cooking and preservation.",
+      "Curing is essential for flavor development and moisture control; do not skip.",
+      "After cooking, ensure the meat is thoroughly dried before storage to prevent bacterial growth."
+    ],
+    "control_variables": {
+      "heat_level": "low",
+      "temperature_control": "precise",
+      "moisture_level": "dry surface, submerged in fat",
+      "agitation": "none",
+      "time_sensitivity": "low"
+    },
+    "failure_modes": [
+      {
+        "case": "Temperature too high",
+        "result": "Meat fries instead of confits; exterior becomes tough and dry; interior may be undercooked."
+      },
+      {
+        "case": "Meat not fully submerged",
+        "result": "Exposed areas dry out and burn; uneven cooking."
+      },
+      {
+        "case": "Insufficient curing time",
+        "result": "Meat lacks depth of flavor and may not have the proper texture."
+      },
+      {
+        "case": "Not drying after rinsing",
+        "result": "Excess moisture causes splattering and may prevent proper fat coverage."
+      }
+    ],
+    "signals": {
+      "visual": "Fat remains clear and still (no bubbling); meat shrinks slightly and pulls away from the bone; skin may become slightly crispy if exposed.",
+      "touch": "Meat is fork-tender and falls apart easily; bone can be removed cleanly.",
+      "smell": "Rich, savory, and deeply aromatic."
+    },
+    "output": {
+      "texture": "fall-apart tender, moist, and silky",
+      "appearance": "pale to golden, glossy from fat",
+      "flavor": "intensely savory, rich, and deeply seasoned"
+    },
+    "links_to_intents": [
+      "tenderize",
+      "preserve",
+      "add_richness"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "critical"
+    },
+    "confidence": 0.96
+  }
+]

@@ -1,0 +1,1044 @@
+[
+  {
+    "ingredient": "pork",
+    "ingredient_state": "whole muscle, tough cut (shoulder, butt)",
+    "intent": "break_down_collagen",
+    "process": "collagen hydrolysis",
+    "mechanism": "collagen to gelatin conversion",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 480
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-120, 240]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "collagen breakdown very slow; meat remains tough"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "meat becomes mushy; fibers disintegrate"
+      }
+    },
+    "equipment": "pressure cooker or sous vide",
+    "condition": "when making pulled pork or carnitas",
+    "decision": "Cook until meat shreds easily with fork",
+    "failure_state": [
+      {
+        "case": "insufficient_cooking_time",
+        "result": "meat tough, collagen not fully converted"
+      },
+      {
+        "case": "temperature_too_high",
+        "result": "meat dry, stringy, or mushy"
+      }
+    ],
+    "effect": "Collagen hydrolyzes to gelatin at 70-90°C, converting tough connective tissue into tender, shreddable meat",
+    "sensory": {
+      "texture": "shreddable, fork-tender",
+      "juiciness": "high from gelatin and rendered fat",
+      "appearance": "brown, fibers separate easily"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "pork shoulder",
+    "ingredient_state": "cubed",
+    "intent": "pressure_cook",
+    "process": "collagen hydrolysis",
+    "mechanism": "accelerated gelatin conversion",
+    "target": {
+      "temperature_c": 120,
+      "time_minutes": 45
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-10, 15]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 30,
+        "effect": "meat not fully tender"
+      },
+      "upper": {
+        "time_minutes": 60,
+        "effect": "meat becomes mushy"
+      }
+    },
+    "equipment": "pressure cooker",
+    "condition": "when making Pressure-Cooked Carnitas",
+    "decision": "Cook under pressure for 45 minutes; natural release",
+    "failure_state": [
+      {
+        "case": "quick_release",
+        "result": "meat may become tough from rapid pressure drop"
+      }
+    ],
+    "effect": "Pressure cooker raises boiling point to 120°C, accelerating collagen hydrolysis 4-5x faster than simmering",
+    "sensory": {
+      "texture": "tender, shreddable",
+      "juiciness": "high",
+      "appearance": "brown after crisping"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "pork",
+    "ingredient_state": "cooked, shredded",
+    "intent": "crisp",
+    "process": "maillard reaction",
+    "mechanism": "surface browning",
+    "target": {
+      "temperature_c": 200,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-20, 20],
+      "time_minutes": [-3, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 150,
+        "effect": "slow browning; meat dries out before crisping"
+      },
+      "upper": {
+        "temperature_c": 230,
+        "effect": "burns before interior heats"
+      }
+    },
+    "equipment": "broiler or skillet",
+    "condition": "after pressure cooking pork for carnitas",
+    "decision": "Spread shredded pork on baking sheet; broil or pan-fry until edges crisp",
+    "failure_state": [
+      {
+        "case": "no_crisping",
+        "result": "soft, unappealing texture"
+      }
+    ],
+    "effect": "High heat creates Maillard browning on surface, adding texture contrast to tender interior",
+    "sensory": {
+      "texture": "crisp edges, tender interior",
+      "appearance": "brown, caramelized",
+      "flavor": "concentrated, savory"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "lamb",
+    "ingredient_state": "whole muscle, tough cut (shoulder, leg)",
+    "intent": "break_down_collagen",
+    "process": "collagen hydrolysis",
+    "mechanism": "collagen to gelatin conversion",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 480
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-120, 240]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "collagen breakdown very slow"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "meat becomes dry and stringy"
+      }
+    },
+    "equipment": "sous vide or pressure cooker",
+    "condition": "when making braised lamb dishes like tajine",
+    "decision": "Cook until meat is fork-tender and pulls apart",
+    "failure_state": [
+      {
+        "case": "undercooked",
+        "result": "tough, chewy texture"
+      }
+    ],
+    "effect": "Lamb shoulder contains significant collagen that converts to gelatin with long, slow cooking",
+    "sensory": {
+      "texture": "tender, falls apart",
+      "juiciness": "high",
+      "appearance": "brown, fibers separate"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "short ribs",
+    "ingredient_state": "whole, bone-in",
+    "intent": "break_down_collagen",
+    "process": "collagen hydrolysis",
+    "mechanism": "collagen to gelatin conversion",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 720
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-240, 240]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "meat remains tough"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "meat disintegrates, bones fall out"
+      }
+    },
+    "equipment": "sous vide or pressure cooker",
+    "condition": "when making Korean Short-Rib Lettuce Wraps",
+    "decision": "Cook until meat is tender enough to pull from bone easily",
+    "failure_state": [
+      {
+        "case": "insufficient_time",
+        "result": "connective tissue not fully broken down; chewy"
+      }
+    ],
+    "effect": "Short ribs have high collagen content requiring extended cooking to convert to gelatin",
+    "sensory": {
+      "texture": "tender, pulls from bone",
+      "juiciness": "high",
+      "appearance": "brown, glazed"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "tomatoes",
+    "ingredient_state": "fresh, whole",
+    "intent": "peel",
+    "process": "thermal skin loosening",
+    "mechanism": "differential expansion",
+    "target": {
+      "temperature_c": 100,
+      "time_minutes": 0.5
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-0.25, 0.5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 80,
+        "effect": "skin does not loosen"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "tomato begins to cook"
+      }
+    },
+    "equipment": "pot, ice bath",
+    "condition": "when removing tomato skins",
+    "decision": "Score X on bottom; blanch in boiling water 30 seconds; transfer to ice bath; peel",
+    "failure_state": [
+      {
+        "case": "no_ice_bath",
+        "result": "carryover cooking; mushy tomato"
+      }
+    ],
+    "effect": "Heat expands flesh faster than skin, loosening attachment; ice bath stops cooking",
+    "sensory": {
+      "texture": "firm, peeled",
+      "appearance": "smooth surface"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "potatoes",
+    "ingredient_state": "whole, unpeeled",
+    "intent": "roast",
+    "process": "starch gelatinization and maillard",
+    "mechanism": "starch swelling and surface browning",
+    "target": {
+      "temperature_c": 200,
+      "time_minutes": 45
+    },
+    "tolerance": {
+      "temperature_c": [-20, 10],
+      "time_minutes": [-10, 15]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 160,
+        "effect": "potatoes cook but do not crisp"
+      },
+      "upper": {
+        "temperature_c": 220,
+        "effect": "outside burns before inside cooks"
+      }
+    },
+    "equipment": "oven, baking sheet",
+    "condition": "when making crispy roasted potatoes",
+    "decision": "Parboil potatoes until edges softened; toss with fat; roast at 200°C until golden and crisp",
+    "failure_state": [
+      {
+        "case": "no_parboil",
+        "result": "dry interior; less crisp exterior"
+      }
+    ],
+    "effect": "Parboiling gelatinizes surface starch, which becomes crisp when roasted; high heat creates Maillard browning",
+    "sensory": {
+      "texture": "crisp exterior, fluffy interior",
+      "appearance": "golden brown"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "french fries",
+    "ingredient_state": "cut potatoes",
+    "intent": "crisp",
+    "process": "double frying",
+    "mechanism": "starch gelatinization and moisture removal",
+    "target": {
+      "temperature_c": 190,
+      "time_minutes": 3
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-1, 1]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 160,
+        "effect": "first fry for par-cooking"
+      },
+      "upper": {
+        "temperature_c": 200,
+        "effect": "burns before interior cooks"
+      }
+    },
+    "equipment": "deep fryer",
+    "condition": "when making crispy french fries",
+    "decision": "Fry first at 160°C until cooked through; fry second at 190°C until golden and crisp",
+    "failure_state": [
+      {
+        "case": "single_fry",
+        "result": "soggy exterior, uneven cooking"
+      }
+    ],
+    "effect": "First fry cooks interior and gelatinizes starch; second fry at higher temperature removes moisture and creates crisp crust",
+    "sensory": {
+      "texture": "crisp exterior, fluffy interior",
+      "appearance": "golden brown"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "onions",
+    "ingredient_state": "thinly sliced",
+    "intent": "caramelize",
+    "process": "caramelization",
+    "mechanism": "sugar breakdown and maillard",
+    "target": {
+      "temperature_c": 150,
+      "time_minutes": 45
+    },
+    "tolerance": {
+      "temperature_c": [-20, 10],
+      "time_minutes": [-15, 30]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 120,
+        "effect": "onions soften but do not brown"
+      },
+      "upper": {
+        "temperature_c": 170,
+        "effect": "burns before softening"
+      }
+    },
+    "equipment": "heavy skillet, fat",
+    "condition": "when making deeply caramelized onions",
+    "decision": "Cook over medium-low heat, stirring occasionally, until deep brown and jammy",
+    "failure_state": [
+      {
+        "case": "high_heat",
+        "result": "burns outside; raw inside"
+      }
+    ],
+    "effect": "Slow cooking allows natural sugars to concentrate and caramelize; Maillard reaction adds savory notes",
+    "sensory": {
+      "texture": "soft, jammy",
+      "appearance": "deep brown",
+      "flavor": "sweet, savory, complex"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "mushrooms",
+    "ingredient_state": "sliced",
+    "intent": "sear",
+    "process": "maillard reaction",
+    "mechanism": "moisture evaporation and browning",
+    "target": {
+      "temperature_c": 180,
+      "time_minutes": 8
+    },
+    "tolerance": {
+      "temperature_c": [-20, 20],
+      "time_minutes": [-3, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 120,
+        "effect": "mushrooms steam; no browning"
+      },
+      "upper": {
+        "temperature_c": 200,
+        "effect": "burns before moisture evaporates"
+      }
+    },
+    "equipment": "hot skillet, oil",
+    "condition": "when browning mushrooms",
+    "decision": "Cook in single layer without stirring until moisture evaporates and browning occurs",
+    "failure_state": [
+      {
+        "case": "overcrowding",
+        "result": "steaming instead of browning"
+      },
+      {
+        "case": "constant_stirring",
+        "result": "no browning; gray texture"
+      }
+    ],
+    "effect": "Mushrooms release significant moisture; must evaporate before surface reaches Maillard temperatures",
+    "sensory": {
+      "texture": "browned, concentrated",
+      "appearance": "golden to dark brown",
+      "flavor": "intense, savory"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "garlic",
+    "ingredient_state": "whole cloves",
+    "intent": "roast",
+    "process": "maillard reaction and caramelization",
+    "mechanism": "sugar concentration and browning",
+    "target": {
+      "temperature_c": 180,
+      "time_minutes": 40
+    },
+    "tolerance": {
+      "temperature_c": [-20, 10],
+      "time_minutes": [-10, 15]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 150,
+        "effect": "garlic softens but does not caramelize"
+      },
+      "upper": {
+        "temperature_c": 200,
+        "effect": "burns before interior softens"
+      }
+    },
+    "equipment": "oven, foil",
+    "condition": "when making roasted garlic",
+    "decision": "Wrap whole head in foil with oil; roast until soft and golden",
+    "failure_state": [
+      {
+        "case": "too_high_temperature",
+        "result": "burnt exterior, raw interior"
+      }
+    ],
+    "effect": "Slow roasting caramelizes natural sugars and mellows harsh allicin flavor, creating sweet, spreadable garlic",
+    "sensory": {
+      "texture": "soft, spreadable",
+      "appearance": "golden brown",
+      "flavor": "sweet, mild, nutty"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "shallots",
+    "ingredient_state": "thinly sliced",
+    "intent": "crisp",
+    "process": "deep frying",
+    "mechanism": "moisture evaporation",
+    "target": {
+      "temperature_c": 160,
+      "time_minutes": 4
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-1, 1]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 140,
+        "effect": "oil absorption; soggy"
+      },
+      "upper": {
+        "temperature_c": 180,
+        "effect": "burns before drying"
+      }
+    },
+    "equipment": "small pot, oil",
+    "condition": "when making crispy shallot garnish",
+    "decision": "Fry shallots at 160°C until golden and crisp; drain on paper towels",
+    "failure_state": [
+      {
+        "case": "oil_too_hot",
+        "result": "burnt exterior, raw interior"
+      }
+    ],
+    "effect": "Lower temperature allows moisture to evaporate slowly before browning, resulting in fully crisp texture",
+    "sensory": {
+      "texture": "crisp, delicate",
+      "appearance": "golden brown",
+      "flavor": "sweet, savory"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "herbs",
+    "ingredient_state": "fresh leaves",
+    "intent": "crisp",
+    "process": "microwave dehydration",
+    "mechanism": "rapid moisture evaporation",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": 1
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-0.25, 0.25]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 0.5,
+        "effect": "not crisp"
+      },
+      "upper": {
+        "time_minutes": 1.5,
+        "effect": "burns"
+      }
+    },
+    "equipment": "microwave, paper towel",
+    "condition": "when making crispy herb garnish",
+    "decision": "Place herbs between paper towels; microwave in 30-second bursts until crisp",
+    "failure_state": [
+      {
+        "case": "too_long",
+        "result": "burnt, bitter"
+      }
+    ],
+    "effect": "Microwave rapidly evaporates moisture without oil, preserving color and creating delicate crisp texture",
+    "sensory": {
+      "texture": "crisp, fragile",
+      "appearance": "bright green",
+      "flavor": "concentrated"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "low"
+    },
+    "confidence": 0.7
+  },
+  {
+    "ingredient": "bacon",
+    "ingredient_state": "sliced",
+    "intent": "crisp",
+    "process": "rendering and maillard",
+    "mechanism": "fat rendering and protein browning",
+    "target": {
+      "temperature_c": 180,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-20, 20],
+      "time_minutes": [-3, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 150,
+        "effect": "renders but does not crisp"
+      },
+      "upper": {
+        "temperature_c": 200,
+        "effect": "burns quickly"
+      }
+    },
+    "equipment": "oven or skillet",
+    "condition": "when making crispy bacon",
+    "decision": "Bake at 180°C until desired crispness; drain on paper towels",
+    "failure_state": [
+      {
+        "case": "overcooking",
+        "result": "brittle, burnt"
+      }
+    ],
+    "effect": "Fat renders out; proteins brown via Maillard; oven provides even heat and prevents curling",
+    "sensory": {
+      "texture": "crisp, brittle",
+      "appearance": "golden brown",
+      "flavor": "smoky, salty"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "chicken wings",
+    "ingredient_state": "whole",
+    "intent": "crisp",
+    "process": "rendering and maillard",
+    "mechanism": "fat rendering and skin browning",
+    "target": {
+      "temperature_c": 200,
+      "time_minutes": 40
+    },
+    "tolerance": {
+      "temperature_c": [-20, 10],
+      "time_minutes": [-10, 15]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 160,
+        "effect": "skin remains soft and flabby"
+      },
+      "upper": {
+        "temperature_c": 220,
+        "effect": "skin burns before fat renders"
+      }
+    },
+    "equipment": "oven, baking sheet",
+    "condition": "when making crispy chicken wings",
+    "decision": "Bake at 200°C until skin is crisp and golden; flip halfway",
+    "failure_state": [
+      {
+        "case": "low_temperature",
+        "result": "greasy, soft skin"
+      }
+    ],
+    "effect": "High heat renders subcutaneous fat and crisps skin via Maillard reaction; flipping ensures even cooking",
+    "sensory": {
+      "texture": "crisp skin, tender meat",
+      "appearance": "golden brown"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "duck breast",
+    "ingredient_state": "whole, skin-on",
+    "intent": "crisp_skin",
+    "process": "rendering and maillard",
+    "mechanism": "fat rendering and skin browning",
+    "target": {
+      "temperature_c": 160,
+      "time_minutes": 8
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-2, 3]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 140,
+        "effect": "fat renders slowly; skin not crisp"
+      },
+      "upper": {
+        "temperature_c": 180,
+        "effect": "skin burns before fat renders"
+      }
+    },
+    "equipment": "cold skillet",
+    "condition": "when cooking duck breast with crispy skin",
+    "decision": "Start duck skin-side down in cold skillet; render fat slowly; increase heat to crisp",
+    "failure_state": [
+      {
+        "case": "hot_skillet_start",
+        "result": "skin burns before fat renders"
+      }
+    ],
+    "effect": "Starting cold allows fat to render gradually; skin becomes crisp without burning; scored skin helps fat escape",
+    "sensory": {
+      "texture": "crisp skin, tender meat",
+      "appearance": "golden brown skin"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "fish",
+    "ingredient_state": "fillet, skin-on",
+    "intent": "crisp_skin",
+    "process": "moisture evaporation and maillard",
+    "mechanism": "skin dehydration and browning",
+    "target": {
+      "temperature_c": 180,
+      "time_minutes": 4
+    },
+    "tolerance": {
+      "temperature_c": [-20, 10],
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 140,
+        "effect": "skin steams; not crisp"
+      },
+      "upper": {
+        "temperature_c": 200,
+        "effect": "skin burns"
+      }
+    },
+    "equipment": "non-stick skillet, oil",
+    "condition": "when making crispy-skinned fish",
+    "decision": "Pat skin dry; press flat in hot oil; cook without moving until crisp",
+    "failure_state": [
+      {
+        "case": "wet_skin",
+        "result": "steaming instead of crisping"
+      },
+      {
+        "case": "moving_fish",
+        "result": "uneven browning"
+      }
+    ],
+    "effect": "Dry skin reaches Maillard temperature quickly; pressing ensures even contact with pan; no movement allows crust to form",
+    "sensory": {
+      "texture": "crisp, crackling skin",
+      "appearance": "golden brown",
+      "flavor": "concentrated, savory"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "vegetables",
+    "ingredient_state": "cut pieces",
+    "intent": "roast",
+    "process": "caramelization and maillard",
+    "mechanism": "sugar concentration and browning",
+    "target": {
+      "temperature_c": 200,
+      "time_minutes": 25
+    },
+    "tolerance": {
+      "temperature_c": [-20, 20],
+      "time_minutes": [-10, 15]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 160,
+        "effect": "cooks but minimal browning"
+      },
+      "upper": {
+        "temperature_c": 220,
+        "effect": "burns before interior cooks"
+      }
+    },
+    "equipment": "oven, baking sheet",
+    "condition": "when roasting vegetables",
+    "decision": "Toss with oil, spread in single layer, roast at 200°C until browned and tender",
+    "failure_state": [
+      {
+        "case": "overcrowding",
+        "result": "steaming instead of roasting"
+      }
+    ],
+    "effect": "High heat caramelizes natural sugars; single layer allows moisture to escape and browning to occur",
+    "sensory": {
+      "texture": "crisp edges, tender interior",
+      "appearance": "browned, caramelized",
+      "flavor": "sweet, concentrated"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "brussels sprouts",
+    "ingredient_state": "halved",
+    "intent": "roast",
+    "process": "caramelization and maillard",
+    "mechanism": "sugar concentration and browning",
+    "target": {
+      "temperature_c": 200,
+      "time_minutes": 20
+    },
+    "tolerance": {
+      "temperature_c": [-20, 20],
+      "time_minutes": [-5, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 160,
+        "effect": "cooks but no browning"
+      },
+      "upper": {
+        "temperature_c": 220,
+        "effect": "outer leaves burn before interior cooks"
+      }
+    },
+    "equipment": "oven, baking sheet",
+    "condition": "when roasting Brussels sprouts",
+    "decision": "Toss with oil, place cut-side down, roast until browned and tender",
+    "failure_state": [
+      {
+        "case": "cut_side_up",
+        "result": "less browning; uneven cooking"
+      }
+    ],
+    "effect": "Cut-side down maximizes contact with hot pan, creating caramelized surface; high heat reduces bitterness",
+    "sensory": {
+      "texture": "crisp exterior, tender interior",
+      "appearance": "browned, dark edges",
+      "flavor": "sweet, nutty"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "asparagus",
+    "ingredient_state": "whole spears",
+    "intent": "blanch",
+    "process": "enzyme inactivation",
+    "mechanism": "peroxidase denaturation",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 2
+    },
+    "tolerance": {
+      "temperature_c": [-5, 10],
+      "time_minutes": [-0.5, 1]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "enzymes active; color fades"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "overcooked; floppy texture"
+      }
+    },
+    "equipment": "pot, ice bath",
+    "condition": "when preparing asparagus for freezing or salads",
+    "decision": "Blanch in boiling water until bright green; shock in ice bath",
+    "failure_state": [
+      {
+        "case": "no_ice_bath",
+        "result": "carryover cooking; loss of color and texture"
+      }
+    ],
+    "effect": "Blanching inactivates enzymes that cause color loss; ice bath stops cooking immediately",
+    "sensory": {
+      "texture": "crisp-tender",
+      "appearance": "bright green",
+      "flavor": "clean, fresh"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "green beans",
+    "ingredient_state": "whole, trimmed",
+    "intent": "blanch",
+    "process": "enzyme inactivation",
+    "mechanism": "peroxidase denaturation",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 3
+    },
+    "tolerance": {
+      "temperature_c": [-5, 10],
+      "time_minutes": [-1, 1]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "enzymes active; color fades"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "overcooked; mushy"
+      }
+    },
+    "equipment": "pot, ice bath",
+    "condition": "when preparing green beans for freezing or salads",
+    "decision": "Blanch in boiling water until bright green and crisp-tender; shock in ice bath",
+    "failure_state": [
+      {
+        "case": "no_ice_bath",
+        "result": "loss of color and texture"
+      }
+    ],
+    "effect": "Blanching inactivates enzymes and sets bright green color; ice bath preserves crisp texture",
+    "sensory": {
+      "texture": "crisp-tender",
+      "appearance": "bright green",
+      "flavor": "fresh"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "carrots",
+    "ingredient_state": "cut pieces",
+    "intent": "roast",
+    "process": "caramelization",
+    "mechanism": "sugar concentration",
+    "target": {
+      "temperature_c": 200,
+      "time_minutes": 25
+    },
+    "tolerance": {
+      "temperature_c": [-20, 20],
+      "time_minutes": [-5, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 160,
+        "effect": "cooks but minimal sweetness"
+      },
+      "upper": {
+        "temperature_c": 220,
+        "effect": "burns before interior cooks"
+      }
+    },
+    "equipment": "oven, baking sheet",
+    "condition": "when roasting carrots",
+    "decision": "Toss with oil, roast until tender and caramelized",
+    "failure_state": [
+      {
+        "case": "overcrowding",
+        "result": "steaming instead of caramelizing"
+      }
+    ],
+    "effect": "Roasting concentrates natural sugars; high heat caramelizes them, enhancing sweetness",
+    "sensory": {
+      "texture": "tender, slightly crisp",
+      "appearance": "browned, caramelized",
+      "flavor": "sweet, concentrated"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "beets",
+    "ingredient_state": "whole, unpeeled",
+    "intent": "roast",
+    "process": "starch gelatinization and caramelization",
+    "mechanism": "sugar concentration",
+    "target": {
+      "temperature_c": 190,
+      "time_minutes": 60
+    },
+    "tolerance": {
+      "temperature_c": [-20, 10],
+      "time_minutes": [-15, 20]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 160,
+        "effect": "cooks but less sweet"
+      },
+      "upper": {
+        "temperature_c": 210,
+        "effect": "skin burns before interior cooks"
+      }
+    },
+    "equipment": "oven, foil",
+    "condition": "when roasting beets",
+    "decision": "Wrap in foil, roast until easily pierced with knife",
+    "failure_state": [
+      {
+        "case": "no_foil",
+        "result": "uneven cooking; dry exterior"
+      }
+    ],
+    "effect": "Foil traps steam, cooking beets evenly; roasting concentrates natural sugars, intensifying sweetness",
+    "sensory": {
+      "texture": "tender, buttery",
+      "appearance": "deep color",
+      "flavor": "sweet, earthy"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.95
+  }
+]

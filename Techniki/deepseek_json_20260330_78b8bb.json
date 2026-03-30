@@ -1,0 +1,711 @@
+[
+  {
+    "technique": "broiling",
+    "category": "heat_application",
+    "goal": "Cook food using intense radiant heat from above to quickly brown the surface and cook through, creating a charred, caramelized exterior.",
+    "when_to_use": "When a quick, high-heat cooking method is needed for tender cuts of meat, fish fillets, or vegetables that benefit from surface browning and charring.",
+    "inputs": [
+      "protein or vegetable (tender cuts, thin pieces)",
+      "oil",
+      "salt, pepper",
+      "optional: marinade"
+    ],
+    "equipment": [
+      "broiler or salamander",
+      "broiler pan or sheet pan with rack",
+      "tongs",
+      "instant-read thermometer"
+    ],
+    "steps": [
+      "Position oven rack 2–4 inches (5–10 cm) from the broiler element.",
+      "Preheat broiler on high for 10–15 minutes until the element is glowing red.",
+      "Pat food dry and brush lightly with oil.",
+      "Season with salt and pepper or apply marinade.",
+      "Place food on a broiler pan or rack set over a sheet pan to allow fat to drain.",
+      "Position food directly under the broiler element.",
+      "Cook for 2–6 minutes per side depending on thickness and desired doneness.",
+      "Watch closely; broiler temperatures can cause burning within seconds.",
+      "Flip once using tongs and broil second side.",
+      "Remove when surface is browned and internal temperature reaches desired doneness.",
+      "Let rest briefly before serving."
+    ],
+    "critical_control_points": [
+      "Preheat the broiler thoroughly; a cold broiler will not sear properly.",
+      "Position rack distance correctly; too close burns, too far causes steaming.",
+      "Watch constantly; broilers cook extremely fast and food can burn in seconds.",
+      "Use a broiler pan with a rack to allow fat to drain and prevent smoking.",
+      "Flip only once to ensure even cooking and browning on both sides."
+    ],
+    "control_variables": {
+      "heat_level": "high",
+      "temperature_control": "approximate",
+      "moisture_level": "dry surface",
+      "agitation": "minimal (flip once)",
+      "time_sensitivity": "critical"
+    },
+    "failure_modes": [
+      {
+        "case": "Rack too close to heat source",
+        "result": "Surface burns before interior cooks; acrid, bitter flavor."
+      },
+      {
+        "case": "Not preheating broiler",
+        "result": "Slow cooking; no browning; food steams."
+      },
+      {
+        "case": "Fat dripping causing flare-ups",
+        "result": "Flames char food unevenly; burnt spots; acrid smoke."
+      },
+      {
+        "case": "Walking away during cooking",
+        "result": "Food burns beyond edibility."
+      }
+    ],
+    "signals": {
+      "visual": "Surface bubbles and browns rapidly; edges may char; juices rise to surface. Broiler element glows red.",
+      "sound": "Loud sizzling; fat may spatter.",
+      "smell": "Intense, savory, charred aroma."
+    },
+    "output": {
+      "texture": "crisp, charred exterior; tender, moist interior",
+      "appearance": "browned to charred with grill-like marks",
+      "flavor": "intensely savory, caramelized, slightly smoky"
+    },
+    "links_to_intents": [
+      "crisp",
+      "char"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "high"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "brunoise",
+    "category": "prep",
+    "goal": "Cut vegetables into very fine, uniform cubes (1/8 inch / 3 mm) for use in sauces, garnishes, or as a base for fine preparations.",
+    "when_to_use": "When an extremely fine, uniform dice is needed for sauces, confit byaldi, or refined garnishes where visual precision matters.",
+    "inputs": [
+      "firm vegetable (carrot, onion, celery, bell pepper)",
+      "sharp chef's knife",
+      "cutting board"
+    ],
+    "equipment": [
+      "sharp chef's knife (8–10 inches)",
+      "cutting board",
+      "optional: mandoline",
+      "bench scraper"
+    ],
+    "steps": [
+      "Wash, peel, and square off the vegetable to create a stable, rectangular block.",
+      "Cut the vegetable into 1/8 inch (3 mm) planks by slicing lengthwise.",
+      "Stack the planks and cut lengthwise into 1/8 inch (3 mm) matchsticks (julienne).",
+      "Gather the matchsticks and cut crosswise into 1/8 inch (3 mm) cubes.",
+      "All cubes should be uniform in size and shape.",
+      "Use a bench scraper to collect and transfer the brunoise.",
+      "Optional: rinse in cold water and pat dry for raw applications."
+    ],
+    "critical_control_points": [
+      "All cuts must be uniform for even cooking and professional appearance.",
+      "Start with a perfectly squared vegetable; rounding prevents consistent cuts.",
+      "Knife must be extremely sharp to produce clean edges without crushing.",
+      "Work methodically; rushing leads to uneven sizes.",
+      "For brunoise, precision matters more than speed."
+    ],
+    "control_variables": {
+      "heat_level": "ambient",
+      "temperature_control": "none",
+      "moisture_level": "dry",
+      "agitation": "none",
+      "time_sensitivity": "none"
+    },
+    "failure_modes": [
+      {
+        "case": "Inconsistent sizing",
+        "result": "Uneven cooking; some pieces burn while others remain raw; unprofessional appearance."
+      },
+      {
+        "case": "Dull knife",
+        "result": "Crushed, ragged edges; uneven cubes; bruising of delicate vegetables."
+      },
+      {
+        "case": "Rounded vegetable base",
+        "result": "Wobbly cutting surface; inconsistent cuts; safety risk."
+      }
+    ],
+    "signals": {
+      "visual": "Perfectly uniform 1/8 inch cubes; clean, sharp edges; no crushing or bruising.",
+      "touch": "Cubes feel firm and separate easily; no mushiness or ragged edges."
+    },
+    "output": {
+      "texture": "fine, uniform cubes",
+      "appearance": "precise, professional, elegant",
+      "flavor": "unchanged"
+    },
+    "links_to_intents": [
+      "create_uniformity",
+      "presentation"
+    ],
+    "meta": {
+      "difficulty": "advanced",
+      "precision": "critical"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "zesting_citrus",
+    "category": "prep",
+    "goal": "Remove the aromatic outer colored layer of citrus peel without the bitter white pith.",
+    "when_to_use": "When adding bright, aromatic citrus flavor to baked goods, sauces, marinades, cocktails, or garnishes.",
+    "inputs": [
+      "citrus fruit (lemon, lime, orange, grapefruit)",
+      "zester or microplane",
+      "optional: paring knife"
+    ],
+    "equipment": [
+      "microplane or citrus zester",
+      "optional: paring knife",
+      "cutting board"
+    ],
+    "steps": [
+      "Wash and dry the citrus fruit thoroughly.",
+      "Using a microplane: draw the fruit across the rasp in long, even strokes, rotating the fruit to access all areas. Stop when you reach the white pith.",
+      "Using a zester: pull the zester across the fruit from stem to blossom end, creating thin strips.",
+      "Using a paring knife (for wider strips): cut off a strip of peel, then carefully trim away the white pith from the underside.",
+      "Collect zest and use immediately or store in an airtight container.",
+      "For zest strips (zest and pith removed), slice into fine julienne if desired."
+    ],
+    "critical_control_points": [
+      "Remove only the colored outer layer; the white pith is bitter and unpleasant.",
+      "Do not press too hard; excessive pressure digs into the pith.",
+      "Zest only the area being worked; avoid going over the same spot repeatedly.",
+      "Zest citrus just before use for maximum flavor; dried zest loses potency.",
+      "Be careful of fingers; microplanes are extremely sharp."
+    ],
+    "control_variables": {
+      "heat_level": "ambient",
+      "temperature_control": "none",
+      "moisture_level": "dry",
+      "agitation": "none",
+      "time_sensitivity": "low"
+    },
+    "failure_modes": [
+      {
+        "case": "Zesting into the white pith",
+        "result": "Bitter, unpleasant flavor; can overpower the intended citrus note."
+      },
+      {
+        "case": "Using dull zester",
+        "result": "Ragged strips; difficulty removing clean zest; more pith included."
+      },
+      {
+        "case": "Zesting too far in advance",
+        "result": "Loss of volatile aromatic oils; diminished flavor."
+      },
+      {
+        "case": "Zesting over open flame or with oil present",
+        "result": "Oil can ignite; safety hazard."
+      }
+    ],
+    "signals": {
+      "visual": "Thin, even strips of bright-colored peel with no white attached.",
+      "touch": "Zest feels aromatic and slightly oily; no bitter residue on fingers."
+    },
+    "output": {
+      "texture": "fine shreds or strips",
+      "appearance": "brightly colored, uniform, pith-free",
+      "flavor": "intensely aromatic, bright citrus flavor without bitterness"
+    },
+    "links_to_intents": [
+      "add_flavor",
+      "garnish"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.98
+  },
+  {
+    "technique": "segmenting_citrus",
+    "category": "prep",
+    "goal": "Remove the individual segments (suprêmes) of citrus fruit, free of membrane, pith, and seeds, for use in salads, desserts, or as a garnish.",
+    "when_to_use": "When a clean, elegant presentation of citrus segments is desired, free from bitter membranes and pith.",
+    "inputs": [
+      "citrus fruit (orange, grapefruit, lemon, lime)",
+      "sharp paring knife",
+      "cutting board"
+    ],
+    "equipment": [
+      "sharp paring knife",
+      "cutting board",
+      "small bowl for segments"
+    ],
+    "steps": [
+      "Wash and dry the citrus fruit.",
+      "Slice off the top and bottom of the fruit to create flat, stable ends.",
+      "Stand the fruit on one cut end and slice downward, following the curve of the fruit, to remove the peel and white pith in strips.",
+      "Continue around the fruit until all peel and pith are removed, leaving only the exposed flesh.",
+      "Hold the fruit over a bowl to catch juice and segments.",
+      "Cut along one side of a membrane, sliding the knife toward the center.",
+      "Cut along the other side of the same membrane, releasing the segment.",
+      "Repeat for all segments, working around the fruit.",
+      "Squeeze the remaining membrane to extract juice for other uses."
+    ],
+    "critical_control_points": [
+      "Remove all white pith; any remaining pith adds bitterness.",
+      "Follow the natural curve of the fruit when removing peel.",
+      "Cut as close to the membrane as possible to maximize segment yield.",
+      "Work over a bowl to catch segments and juice; the juice is valuable.",
+      "Use a very sharp knife to cut cleanly through membranes."
+    ],
+    "control_variables": {
+      "heat_level": "ambient",
+      "temperature_control": "none",
+      "moisture_level": "wet",
+      "agitation": "none",
+      "time_sensitivity": "low"
+    },
+    "failure_modes": [
+      {
+        "case": "Leaving pith attached",
+        "result": "Bitter taste; unappealing appearance."
+      },
+      {
+        "case": "Dull knife",
+        "result": "Torn membranes; crushed segments; ragged appearance."
+      },
+      {
+        "case": "Cutting too far into segment",
+        "result": "Smaller segments; loss of yield; broken pieces."
+      },
+      {
+        "case": "Not working over bowl",
+        "result": "Lost juice; messy workstation."
+      }
+    ],
+    "signals": {
+      "visual": "Clean, intact segments with no membrane or pith attached. Smooth, glossy surface. Uniform size and shape.",
+      "touch": "Segments feel firm and intact; no ragged edges."
+    },
+    "output": {
+      "texture": "tender, juicy, intact segments",
+      "appearance": "clean, elegant, membrane-free segments",
+      "flavor": "pure citrus flavor without bitterness"
+    },
+    "links_to_intents": [
+      "presentation",
+      "garnish"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "high"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "making_glaze",
+    "category": "reduction",
+    "goal": "Reduce a liquid (stock, wine, vinegar, or fruit juice) to a syrupy consistency that coats the back of a spoon, concentrating flavor and adding sheen.",
+    "when_to_use": "When an intensely flavored, glossy sauce is needed for finishing meats, vegetables, or for plating.",
+    "inputs": [
+      "liquid (stock, wine, vinegar, fruit juice, or combination)",
+      "optional: aromatics, butter for finishing",
+      "salt"
+    ],
+    "equipment": [
+      "saucepan (wide surface area for faster reduction)",
+      "wooden spoon or spatula",
+      "fine-mesh strainer"
+    ],
+    "steps": [
+      "Place liquid in a saucepan; a wide pan increases surface area and speeds reduction.",
+      "Bring to a simmer over medium heat.",
+      "Reduce heat to maintain a gentle, steady simmer.",
+      "Allow liquid to reduce, skimming any impurities that rise to the surface.",
+      "Continue reducing until the liquid has reached the desired consistency:",
+      "  - Nappe: coats the back of a spoon",
+      "  - Glaze: syrupy, clings to food, leaves a trail when stirred",
+      "Season to taste; salt becomes more concentrated as liquid reduces.",
+      "Optional: strain through a fine-mesh strainer for a clean finish.",
+      "Optional: finish with cold butter off heat for added shine and richness."
+    ],
+    "critical_control_points": [
+      "Use a wide pan to maximize evaporation and reduce cooking time.",
+      "Maintain a gentle simmer; boiling can cause scorching and flavor degradation.",
+      "Watch closely near the end; glaze can burn in seconds once it thickens.",
+      "Taste frequently to avoid over-reducing and over-concentrating salt.",
+      "Skim regularly for a clean, clear glaze."
+    ],
+    "control_variables": {
+      "heat_level": "medium-low",
+      "temperature_control": "approximate",
+      "moisture_level": "dry (evaporating)",
+      "agitation": "occasional stirring",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Reducing too far",
+        "result": "Glaze becomes too thick, sticky, and bitter; may burn."
+      },
+      {
+        "case": "Boiling too vigorously",
+        "result": "Cloudy glaze; flavor becomes harsh; may break if emulsion-based."
+      },
+      {
+        "case": "Not skimming impurities",
+        "result": "Cloudy, unappealing glaze with off-flavors."
+      },
+      {
+        "case": "Oversalting",
+        "result": "Inedibly salty as liquid concentrates."
+      }
+    ],
+    "signals": {
+      "visual": "Volume reduces significantly; liquid becomes syrupy and coats the back of a spoon; bubbles become larger and slower as liquid thickens. When stirred, a trail remains briefly.",
+      "sound": "Bubbling sound becomes slower and more concentrated as liquid reduces.",
+      "touch": "Glaze feels thick and sticky; leaves a coating on the spoon."
+    },
+    "output": {
+      "texture": "syrupy, thick, clinging",
+      "appearance": "dark, glossy, translucent",
+      "flavor": "intensely concentrated, savory or sweet depending on base"
+    },
+    "links_to_intents": [
+      "concentrate_flavor",
+      "add_gloss"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "high"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "shallow_frying",
+    "category": "fat_based",
+    "goal": "Cook food in a moderate amount of hot oil (about halfway up the food) to achieve a crisp, browned exterior.",
+    "when_to_use": "When cooking foods that are too thick for sautéing but not large enough to require deep frying, such as chicken cutlets, fish fillets, or potato cakes.",
+    "inputs": [
+      "food (cutlets, fillets, patties)",
+      "high smoke point oil (canola, vegetable, peanut)",
+      "optional: flour, egg wash, breadcrumbs"
+    ],
+    "equipment": [
+      "heavy skillet or frying pan",
+      "thermometer",
+      "tongs or spatula",
+      "wire rack with paper towels"
+    ],
+    "steps": [
+      "Pour oil into a heavy skillet to a depth of about 1/4 to 1/2 inch (6–12 mm).",
+      "Heat oil to 350–375°F (175–190°C).",
+      "Prepare food: pat dry, season, and dredge in flour, egg, and breadcrumbs if desired.",
+      "Test oil temperature with a small piece of food; it should bubble vigorously.",
+      "Place food in the pan in a single layer, leaving space between pieces.",
+      "Cook until golden brown on the first side, about 2–4 minutes depending on thickness.",
+      "Flip carefully and cook until second side is golden brown and food is cooked through.",
+      "Remove with tongs and drain on a wire rack over paper towels.",
+      "Season immediately with salt."
+    ],
+    "critical_control_points": [
+      "Maintain consistent oil temperature; too low causes greasy food, too high burns exterior.",
+      "Do not overcrowd the pan; food should be in a single layer with space between pieces.",
+      "Food must be dry before frying to prevent splattering and ensure crispness.",
+      "Flip only once for best crust development.",
+      "Drain on a wire rack, not directly on paper towels, to prevent steam from making crust soggy."
+    ],
+    "control_variables": {
+      "heat_level": "medium-high",
+      "temperature_control": "critical",
+      "moisture_level": "dry surface",
+      "agitation": "minimal (flip once)",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Oil temperature too low",
+        "result": "Food absorbs oil; greasy, heavy texture; pale color."
+      },
+      {
+        "case": "Oil temperature too high",
+        "result": "Exterior burns before interior cooks; bitter flavor."
+      },
+      {
+        "case": "Overcrowding",
+        "result": "Temperature drops; food steams instead of fries; soggy crust."
+      },
+      {
+        "case": "Wet food",
+        "result": "Splattering; poor crust formation; dangerous oil spatter."
+      }
+    ],
+    "signals": {
+      "visual": "Food bubbles vigorously when added; turns golden to deep brown; oil surface remains relatively calm.",
+      "sound": "Loud, steady sizzling; sizzle subsides as cooking completes.",
+      "touch": "Crust feels crisp and firm; food releases easily from pan when ready to flip."
+    },
+    "output": {
+      "texture": "crisp, golden crust; moist interior",
+      "appearance": "uniform golden to deep brown",
+      "flavor": "rich, savory, with characteristic fried flavor"
+    },
+    "links_to_intents": [
+      "crisp",
+      "create_crust"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "high"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "rolling_dough",
+    "category": "mechanical",
+    "goal": "Shape dough into an even, uniform thickness using a rolling pin to prepare it for shaping, cutting, or baking.",
+    "when_to_use": "When preparing pie crusts, cookie dough, pasta, pizza bases, or any dough that requires a uniform thickness.",
+    "inputs": [
+      "chilled dough (pastry, cookie, pasta)",
+      "flour for dusting",
+      "rolling pin"
+    ],
+    "equipment": [
+      "rolling pin (French or American style)",
+      "lightly floured work surface",
+      "bench scraper",
+      "optional: rolling pin rings or guides"
+    ],
+    "steps": [
+      "Lightly flour the work surface and rolling pin.",
+      "Shape the dough into a flat disc or rectangle (for pasta).",
+      "Place dough on the floured surface.",
+      "Press the rolling pin gently into the center of the dough and roll outward, applying even pressure.",
+      "Rotate the dough 90 degrees after each roll to maintain an even circle or shape.",
+      "Lift and turn the dough periodically to ensure it isn't sticking.",
+      "Dust with additional flour as needed to prevent sticking, but avoid excess.",
+      "Roll to the desired thickness, checking with a ruler or by eye.",
+      "For pasta, fold and roll repeatedly to develop gluten and achieve thinness.",
+      "If dough becomes too soft, chill for 15–30 minutes before continuing."
+    ],
+    "critical_control_points": [
+      "Start with chilled dough; warm dough becomes sticky and difficult to roll.",
+      "Apply even pressure; uneven pressure creates uneven thickness.",
+      "Rotate dough frequently to maintain shape and prevent sticking.",
+      "Dust with flour sparingly; excess flour dries out dough and prevents proper sealing.",
+      "For flaky pastries, work quickly to keep butter cold; warm butter melts into dough."
+    ],
+    "control_variables": {
+      "heat_level": "cold for pastry, ambient for pasta",
+      "temperature_control": "critical for laminated doughs",
+      "moisture_level": "dry surface, lightly floured",
+      "agitation": "rolling motion",
+      "time_sensitivity": "medium"
+    },
+    "failure_modes": [
+      {
+        "case": "Dough too warm",
+        "result": "Sticky, difficult to handle; butter melts out (for pastry); dough tears."
+      },
+      {
+        "case": "Uneven pressure",
+        "result": "Inconsistent thickness; uneven baking; some areas burn while others are underbaked."
+      },
+      {
+        "case": "Not rotating dough",
+        "result": "Dough sticks; shape becomes irregular; uneven rolling."
+      },
+      {
+        "case": "Excess flour",
+        "result": "Dough becomes dry and tough; layers may not seal (for laminated doughs)."
+      }
+    ],
+    "signals": {
+      "visual": "Dough maintains consistent thickness throughout; edges are smooth and even; no visible cracks.",
+      "touch": "Dough feels supple and even; no thick or thin spots; moves freely on work surface without sticking."
+    },
+    "output": {
+      "texture": "uniform thickness, pliable",
+      "appearance": "smooth, even, ready for shaping",
+      "flavor": "unchanged"
+    },
+    "links_to_intents": [
+      "create_uniformity",
+      "prepare_for_baking"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "saucing",
+    "category": "finishing",
+    "goal": "Apply sauce to a plated dish in an intentional, aesthetically pleasing manner that complements the food and enhances the dining experience.",
+    "when_to_use": "When finishing a plated dish that will be served with a sauce, in restaurants or when presentation matters.",
+    "inputs": [
+      "plated food",
+      "sauce (warm or room temperature)",
+      "plate (appropriate size and color)",
+      "sauce application tools"
+    ],
+    "equipment": [
+      "squeeze bottles (for precise application)",
+      "spoons (various sizes for different techniques)",
+      "ladle",
+      "offset spatula",
+      "paper towels for clean-up"
+    ],
+    "steps": [
+      "Ensure sauce is at the proper temperature and consistency; warm sauces should be hot, cold sauces chilled.",
+      "Choose an application method based on desired effect:",
+      "  - Under: Pool sauce under the main component.",
+      "  - Over: Ladle or spoon sauce over the main component.",
+      "  - Around: Swirl or pool sauce around the main component.",
+      "  - Drizzle: Use a squeeze bottle or spoon to create lines or dots.",
+      "  - Swoosh: Use the back of a spoon to create a curved stroke.",
+      "  - Dot: Place small dots of sauce around the plate.",
+      "Apply sauce to the plate, not over the food, if multiple sauces are used to maintain separation.",
+      "If using multiple sauces, apply each separately and ensure they do not run into each other unless intended.",
+      "Wipe any drips or smudges from the plate rim.",
+      "Serve immediately."
+    ],
+    "critical_control_points": [
+      "Sauce consistency must be appropriate for the application; too thin runs, too thick doesn't flow.",
+      "Sauce temperature must be correct; warm sauce on cold plates cools quickly.",
+      "Work quickly to maintain food temperature.",
+      "Do not oversauce; sauce should complement, not overwhelm.",
+      "Plate rim must be clean; drips appear unprofessional."
+    ],
+    "control_variables": {
+      "heat_level": "sauce temperature appropriate to dish",
+      "temperature_control": "intentional",
+      "moisture_level": "sauce consistency",
+      "agitation": "none",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Sauce too thin",
+        "result": "Runs off food or plate; pools unattractively; fails to cling."
+      },
+      {
+        "case": "Sauce too thick",
+        "result": "Lumps on plate; difficult to apply evenly; looks heavy."
+      },
+      {
+        "case": "Oversaucing",
+        "result": "Overwhelms the main component; unattractive appearance."
+      },
+      {
+        "case": "Drips on plate rim",
+        "result": "Unprofessional appearance; suggests lack of care."
+      },
+      {
+        "case": "Inconsistent application",
+        "result": "Uneven coverage; unattractive presentation."
+      }
+    ],
+    "signals": {
+      "visual": "Sauce placed with intention; complements the main component without overwhelming; plate rim clean; pattern or placement enhances the dish.",
+      "touch": "Sauce is at proper serving temperature."
+    },
+    "output": {
+      "texture": "sauce consistency appropriate to dish",
+      "appearance": "clean, intentional, professional",
+      "flavor": "sauce complements and enhances main component"
+    },
+    "links_to_intents": [
+      "present",
+      "enhance_flavor"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "high"
+    },
+    "confidence": 0.94
+  },
+  {
+    "technique": "torching_meringue",
+    "category": "finishing",
+    "goal": "Caramelize the surface of a meringue using a kitchen torch to create a browned, crisp exterior with a soft interior.",
+    "when_to_use": "When finishing desserts with meringue toppings such as baked Alaska, lemon meringue pie, or pavlova for a dramatic, toasted appearance.",
+    "inputs": [
+      "meringue-topped dessert (lemon pie, baked Alaska, etc.)",
+      "kitchen torch with butane or propane",
+      "optional: sugar for dusting"
+    ],
+    "equipment": [
+      "kitchen torch",
+      "butane or propane fuel",
+      "long lighter (if torch doesn't have piezo ignition)",
+      "heat-safe surface"
+    ],
+    "steps": [
+      "Ensure the dessert is fully assembled and chilled (for baked Alaska) or at room temperature.",
+      "Check the torch: ensure fuel is adequate and connections are secure.",
+      "Hold the torch 2–4 inches (5–10 cm) from the meringue surface.",
+      "Ignite the torch and adjust flame to a medium intensity.",
+      "Move the flame continuously over the meringue surface in a sweeping motion.",
+      "Do not hold the flame in one spot; this causes burning.",
+      "Watch as the meringue browns; color will develop quickly.",
+      "Continue until the entire surface is uniformly golden brown with some darker spots for visual appeal.",
+      "Serve immediately while the contrast between crisp exterior and soft interior is at its peak."
+    ],
+    "critical_control_points": [
+      "Keep the torch moving constantly to avoid burning.",
+      "Maintain proper distance; too close burns, too far does nothing.",
+      "Do not torch near flammable materials; remove paper liners, napkins, etc.",
+      "Let the torch cool before storing; butane torches get hot.",
+      "For baked Alaska, ensure the meringue is thick enough to insulate the ice cream; thin meringue will transfer heat and melt ice cream."
+    ],
+    "control_variables": {
+      "heat_level": "medium flame",
+      "temperature_control": "approximate",
+      "moisture_level": "dry surface",
+      "agitation": "continuous sweeping motion",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Holding flame in one spot",
+        "result": "Burnt, black spots; bitter flavor; uneven appearance."
+      },
+      {
+        "case": "Flame too close",
+        "result": "Burning; meringue catches fire; melted ice cream underneath."
+      },
+      {
+        "case": "Flame too far",
+        "result": "No browning; meringue warms but doesn't caramelize."
+      },
+      {
+        "case": "Torching near flammable materials",
+        "result": "Fire hazard; injury risk."
+      }
+    ],
+    "signals": {
+      "visual": "Meringue surface transforms from white to golden brown; darker spots develop for contrast; no black, burnt areas.",
+      "sound": "Gentle hissing of torch; subtle crackling as meringue caramelizes.",
+      "smell": "Sweet, caramelized, toasty aroma."
+    },
+    "output": {
+      "texture": "crisp, caramelized exterior; soft, marshmallow-like interior",
+      "appearance": "golden brown, evenly toasted, with dramatic visual appeal",
+      "flavor": "sweet, caramelized, with toasted notes"
+    },
+    "links_to_intents": [
+      "crisp",
+      "caramelize",
+      "add_drama"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.97
+  }
+]

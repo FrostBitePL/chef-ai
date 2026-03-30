@@ -1,0 +1,571 @@
+[
+  {
+    "rule": "menu_as_organizing_tool",
+    "category": "structure",
+    "applies_to": [
+      "kitchen operations"
+    ],
+    "description": "Menu determines kitchen organization, staffing, equipment needs, and workflow before any cooking begins.",
+    "structure": [
+      "menu concept",
+      "station assignment",
+      "recipe breakdown",
+      "mise en place"
+    ],
+    "roles": {
+      "menu concept": "defines what needs to be prepared",
+      "station assignment": "who does what",
+      "recipe breakdown": "components per dish",
+      "mise en place": "advance preparation requirements"
+    },
+    "balance_logic": "Workload balance across stations based on menu complexity and volume.",
+    "contrast_logic": "Not applicable – operational rule",
+    "examples": [
+      "banquet menu determines how much can be prepped ahead",
+      "à la carte menu determines which items are cooked to order"
+    ],
+    "failure_modes": [
+      {
+        "case": "menu designed without consulting kitchen capacity",
+        "result": "chaos during service, inability to execute"
+      },
+      {
+        "case": "no clear station assignment for components",
+        "result": "duplicated work or missing elements"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "standardized_recipe_elements",
+    "category": "structure",
+    "applies_to": [
+      "all dishes"
+    ],
+    "description": "A complete recipe includes not just ingredients and steps, but yield, portion size, equipment, holding temps, and plating instructions.",
+    "structure": [
+      "yield information",
+      "portion size",
+      "ingredients in order of use",
+      "equipment list",
+      "preparation steps",
+      "service instructions",
+      "holding instructions",
+      "critical control points"
+    ],
+    "roles": {
+      "yield": "total quantity produced",
+      "portion size": "individual serving specification",
+      "ingredients": "what and how much, in sequence",
+      "equipment": "tools needed for each step",
+      "preparation steps": "how to execute",
+      "service instructions": "how to plate and garnish",
+      "holding instructions": "safe storage parameters",
+      "CCPs": "safety monitoring points"
+    },
+    "balance_logic": "Clarity and completeness prevent variation.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "recipe card with plating diagram",
+      "standardized recipe for banquet production"
+    ],
+    "failure_modes": [
+      {
+        "case": "missing portion size",
+        "result": "inconsistent servings"
+      },
+      {
+        "case": "no holding instructions",
+        "result": "food safety risk"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "mirepoix_foundation",
+    "category": "structure",
+    "applies_to": [
+      "stock",
+      "soup",
+      "sauce",
+      "braise",
+      "stew"
+    ],
+    "description": "Aromatic vegetable base (onion, carrot, celery in 2:1:1 ratio) forms the flavor foundation for Western stocks, sauces, and braised dishes.",
+    "structure": [
+      "onion (2 parts)",
+      "carrot (1 part)",
+      "celery (1 part)",
+      "cooking fat",
+      "main liquid"
+    ],
+    "roles": {
+      "onion": "primary aromatic sweetness",
+      "carrot": "earthy sweetness and color",
+      "celery": "herbaceous, savory note",
+      "cooking fat": "medium for flavor extraction",
+      "main liquid": "carrier for extracted flavors"
+    },
+    "balance_logic": "The 2:1:1 ratio creates a balanced aromatic base that supports but doesn't overpower the main ingredient.",
+    "contrast_logic": "Not applicable – harmony, not contrast.",
+    "examples": [
+      "brown veal stock with mirepoix",
+      "chicken soup with mirepoix"
+    ],
+    "failure_modes": [
+      {
+        "case": "wrong proportions",
+        "result": "one aromatic dominates"
+      },
+      {
+        "case": "vegetables cut inconsistently",
+        "result": "uneven flavor extraction"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "pinçage_depth",
+    "category": "flavor_logic",
+    "applies_to": [
+      "brown sauce",
+      "braise",
+      "stew"
+    ],
+    "description": "Browning tomato paste with caramelized mirepoix (pinçage) adds acidity, depth, and color to brown sauces and braises.",
+    "structure": [
+      "browned mirepoix",
+      "tomato paste",
+      "cooking fat"
+    ],
+    "roles": {
+      "browned mirepoix": "caramelized sweetness and umami",
+      "tomato paste": "acidity, color, and concentrated tomato flavor",
+      "cooking fat": "heat transfer and flavor carrier"
+    },
+    "balance_logic": "Tomato paste cooked until 'rusty brown' – not burnt, not raw. The color indicates proper flavor development.",
+    "contrast_logic": "Sweet from caramelized vegetables vs. acidic from tomato.",
+    "examples": [
+      "espagnole sauce",
+      "beef bourguignon"
+    ],
+    "failure_modes": [
+      {
+        "case": "tomato paste not cooked enough",
+        "result": "raw, metallic tomato flavor"
+      },
+      {
+        "case": "tomato paste burned",
+        "result": "bitter, acrid taste"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "bouquet_garni_infusion",
+    "category": "flavor_logic",
+    "applies_to": [
+      "stock",
+      "soup",
+      "sauce",
+      "braise"
+    ],
+    "description": "Fresh herbs and vegetables tied in a bundle (bouquet garni) gently infuse liquid with flavor and are easily removed before service.",
+    "structure": [
+      "leek leaves or celery stalk (wrapper)",
+      "thyme sprigs",
+      "parsley stems",
+      "bay leaf",
+      "optional: carrot, parsnip"
+    ],
+    "roles": {
+      "wrapper": "holds bundle together, adds mild onion/celery flavor",
+      "thyme": "earthy, savory foundation",
+      "parsley stems": "fresh, clean note",
+      "bay leaf": "subtle herbal depth",
+      "optional vegetables": "additional sweetness and aroma"
+    },
+    "balance_logic": "Herbs support but don't dominate. Added in last 30-60 minutes of cooking.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "chicken stock with bouquet garni",
+      "beef braise with bouquet garni"
+    ],
+    "failure_modes": [
+      {
+        "case": "left in too long",
+        "result": "herbal flavors become bitter or overpowering"
+      },
+      {
+        "case": "dried herbs used instead of fresh",
+        "result": "less vibrant, more one-dimensional flavor"
+      }
+    ],
+    "meta": {
+      "priority": "medium",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "sachet_depices_precision",
+    "category": "flavor_logic",
+    "applies_to": [
+      "stock",
+      "soup",
+      "sauce"
+    ],
+    "description": "Spices and herbs tied in cheesecloth (sachet d'épices) allow precise flavor control and easy removal when the desired intensity is reached.",
+    "structure": [
+      "bay leaf",
+      "parsley stems",
+      "cracked peppercorns",
+      "thyme (or dried)",
+      "optional: garlic clove"
+    ],
+    "roles": {
+      "bay leaf": "subtle herbal depth",
+      "parsley stems": "freshness",
+      "peppercorns": "mild heat",
+      "thyme": "earthy foundation",
+      "garlic": "pungent, savory note"
+    },
+    "balance_logic": "Spices should be perceptible but not dominant. Added in last 30-45 minutes for stocks, earlier for short-cooking liquids.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "white chicken stock with sachet",
+      "fish fumet with sachet"
+    ],
+    "failure_modes": [
+      {
+        "case": "left in too long",
+        "result": "peppercorns make liquid bitter"
+      },
+      {
+        "case": "sachet too tight",
+        "result": "poor flavor extraction"
+      }
+    ],
+    "meta": {
+      "priority": "medium",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "roux_color_thickening_tradeoff",
+    "category": "balance",
+    "applies_to": [
+      "sauce",
+      "soup",
+      "stew"
+    ],
+    "description": "Darker roux has less thickening power but more flavor. Lighter roux thickens more but adds less flavor.",
+    "structure": [
+      "flour",
+      "fat (butter or oil)"
+    ],
+    "roles": {
+      "flour": "thickening agent",
+      "fat": "coats starch, prevents clumping, adds flavor"
+    },
+    "balance_logic": "1 lb roux per gallon liquid is baseline. Darker roux = more roux needed for same thickness.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "white roux for béchamel (maximum thickening)",
+      "dark roux for gumbo (minimum thickening, maximum flavor)"
+    ],
+    "failure_modes": [
+      {
+        "case": "using dark roux in white sauce",
+        "result": "unwanted color and flavor"
+      },
+      {
+        "case": "not enough roux for desired thickness",
+        "result": "thin, watery sauce"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "liaison_tempering",
+    "category": "technique",
+    "applies_to": [
+      "sauce",
+      "soup"
+    ],
+    "description": "Egg yolk and cream mixture (liaison) must be tempered with hot liquid before being added back to prevent curdling.",
+    "structure": [
+      "cream",
+      "egg yolks (3:1 ratio cream to yolk)",
+      "hot liquid"
+    ],
+    "roles": {
+      "cream": "raises coagulation point of yolks",
+      "egg yolks": "thickens and enriches",
+      "hot liquid": "tempers the mixture"
+    },
+    "balance_logic": "3 parts cream to 1 part yolk by volume.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "cream of mushroom soup finished with liaison",
+      "sauce supreme"
+    ],
+    "failure_modes": [
+      {
+        "case": "no tempering",
+        "result": "scrambled eggs in soup"
+      },
+      {
+        "case": "temperature exceeds 185°F/85°C",
+        "result": "curdled sauce"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "stock_clarity_purity",
+    "category": "structure",
+    "applies_to": [
+      "stock",
+      "consommé"
+    ],
+    "description": "Clear stock requires starting with cold liquid, skimming regularly, maintaining a bare simmer, and never boiling.",
+    "structure": [
+      "bones",
+      "cold water",
+      "mirepoix (added later)",
+      "aromatics (added last)"
+    ],
+    "roles": {
+      "bones": "flavor and gelatin",
+      "cold water": "slow, even extraction",
+      "mirepoix": "aromatic support",
+      "aromatics": "final flavor layer"
+    },
+    "balance_logic": "Clearer stock = longer shelf life because impurities that cause cloudiness also cause spoilage.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "white chicken stock",
+      "consommé"
+    ],
+    "failure_modes": [
+      {
+        "case": "stock boiled",
+        "result": "cloudy, emulsified impurities"
+      },
+      {
+        "case": "not skimmed",
+        "result": "cloudy, off-flavors"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.98
+  },
+  {
+    "rule": "consomme_raft_function",
+    "category": "structure",
+    "applies_to": [
+      "consommé"
+    ],
+    "description": "Clarification mixture (ground meat, egg whites, mirepoix, tomato) forms a 'raft' that traps impurities as it rises through simmering stock.",
+    "structure": [
+      "lean ground meat",
+      "egg whites",
+      "minced mirepoix",
+      "tomato (acid)",
+      "cold stock"
+    ],
+    "roles": {
+      "ground meat": "protein that coagulates and traps particles",
+      "egg whites": "albumin that forms the raft structure",
+      "mirepoix": "flavor and raft integrity",
+      "tomato": "acid helps raft formation and adds flavor",
+      "cold stock": "prevents premature coagulation"
+    },
+    "balance_logic": "Ingredients must be below 40°F/4°C at start to prevent emulsification.",
+    "contrast_logic": "Not applicable.",
+    "examples": [
+      "beef consommé",
+      "chicken consommé"
+    ],
+    "failure_modes": [
+      {
+        "case": "stock too hot at start",
+        "result": "raft forms too fast, impurities remain"
+      },
+      {
+        "case": "raft broken during simmering",
+        "result": "cloudy consommé"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "contextual"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "hearty_broth_sequential_addition",
+    "category": "structure",
+    "applies_to": [
+      "hearty broth",
+      "vegetable soup"
+    ],
+    "description": "Ingredients are added to broth in sequence based on cooking time – densest first, most delicate last.",
+    "structure": [
+      "aromatics (sweated in fat)",
+      "dense vegetables/meats",
+      "liquid",
+      "tender vegetables",
+      "leafy greens",
+      "garnish"
+    ],
+    "roles": {
+      "aromatics": "flavor foundation",
+      "dense ingredients": "long-cooking elements",
+      "liquid": "cooking medium",
+      "tender vegetables": "medium-cooking elements",
+      "leafy greens": "quick-cooking elements",
+      "garnish": "final texture and freshness"
+    },
+    "balance_logic": "Each ingredient group cooks just until tender, not beyond.",
+    "contrast_logic": "Textural contrast between tender meat and firm vegetables.",
+    "examples": [
+      "vegetable beef soup",
+      "minestrone"
+    ],
+    "failure_modes": [
+      {
+        "case": "all ingredients added at once",
+        "result": "some overcooked, some undercooked"
+      },
+      {
+        "case": "leafy greens added too early",
+        "result": "mushy, discolored"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "universal"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "cream_soup_puree_strain",
+    "category": "structure",
+    "applies_to": [
+      "cream soup"
+    ],
+    "description": "Cream soups are puréed and strained for velvety texture, with vegetables as the primary thickener (not just roux).",
+    "structure": [
+      "sweated aromatics",
+      "main vegetable",
+      "velouté or béchamel",
+      "cream (added at end)",
+      "garnish"
+    ],
+    "roles": {
+      "sweated aromatics": "flavor base without browning",
+      "main vegetable": "primary flavor and natural thickener",
+      "velouté/béchamel": "additional body",
+      "cream": "richness and smoothness",
+      "garnish": "texture and visual contrast"
+    },
+    "balance_logic": "Simmer until main ingredient is fully cooked (30-45 min), then purée, strain, finish with cream.",
+    "contrast_logic": "Smooth soup contrasted with textured garnish.",
+    "examples": [
+      "cream of broccoli soup",
+      "cream of mushroom soup"
+    ],
+    "failure_modes": [
+      {
+        "case": "not strained",
+        "result": "gritty, fibrous texture"
+      },
+      {
+        "case": "cream added too early",
+        "result": "soup may curdle during reduction"
+      }
+    ],
+    "meta": {
+      "priority": "high",
+      "universality": "broad"
+    },
+    "confidence": 0.95
+  },
+  {
+    "rule": "bisque_shell_pulverization",
+    "category": "structure",
+    "applies_to": [
+      "bisque"
+    ],
+    "description": "Crustacean shells are browned, then pulverized with aromatics during puréeing to extract maximum flavor and color.",
+    "structure": [
+      "shells (browned in fat)",
+      "mirepoix",
+      "tomato paste",
+      "brandy/wine",
+      "thickener (rice or roux)",
+      "stock",
+      "cream and sherry (finish)"
+    ],
+    "roles": {
+      "shells": "primary flavor and color",
+      "mirepoix": "aromatic support",
+      "tomato paste": "acidity and color",
+      "brandy/wine": "depth and complexity",
+      "thickener": "body",
+      "stock": "liquid base",
+      "cream/sherry": "finishing richness"
+    },
+    "balance_logic": "Rice as thickener is traditional; cream adds richness but shouldn't mask shellfish flavor.",
+    "contrast_logic": "Smooth bisque contrasted with diced shellfish garnish.",
+    "examples": [
+      "lobster bisque",
+      "shrimp bisque"
+    ],
+    "failure_modes": [
+      {
+        "case": "shells not fully pulverized",
+        "result": "gritty texture"
+      },
+      {
+        "case": "too much cream",
+        "result": "shellfish flavor masked"
+      }
+    ],
+    "meta": {
+      "priority": "medium",
+      "universality": "contextual"
+    },
+    "confidence": 0.95
+  }
+]

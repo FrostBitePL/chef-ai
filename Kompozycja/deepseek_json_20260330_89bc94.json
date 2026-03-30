@@ -1,0 +1,253 @@
+[
+  {
+    "rule": "salt_amplifies_flavor",
+    "category": "balance",
+    "applies_to": ["all dishes"],
+    "description": "Salt has a greater impact on flavor than any other ingredient. It minimizes bitterness, balances sweetness, and enhances aromas.",
+    "structure": ["salt", "food"],
+    "roles": {
+      "salt": "flavor enhancer, bitterness reducer, sweetness balancer",
+      "food": "substrate for salt's effects"
+    },
+    "balance_logic": "Salt must be added in the right amount, at the right time, in the right form. A smaller amount applied while cooking does more than a larger amount at the table.",
+    "contrast_logic": "Salt contrasts with and cuts through sweetness and fat.",
+    "examples": ["salted caramel", "properly seasoned soup vs. flat unseasoned soup"],
+    "failure_modes": [
+      {"case": "underseasoned", "result": "flat, dull, lifeless food"},
+      {"case": "overseasoned", "result": "inedibly salty, metallic taste"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.99
+  },
+  {
+    "rule": "salt_timing_diffusion",
+    "category": "technique",
+    "applies_to": ["meat dish", "poultry dish"],
+    "description": "Salt needs time to diffuse into meat – season in advance (1 day for chicken, 2-3 days for turkey, 15 min for fish). Time, not amount, is the crucial variable.",
+    "structure": ["meat", "salt", "time", "refrigeration"],
+    "roles": {
+      "meat": "protein matrix that salt penetrates",
+      "salt": "dissolves proteins, creates gel that retains moisture",
+      "time": "allows diffusion and osmosis to occur",
+      "refrigeration": "slows process but still effective"
+    },
+    "balance_logic": "Earlier salting = more tender, more flavorful meat. Any time is better than none, but overnight is ideal.",
+    "contrast_logic": "Not applicable.",
+    "examples": ["day-before salted roast chicken", "2-day brined turkey"],
+    "failure_modes": [
+      {"case": "salted too early (weeks)", "result": "cured, leathery texture"},
+      {"case": "salted just before cooking", "result": "surface salty, interior bland"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.98
+  },
+  {
+    "rule": "salt_water_seasoning",
+    "category": "technique",
+    "applies_to": ["pasta", "vegetables", "grains"],
+    "description": "Season boiling water until it tastes like the sea (2% salinity). Food cooked in properly salted water seasons itself from within.",
+    "structure": ["water", "salt", "food"],
+    "roles": {
+      "water": "conductor and medium",
+      "salt": "creates osmotic gradient",
+      "food": "absorbs salt during cooking"
+    },
+    "balance_logic": "The saltier the water, the more flavor the food absorbs. Most salt goes down the drain, so be aggressive.",
+    "contrast_logic": "Not applicable.",
+    "examples": ["pasta cooked in properly salted water", "blanched green beans"],
+    "failure_modes": [
+      {"case": "lightly salted water", "result": "bland food, nutrients leach out"},
+      {"case": "water evaporates too long", "result": "too salty, must dilute"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.98
+  },
+  {
+    "rule": "fat_carries_flavor",
+    "category": "balance",
+    "applies_to": ["all dishes"],
+    "description": "Fat carries flavor, coats the tongue, and allows aromatic compounds to stay in contact with taste buds longer.",
+    "structure": ["fat", "aromatics", "food"],
+    "roles": {
+      "fat": "flavor carrier, texture modifier, heat conductor",
+      "aromatics": "flavor compounds dissolved in fat",
+      "food": "receives and absorbs flavors"
+    },
+    "balance_logic": "The flavor of fat itself matters – good fat makes good food. Fat can be layered (multiple types in one dish).",
+    "contrast_logic": "Fat contrasts with acid and salt.",
+    "examples": ["garlic sizzled in oil vs. water – oil wins", "butter in pastry"],
+    "failure_modes": [
+      {"case": "poor quality fat", "result": "entire dish tastes inferior"},
+      {"case": "too little fat", "result": "dry, flavorless, food sticks to pan"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.98
+  },
+  {
+    "rule": "fat_texture_roles",
+    "category": "structure",
+    "applies_to": ["all dishes"],
+    "description": "Fat creates five distinct textures: crisp (evaporated water + hot fat), creamy (emulsions), flaky (cold fat in layers), tender (fat coats gluten), and light (whipped fat traps air).",
+    "structure": ["fat", "heat", "technique"],
+    "roles": {
+      "crisp": "water evaporates, fat browns",
+      "creamy": "emulsion of fat and water",
+      "flaky": "cold fat layers separate dough",
+      "tender": "fat prevents gluten formation",
+      "light": "whipped fat incorporates air"
+    },
+    "balance_logic": "Choose fat type and temperature based on desired texture outcome.",
+    "contrast_logic": "Multiple textures within one dish create interest.",
+    "examples": ["fried chicken (crisp)", "mayonnaise (creamy)", "pie crust (flaky)", "shortbread (tender)", "pound cake (light)"],
+    "failure_modes": [
+      {"case": "fat too warm for flaky pastry", "result": "tough, not flaky"},
+      {"case": "insufficient fat for emulsion", "result": "broken sauce"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.98
+  },
+  {
+    "rule": "acid_brightens_balances",
+    "category": "balance",
+    "applies_to": ["all dishes"],
+    "description": "Acid balances other flavors – it acts as a foil to salt, fat, sugar, and starch. Unlike salt, acid balance is relative, not absolute.",
+    "structure": ["acid", "food"],
+    "roles": {
+      "acid": "brightens, balances, provides relief",
+      "food": "receives acid's balancing effect"
+    },
+    "balance_logic": "Acid doesn't have an absolute threshold like salt – it can always be balanced with sugar, fat, or salt.",
+    "contrast_logic": "Acid contrasts with richness and sweetness.",
+    "examples": ["lemonade (sour + sweet)", "vinegar in soup (reveals hidden flavors)"],
+    "failure_modes": [
+      {"case": "no acid in rich dish", "result": "heavy, dull, cloying"},
+      {"case": "too much acid", "result": "harsh, puckering, unpleasant"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.99
+  },
+  {
+    "rule": "acid_affects_texture_color",
+    "category": "technique",
+    "applies_to": ["vegetables", "legumes", "eggs"],
+    "description": "Acid keeps vegetables and legumes firmer, preserves red/purple colors (but dulls greens), and helps egg proteins coagulate faster but less densely.",
+    "structure": ["acid", "ingredient", "heat"],
+    "roles": {
+      "acid": "texture modifier, color stabilizer (for reds)",
+      "ingredient": "substrate for acid's effects",
+      "heat": "activates reactions"
+    },
+    "balance_logic": "Add acid early for texture modification (beans stay firm), late for color (greens stay green).",
+    "contrast_logic": "Not applicable.",
+    "examples": ["red cabbage cooked with apple (color preserved)", "beans cooked with tomato (stay firm)", "poached eggs with vinegar (whites set faster)"],
+    "failure_modes": [
+      {"case": "acid added to green vegetables early", "result": "drab, olive-green color"},
+      {"case": "acid added to beans before tender", "result": "beans never soften"}
+    ],
+    "meta": {"priority": "medium", "universality": "universal"},
+    "confidence": 0.95
+  },
+  {
+    "rule": "layering_acids",
+    "category": "structure",
+    "applies_to": ["all dishes"],
+    "description": "Use multiple forms of acid in a single dish: cooking acids (tomatoes, wine) added early, garnishing acids (citrus, vinegar) added at the end.",
+    "structure": ["cooking acid", "garnishing acid", "main dish"],
+    "roles": {
+      "cooking acid": "mellows over time, transforms dish from within",
+      "garnishing acid": "brightens at the last moment, adds freshness"
+    },
+    "balance_logic": "Cooking acids are subtle – their absence is felt more than their presence. Garnishing acids provide immediate impact.",
+    "contrast_logic": "Layered acids create complexity without harshness.",
+    "examples": ["beef bourguignon (wine cooked in) + splash of vinegar at end", "Caesar dressing (anchovies, Worcestershire, Parmesan, lemon, vinegar)"],
+    "failure_modes": [
+      {"case": "only cooking acid, no finishing acid", "result": "dish lacks brightness"},
+      {"case": "only finishing acid", "result": "dish lacks depth"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.95
+  },
+  {
+    "rule": "heat_gentle_vs_intense",
+    "category": "technique",
+    "applies_to": ["all dishes"],
+    "description": "Gentle heat (simmering, poaching, steaming, braising) creates tenderness. Intense heat (grilling, sautéing, frying, roasting) creates browning and crispness.",
+    "structure": ["heat type", "food", "desired outcome"],
+    "roles": {
+      "gentle heat": "transforms tough to tender, preserves moisture",
+      "intense heat": "creates Maillard reaction, caramelization, crisp exterior"
+    },
+    "balance_logic": "Already-tender foods need gentle heat to preserve tenderness. Tough foods need gentle heat + time to become tender. Browning requires intense heat.",
+    "contrast_logic": "Combining both (sear then braise) creates complex textures.",
+    "examples": ["slow-roasted salmon (gentle)", "grilled steak (intense)", "braised short ribs (sear then gentle)"],
+    "failure_modes": [
+      {"case": "intense heat on delicate fish", "result": "burnt outside, raw inside"},
+      {"case": "gentle heat on steak", "result": "gray, no crust, overcooked"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.98
+  },
+  {
+    "rule": "browning_maillard_caramelization",
+    "category": "flavor_logic",
+    "applies_to": ["all dishes"],
+    "description": "Browning creates entirely new flavors that don't exist in raw food. Caramelization (sugars) and Maillard reaction (proteins + sugars) produce hundreds of new compounds, including acids.",
+    "structure": ["food", "intense heat", "time"],
+    "roles": {
+      "food": "contains sugars and/or proteins",
+      "intense heat": "activates reactions (>230°F/110°C)",
+      "time": "allows reactions to develop"
+    },
+    "balance_logic": "Brown until golden/dark brown but not black. The edge of burning is where deepest flavor lies.",
+    "contrast_logic": "Browned exterior vs. tender interior creates textural and flavor contrast.",
+    "examples": ["toasted bread vs. raw bread", "seared meat", "caramelized onions"],
+    "failure_modes": [
+      {"case": "not enough browning", "result": "pale, lacking depth"},
+      {"case": "too much browning (burnt)", "result": "bitter, acrid, unpleasant"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.98
+  },
+  {
+    "rule": "resting_meat",
+    "category": "technique",
+    "applies_to": ["roasted meat", "grilled meat", "pan-seared meat"],
+    "description": "Rest cooked meat before carving to allow juices to redistribute. 5 min for small items, 15-20 min for medium, up to 45 min for large roasts.",
+    "structure": ["cooked meat", "resting time", "loose cover"],
+    "roles": {
+      "cooked meat": "carryover cooking continues",
+      "resting time": "proteins relax, reabsorb water",
+      "loose cover": "prevents cooling while allowing steam escape"
+    },
+    "balance_logic": "Remove meat 5-10°F below target temperature; carryover completes cooking.",
+    "contrast_logic": "Not applicable.",
+    "examples": ["prime rib rested 20 minutes", "roast chicken rested 15 minutes"],
+    "failure_modes": [
+      {"case": "no resting", "result": "juices run out, meat dry"},
+      {"case": "tight cover", "result": "steam softens crust"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.98
+  },
+  {
+    "rule": "emulsion_temporary_vs_permanent",
+    "category": "structure",
+    "applies_to": ["vinaigrette", "mayonnaise", "sauce"],
+    "description": "Temporary emulsions (vinaigrette) separate quickly and must be re-emulsified. Permanent emulsions (mayonnaise) use emulsifiers (lecithin in egg yolks) to remain stable.",
+    "structure": ["oil", "water-based liquid", "emulsifier (optional)"],
+    "roles": {
+      "oil": "dispersed phase",
+      "water-based liquid": "continuous phase",
+      "emulsifier": "stabilizes the emulsion"
+    },
+    "balance_logic": "3:1 oil to acid ratio for vinaigrette baseline. 1 egg yolk per 6-8 oz oil for mayonnaise.",
+    "contrast_logic": "Not applicable.",
+    "examples": ["vinaigrette (temporary)", "mayonnaise (permanent)", "hollandaise (permanent)"],
+    "failure_modes": [
+      {"case": "oil added too quickly to mayonnaise", "result": "broken emulsion"},
+      {"case": "temperature too hot or cold", "result": "emulsion breaks"}
+    ],
+    "meta": {"priority": "medium", "universality": "universal"},
+    "confidence": 0.95
+  }
+]

@@ -1,0 +1,279 @@
+[
+  {
+    "rule": "taste_narrative_arc",
+    "category": "structure",
+    "applies_to": ["all dishes"],
+    "description": "A dish has a beginning, middle, and end – like a story or song. First aroma, then texture and primary tastes, then lingering aftertaste.",
+    "structure": ["first aroma", "first bite/texture", "developing tastes", "finish/aftertaste"],
+    "roles": {
+      "first aroma": "announces the dish, sets expectations",
+      "first bite/texture": "immediate sensory impact",
+      "developing tastes": "main flavor experience",
+      "finish/aftertaste": "lingering notes, closure"
+    },
+    "balance_logic": "Progression must have logic – start with inviting notes, build complexity, resolve cleanly.",
+    "contrast_logic": "Each phase should contrast with the previous to maintain interest.",
+    "examples": ["crunch of crust, then juicy interior, then lingering spice"],
+    "failure_modes": [
+      {"case": "strongest taste hits first", "result": "nowhere to go, palate overwhelmed"},
+      {"case": "no resolution at end", "result": "dish feels incomplete"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.98
+  },
+  {
+    "rule": "push_tastes",
+    "category": "balance",
+    "applies_to": ["all dishes"],
+    "description": "Salty, sweet, and picante (spicy heat) are 'push' tastes – they heighten all other tastes. Remove any, and the dish becomes dull and flaccid.",
+    "structure": ["salty", "sweet", "picante", "other tastes"],
+    "roles": {
+      "salty": "wakes up all other tastes, fundamental",
+      "sweet": "rounds sharp edges, pushes fruitiness",
+      "picante": "adds heat, pushes everything forward",
+      "other tastes": "receive the push"
+    },
+    "balance_logic": "All three can be combined in the same dish. Chefs 'balance a sauce' by adjusting salt, sugar, and pepper.",
+    "contrast_logic": "Push tastes work together, not in contrast – they amplify, not oppose.",
+    "examples": ["Cajun court bouillon – remove cayenne and it tastes like hospital food"],
+    "failure_modes": [
+      {"case": "no salt", "result": "flat, lifeless"},
+      {"case": "no sweet", "result": "sharp, unbalanced"},
+      {"case": "no picante where expected", "result": "missing expected dimension"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.98
+  },
+  {
+    "rule": "pull_tastes",
+    "category": "balance",
+    "applies_to": ["all dishes"],
+    "description": "Tangy, vinted, bulby, floral herbal, spiced aromatic, and funky are 'pull' tastes – they seek out underlying flavors and highlight them.",
+    "structure": ["pull taste", "platform food", "other tastes"],
+    "roles": {
+      "tangy": "brightens, makes distinct (lemon, vinegar)",
+      "vinted": "fruity and astringent (wine)",
+      "bulby": "opens the nose, pulls sweetness (onions, garlic)",
+      "floral herbal": "focuses specific tastes (herbs, lemongrass)",
+      "spiced aromatic": "rises over ensemble, restates themes (cinnamon, cumin, curry)",
+      "funky": "pulls back to organic origins (truffles, aged cheese, cured meat)"
+    },
+    "balance_logic": "Pull tastes work best when they have a push taste foundation to work against.",
+    "contrast_logic": "Each pull taste has a different focus – choose based on what you want to highlight.",
+    "examples": ["tarragon pulls sweetness", "rosemary accents saltiness and meatiness", "cumin pulls out oceanic tones in shellfish"],
+    "failure_modes": [
+      {"case": "too many pull tastes", "result": "muddled, no clear focus"},
+      {"case": "pull taste without push foundation", "result": "thin, lacking depth"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.95
+  },
+  {
+    "rule": "punctuate_tastes",
+    "category": "contrast",
+    "applies_to": ["all dishes"],
+    "description": "Texture and sharp/bitter tastes punctuate – they separate tastes, emphasize some, mute others. Crunch is a period, smoothness is a comma.",
+    "structure": ["punctuating element", "main tastes", "platform"],
+    "roles": {
+      "crunch": "stops one taste, starts another (punctuation)",
+      "smoothness": "extends taste experience (comma)",
+      "sharp/bitter": "brings taste to a full stop, cleans palate"
+    },
+    "balance_logic": "Texture contrast is essential for complex dishes. Without punctuation, tastes blur together.",
+    "contrast_logic": "Crunch vs. soft, smooth vs. granular, sharp/bitter vs. sweet/rich.",
+    "examples": ["vanilla ice cream with chocolate chips", "crispy fried chicken skin", "watercress with rich meat"],
+    "failure_modes": [
+      {"case": "no texture contrast", "result": "monotonous, boring"},
+      {"case": "wrong punctuation for dish", "result": "jarring or ineffective"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.95
+  },
+  {
+    "rule": "platform_tastes",
+    "category": "structure",
+    "applies_to": ["all dishes"],
+    "description": "Vegetables (garden), meat (meaty), fish (oceanic), and starches (starchy) are platforms – they provide texture and base flavors upon which other tastes stand.",
+    "structure": ["platform", "push tastes", "pull tastes", "punctuation"],
+    "roles": {
+      "garden": "refreshing, watery, crunchy, bright",
+      "meaty": "aroma-driven, texture-rich, supports strong flavors",
+      "oceanic": "delicate, herb-friendly, clean",
+      "starchy": "texture-driven, coats palate, diffuses strong flavors"
+    },
+    "balance_logic": "Each platform has different affinities – choose push/pull tastes accordingly.",
+    "contrast_logic": "Platform provides base texture and flavor that contrasts with added elements.",
+    "examples": ["meat with wine sauce (meaty + vinted)", "fish with herbs (oceanic + floral herbal)", "potatoes with butter (starchy + creamy)"],
+    "failure_modes": [
+      {"case": "wrong platform for strong tastes", "result": "overwhelmed or mismatched"},
+      {"case": "platform overcooked", "result": "texture lost, purpose defeated"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.95
+  },
+  {
+    "rule": "bitter_punctuates",
+    "category": "contrast",
+    "applies_to": ["all dishes"],
+    "description": "Bitter brings taste on the palate to a full stop. It prevents strong tastes from cascading and overwhelming the senses.",
+    "structure": ["bitter element", "rich/sweet elements"],
+    "roles": {
+      "bitter": "closes down palate, prepares for next bite",
+      "rich/sweet": "balanced and contained by bitter"
+    },
+    "balance_logic": "A little bitter goes a long way – it should punctuate, not dominate.",
+    "contrast_logic": "Bitter contrasts directly with sweet and rich.",
+    "examples": ["cranberries with sweet dishes", "watercress with rich meats", "beer with fatty foods"],
+    "failure_modes": [
+      {"case": "no bitter in very rich dish", "result": "palate overwhelmed, can't appreciate subsequent bites"},
+      {"case": "too much bitter", "result": "unpleasant, dominates dish"}
+    ],
+    "meta": {"priority": "medium", "universality": "universal"},
+    "confidence": 0.95
+  },
+  {
+    "rule": "menu_golden_thread",
+    "category": "structure",
+    "applies_to": ["meal planning"],
+    "description": "A well-planned menu is a progression of flavors reaching a crescendo with the main course and resolution in dessert. There must be a 'golden thread' uniting the meal.",
+    "structure": ["starter", "second course", "main course", "dessert"],
+    "roles": {
+      "starter": "wakes up palate, bright notes",
+      "second course": "builds on starter, introduces depth",
+      "main course": "crescendo, most complex",
+      "dessert": "resolution, sweet closure"
+    },
+    "balance_logic": "Transitions between dishes are critical – each course should prepare the palate for the next.",
+    "contrast_logic": "Light before heavy, bright before rich, simple before complex.",
+    "examples": ["tomato coulis (bright) → grilled snapper (defined) → crispy chicken (sweet/tangy) → espresso custard (closure)"],
+    "failure_modes": [
+      {"case": "strongest flavors first", "result": "nowhere to go, palate exhausted"},
+      {"case": "no logical transitions", "result": "meal feels disjointed, random"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.95
+  },
+  {
+    "rule": "vinted_taste",
+    "category": "balance",
+    "applies_to": ["sauce", "braise", "stew"],
+    "description": "Wine has a pulling characteristic – it's fermented fruit with tang, plus tannins that pucker the tongue and pull out even more flavor.",
+    "structure": ["wine", "dish"],
+    "roles": {
+      "wine": "adds fruity tang, bitterness from tannins, cleanses palate",
+      "dish": "receives depth and complexity"
+    },
+    "balance_logic": "Red wine's bitterness helps cut through other tastes and clean the palate for the next bite.",
+    "contrast_logic": "Wine's tang and bitterness contrast with richness and sweetness.",
+    "examples": ["red wine with beef", "white wine with fish", "wine in braising liquid"],
+    "failure_modes": [
+      {"case": "wine not reduced enough", "result": "harsh alcohol taste"},
+      {"case": "wrong wine for dish", "result": "clashing flavors"}
+    ],
+    "meta": {"priority": "medium", "universality": "contextual"},
+    "confidence": 0.9
+  },
+  {
+    "rule": "bulby_taste",
+    "category": "balance",
+    "applies_to": ["sauce", "soup", "stew", "roast"],
+    "description": "Onions, garlic, shallots, leeks – cooked bulby vegetables caramelize, turning sharpness to nutty sugar. They fill the nose and pull all flavors forward.",
+    "structure": ["bulby vegetable", "fat", "heat"],
+    "roles": {
+      "bulby vegetable": "opens bouquet, pulls sweetness, broad flavor enhancement",
+      "fat": "carries bulby flavors",
+      "heat": "transforms sharp to sweet"
+    },
+    "balance_logic": "Raw bulby = sharp, pungent. Cooked bulby = sweet, nutty, broad. Choose based on desired effect.",
+    "contrast_logic": "Not applicable – bulby tastes work broadly, not in contrast.",
+    "examples": ["sweated onions in risotto", "caramelized onions on burgers", "garlic in nearly everything"],
+    "failure_modes": [
+      {"case": "bulby vegetables undercooked", "result": "harsh, sharp, overwhelming"},
+      {"case": "bulby vegetables burned", "result": "bitter, acrid"}
+    ],
+    "meta": {"priority": "high", "universality": "universal"},
+    "confidence": 0.95
+  },
+  {
+    "rule": "floral_herbal_taste",
+    "category": "balance",
+    "applies_to": ["all dishes"],
+    "description": "Fresh herbs, lemongrass, citrus zest – floral herbal ingredients pull up and focus specific tastes. Basil/tarragon pull sweetness, rosemary/thyme accent saltiness and meatiness.",
+    "structure": ["floral herbal ingredient", "target taste", "dish"],
+    "roles": {
+      "floral herbal": "focuses and directs specific tastes",
+      "target taste": "what the herb is meant to highlight",
+      "dish": "receives focused flavor"
+    },
+    "balance_logic": "Each herb has a specific affinity – use deliberately, not arbitrarily.",
+    "contrast_logic": "Not applicable – these are focusing, not contrasting.",
+    "examples": ["tarragon with chicken (pulls sweetness)", "rosemary with lamb (accents meatiness)", "cilantro with chili (essential pair)"],
+    "failure_modes": [
+      {"case": "wrong herb for dish", "result": "mismatched, distracting"},
+      {"case": "too much herb", "result": "overwhelms, tastes like a garden"}
+    ],
+    "meta": {"priority": "medium", "universality": "universal"},
+    "confidence": 0.95
+  },
+  {
+    "rule": "spiced_aromatic_taste",
+    "category": "balance",
+    "applies_to": ["all dishes"],
+    "description": "Cinnamon, cloves, cumin, coriander, saffron, star anise – spiced aromatics rise over the ensemble, their notes ring clearly, restating themes and signaling new ones.",
+    "structure": ["spiced aromatic", "dish"],
+    "roles": {
+      "spiced aromatic": "pulls sweetness, tempers richness, signals flavors to come",
+      "dish": "receives clear, identifiable notes"
+    },
+    "balance_logic": "Use sparingly – they are trumpets, not string section. More combinations don't work than do.",
+    "contrast_logic": "Not applicable – they rise above, not contrast with.",
+    "examples": ["cinnamon in cookies", "curry with shellfish", "cloves with pork"],
+    "failure_modes": [
+      {"case": "too many spices", "result": "muddled, no clear note"},
+      {"case": "spice overpowering", "result": "dish tastes of spice only"}
+    ],
+    "meta": {"priority": "medium", "universality": "universal"},
+    "confidence": 0.95
+  },
+  {
+    "rule": "funky_taste",
+    "category": "balance",
+    "applies_to": ["meat dish", "cheese dish", "game dish"],
+    "description": "Aged meats, pungent cheeses, truffles, cabbage – funky ingredients have an organic, overripe smell that stimulates the palate and pulls up strong flavors.",
+    "structure": ["funky ingredient", "platform", "other tastes"],
+    "roles": {
+      "funky": "pulls flavors back to organic origins, adds depth",
+      "platform": "receives and supports funky notes",
+      "other tastes": "balanced and contextualized by funk"
+    },
+    "balance_logic": "A little funk goes a long way – it should enhance, not dominate.",
+    "contrast_logic": "Funk contrasts with clean, bright, and fresh tastes.",
+    "examples": ["truffles with beef", "aged country ham", "cabbage with pork"],
+    "failure_modes": [
+      {"case": "too much funk", "result": "overpowering, unpleasant"},
+      {"case": "funk without counterpoint", "result": "one-dimensional, heavy"}
+    ],
+    "meta": {"priority": "low", "universality": "contextual"},
+    "confidence": 0.9
+  },
+  {
+    "rule": "sharp_taste_punctuation",
+    "category": "contrast",
+    "applies_to": ["all dishes"],
+    "description": "Sharpness (horseradish, wasabi, certain radishes) feels like bitter with picante heat in the bouquet. It stops taste on the tongue but reinforces aroma effects.",
+    "structure": ["sharp element", "rich elements"],
+    "roles": {
+      "sharp": "stops taste, reinforces aromas, cleanses",
+      "rich elements": "balanced and punctuated by sharpness"
+    },
+    "balance_logic": "Sharpness is powerful – use judiciously to punctuate, not overwhelm.",
+    "contrast_logic": "Sharp contrasts directly with rich, fatty, and sweet.",
+    "examples": ["horseradish with roast beef", "wasabi with sushi", "radishes with butter and salt"],
+    "failure_modes": [
+      {"case": "too much sharpness", "result": "overpowers, unpleasant heat"},
+      {"case": "sharpness without richness to cut", "result": "harsh, unbalanced"}
+    ],
+    "meta": {"priority": "low", "universality": "contextual"},
+    "confidence": 0.9
+  }
+]

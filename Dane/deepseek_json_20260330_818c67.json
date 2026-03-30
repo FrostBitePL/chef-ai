@@ -1,0 +1,926 @@
+[
+  {
+    "ingredient": "chocolate",
+    "ingredient_state": "solid, unmelted",
+    "intent": "temper",
+    "process": "crystallization",
+    "mechanism": "beta V crystal formation",
+    "target": {
+      "temperature_c": 31.5,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-0.5, 0.5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 28,
+        "effect": "beta V crystals do not form; chocolate blooms"
+      },
+      "upper": {
+        "temperature_c": 34,
+        "effect": "beta V crystals melt; temper lost"
+      }
+    },
+    "equipment": "thermometer, marble slab or sous vide",
+    "condition": "when making chocolate coatings or molded chocolates",
+    "decision": "Heat dark chocolate to 45-50°C to melt all crystals, cool to 27-28°C while stirring to form beta V crystals, reheat to 31-32°C for working",
+    "failure_state": [
+      {
+        "case": "improper_temperature",
+        "result": "bloom (white streaks), poor snap, difficulty unmolding"
+      }
+    ],
+    "effect": "Cocoa butter forms six crystal types; only beta V gives proper snap, gloss, and shrinkage for unmolding",
+    "sensory": {
+      "texture": "snaps cleanly, melts smoothly",
+      "appearance": "glossy, no streaks"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "milk chocolate",
+    "ingredient_state": "solid, unmelted",
+    "intent": "temper",
+    "process": "crystallization",
+    "mechanism": "beta V crystal formation",
+    "target": {
+      "temperature_c": 29.5,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-0.5, 0.5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 26,
+        "effect": "beta V crystals do not form"
+      },
+      "upper": {
+        "temperature_c": 32,
+        "effect": "beta V crystals melt; temper lost"
+      }
+    },
+    "equipment": "thermometer, marble slab or sous vide",
+    "condition": "when tempering milk chocolate",
+    "decision": "Heat to 40-45°C, cool to 25-26°C, reheat to 29-30°C for working",
+    "failure_state": [
+      {
+        "case": "improper_temperature",
+        "result": "bloom, poor snap"
+      }
+    ],
+    "effect": "Milk chocolate has lower melting point due to milk fat; tempering temperatures are 2-3°C lower than dark chocolate",
+    "sensory": {
+      "texture": "snaps cleanly, melts smoothly",
+      "appearance": "glossy"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "white chocolate",
+    "ingredient_state": "solid, unmelted",
+    "intent": "temper",
+    "process": "crystallization",
+    "mechanism": "beta V crystal formation",
+    "target": {
+      "temperature_c": 28.5,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-0.5, 0.5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 25,
+        "effect": "beta V crystals do not form"
+      },
+      "upper": {
+        "temperature_c": 31,
+        "effect": "beta V crystals melt; temper lost"
+      }
+    },
+    "equipment": "thermometer, marble slab or sous vide",
+    "condition": "when tempering white chocolate",
+    "decision": "Heat to 40-45°C, cool to 24-25°C, reheat to 28-29°C for working",
+    "failure_state": [
+      {
+        "case": "improper_temperature",
+        "result": "bloom, poor snap"
+      }
+    ],
+    "effect": "White chocolate has no cocoa solids, only cocoa butter and milk solids; lowest working temperature of all chocolates",
+    "sensory": {
+      "texture": "snaps cleanly, melts smoothly",
+      "appearance": "glossy, ivory"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "egg white",
+    "ingredient_state": "liquid",
+    "intent": "aerate",
+    "process": "foaming",
+    "mechanism": "protein denaturation at air-water interface",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-5, 15],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 4,
+        "effect": "slower foaming; smaller volume"
+      },
+      "upper": {
+        "temperature_c": 40,
+        "effect": "proteins denature before whipping; foam unstable"
+      }
+    },
+    "equipment": "stand mixer or hand mixer",
+    "condition": "when making meringue or angel food cake",
+    "decision": "Whip egg whites at room temperature until soft or stiff peaks form",
+    "failure_state": [
+      {
+        "case": "fat_present",
+        "result": "foam will not form; whites remain liquid"
+      },
+      {
+        "case": "over_whipping",
+        "result": "proteins over-coagulate; foam collapses"
+      }
+    ],
+    "effect": "Whipping denatures ovalbumin at air-water interface, forming stable film around air bubbles; fat disrupts this film",
+    "sensory": {
+      "texture": "light, airy, stable peaks",
+      "appearance": "white, glossy"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "cream",
+    "ingredient_state": "liquid, cold",
+    "intent": "aerate",
+    "process": "foaming",
+    "mechanism": "fat globule partial coalescence",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": 3
+    },
+    "tolerance": {
+      "temperature_c": [-2, 5],
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 0,
+        "effect": "cream freezes; cannot whip"
+      },
+      "upper": {
+        "temperature_c": 15,
+        "effect": "fat too soft; foam unstable"
+      }
+    },
+    "equipment": "stand mixer or hand mixer, chilled bowl",
+    "condition": "when making whipped cream",
+    "decision": "Whip cold cream until soft or stiff peaks form",
+    "failure_state": [
+      {
+        "case": "warm_cream",
+        "result": "foam collapses quickly; becomes buttery"
+      },
+      {
+        "case": "over_whipping",
+        "result": "butter forms; cream separates"
+      }
+    ],
+    "effect": "Whipping incorporates air; fat globules partially coalesce around bubbles, creating stable structure; cold fat is essential for stability",
+    "sensory": {
+      "texture": "light, fluffy",
+      "appearance": "white, peaks hold shape"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "sugar",
+    "ingredient_state": "crystals",
+    "intent": "stabilize_meringue",
+    "process": "protein stabilization",
+    "mechanism": "intermolecular interactions",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": null,
+        "effect": null
+      }
+    },
+    "equipment": "mixer",
+    "condition": "when making stable meringue",
+    "decision": "Add sugar gradually after soft peaks form",
+    "failure_state": [
+      {
+        "case": "sugar_added_too_early",
+        "result": "slower foaming; less volume"
+      }
+    ],
+    "effect": "Sugar dissolves in water phase, increasing viscosity and stabilizing protein film around air bubbles",
+    "sensory": {
+      "texture": "stable, glossy",
+      "appearance": "white, smooth"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "sugar",
+    "ingredient_state": "crystals",
+    "intent": "caramelize",
+    "process": "caramelization",
+    "mechanism": "thermal decomposition",
+    "target": {
+      "temperature_c": 170,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-2, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 150,
+        "effect": "sugar melts but minimal caramelization"
+      },
+      "upper": {
+        "temperature_c": 190,
+        "effect": "caramel burns, becomes bitter and black"
+      }
+    },
+    "equipment": "heavy-bottomed pot",
+    "condition": "when making caramel sauce or candy",
+    "decision": "Heat sugar without stirring until melted and amber-colored",
+    "failure_state": [
+      {
+        "case": "stirring_after_melting",
+        "result": "crystallization, grainy texture"
+      }
+    ],
+    "effect": "Sucrose decomposes above 150°C, creating hundreds of flavor compounds; stirring introduces crystals that seed further crystallization",
+    "sensory": {
+      "texture": "fluid when hot, brittle when cool",
+      "appearance": "amber to deep brown"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "sugar syrup",
+    "ingredient_state": "concentrated",
+    "intent": "determine_stage",
+    "process": "concentration measurement",
+    "mechanism": "boiling point elevation",
+    "target": {
+      "temperature_c": 110,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 100,
+        "effect": "thread stage (110°C)"
+      },
+      "upper": {
+        "temperature_c": 155,
+        "effect": "hard crack stage (150-155°C)"
+      }
+    },
+    "equipment": "candy thermometer",
+    "condition": "when making candy",
+    "decision": "Heat sugar syrup to specific temperature for desired texture: 110°C thread, 115°C soft ball, 120°C firm ball, 130°C hard ball, 145°C soft crack, 150°C hard crack",
+    "failure_state": [
+      {
+        "case": "no_thermometer",
+        "result": "unpredictable texture; candy may fail"
+      }
+    ],
+    "effect": "Sugar concentration determines final texture; boiling point increases as water evaporates; each 5°C represents significant concentration change",
+    "sensory": {
+      "texture": "varies from syrupy to brittle",
+      "appearance": "clear to amber"
+    },
+    "meta": {
+      "category": "measurement",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "dough",
+    "ingredient_state": "mixed",
+    "intent": "test_gluten_development",
+    "process": "windowpane test",
+    "mechanism": "gluten network elasticity",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": null,
+        "effect": null
+      }
+    },
+    "equipment": "hands",
+    "condition": "when determining if bread dough is fully kneaded",
+    "decision": "Stretch a small piece of dough; it should form a thin translucent membrane without tearing",
+    "failure_state": [
+      {
+        "case": "dough_tears",
+        "result": "gluten underdeveloped; continue kneading"
+      }
+    ],
+    "effect": "Properly developed gluten network stretches without breaking, indicating sufficient cross-linking of glutenin and gliadin",
+    "sensory": {
+      "texture": "elastic, extensible",
+      "appearance": "thin, translucent"
+    },
+    "meta": {
+      "category": "measurement",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "sauce",
+    "ingredient_state": "liquid",
+    "intent": "thicken",
+    "process": "reduction",
+    "mechanism": "water evaporation",
+    "target": {
+      "temperature_c": 100,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 85,
+        "effect": "evaporation very slow"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "vigorous boiling; risk of scorching"
+      }
+    },
+    "equipment": "wide pot",
+    "condition": "when concentrating flavor and thickening liquid",
+    "decision": "Simmer uncovered until desired consistency, stirring occasionally",
+    "failure_state": [
+      {
+        "case": "covered_pot",
+        "result": "no reduction; steam trapped"
+      }
+    ],
+    "effect": "Water evaporates, concentrating dissolved solids and thickening; wide surface area accelerates evaporation",
+    "sensory": {
+      "texture": "thicker, more viscous",
+      "appearance": "darker, more intense color"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "sauce",
+    "ingredient_state": "finished",
+    "intent": "mount_with_butter",
+    "process": "emulsification",
+    "mechanism": "fat droplet suspension",
+    "target": {
+      "temperature_c": 60,
+      "time_minutes": 1
+    },
+    "tolerance": {
+      "temperature_c": [-10, 5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 40,
+        "effect": "butter does not melt fully"
+      },
+      "upper": {
+        "temperature_c": 70,
+        "effect": "emulsion breaks; sauce separates"
+      }
+    },
+    "equipment": "saucepan, whisk",
+    "condition": "when finishing sauce to add richness and shine",
+    "decision": "Remove sauce from heat, whisk in cold butter pieces one at a time",
+    "failure_state": [
+      {
+        "case": "sauce_too_hot",
+        "result": "butter melts too quickly; emulsion breaks"
+      }
+    ],
+    "effect": "Cold butter emulsifies into sauce, adding richness and viscosity; proteins in butter help stabilize emulsion",
+    "sensory": {
+      "texture": "smooth, silky",
+      "appearance": "glossy, emulsified"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "bread",
+    "ingredient_state": "baked",
+    "intent": "stale",
+    "process": "starch retrogradation",
+    "mechanism": "amylose and amylopectin recrystallization",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": 720
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": -18,
+        "effect": "staling stops; bread preserved"
+      },
+      "upper": {
+        "temperature_c": 60,
+        "effect": "starch remains gelatinized; bread stays soft"
+      }
+    },
+    "equipment": "none",
+    "condition": "when storing bread",
+    "decision": "Store bread at room temperature for short term; freeze for long term",
+    "failure_state": [
+      {
+        "case": "refrigerating_bread",
+        "result": "accelerated staling; stale in 1-2 days"
+      }
+    ],
+    "effect": "Starch retrogradation (recrystallization) occurs fastest at 4°C; freezing stops molecular movement; room temperature slows retrogradation",
+    "sensory": {
+      "texture": "firm, dry, crumbly",
+      "appearance": "unchanged"
+    },
+    "meta": {
+      "category": "safety",
+      "priority": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "frozen food",
+    "ingredient_state": "frozen solid",
+    "intent": "thaw",
+    "process": "phase change",
+    "mechanism": "ice crystal melting",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 0,
+        "effect": "food remains frozen"
+      },
+      "upper": {
+        "temperature_c": 60,
+        "effect": "food enters danger zone; bacterial growth"
+      }
+    },
+    "equipment": "refrigerator",
+    "condition": "when thawing frozen food safely",
+    "decision": "Thaw in refrigerator overnight; submerge sealed bag in cold water for faster thawing",
+    "failure_state": [
+      {
+        "case": "room_temperature_thaw",
+        "result": "surface in danger zone while interior frozen"
+      }
+    ],
+    "effect": "Refrigerator maintains temperature below 4°C, preventing bacterial growth during thawing",
+    "sensory": null,
+    "meta": {
+      "category": "safety",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "meat",
+    "ingredient_state": "frozen",
+    "intent": "prevent_ice_crystals",
+    "process": "freezing",
+    "mechanism": "rapid freezing",
+    "target": {
+      "temperature_c": -30,
+      "time_minutes": 30
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": -40,
+        "effect": "maximum quality preservation"
+      },
+      "upper": {
+        "temperature_c": -18,
+        "effect": "slow freezing; large ice crystals damage cells"
+      }
+    },
+    "equipment": "freezer",
+    "condition": "when freezing meat for long-term storage",
+    "decision": "Freeze as quickly as possible; use blast freezer if available",
+    "failure_state": [
+      {
+        "case": "slow_freezing",
+        "result": "large ice crystals rupture cells; texture degraded"
+      }
+    ],
+    "effect": "Rapid freezing creates small ice crystals that do not puncture cell walls; slow freezing allows large crystal growth",
+    "sensory": {
+      "texture": "better preserved with rapid freezing",
+      "appearance": "unchanged"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "cheese",
+    "ingredient_state": "solid",
+    "intent": "melt_smoothly",
+    "process": "emulsification",
+    "mechanism": "casein matrix with emulsifying salts",
+    "target": {
+      "temperature_c": 75,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-2, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 60,
+        "effect": "cheese softens but does not flow"
+      },
+      "upper": {
+        "temperature_c": 85,
+        "effect": "fat separates; cheese becomes greasy"
+      }
+    },
+    "equipment": "pot, sodium citrate",
+    "condition": "when making cheese sauce or melting cheese without breaking",
+    "decision": "Add sodium citrate (0.5-2% of cheese weight) and heat gently with liquid",
+    "failure_state": [
+      {
+        "case": "no_emulsifier",
+        "result": "cheese separates; greasy, stringy texture"
+      }
+    ],
+    "effect": "Sodium citrate chelates calcium, disrupting casein network and allowing fat to emulsify smoothly",
+    "sensory": {
+      "texture": "smooth, creamy, fluid",
+      "appearance": "homogeneous"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "oil",
+    "ingredient_state": "liquid",
+    "intent": "determine_smoke_point",
+    "process": "thermal decomposition",
+    "mechanism": "free fatty acid oxidation",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 160,
+        "effect": "butter, extra virgin olive oil begin smoking"
+      },
+      "upper": {
+        "temperature_c": 260,
+        "effect": "refined avocado, safflower oils"
+      }
+    },
+    "equipment": "thermometer",
+    "condition": "when selecting oil for cooking",
+    "decision": "Use refined oils (avocado, canola, peanut) for high-heat searing; use unrefined oils for low-heat or finishing",
+    "failure_state": [
+      {
+        "case": "exceeding_smoke_point",
+        "result": "acrid smoke, off-flavors, harmful compounds"
+      }
+    ],
+    "effect": "Free fatty acids oxidize at characteristic temperatures; refining removes impurities, raising smoke point",
+    "sensory": null,
+    "meta": {
+      "category": "measurement",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "sous vide bag",
+    "ingredient_state": "sealed",
+    "intent": "remove_air",
+    "process": "displacement",
+    "mechanism": "Archimedes' principle",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": null,
+        "effect": null
+      }
+    },
+    "equipment": "zip-top bag, water",
+    "condition": "when vacuum sealer is not available",
+    "decision": "Place food in zip-top bag, slowly lower into water to push air out, seal just above water line",
+    "failure_state": [
+      {
+        "case": "air_pockets_remaining",
+        "result": "poor heat transfer; bag floats"
+      }
+    ],
+    "effect": "Water pressure forces air out of bag; works for most foods except those that float naturally",
+    "sensory": null,
+    "meta": {
+      "category": "prep",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "food",
+    "ingredient_state": "any",
+    "intent": "cook_sous_vide",
+    "process": "precision temperature cooking",
+    "mechanism": "thermal equilibrium",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": [-0.5, 0.5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": null,
+        "effect": null
+      }
+    },
+    "equipment": "sous vide circulator, water bath, vacuum sealer",
+    "condition": "when precise doneness is required",
+    "decision": "Seal food in bag, cook in water bath at target temperature until core reaches temperature (minimum time) or longer for tenderization",
+    "failure_state": [
+      {
+        "case": "temperature_fluctuation",
+        "result": "uneven cooking; potential safety issues"
+      }
+    ],
+    "effect": "Water bath maintains exact temperature; food cannot overcook beyond target; enzymes and bacteria are precisely controlled",
+    "sensory": {
+      "texture": "edge-to-edge consistency",
+      "juiciness": "maximized"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "meat",
+    "ingredient_state": "cooked sous vide",
+    "intent": "sear",
+    "process": "maillard reaction",
+    "mechanism": "amino acid-sugar reaction",
+    "target": {
+      "temperature_c": 180,
+      "time_minutes": 1
+    },
+    "tolerance": {
+      "temperature_c": [-20, 30],
+      "time_minutes": [-0.5, 1]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 140,
+        "effect": "browning very slow"
+      },
+      "upper": {
+        "temperature_c": 220,
+        "effect": "surface burns before crust forms"
+      }
+    },
+    "equipment": "cast iron pan, blowtorch",
+    "condition": "after sous vide cooking",
+    "decision": "Pat meat completely dry; sear in hot oil for 30-60 seconds per side or use blowtorch",
+    "failure_state": [
+      {
+        "case": "wet_surface",
+        "result": "steaming not searing; no crust"
+      }
+    ],
+    "effect": "Moisture must evaporate for surface to reach Maillard temperatures; brief sear prevents overcooking interior",
+    "sensory": {
+      "texture": "crisp crust, tender interior",
+      "appearance": "deep brown"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "meat",
+    "ingredient_state": "whole muscle",
+    "intent": "brine",
+    "process": "osmosis and diffusion",
+    "mechanism": "salt penetration and protein modification",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": 720
+    },
+    "tolerance": {
+      "temperature_c": [-1, 1],
+      "time_minutes": [-240, 240]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 0,
+        "effect": "freezing prevents penetration"
+      },
+      "upper": {
+        "temperature_c": 10,
+        "effect": "bacterial growth risk"
+      }
+    },
+    "equipment": "container, refrigerator",
+    "condition": "when adding moisture and flavor to lean meats",
+    "decision": "Submerge meat in salt solution (5-10% salt) for 4-24 hours depending on thickness",
+    "failure_state": [
+      {
+        "case": "too_long",
+        "result": "meat becomes overly salty, mushy texture"
+      }
+    ],
+    "effect": "Salt denatures proteins, increasing water-holding capacity; osmosis drives water into meat; salt also seasons interior",
+    "sensory": {
+      "texture": "more tender, juicier",
+      "juiciness": "increased",
+      "appearance": "slightly darker"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "vegetables",
+    "ingredient_state": "cut pieces",
+    "intent": "blanch",
+    "process": "enzyme inactivation",
+    "mechanism": "peroxidase denaturation",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 2
+    },
+    "tolerance": {
+      "temperature_c": [-5, 10],
+      "time_minutes": [-0.5, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "enzymes not fully inactivated; quality degrades during freezing"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "vegetables may become overcooked"
+      }
+    },
+    "equipment": "pot, ice bath",
+    "condition": "when preparing vegetables for freezing or to set color",
+    "decision": "Blanch in boiling or near-boiling water until bright color develops, then shock in ice water",
+    "failure_state": [
+      {
+        "case": "no_ice_bath",
+        "result": "carryover cooking; mushy texture"
+      }
+    ],
+    "effect": "Heat inactivates enzymes that cause color loss and off-flavors; ice bath stops cooking immediately",
+    "sensory": {
+      "texture": "crisp-tender",
+      "appearance": "bright, vibrant color"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  }
+]

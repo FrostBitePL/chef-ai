@@ -1,0 +1,558 @@
+[
+  {
+    "technique": "slow_roasting",
+    "category": "heat_application",
+    "goal": "Cook food at a low temperature over an extended period to achieve even doneness, tender texture, and concentrated flavor without excessive browning.",
+    "when_to_use": "When cooking large cuts of meat (prime rib, pork shoulder), whole birds, or root vegetables where even cooking and tenderness are prioritized over crust formation.",
+    "inputs": [
+      "large cut of meat, whole bird, or root vegetables",
+      "oil",
+      "salt, pepper",
+      "optional: aromatics, herbs"
+    ],
+    "equipment": [
+      "roasting pan",
+      "wire rack",
+      "instant-read thermometer",
+      "oven"
+    ],
+    "steps": [
+      "Preheat oven to 200–275°F (95–135°C) depending on the food and desired cooking time.",
+      "Pat the food dry and season generously with salt and pepper.",
+      "Optional: Sear the food briefly in a hot pan to develop a flavorful crust before slow roasting.",
+      "Place food on a wire rack set in a roasting pan to allow air circulation.",
+      "Insert a probe thermometer into the thickest part of the meat (for proteins).",
+      "Place in the oven and roast until the internal temperature reaches the desired doneness:",
+      "  - Rare beef: 120–125°F (49–52°C)",
+      "  - Medium-rare beef: 130–135°F (54–57°C)",
+      "  - Pork: 140–145°F (60–63°C)",
+      "  - Poultry breast: 150–155°F (65–68°C)",
+      "  - Poultry thigh: 165–170°F (74–77°C)",
+      "Remove from oven and let rest for 15–30 minutes (for large cuts) before carving.",
+      "Optional: Increase oven temperature to 450–500°F (230–260°C) for the final 5–10 minutes to crisp the exterior."
+    ],
+    "critical_control_points": [
+      "Maintain consistent low oven temperature; fluctuations can cause uneven cooking.",
+      "Use a probe thermometer to monitor internal temperature; timing alone is unreliable.",
+      "Do not open the oven door unnecessarily; heat loss extends cooking time.",
+      "Resting is essential; carryover cooking will raise temperature 5–10°F (3–5°C).",
+      "For poultry, ensure the internal temperature reaches safe minimums."
+    ],
+    "control_variables": {
+      "heat_level": "low",
+      "temperature_control": "precise",
+      "moisture_level": "dry",
+      "agitation": "none",
+      "time_sensitivity": "low"
+    },
+    "failure_modes": [
+      {
+        "case": "Oven temperature too high",
+        "result": "Exterior overcooks before interior reaches doneness; uneven cooking; moisture loss."
+      },
+      {
+        "case": "Not resting after cooking",
+        "result": "Juices run out during carving; meat becomes dry."
+      },
+      {
+        "case": "Insufficient seasoning",
+        "result": "Flat flavor; salt does not penetrate fully during slow cooking."
+      },
+      {
+        "case": "Skipping the final high-heat step (when desired)",
+        "result": "Pale, unappetizing exterior without crust."
+      }
+    ],
+    "signals": {
+      "visual": "Meat appears evenly cooked throughout when sliced; exterior may be pale if not finished with high heat; juices run clear (for poultry).",
+      "touch": "Meat feels tender and yields to pressure; fork slides in easily.",
+      "smell": "Gentle, savory aroma; no burning or scorching."
+    },
+    "output": {
+      "texture": "tender, evenly cooked throughout; moist interior",
+      "appearance": "evenly cooked with optional crisp exterior if finished at high heat",
+      "flavor": "concentrated, well-developed, savory"
+    },
+    "links_to_intents": [
+      "tenderize",
+      "cook_evenly"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "high"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "parboiling",
+    "category": "water_based",
+    "goal": "Partially cook food in boiling water to soften it, reduce cooking time, or remove undesirable flavors before finishing with another cooking method.",
+    "when_to_use": "When preparing potatoes for roasting, par-cooking vegetables for stir-fries, or pre-cooking ingredients for dishes where even cooking is important.",
+    "inputs": [
+      "vegetables (potatoes, root vegetables) or other food",
+      "water",
+      "salt (optional)",
+      "optional: acid (lemon juice, vinegar) for color retention"
+    ],
+    "equipment": [
+      "large pot",
+      "colander or spider",
+      "cutting board",
+      "knife"
+    ],
+    "steps": [
+      "Cut food into uniform pieces to ensure even par-cooking.",
+      "Bring a large pot of salted water to a rolling boil.",
+      "Add the food to the boiling water.",
+      "Cook for a fraction of the total cooking time (typically 2–10 minutes depending on size and density).",
+      "Test for doneness: food should be partially tender but still firm at the center.",
+      "Drain immediately and either:",
+      "  - Plunge into ice water to stop cooking (if finishing later), or",
+      "  - Proceed directly to final cooking method (roasting, frying, sautéing).",
+      "Pat dry thoroughly before final cooking to ensure proper browning."
+    ],
+    "critical_control_points": [
+      "Cut pieces uniformly for even partial cooking.",
+      "Use plenty of water to maintain temperature when food is added.",
+      "Cook only until partially tender; the food will finish cooking in the final step.",
+      "If not using immediately, shock in ice water to prevent overcooking.",
+      "Dry thoroughly before final cooking to achieve browning."
+    ],
+    "control_variables": {
+      "heat_level": "high",
+      "temperature_control": "approximate",
+      "moisture_level": "wet",
+      "agitation": "none",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Overcooking during parboiling",
+        "result": "Food becomes mushy; falls apart during final cooking."
+      },
+      {
+        "case": "Uneven cutting",
+        "result": "Inconsistent doneness; some pieces overcook while others remain raw."
+      },
+      {
+        "case": "Not drying before final cooking",
+        "result": "Steaming instead of browning; poor crust formation."
+      },
+      {
+        "case": "Skipping ice water shock when prepping ahead",
+        "result": "Residual heat continues cooking; food becomes overcooked."
+      }
+    ],
+    "signals": {
+      "visual": "Food becomes slightly translucent at edges; color may brighten; surface softens but center remains firm.",
+      "touch": "Food yields slightly to pressure but still offers resistance at the center; knife meets some resistance."
+    },
+    "output": {
+      "texture": "partially tender, firm center",
+      "appearance": "slightly softened, color brightened",
+      "flavor": "partially cooked, neutralized raw flavors"
+    },
+    "links_to_intents": [
+      "prepare_for_cooking",
+      "reduce_cooking_time"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "tempering_eggs",
+    "category": "mechanical",
+    "goal": "Gradually raise the temperature of eggs by slowly adding hot liquid while whisking to prevent curdling before incorporating into a hot mixture.",
+    "when_to_use": "When adding eggs or egg yolks to hot liquids (sauces, soups, custards) to thicken them without scrambling.",
+    "inputs": [
+      "eggs or egg yolks",
+      "hot liquid (stock, milk, cream, sauce base)",
+      "bowl for tempering"
+    ],
+    "equipment": [
+      "heatproof bowl",
+      "whisk",
+      "ladle or measuring cup"
+    ],
+    "steps": [
+      "In a heatproof bowl, whisk the eggs or yolks until smooth and combined.",
+      "Heat the liquid to the desired temperature (simmering for most applications).",
+      "Slowly add a small amount (about 1/4 cup or 60 ml) of the hot liquid to the eggs while whisking constantly.",
+      "Continue whisking until the eggs are warm and fluid, not curdled.",
+      "Add another ladleful of hot liquid, whisking constantly.",
+      "Repeat until the egg mixture has doubled in volume and is warm to the touch.",
+      "Pour the tempered egg mixture back into the remaining hot liquid in a steady stream, whisking constantly.",
+      "Continue cooking over gentle heat, stirring, until the desired thickness is achieved."
+    ],
+    "critical_control_points": [
+      "Add hot liquid slowly; adding too much too quickly will scramble the eggs.",
+      "Whisk constantly during the addition; eggs must be in constant motion.",
+      "Use a heatproof bowl; the bowl must withstand temperature changes.",
+      "The initial addition of liquid should be small; this raises the egg temperature gradually.",
+      "After returning to the pot, cook over low heat; high heat will curdle the eggs."
+    ],
+    "control_variables": {
+      "heat_level": "low (for final cooking)",
+      "temperature_control": "critical",
+      "moisture_level": "wet",
+      "agitation": "constant whisking",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Adding hot liquid too quickly",
+        "result": "Eggs scramble; sauce becomes grainy and separated."
+      },
+      {
+        "case": "Not whisking constantly",
+        "result": "Eggs cook unevenly; lumps form."
+      },
+      {
+        "case": "Final cooking temperature too high",
+        "result": "Eggs overcook; sauce curdles."
+      },
+      {
+        "case": "Not enough initial liquid additions",
+        "result": "Temperature rise too rapid; eggs scramble."
+      }
+    ],
+    "signals": {
+      "visual": "Egg mixture becomes warm, fluid, and slightly thickened; no lumps or curds. When returned to the pot, mixture thickens smoothly.",
+      "touch": "Egg mixture feels warm to the touch but not hot; no visible coagulation."
+    },
+    "output": {
+      "texture": "smooth, thickened",
+      "appearance": "homogenous, no lumps or curds",
+      "flavor": "creamy, rich egg flavor without cooked egg solids"
+    },
+    "links_to_intents": [
+      "thicken",
+      "prevent_curdling"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "critical"
+    },
+    "confidence": 0.97
+  },
+  {
+    "technique": "making_caramel_sauce",
+    "category": "reduction",
+    "goal": "Create a smooth, rich sauce by caramelizing sugar and then combining with cream, butter, and flavorings.",
+    "when_to_use": "When a rich, buttery caramel sauce is needed for desserts, ice cream, cakes, or as a topping.",
+    "inputs": [
+      "granulated sugar",
+      "water (optional, for wet caramel)",
+      "heavy cream (warmed)",
+      "butter (cold, cut into pieces)",
+      "salt",
+      "optional: vanilla extract"
+    ],
+    "equipment": [
+      "heavy-bottomed saucepan (light-colored for monitoring color)",
+      "heatproof spatula or whisk",
+      "thermometer (optional)",
+      "bowl for ice bath (optional)"
+    ],
+    "steps": [
+      "For wet caramel: combine sugar and water in a heavy-bottomed saucepan. Stir to moisten evenly.",
+      "For dry caramel: place sugar alone in the saucepan.",
+      "Heat over medium heat without stirring until sugar begins to melt and caramelize around the edges.",
+      "Gently swirl the pan to distribute heat and ensure even caramelization. Do not stir.",
+      "Continue cooking until sugar reaches the desired color (light amber to dark amber).",
+      "Remove from heat immediately when color is achieved.",
+      "Slowly pour in warm cream while whisking vigorously; mixture will bubble vigorously.",
+      "Whisk until smooth and combined.",
+      "Whisk in cold butter pieces one at a time until incorporated.",
+      "Add salt and vanilla if using.",
+      "Strain through a fine-mesh strainer if necessary.",
+      "Cool to room temperature before serving; sauce will thicken as it cools."
+    ],
+    "critical_control_points": [
+      "Do not stir sugar during caramelization; stirring can cause crystallization.",
+      "Watch color closely; sugar can go from amber to burnt in seconds.",
+      "Remove from heat before adding cream; the caramel will continue to darken from residual heat.",
+      "Use warm cream; cold cream can cause violent splattering and seize the caramel.",
+      "Whisk vigorously when adding cream; the mixture will bubble aggressively.",
+      "If caramel crystallizes, add a small amount of water and reheat gently."
+    ],
+    "control_variables": {
+      "heat_level": "medium",
+      "temperature_control": "critical",
+      "moisture_level": "dry to wet",
+      "agitation": "swirling only (no stirring until cream addition)",
+      "time_sensitivity": "critical"
+    },
+    "failure_modes": [
+      {
+        "case": "Stirring during caramelization",
+        "result": "Sugar crystallizes; sauce becomes grainy."
+      },
+      {
+        "case": "Caramel too dark (burnt)",
+        "result": "Bitter, acrid flavor; sauce is ruined."
+      },
+      {
+        "case": "Using cold cream",
+        "result": "Violent splattering; caramel seizes into hard lumps."
+      },
+      {
+        "case": "Adding cream off heat too late",
+        "result": "Caramel hardens before cream incorporates; difficult to combine."
+      }
+    ],
+    "signals": {
+      "visual": "Sugar melts and turns from clear to pale yellow, then amber, then dark amber. When cream is added, mixture bubbles and foams before smoothing. Final sauce is smooth, glossy, and deep amber.",
+      "sound": "Sugar crackles as it melts; sizzling as cream is added; quiet as sauce comes together.",
+      "smell": "Sweet, nutty, caramel aroma; burnt smell indicates overcooking."
+    },
+    "output": {
+      "texture": "smooth, pourable when warm; thickens to a spreadable consistency when cool",
+      "appearance": "deep amber, glossy",
+      "flavor": "rich, buttery, sweet with slight bitterness for balance"
+    },
+    "links_to_intents": [
+      "caramelize",
+      "create_sauce"
+    ],
+    "meta": {
+      "difficulty": "intermediate",
+      "precision": "critical"
+    },
+    "confidence": 0.96
+  },
+  {
+    "technique": "paysanne",
+    "category": "prep",
+    "goal": "Cut vegetables into thin, uniform slices or small shapes (typically 1/2 inch / 12 mm) for soups, stews, or rustic preparations where even cooking and a simple appearance are desired.",
+    "when_to_use": "When preparing vegetables for soups, stews, or braises where a uniform, rustic cut is needed for even cooking and attractive presentation.",
+    "inputs": [
+      "vegetables (carrots, potatoes, onions, leeks)",
+      "sharp chef's knife",
+      "cutting board"
+    ],
+    "equipment": [
+      "sharp chef's knife",
+      "cutting board",
+      "bench scraper"
+    ],
+    "steps": [
+      "Wash, peel, and trim vegetables as needed.",
+      "Cut the vegetable into uniform slices of desired thickness (typically 1/8 to 1/4 inch / 3–6 mm).",
+      "For root vegetables: cut lengthwise into planks, then crosswise into batons, then into small squares or triangles.",
+      "For onions: slice into rings, then cut into small, uniform pieces.",
+      "For leeks: halve lengthwise, rinse thoroughly, then slice into half-moons.",
+      "All pieces should be approximately the same size for even cooking.",
+      "For a classic paysanne cut: vegetables are cut into thin, flat squares or triangles, approximately 1/2 inch (12 mm) in size."
+    ],
+    "critical_control_points": [
+      "All pieces should be uniform for even cooking.",
+      "Use a sharp knife to achieve clean cuts without crushing.",
+      "For leeks, rinse thoroughly after cutting to remove any trapped dirt.",
+      "The cut is rustic; precision is important but the shape is simple.",
+      "Size can vary by application; the key is consistency within the batch."
+    ],
+    "control_variables": {
+      "heat_level": "ambient",
+      "temperature_control": "none",
+      "moisture_level": "dry",
+      "agitation": "none",
+      "time_sensitivity": "none"
+    },
+    "failure_modes": [
+      {
+        "case": "Inconsistent sizing",
+        "result": "Uneven cooking; some pieces overcook while others remain undercooked."
+      },
+      {
+        "case": "Dull knife",
+        "result": "Crushed, ragged edges; uneven pieces; vegetable bruising."
+      },
+      {
+        "case": "Pieces too large",
+        "result": "Longer cooking time; may not fit dish proportions."
+      }
+    ],
+    "signals": {
+      "visual": "Thin, uniform slices or small squares; clean edges; consistent size throughout the batch.",
+      "touch": "Pieces feel firm and uniform; no ragged or crushed edges."
+    },
+    "output": {
+      "texture": "uniform pieces for even cooking",
+      "appearance": "rustic, simple, uniform",
+      "flavor": "unchanged"
+    },
+    "links_to_intents": [
+      "create_uniformity",
+      "prepare_for_cooking"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "technique": "tourné",
+    "category": "prep",
+    "goal": "Cut vegetables (typically root vegetables) into elegant, seven-sided, barrel-shaped pieces for refined presentations.",
+    "when_to_use": "When a classic, elegant vegetable cut is needed for fine dining presentations, garnishes, or when visual precision is paramount.",
+    "inputs": [
+      "firm root vegetable (potato, carrot, turnip, zucchini)",
+      "tourné knife (bird's beak or paring knife)",
+      "cutting board"
+    ],
+    "equipment": [
+      "tourné knife (curved paring knife with a short blade)",
+      "cutting board",
+      "bowl of cold water (for storage)"
+    ],
+    "steps": [
+      "Select a firm, straight vegetable of uniform thickness.",
+      "Cut the vegetable into even lengths, typically 1.5–2 inches (4–5 cm).",
+      "Hold the vegetable in your non-dominant hand with the thumb and fingers curved to protect fingertips.",
+      "Using the tourné knife, make a shallow cut from the top toward the bottom, rotating the vegetable as you cut to create a curved, even surface.",
+      "Continue cutting around the vegetable, creating 6–7 equal sides (facets).",
+      "The ends should be slightly rounded, creating a barrel or football shape.",
+      "Ensure all sides are uniform in thickness and length.",
+      "Place finished pieces in cold water to prevent oxidation until use.",
+      "The trimmings can be used for stocks, purees, or other preparations."
+    ],
+    "critical_control_points": [
+      "Use a very sharp tourné knife; a dull knife will crush rather than cut.",
+      "Hold the vegetable securely with curved fingers to protect from the blade.",
+      "All facets should be of equal size and depth for a symmetrical final shape.",
+      "Work slowly; this is a precision cut that requires practice.",
+      "The finished pieces should be uniform across the batch for consistent cooking."
+    ],
+    "control_variables": {
+      "heat_level": "ambient",
+      "temperature_control": "none",
+      "moisture_level": "dry initially, then wet for storage",
+      "agitation": "none",
+      "time_sensitivity": "none"
+    },
+    "failure_modes": [
+      {
+        "case": "Uneven facets",
+        "result": "Asymmetrical, unprofessional appearance; inconsistent cooking."
+      },
+      {
+        "case": "Dull knife",
+        "result": "Crushed edges; ragged surfaces; difficulty achieving clean cuts."
+      },
+      {
+        "case": "Pieces not uniform length",
+        "result": "Inconsistent appearance; uneven cooking."
+      },
+      {
+        "case": "Cutting too deeply",
+        "result": "Excessive waste; piece becomes too small."
+      }
+    ],
+    "signals": {
+      "visual": "Symmetrical, barrel-shaped pieces with 6–7 equal facets; smooth, curved surfaces; uniform size and length.",
+      "touch": "Pieces feel smooth and even; no ragged or crushed edges."
+    },
+    "output": {
+      "texture": "uniform pieces for even cooking",
+      "appearance": "elegant, classic, refined",
+      "flavor": "unchanged"
+    },
+    "links_to_intents": [
+      "presentation",
+      "create_uniformity"
+    ],
+    "meta": {
+      "difficulty": "advanced",
+      "precision": "critical"
+    },
+    "confidence": 0.94
+  },
+  {
+    "technique": "steaming_fish",
+    "category": "water_based",
+    "goal": "Cook delicate fish fillets or whole fish gently with steam to preserve moisture, texture, and subtle flavors.",
+    "when_to_use": "When cooking delicate fish (sole, flounder, sea bass) where a gentle, moist cooking method is desired to preserve the fish's natural flavor and texture.",
+    "inputs": [
+      "fish fillets or whole fish",
+      "aromatics (ginger, scallions, garlic, herbs)",
+      "soy sauce, sesame oil (for Asian preparations)",
+      "salt, pepper"
+    ],
+    "equipment": [
+      "steamer basket or bamboo steamer",
+      "wok or pot with lid",
+      "heatproof plate (for bamboo steamer)",
+      "tongs or fish spatula"
+    ],
+    "steps": [
+      "Prepare the steamer: fill a wok or pot with 1–2 inches (2.5–5 cm) of water; water should not touch the steamer basket.",
+      "Bring water to a rolling boil.",
+      "Pat fish dry and season lightly with salt and pepper.",
+      "Place fish on a heatproof plate (if using a bamboo steamer) or directly in the steamer basket.",
+      "Arrange aromatics (ginger slices, scallions, herbs) on and around the fish.",
+      "Place the steamer over the boiling water and cover tightly.",
+      "Steam fish until just cooked through:",
+      "  - Thin fillets (1/2 inch / 1.2 cm): 4–6 minutes",
+      "  - Thick fillets (1 inch / 2.5 cm): 8–12 minutes",
+      "  - Whole small fish: 8–15 minutes depending on size",
+      "Check doneness: fish should flake easily with a fork and be opaque throughout.",
+      "Remove from steamer carefully to avoid breaking.",
+      "Optional: Finish with hot oil, soy sauce, or fresh herbs."
+    ],
+    "critical_control_points": [
+      "Water must be boiling before adding fish to ensure immediate steaming.",
+      "Do not overcrowd the steamer; allow space for steam to circulate.",
+      "Cover tightly; steam must be contained to cook properly.",
+      "Check doneness early; fish overcooks quickly.",
+      "Handle delicate fish gently to prevent breaking."
+    ],
+    "control_variables": {
+      "heat_level": "high",
+      "temperature_control": "approximate",
+      "moisture_level": "humid",
+      "agitation": "none",
+      "time_sensitivity": "high"
+    },
+    "failure_modes": [
+      {
+        "case": "Overcooking",
+        "result": "Fish becomes dry, tough, and flaky in an unappealing way; loses delicate texture."
+      },
+      {
+        "case": "Water boiling dry",
+        "result": "Pan scorches; fish may burn; steamer damaged."
+      },
+      {
+        "case": "Lid not tight",
+        "result": "Steam escapes; extended cooking time; uneven doneness."
+      },
+      {
+        "case": "Fish not dried before steaming",
+        "result": "Excess moisture dilutes flavor; uneven cooking."
+      }
+    ],
+    "signals": {
+      "visual": "Fish turns from translucent to opaque white; flakes easily when tested with a fork; juices run clear.",
+      "touch": "Fish feels firm and separates easily at the flakes; no resistance when pierced."
+    },
+    "output": {
+      "texture": "delicate, moist, tender",
+      "appearance": "opaque white, moist, with aromatic garnish",
+      "flavor": "pure, clean fish flavor enhanced by aromatics"
+    },
+    "links_to_intents": [
+      "preserve_delicacy",
+      "retain_moisture"
+    ],
+    "meta": {
+      "difficulty": "basic",
+      "precision": "high"
+    },
+    "confidence": 0.96
+  }
+]

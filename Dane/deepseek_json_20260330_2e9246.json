@@ -1,0 +1,885 @@
+[
+  {
+    "ingredient": "cream",
+    "ingredient_state": "liquid, cold",
+    "intent": "whip",
+    "process": "foaming",
+    "mechanism": "fat globule partial coalescence",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": 3
+    },
+    "tolerance": {
+      "temperature_c": [-2, 3],
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 0,
+        "effect": "cream freezes; cannot whip"
+      },
+      "upper": {
+        "temperature_c": 10,
+        "effect": "fat too soft; foam unstable"
+      }
+    },
+    "equipment": "stand mixer or hand mixer, chilled bowl",
+    "condition": "when making whipped cream",
+    "decision": "Whip cold cream until soft or stiff peaks form",
+    "failure_state": [
+      {
+        "case": "over_whipping",
+        "result": "butter forms; cream separates"
+      },
+      {
+        "case": "warm_cream",
+        "result": "foam collapses quickly"
+      }
+    ],
+    "effect": "Cold fat partially coalesces around air bubbles, creating stable foam; over-whipping causes fat to fully coalesce into butter",
+    "sensory": {
+      "texture": "light, fluffy, stable",
+      "appearance": "white, holds peaks"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "egg whites",
+    "ingredient_state": "liquid, room temperature",
+    "intent": "whip",
+    "process": "foaming",
+    "mechanism": "protein denaturation at air-water interface",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-5, 10],
+      "time_minutes": [-2, 3]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 4,
+        "effect": "slower foaming; smaller volume"
+      },
+      "upper": {
+        "temperature_c": 35,
+        "effect": "proteins denature prematurely; unstable foam"
+      }
+    },
+    "equipment": "stand mixer, clean bowl",
+    "condition": "when making meringue or angel food cake",
+    "decision": "Whip egg whites at room temperature until soft or stiff peaks form",
+    "failure_state": [
+      {
+        "case": "fat_present",
+        "result": "foam will not form"
+      },
+      {
+        "case": "yolk_contamination",
+        "result": "fat prevents foaming"
+      }
+    ],
+    "effect": "Whipping denatures proteins, which form stable film around air bubbles; fat disrupts this film",
+    "sensory": {
+      "texture": "light, airy, stable peaks",
+      "appearance": "white, glossy"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "sugar",
+    "ingredient_state": "granulated",
+    "intent": "stabilize_meringue",
+    "process": "protein stabilization",
+    "mechanism": "viscosity increase and protein protection",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": null,
+        "effect": null
+      }
+    },
+    "equipment": "mixer",
+    "condition": "when making stable meringue",
+    "decision": "Add sugar gradually after soft peaks form",
+    "failure_state": [
+      {
+        "case": "sugar_added_too_early",
+        "result": "reduced volume; slower foaming"
+      }
+    ],
+    "effect": "Sugar dissolves, increasing viscosity and stabilizing protein film; added too early, it interferes with protein denaturation",
+    "sensory": {
+      "texture": "stable, glossy",
+      "appearance": "smooth, white"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "gelatin",
+    "ingredient_state": "powdered",
+    "intent": "hydrate",
+    "process": "blooming",
+    "mechanism": "water absorption",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-5, 15],
+      "time_minutes": [-5, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 0,
+        "effect": "hydration very slow"
+      },
+      "upper": {
+        "temperature_c": 50,
+        "effect": "gelatin dissolves without blooming"
+      }
+    },
+    "equipment": "bowl",
+    "condition": "when using powdered gelatin",
+    "decision": "Sprinkle gelatin over cold water; let sit 5-10 minutes until hydrated",
+    "failure_state": [
+      {
+        "case": "hot_water",
+        "result": "gelatin dissolves without blooming; weaker gel"
+      }
+    ],
+    "effect": "Cold water hydrates gelatin granules, allowing them to swell; prevents clumping when heated",
+    "sensory": {
+      "texture": "spongy, hydrated",
+      "appearance": "translucent mass"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "gelatin",
+    "ingredient_state": "hydrated (bloomed)",
+    "intent": "melt",
+    "process": "thermal denaturation",
+    "mechanism": "helix-to-coil transition",
+    "target": {
+      "temperature_c": 60,
+      "time_minutes": 1
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 35,
+        "effect": "gelatin remains solid; does not dissolve"
+      },
+      "upper": {
+        "temperature_c": 85,
+        "effect": "excessive heat weakens gel strength"
+      }
+    },
+    "equipment": "microwave or double boiler",
+    "condition": "when incorporating gelatin into recipes",
+    "decision": "Heat hydrated gelatin gently until liquid; do not boil",
+    "failure_state": [
+      {
+        "case": "boiling",
+        "result": "reduced gelling strength"
+      }
+    ],
+    "effect": "Gelatin melts at 35-40°C; higher temperatures cause protein degradation, reducing gel strength",
+    "sensory": {
+      "texture": "liquid",
+      "appearance": "clear"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "gelatin gel",
+    "ingredient_state": "set",
+    "intent": "set_firmness",
+    "process": "gelation",
+    "mechanism": "collagen triple helix formation",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": 240
+    },
+    "tolerance": {
+      "temperature_c": [-2, 2],
+      "time_minutes": [-60, 120]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 0,
+        "effect": "freezing damages gel structure"
+      },
+      "upper": {
+        "temperature_c": 15,
+        "effect": "gel may not set; remains liquid"
+      }
+    },
+    "equipment": "refrigerator",
+    "condition": "when making gelatin-based desserts",
+    "decision": "Refrigerate until fully set (minimum 4 hours)",
+    "failure_state": [
+      {
+        "case": "insufficient_chilling",
+        "result": "gel does not set; runny"
+      }
+    ],
+    "effect": "Cooling allows gelatin molecules to reform triple helices, creating solid gel structure",
+    "sensory": {
+      "texture": "firm, jiggly",
+      "appearance": "clear or translucent"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "agar agar",
+    "ingredient_state": "powdered",
+    "intent": "gel",
+    "process": "gelation",
+    "mechanism": "hydrogen bonding",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-2, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "agar does not dissolve; gel fails"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "overheating not harmful"
+      }
+    },
+    "equipment": "saucepan",
+    "condition": "when making vegetarian gels",
+    "decision": "Boil agar with liquid to fully dissolve; cool to set",
+    "failure_state": [
+      {
+        "case": "insufficient_heating",
+        "result": "grainy texture; gel does not set"
+      }
+    ],
+    "effect": "Agar requires boiling (85°C+) to dissolve; sets at 32-40°C; high melting point (85°C) allows warm serving",
+    "sensory": {
+      "texture": "firm, brittle",
+      "appearance": "clear"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "xanthan gum",
+    "ingredient_state": "powdered",
+    "intent": "thicken",
+    "process": "viscosity increase",
+    "mechanism": "polymer entanglement",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": 1
+    },
+    "tolerance": {
+      "temperature_c": [-10, 50],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": null,
+        "effect": null
+      }
+    },
+    "equipment": "blender or whisk",
+    "condition": "when stabilizing sauces or dressings",
+    "decision": "Disperse xanthan gum in liquid with high shear (blender) to prevent lumps",
+    "failure_state": [
+      {
+        "case": "sprinkling_into_still_liquid",
+        "result": "lumps form"
+      }
+    ],
+    "effect": "Xanthan gum hydrates instantly, creating high viscosity at low concentrations (0.1-0.5%); shear mixing prevents clumping",
+    "sensory": {
+      "texture": "smooth, thickened",
+      "appearance": "clear or translucent"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "sodium alginate",
+    "ingredient_state": "powdered",
+    "intent": "spherify",
+    "process": "ionotropic gelation",
+    "mechanism": "calcium cross-linking",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": 2
+    },
+    "tolerance": {
+      "temperature_c": [-5, 10],
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": 40,
+        "effect": "gel forms faster; may be uneven"
+      }
+    },
+    "equipment": "bowls, slotted spoon",
+    "condition": "when making spherification (caviar or spheres)",
+    "decision": "Mix sodium alginate into flavored liquid; drop into calcium chloride bath",
+    "failure_state": [
+      {
+        "case": "liquid_too_acidic",
+        "result": "gel does not form properly"
+      }
+    ],
+    "effect": "Calcium ions cross-link alginate polymers, forming gel membrane; acidic conditions (pH<4) inhibit gelation",
+    "sensory": {
+      "texture": "gel membrane, liquid center",
+      "appearance": "spherical"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "calcium lactate",
+    "ingredient_state": "powdered",
+    "intent": "reverse_spherify",
+    "process": "ionotropic gelation",
+    "mechanism": "calcium cross-linking",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": 2
+    },
+    "tolerance": {
+      "temperature_c": [-5, 10],
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": null,
+        "effect": null
+      }
+    },
+    "equipment": "bowls, slotted spoon",
+    "condition": "when making spherification with calcium-rich liquids (dairy)",
+    "decision": "Add calcium lactate to liquid; drop into sodium alginate bath",
+    "failure_state": [
+      {
+        "case": "calcium_in_alginate_bath",
+        "result": "pre-gelation; uneven spheres"
+      }
+    ],
+    "effect": "Reverse spherification works with calcium-rich liquids; alginate bath creates gel membrane from outside in",
+    "sensory": {
+      "texture": "gel membrane, liquid center",
+      "appearance": "spherical"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.85
+  },
+  {
+    "ingredient": "pasta dough",
+    "ingredient_state": "mixed",
+    "intent": "rest",
+    "process": "gluten relaxation",
+    "mechanism": "protein stress relief",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": 30
+    },
+    "tolerance": {
+      "temperature_c": [-5, 10],
+      "time_minutes": [-15, 30]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 15,
+        "effect": "partial relaxation; dough may shrink"
+      },
+      "upper": {
+        "time_minutes": 120,
+        "effect": "dough may dry out"
+      }
+    },
+    "equipment": "plastic wrap",
+    "condition": "after kneading pasta dough",
+    "decision": "Wrap dough in plastic; let rest at room temperature for 30 minutes before rolling",
+    "failure_state": [
+      {
+        "case": "no_rest",
+        "result": "dough shrinks when rolled; difficult to shape"
+      }
+    ],
+    "effect": "Resting allows gluten strands to relax, making dough extensible and reducing shrinkage during rolling",
+    "sensory": {
+      "texture": "smooth, elastic, relaxed",
+      "appearance": "smooth surface"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "bread dough",
+    "ingredient_state": "shaped",
+    "intent": "proof",
+    "process": "final fermentation",
+    "mechanism": "yeast CO2 production",
+    "target": {
+      "temperature_c": 30,
+      "time_minutes": 60
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-20, 30]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 20,
+        "effect": "slower proofing; longer time needed"
+      },
+      "upper": {
+        "temperature_c": 40,
+        "effect": "yeast dies; dough collapses"
+      }
+    },
+    "equipment": "oven with light or proofing box",
+    "condition": "after shaping bread dough",
+    "decision": "Proof until doubled in size; finger poke test: indentation springs back slowly",
+    "failure_state": [
+      {
+        "case": "over_proofing",
+        "result": "dough collapses; dense bread"
+      }
+    ],
+    "effect": "Yeast produces CO2, expanding dough; proper proofing balances gas production with gluten strength",
+    "sensory": {
+      "texture": "puffy, airy",
+      "appearance": "increased volume"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "bread",
+    "ingredient_state": "baked",
+    "intent": "cool",
+    "process": "crust setting",
+    "mechanism": "moisture redistribution",
+    "target": {
+      "temperature_c": 30,
+      "time_minutes": 60
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-30, 60]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 15,
+        "effect": "crust softens; gummy texture"
+      },
+      "upper": {
+        "time_minutes": 180,
+        "effect": "bread fully cooled"
+      }
+    },
+    "equipment": "wire rack",
+    "condition": "after baking bread",
+    "decision": "Cool bread on wire rack completely before slicing",
+    "failure_state": [
+      {
+        "case": "slicing_hot",
+        "result": "gummy, compressed crumb"
+      }
+    ],
+    "effect": "Cooling allows steam to escape and crumb to set; slicing hot compresses structure and releases moisture",
+    "sensory": {
+      "texture": "firm crust, set crumb",
+      "appearance": "fully developed"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "stock",
+    "ingredient_state": "liquid",
+    "intent": "concentrate",
+    "process": "reduction",
+    "mechanism": "water evaporation",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "evaporation too slow"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "vigorous boiling clouds stock"
+      }
+    },
+    "equipment": "wide pot",
+    "condition": "when making glazes or concentrated stocks",
+    "decision": "Simmer uncovered until reduced to desired concentration",
+    "failure_state": [
+      {
+        "case": "boiling",
+        "result": "emulsified fat; cloudy stock"
+      }
+    ],
+    "effect": "Gentle simmer allows water to evaporate without agitating fat and proteins into suspension",
+    "sensory": {
+      "texture": "viscous, concentrated",
+      "appearance": "clear"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "fat",
+    "ingredient_state": "liquid",
+    "intent": "filter",
+    "process": "filtration",
+    "mechanism": "particle removal",
+    "target": {
+      "temperature_c": 60,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": [-10, 20],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 30,
+        "effect": "fat solidifies; cannot filter"
+      },
+      "upper": {
+        "temperature_c": 80,
+        "effect": "risk of burns"
+      }
+    },
+    "equipment": "coffee filter or cheesecloth",
+    "condition": "when clarifying used frying oil or rendered fat",
+    "decision": "Strain warm fat through fine filter to remove solids",
+    "failure_state": [
+      {
+        "case": "filtering_cold_fat",
+        "result": "solids trapped in solid fat"
+      }
+    ],
+    "effect": "Warm fat flows through filter; solids are trapped, extending oil life and improving flavor",
+    "sensory": {
+      "texture": "clear liquid",
+      "appearance": "transparent"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "egg",
+    "ingredient_state": "whole in shell",
+    "intent": "determine_freshness",
+    "process": "float test",
+    "mechanism": "air cell expansion",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": null,
+        "effect": null
+      }
+    },
+    "equipment": "bowl of water",
+    "condition": "when testing egg freshness",
+    "decision": "Place egg in bowl of cold water; fresh sinks, older floats",
+    "failure_state": null,
+    "effect": "As egg ages, moisture evaporates, air cell enlarges, making egg more buoyant",
+    "sensory": null,
+    "meta": {
+      "category": "measurement",
+      "priority": "low"
+    },
+    "confidence": 0.85
+  },
+  {
+    "ingredient": "milk",
+    "ingredient_state": "liquid",
+    "intent": "scald",
+    "process": "protein denaturation",
+    "mechanism": "whey protein denaturation",
+    "target": {
+      "temperature_c": 82,
+      "time_minutes": 1
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 75,
+        "effect": "insufficient denaturation"
+      },
+      "upper": {
+        "temperature_c": 90,
+        "effect": "skin forms; risk of scorching"
+      }
+    },
+    "equipment": "saucepan",
+    "condition": "when using milk in custards or breads",
+    "decision": "Heat milk to 82°C until small bubbles form around edges; do not boil",
+    "failure_state": [
+      {
+        "case": "boiling",
+        "result": "denatured proteins curdle"
+      }
+    ],
+    "effect": "Scalding denatures whey proteins, improving texture in custards and preventing interference with yeast in breads",
+    "sensory": {
+      "texture": "unchanged",
+      "appearance": "steam rising, bubbles at edge"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "butter",
+    "ingredient_state": "cold, solid",
+    "intent": "brown",
+    "process": "maillard reaction",
+    "mechanism": "milk solids browning",
+    "target": {
+      "temperature_c": 120,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-2, 3]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 100,
+        "effect": "water evaporates; no browning"
+      },
+      "upper": {
+        "temperature_c": 140,
+        "effect": "milk solids burn; bitter flavor"
+      }
+    },
+    "equipment": "light-colored saucepan",
+    "condition": "when making beurre noisette (brown butter)",
+    "decision": "Heat butter until water evaporates and milk solids turn nut-brown",
+    "failure_state": [
+      {
+        "case": "dark_pan",
+        "result": "difficult to see color change; risk of burning"
+      }
+    ],
+    "effect": "Milk solids (lactose and proteins) undergo Maillard reaction, creating nutty, toasty flavor",
+    "sensory": {
+      "texture": "liquid",
+      "appearance": "amber with brown specks",
+      "flavor": "nutty, toasty"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "nuts",
+    "ingredient_state": "raw",
+    "intent": "toast",
+    "process": "maillard reaction",
+    "mechanism": "protein and sugar browning",
+    "target": {
+      "temperature_c": 160,
+      "time_minutes": 8
+    },
+    "tolerance": {
+      "temperature_c": [-20, 20],
+      "time_minutes": [-3, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 120,
+        "effect": "drying but no browning"
+      },
+      "upper": {
+        "temperature_c": 180,
+        "effect": "burns quickly; bitter"
+      }
+    },
+    "equipment": "oven or dry skillet",
+    "condition": "when enhancing nut flavor",
+    "decision": "Toast nuts in single layer until fragrant and lightly browned",
+    "failure_state": [
+      {
+        "case": "over_toasting",
+        "result": "bitter, burnt flavor"
+      }
+    ],
+    "effect": "Heat triggers Maillard reaction and caramelization, developing deep nutty flavor and crisp texture",
+    "sensory": {
+      "texture": "crisp, crunchy",
+      "appearance": "golden brown",
+      "flavor": "intensified, nutty"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "spices",
+    "ingredient_state": "whole",
+    "intent": "bloom",
+    "process": "essential oil release",
+    "mechanism": "volatile compound liberation",
+    "target": {
+      "temperature_c": 120,
+      "time_minutes": 1
+    },
+    "tolerance": {
+      "temperature_c": [-20, 20],
+      "time_minutes": [-0.5, 1]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 80,
+        "effect": "minimal oil release"
+      },
+      "upper": {
+        "temperature_c": 160,
+        "effect": "spices burn; bitter"
+      }
+    },
+    "equipment": "dry skillet or oil",
+    "condition": "when maximizing spice flavor",
+    "decision": "Heat whole spices in dry pan until fragrant (30-60 seconds) before grinding",
+    "failure_state": [
+      {
+        "case": "overheating",
+        "result": "burnt, bitter flavor"
+      }
+    ],
+    "effect": "Heat releases essential oils from spice cells, making them more aromatic and flavorful",
+    "sensory": {
+      "texture": "unchanged",
+      "appearance": "slightly darker",
+      "flavor": "more aromatic, intense"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  }
+]

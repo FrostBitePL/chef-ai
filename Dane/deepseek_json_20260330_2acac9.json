@@ -1,0 +1,972 @@
+[
+  {
+    "ingredient": "rice",
+    "ingredient_state": "dry, unwashed grains",
+    "intent": "set_texture",
+    "process": "starch gelatinization",
+    "mechanism": "amylopectin swelling and amylose leaching",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 18
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-2, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "rice remains hard, chalky center"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "rice becomes mushy, grains burst"
+      }
+    },
+    "equipment": "pot with lid or rice cooker",
+    "condition": "when cooking white rice for fluffy separate grains",
+    "decision": "Simmer rice covered without stirring until liquid absorbed",
+    "failure_state": [
+      {
+        "case": "stirring_during_cooking",
+        "result": "starchy, gummy texture from excess starch release"
+      },
+      {
+        "case": "insufficient_liquid",
+        "result": "undercooked, hard grains"
+      }
+    ],
+    "effect": "Starch granules absorb water and swell; amylose leaches and sets upon cooling, creating separate grains",
+    "sensory": {
+      "texture": "tender, separate grains",
+      "juiciness": "moist but not wet",
+      "appearance": "opaque white, distinct kernels"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "pasta",
+    "ingredient_state": "dried, durum wheat",
+    "intent": "gelatinize_starch",
+    "process": "starch gelatinization and protein coagulation",
+    "mechanism": "gluten network formation and starch swelling",
+    "target": {
+      "temperature_c": 100,
+      "time_minutes": 9
+    },
+    "tolerance": {
+      "temperature_c": [-5, 0],
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 85,
+        "effect": "pasta remains hard, uncooked interior"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "pasta becomes mushy, loses structure"
+      }
+    },
+    "equipment": "large pot, salted water",
+    "condition": "when cooking dried pasta",
+    "decision": "Cook in abundant boiling salted water until al dente",
+    "failure_state": [
+      {
+        "case": "insufficient_water",
+        "result": "pasta sticks together, uneven cooking"
+      },
+      {
+        "case": "overcooking",
+        "result": "mushy, sticky, loses shape"
+      }
+    ],
+    "effect": "Starch gelatinizes fully; gluten network provides structure; salt seasons and strengthens gluten",
+    "sensory": {
+      "texture": "al dente: firm but tender with slight resistance",
+      "juiciness": "moist",
+      "appearance": "opaque, uniform color"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "pasta water",
+    "ingredient_state": "starchy liquid",
+    "intent": "thicken",
+    "process": "starch gelatinization",
+    "mechanism": "amylose release and emulsification",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 1
+    },
+    "tolerance": {
+      "temperature_c": [-10, 5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 60,
+        "effect": "starch not fully hydrated; sauce remains thin"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "starch fully gelatinized, sauce thickens"
+      }
+    },
+    "equipment": "pan",
+    "condition": "when finishing pasta sauces",
+    "decision": "Reserve 1 cup pasta water, add to sauce while cooking to create emulsion",
+    "failure_state": [
+      {
+        "case": "no_pasta_water",
+        "result": "sauce does not cling to pasta, separates"
+      }
+    ],
+    "effect": "Starch in water helps emulsify oil and fat, creating creamy sauce that adheres to pasta",
+    "sensory": {
+      "texture": "creamy, silky",
+      "appearance": "sauce coats pasta evenly"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "vegetables",
+    "ingredient_state": "cut pieces",
+    "intent": "set_texture",
+    "process": "pectin breakdown",
+    "mechanism": "β-elimination of pectin polymers",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 20
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-5, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "vegetables remain crisp, pectin intact"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "cell walls collapse, vegetables become mushy"
+      }
+    },
+    "equipment": "pot or sous vide",
+    "condition": "when cooking vegetables to tender but not mushy",
+    "decision": "Cook at 85°C until fork-tender but still holding shape",
+    "failure_state": [
+      {
+        "case": "boiling_water_100C",
+        "result": "vegetables may become waterlogged and mushy faster"
+      }
+    ],
+    "effect": "Pectin breaks down at 80-90°C; lower temperatures preserve structure, higher temperatures cause rapid breakdown",
+    "sensory": {
+      "texture": "tender with slight resistance",
+      "juiciness": "retains natural moisture",
+      "appearance": "bright colors if blanched first"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.85
+  },
+  {
+    "ingredient": "meat",
+    "ingredient_state": "whole muscle",
+    "intent": "crisp",
+    "process": "maillard reaction",
+    "mechanism": "amino acid-sugar reaction and moisture evaporation",
+    "target": {
+      "temperature_c": 180,
+      "time_minutes": 3
+    },
+    "tolerance": {
+      "temperature_c": [-20, 20],
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 140,
+        "effect": "browning very slow; meat steams rather than sears"
+      },
+      "upper": {
+        "temperature_c": 220,
+        "effect": "surface burns before interior develops crust"
+      }
+    },
+    "equipment": "heavy pan, oil",
+    "condition": "when developing crust on meat after sous vide or roasting",
+    "decision": "Pat meat completely dry; sear in hot oil for 1-2 minutes per side",
+    "failure_state": [
+      {
+        "case": "wet_surface",
+        "result": "steaming instead of browning; no crust"
+      },
+      {
+        "case": "pan_not_hot_enough",
+        "result": "gray, unappetizing surface"
+      }
+    ],
+    "effect": "Maillard reaction occurs above 140°C, creating hundreds of flavor compounds; moisture must evaporate for surface to reach temperature",
+    "sensory": {
+      "texture": "crisp, caramelized crust",
+      "juiciness": "unchanged interior",
+      "appearance": "deep brown, caramelized"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "stock",
+    "ingredient_state": "liquid with fat",
+    "intent": "clarify",
+    "process": "coagulation and filtration",
+    "mechanism": "protein coagulation trapping particles",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 30
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-10, 30]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "egg white raft does not form; stock remains cloudy"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "rapid boiling breaks raft, re-suspends particles"
+      }
+    },
+    "equipment": "pot, egg whites",
+    "condition": "when making consommé or clarifying stock",
+    "decision": "Add beaten egg whites to cold stock, slowly heat to 85°C without stirring",
+    "failure_state": [
+      {
+        "case": "stirring_after_raft_forms",
+        "result": "raft breaks; particles re-enter stock"
+      },
+      {
+        "case": "boiling",
+        "result": "raft disintegrates; stock remains cloudy"
+      }
+    ],
+    "effect": "Egg whites coagulate, trapping suspended particles and rising to surface as raft; slow heating ensures even coagulation",
+    "sensory": {
+      "texture": "clear liquid",
+      "appearance": "crystal clear, amber"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "butter",
+    "ingredient_state": "solid fat with milk solids",
+    "intent": "clarify",
+    "process": "fat separation",
+    "mechanism": "density separation and water evaporation",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-5, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 60,
+        "effect": "butter melts but water not evaporated; milk solids not separated"
+      },
+      "upper": {
+        "temperature_c": 120,
+        "effect": "milk solids burn, butter becomes brown (browned butter)"
+      }
+    },
+    "equipment": "saucepan",
+    "condition": "when making clarified butter or ghee",
+    "decision": "Heat butter gently until water evaporates and milk solids separate; skim foam, pour off clear fat",
+    "failure_state": [
+      {
+        "case": "overheating",
+        "result": "burned milk solids, bitter flavor"
+      }
+    ],
+    "effect": "Water evaporates at 100°C; milk solids settle or foam; pure butterfat has higher smoke point (250°C vs 175°C)",
+    "sensory": {
+      "texture": "liquid, clear",
+      "appearance": "golden, translucent"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "sugar syrup",
+    "ingredient_state": "concentrated solution",
+    "intent": "prevent_crystallization",
+    "process": "crystallization inhibition",
+    "mechanism": "inversion or interfering agents",
+    "target": {
+      "temperature_c": 115,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 100,
+        "effect": "inversion slow; risk of crystallization remains"
+      },
+      "upper": {
+        "temperature_c": 130,
+        "effect": "caramelization begins, changing flavor"
+      }
+    },
+    "equipment": "saucepan, thermometer",
+    "condition": "when making candy, caramel, or sugar syrups that should remain liquid",
+    "decision": "Add acid (lemon juice, cream of tartar) or corn syrup; avoid stirring after boiling begins",
+    "failure_state": [
+      {
+        "case": "stirring_after_boiling",
+        "result": "crystallization, grainy texture"
+      },
+      {
+        "case": "no_invert_sugar",
+        "result": "higher risk of crystallization"
+      }
+    ],
+    "effect": "Acid inverts sucrose into glucose and fructose, which resist crystallization; corn syrup adds interfering molecules",
+    "sensory": {
+      "texture": "smooth, fluid",
+      "appearance": "clear"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "garlic",
+    "ingredient_state": "crushed or minced",
+    "intent": "develop_flavor",
+    "process": "enzymatic reaction",
+    "mechanism": "alliinase conversion of alliin to allicin",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-10, 20],
+      "time_minutes": [-5, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 4,
+        "effect": "enzymatic reaction slows significantly"
+      },
+      "upper": {
+        "temperature_c": 60,
+        "effect": "alliinase denatures; no allicin formation"
+      }
+    },
+    "equipment": "knife, cutting board",
+    "condition": "when raw garlic flavor is desired",
+    "decision": "Crush or mince garlic, let sit for 10 minutes before cooking or using raw",
+    "failure_state": [
+      {
+        "case": "cooking_immediately",
+        "result": "milder flavor; less complex"
+      }
+    ],
+    "effect": "Alliinase enzyme converts alliin to allicin, creating characteristic garlic flavor and aroma; reaction takes minutes and stops when heated",
+    "sensory": {
+      "texture": "unchanged",
+      "appearance": "unchanged",
+      "flavor": "stronger, more complex"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "onions",
+    "ingredient_state": "sliced or chopped",
+    "intent": "caramelize",
+    "process": "caramelization and maillard reaction",
+    "mechanism": "sugar breakdown and amino acid reaction",
+    "target": {
+      "temperature_c": 160,
+      "time_minutes": 30
+    },
+    "tolerance": {
+      "temperature_c": [-20, 10],
+      "time_minutes": [-10, 30]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 120,
+        "effect": "onions soften but do not brown; become sweet but not caramelized"
+      },
+      "upper": {
+        "temperature_c": 180,
+        "effect": "burning before interior softens"
+      }
+    },
+    "equipment": "heavy pan, fat",
+    "condition": "when developing deep sweet flavor from onions",
+    "decision": "Cook over medium-low heat with fat, stirring occasionally, until deep brown",
+    "failure_state": [
+      {
+        "case": "high_heat",
+        "result": "onions burn before softening"
+      },
+      {
+        "case": "no_stirring",
+        "result": "uneven browning"
+      }
+    ],
+    "effect": "Natural sugars caramelize above 150°C; Maillard reaction adds savory notes; slow cooking allows moisture to evaporate and sugars to concentrate",
+    "sensory": {
+      "texture": "very soft, jammy",
+      "appearance": "deep brown",
+      "flavor": "sweet, savory, complex"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "meat",
+    "ingredient_state": "whole muscle",
+    "intent": "rest",
+    "process": "carryover cooking",
+    "mechanism": "thermal gradient equalization",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-5, 15]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 0,
+        "effect": "juices immediately released when sliced; dry meat"
+      },
+      "upper": {
+        "time_minutes": 30,
+        "effect": "meat cools excessively"
+      }
+    },
+    "equipment": "cutting board, tented foil",
+    "condition": "after roasting or searing large cuts of meat",
+    "decision": "Let meat rest for 5-15 minutes before slicing",
+    "failure_state": [
+      {
+        "case": "slicing_immediately",
+        "result": "significant juice loss; drier meat"
+      }
+    ],
+    "effect": "Heat equalizes from exterior to interior; muscle fibers relax, reabsorbing juices that would otherwise escape when cut",
+    "sensory": {
+      "texture": "more tender",
+      "juiciness": "higher",
+      "appearance": "even color distribution"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "oil",
+    "ingredient_state": "liquid",
+    "intent": "determine_smoke_point",
+    "process": "thermal decomposition",
+    "mechanism": "fatty acid oxidation and triglyceride breakdown",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 160,
+        "effect": "some oils begin smoking (butter, EVOO)"
+      },
+      "upper": {
+        "temperature_c": 260,
+        "effect": "high smoke point oils (avocado, refined oils)"
+      }
+    },
+    "equipment": "thermometer",
+    "condition": "when selecting oil for high-heat cooking",
+    "decision": "Choose oil with smoke point above cooking temperature: refined oils (250°C+) for searing; butter (175°C) for gentle cooking",
+    "failure_state": [
+      {
+        "case": "exceeding_smoke_point",
+        "result": "oil breaks down, creates acrid smoke, off-flavors"
+      }
+    ],
+    "effect": "Free fatty acids oxidize and triglycerides decompose at characteristic temperatures; refined oils have higher smoke points due to removed impurities",
+    "sensory": null,
+    "meta": {
+      "category": "measurement",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "food",
+    "ingredient_state": "any",
+    "intent": "cool_rapidly",
+    "process": "heat transfer",
+    "mechanism": "conduction and convection",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": 30
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-10, 30]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 60,
+        "effect": "danger zone for bacterial growth"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "starting temperature"
+      }
+    },
+    "equipment": "ice bath, shallow containers",
+    "condition": "when cooling cooked food for storage",
+    "decision": "Transfer to shallow containers, place in ice bath, stir occasionally; refrigerate when below 20°C",
+    "failure_state": [
+      {
+        "case": "large_hot_container_in_fridge",
+        "result": "prolonged time in danger zone; raises fridge temperature"
+      }
+    ],
+    "effect": "Rapid cooling minimizes time in 4-60°C danger zone where bacteria multiply fastest; increased surface area accelerates heat loss",
+    "sensory": null,
+    "meta": {
+      "category": "safety",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "fat",
+    "ingredient_state": "solid with connective tissue",
+    "intent": "render",
+    "process": "fat separation",
+    "mechanism": "melting and density separation",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 45
+    },
+    "tolerance": {
+      "temperature_c": [-10, 15],
+      "time_minutes": [-15, 60]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 60,
+        "effect": "fat melts but does not separate cleanly"
+      },
+      "upper": {
+        "temperature_c": 120,
+        "effect": "solids burn before fat renders"
+      }
+    },
+    "equipment": "heavy pot, water (optional)",
+    "condition": "when rendering lard, schmaltz, or suet",
+    "decision": "Cut fat into small pieces, add small amount of water, cook slowly until fat is liquid and solids are crisp",
+    "failure_state": [
+      {
+        "case": "high_heat_start",
+        "result": "solids burn; fat off-flavors"
+      }
+    ],
+    "effect": "Water prevents solids from burning until fat melts; slow heating allows fat to separate cleanly from connective tissue",
+    "sensory": {
+      "texture": "liquid fat, crispy solids (cracklings)",
+      "appearance": "clear when strained"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "egg yolk",
+    "ingredient_state": "liquid",
+    "intent": "emulsify",
+    "process": "emulsification",
+    "mechanism": "lecithin interfacial stabilization",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-10, 15],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 4,
+        "effect": "emulsification slower but still possible"
+      },
+      "upper": {
+        "temperature_c": 70,
+        "effect": "egg yolk coagulates; emulsion cannot form"
+      }
+    },
+    "equipment": "bowl, whisk or blender",
+    "condition": "when making mayonnaise, aioli, or emulsified sauces",
+    "decision": "Add oil slowly while whisking vigorously; start with drop by drop, then thin stream",
+    "failure_state": [
+      {
+        "case": "oil_added_too_quickly",
+        "result": "emulsion breaks; mixture separates"
+      }
+    ],
+    "effect": "Lecithin in yolk reduces surface tension, allowing oil droplets to remain suspended; slow incorporation creates smaller droplets for stability",
+    "sensory": {
+      "texture": "creamy, thick",
+      "appearance": "opaque, uniform"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "sauce",
+    "ingredient_state": "emulsion",
+    "intent": "stabilize",
+    "process": "emulsification",
+    "mechanism": "hydrocolloid stabilization",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": null,
+        "effect": null
+      }
+    },
+    "equipment": "blender",
+    "condition": "when making sauce that must survive heating or freezing",
+    "decision": "Add stabilizer (xanthan gum, modified starch) during blending",
+    "failure_state": [
+      {
+        "case": "too_much_stabilizer",
+        "result": "sauce becomes slimy or gummy"
+      },
+      {
+        "case": "insufficient_stabilizer",
+        "result": "sauce breaks when heated"
+      }
+    ],
+    "effect": "Hydrocolloids increase viscosity and create physical barrier preventing oil droplets from coalescing",
+    "sensory": {
+      "texture": "smooth, stable",
+      "appearance": "unchanged"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.85
+  },
+  {
+    "ingredient": "dough",
+    "ingredient_state": "mixed, unbaked",
+    "intent": "develop_gluten",
+    "process": "protein hydration",
+    "mechanism": "glutenin and gliadin cross-linking",
+    "target": {
+      "temperature_c": 20,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-5, 15]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 4,
+        "effect": "gluten development very slow"
+      },
+      "upper": {
+        "temperature_c": 50,
+        "effect": "proteins begin to denature; structure compromised"
+      }
+    },
+    "equipment": "stand mixer or hands",
+    "condition": "when making bread, pizza dough, or pasta",
+    "decision": "Knead dough until smooth and elastic; windowpane test for full development",
+    "failure_state": [
+      {
+        "case": "over_kneading",
+        "result": "gluten structure breaks down; dough becomes sticky"
+      },
+      {
+        "case": "under_kneading",
+        "result": "dough lacks structure; does not hold shape"
+      }
+    ],
+    "effect": "Water hydrates glutenin and gliadin, allowing disulfide bonds to form, creating elastic network that traps gas",
+    "sensory": {
+      "texture": "smooth, elastic",
+      "appearance": "stretches without tearing"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "bread dough",
+    "ingredient_state": "mixed",
+    "intent": "ferment",
+    "process": "fermentation",
+    "mechanism": "yeast metabolism and gluten relaxation",
+    "target": {
+      "temperature_c": 24,
+      "time_minutes": 120
+    },
+    "tolerance": {
+      "temperature_c": [-4, 6],
+      "time_minutes": [-30, 60]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 4,
+        "effect": "fermentation very slow; flavor develops differently (cold proof)"
+      },
+      "upper": {
+        "temperature_c": 40,
+        "effect": "yeast activity declines; off-flavors"
+      }
+    },
+    "equipment": "bowl, covered",
+    "condition": "when making yeast-leavened bread",
+    "decision": "Let dough rise in warm place until doubled in volume",
+    "failure_state": [
+      {
+        "case": "too_warm",
+        "result": "yeast dies; dough collapses"
+      },
+      {
+        "case": "too_cold",
+        "result": "very slow fermentation; under-proofed bread"
+      }
+    ],
+    "effect": "Yeast converts sugars to CO2 and alcohol; optimal temperature for Saccharomyces cerevisiae is 24-32°C; gluten relaxes during fermentation",
+    "sensory": {
+      "texture": "puffy, elastic",
+      "appearance": "doubled in size"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "ice cream base",
+    "ingredient_state": "liquid mixture",
+    "intent": "create_smooth_texture",
+    "process": "freezing and churning",
+    "mechanism": "ice crystal nucleation and fat emulsion",
+    "target": {
+      "temperature_c": -6,
+      "time_minutes": 20
+    },
+    "tolerance": {
+      "temperature_c": [-2, 2],
+      "time_minutes": [-5, 10]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": -12,
+        "effect": "too hard to churn; large ice crystals"
+      },
+      "upper": {
+        "temperature_c": -4,
+        "effect": "mixture remains too liquid; ice cream not set"
+      }
+    },
+    "equipment": "ice cream maker",
+    "condition": "when making ice cream",
+    "decision": "Churn until mixture reaches soft-serve consistency; freeze to harden",
+    "failure_state": [
+      {
+        "case": "slow_freezing",
+        "result": "large ice crystals; gritty texture"
+      },
+      {
+        "case": "no_churning",
+        "result": "solid block of ice; no aeration"
+      }
+    ],
+    "effect": "Churning incorporates air (overrun) and breaks ice crystals as they form; sugar lowers freezing point, preventing solid freeze",
+    "sensory": {
+      "texture": "smooth, creamy",
+      "appearance": "pale, aerated"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "pizza dough",
+    "ingredient_state": "mixed",
+    "intent": "ferment",
+    "process": "cold fermentation",
+    "mechanism": "slow yeast activity and enzymatic development",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": 2880
+    },
+    "tolerance": {
+      "temperature_c": [-1, 2],
+      "time_minutes": [-720, 1440]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 0,
+        "effect": "fermentation stops; dough may freeze"
+      },
+      "upper": {
+        "temperature_c": 10,
+        "effect": "fermentation too fast; off-flavors"
+      }
+    },
+    "equipment": "refrigerator, covered container",
+    "condition": "when making Neapolitan-style pizza",
+    "decision": "Refrigerate dough for 24-72 hours before shaping",
+    "failure_state": [
+      {
+        "case": "no_cold_ferment",
+        "result": "less complex flavor; dough harder to stretch"
+      }
+    ],
+    "effect": "Slow fermentation develops organic acids and aromatic compounds; enzymes break down proteins, improving extensibility",
+    "sensory": {
+      "texture": "more extensible, less springy",
+      "appearance": "bubbles form",
+      "flavor": "complex, slightly tangy"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "pizza",
+    "ingredient_state": "assembled, raw",
+    "intent": "crisp",
+    "process": "maillard reaction and starch gelatinization",
+    "mechanism": "moisture evaporation and crust formation",
+    "target": {
+      "temperature_c": 260,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-30, 50],
+      "time_minutes": [-2, 5]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 200,
+        "effect": "crust bakes but does not develop crisp bottom"
+      },
+      "upper": {
+        "temperature_c": 450,
+        "effect": "Neapolitan style; crust chars in 90 seconds"
+      }
+    },
+    "equipment": "baking stone, oven",
+    "condition": "when baking pizza in home oven",
+    "decision": "Preheat baking stone at highest oven setting (260°C/500°F) for 45-60 minutes before baking",
+    "failure_state": [
+      {
+        "case": "cold_stone",
+        "result": "soggy bottom crust"
+      },
+      {
+        "case": "overcrowded_oven",
+        "result": "steam prevents crisping"
+      }
+    ],
+    "effect": "Hot stone transfers intense heat to bottom crust, driving off moisture before it can soak in; high heat creates rapid Maillard browning",
+    "sensory": {
+      "texture": "crisp bottom, tender interior",
+      "appearance": "golden brown, leopard spotting"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  }
+]

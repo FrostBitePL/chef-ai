@@ -1,0 +1,899 @@
+[
+  {
+    "ingredient": "bread dough",
+    "ingredient_state": "shaped loaf",
+    "intent": "score",
+    "process": "dough expansion control",
+    "mechanism": "controlled tearing",
+    "target": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": null,
+        "effect": null
+      },
+      "upper": {
+        "temperature_c": null,
+        "effect": null
+      }
+    },
+    "equipment": "lame or razor blade",
+    "condition": "before baking bread",
+    "decision": "Score dough with 45° angle cut, 0.5-1 cm deep",
+    "failure_state": [
+      {
+        "case": "dull_blade",
+        "result": "dough drags; poor oven spring"
+      },
+      {
+        "case": "too_deep",
+        "result": "dough collapses"
+      },
+      {
+        "case": "too_shallow",
+        "result": "no controlled expansion; random cracking"
+      }
+    ],
+    "effect": "Scoring creates weak points where steam can escape, directing oven spring and preventing uncontrolled bursting",
+    "sensory": {
+      "texture": "crisp crust with decorative pattern",
+      "appearance": "ear-shaped curl"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "bread dough",
+    "ingredient_state": "shaped",
+    "intent": "steam",
+    "process": "crust formation",
+    "mechanism": "starch gelatinization and moisture retention",
+    "target": {
+      "temperature_c": 220,
+      "time_minutes": 10
+    },
+    "tolerance": {
+      "temperature_c": [-20, 30],
+      "time_minutes": [-5, 5]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 5,
+        "effect": "insufficient steam; crust forms too early"
+      },
+      "upper": {
+        "time_minutes": 15,
+        "effect": "excess steam; crust soft"
+      }
+    },
+    "equipment": "oven with steam function or water pan",
+    "condition": "when baking bread with crisp crust",
+    "decision": "Introduce steam at start of baking; vent after 10 minutes for crust to form",
+    "failure_state": [
+      {
+        "case": "no_steam",
+        "result": "crust forms too early; limited oven spring"
+      }
+    ],
+    "effect": "Steam keeps surface moist, allowing dough to expand fully before crust sets; moisture also gelatinizes surface starch for glossy crust",
+    "sensory": {
+      "texture": "crisp, crackly crust",
+      "appearance": "glossy, brown",
+      "flavor": "developed"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "bread",
+    "ingredient_state": "baked",
+    "intent": "cool",
+    "process": "moisture redistribution",
+    "mechanism": "crust-to-crumb moisture equilibration",
+    "target": {
+      "temperature_c": 30,
+      "time_minutes": 60
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-30, 60]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 15,
+        "effect": "gummy crumb when sliced"
+      },
+      "upper": {
+        "time_minutes": 180,
+        "effect": "bread fully cooled"
+      }
+    },
+    "equipment": "wire rack",
+    "condition": "after baking bread",
+    "decision": "Cool completely on wire rack before slicing",
+    "failure_state": [
+      {
+        "case": "slicing_hot",
+        "result": "compressed crumb; gummy texture"
+      },
+      {
+        "case": "cooling_on_solid_surface",
+        "result": "bottom condensation; soggy crust"
+      }
+    ],
+    "effect": "Cooling allows steam to escape and crumb to set; wire rack allows air circulation preventing sogginess",
+    "sensory": {
+      "texture": "firm crumb, crisp crust",
+      "appearance": "fully set"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "pasta dough",
+    "ingredient_state": "fresh, rolled",
+    "intent": "cook",
+    "process": "starch gelatinization",
+    "mechanism": "starch swelling and protein setting",
+    "target": {
+      "temperature_c": 100,
+      "time_minutes": 2
+    },
+    "tolerance": {
+      "temperature_c": [-5, 0],
+      "time_minutes": [-0.5, 1]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 1,
+        "effect": "undercooked; raw flour taste"
+      },
+      "upper": {
+        "time_minutes": 4,
+        "effect": "overcooked; mushy"
+      }
+    },
+    "equipment": "large pot, salted water",
+    "condition": "when cooking fresh pasta",
+    "decision": "Cook in boiling salted water for 1-3 minutes until tender",
+    "failure_state": [
+      {
+        "case": "insufficient_water",
+        "result": "pasta sticks together"
+      },
+      {
+        "case": "no_salt",
+        "result": "bland pasta"
+      }
+    ],
+    "effect": "Fresh pasta cooks much faster than dried due to higher moisture content; starch gelatinizes and egg proteins set",
+    "sensory": {
+      "texture": "tender, slightly chewy",
+      "appearance": "pale, opaque"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "dumplings",
+    "ingredient_state": "filled, raw",
+    "intent": "cook",
+    "process": "steaming",
+    "mechanism": "moist heat transfer",
+    "target": {
+      "temperature_c": 100,
+      "time_minutes": 8
+    },
+    "tolerance": {
+      "temperature_c": [-5, 0],
+      "time_minutes": [-2, 3]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 5,
+        "effect": "undercooked filling"
+      },
+      "upper": {
+        "time_minutes": 12,
+        "effect": "wrapper becomes soggy or tears"
+      }
+    },
+    "equipment": "steamer basket",
+    "condition": "when cooking filled dumplings",
+    "decision": "Steam over boiling water until wrapper is translucent and filling is cooked through",
+    "failure_state": [
+      {
+        "case": "overcrowding",
+        "result": "dumplings stick together; uneven cooking"
+      }
+    ],
+    "effect": "Steam transfers heat efficiently without agitation, preserving delicate wrapper structure",
+    "sensory": {
+      "texture": "tender wrapper, hot filling",
+      "appearance": "translucent, moist"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "rice",
+    "ingredient_state": "dry grains",
+    "intent": "steam",
+    "process": "starch gelatinization",
+    "mechanism": "controlled hydration",
+    "target": {
+      "temperature_c": 100,
+      "time_minutes": 18
+    },
+    "tolerance": {
+      "temperature_c": [-5, 0],
+      "time_minutes": [-3, 5]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 15,
+        "effect": "undercooked; hard center"
+      },
+      "upper": {
+        "time_minutes": 25,
+        "effect": "overcooked; mushy"
+      }
+    },
+    "equipment": "steamer or rice cooker",
+    "condition": "when cooking sticky or glutinous rice",
+    "decision": "Soak rice, then steam until tender and translucent",
+    "failure_state": [
+      {
+        "case": "no_soaking",
+        "result": "uneven cooking; hard grains"
+      }
+    ],
+    "effect": "Soaking allows even hydration; steaming gelatinizes starch without agitation, preserving grain integrity",
+    "sensory": {
+      "texture": "tender, slightly sticky",
+      "appearance": "translucent, glossy"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "vegetables",
+    "ingredient_state": "cut pieces",
+    "intent": "steam",
+    "process": "moist heat transfer",
+    "mechanism": "condensation heat transfer",
+    "target": {
+      "temperature_c": 100,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-5, 0],
+      "time_minutes": [-2, 3]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 3,
+        "effect": "crisp but undercooked"
+      },
+      "upper": {
+        "time_minutes": 10,
+        "effect": "overcooked; mushy"
+      }
+    },
+    "equipment": "steamer basket",
+    "condition": "when cooking vegetables to retain nutrients and color",
+    "decision": "Steam until crisp-tender and bright in color",
+    "failure_state": [
+      {
+        "case": "overcooking",
+        "result": "loss of color, nutrients, and texture"
+      }
+    ],
+    "effect": "Steaming minimizes nutrient loss compared to boiling; vegetables cook quickly without agitation",
+    "sensory": {
+      "texture": "crisp-tender",
+      "appearance": "bright colors",
+      "flavor": "pure, unadulterated"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "shellfish",
+    "ingredient_state": "live or fresh",
+    "intent": "steam",
+    "process": "protein coagulation",
+    "mechanism": "heat denaturation",
+    "target": {
+      "temperature_c": 100,
+      "time_minutes": 5
+    },
+    "tolerance": {
+      "temperature_c": [-5, 0],
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 3,
+        "effect": "underdone; shells not fully open"
+      },
+      "upper": {
+        "time_minutes": 8,
+        "effect": "overcooked; rubbery texture"
+      }
+    },
+    "equipment": "pot with lid",
+    "condition": "when cooking mussels, clams, or shrimp",
+    "decision": "Steam with aromatics until shells open (mussels/clams) or flesh is opaque (shrimp)",
+    "failure_state": [
+      {
+        "case": "shells_not_opening",
+        "result": "shellfish dead before cooking; discard"
+      }
+    ],
+    "effect": "Steam heats shellfish quickly and evenly; shells open when muscle proteins contract; discard any that don't open",
+    "sensory": {
+      "texture": "tender, not rubbery",
+      "appearance": "opaque, shells open"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "lobster",
+    "ingredient_state": "live",
+    "intent": "cook",
+    "process": "protein coagulation",
+    "mechanism": "heat denaturation",
+    "target": {
+      "temperature_c": 100,
+      "time_minutes": 12
+    },
+    "tolerance": {
+      "temperature_c": [-5, 0],
+      "time_minutes": [-2, 3]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 8,
+        "effect": "undercooked; translucent meat"
+      },
+      "upper": {
+        "time_minutes": 15,
+        "effect": "overcooked; tough, rubbery"
+      }
+    },
+    "equipment": "large pot",
+    "condition": "when boiling or steaming whole lobster",
+    "decision": "Cook until shell turns bright red and meat is opaque",
+    "failure_state": [
+      {
+        "case": "overcooking",
+        "result": "tough, rubbery texture"
+      }
+    ],
+    "effect": "Heat denatures proteins; shell pigment (astaxanthin) is released from protein binding, turning red",
+    "sensory": {
+      "texture": "tender, succulent",
+      "appearance": "bright red shell, white meat"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "eggs",
+    "ingredient_state": "whole in shell",
+    "intent": "hard_cook",
+    "process": "protein coagulation",
+    "mechanism": "ovalbumin and ovotransferrin denaturation",
+    "target": {
+      "temperature_c": 90,
+      "time_minutes": 12
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-2, 3]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 85,
+        "effect": "soft-set; yolk not fully cooked"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "green ring around yolk; rubbery white"
+      }
+    },
+    "equipment": "pot, ice bath",
+    "condition": "when making hard-boiled eggs",
+    "decision": "Start in cold water; bring to boil; remove from heat; cover; let sit 10-12 minutes; shock in ice bath",
+    "failure_state": [
+      {
+        "case": "no_ice_bath",
+        "result": "green ring from iron-sulfur reaction"
+      },
+      {
+        "case": "boiling_too_long",
+        "result": "rubbery, dry yolk"
+      }
+    ],
+    "effect": "Gentle cooking prevents iron-sulfur reaction; ice bath stops carryover cooking; yolk stays yellow, white tender",
+    "sensory": {
+      "texture": "tender white, creamy yolk",
+      "appearance": "no green ring"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "egg",
+    "ingredient_state": "whole in shell",
+    "intent": "soft_cook",
+    "process": "protein coagulation",
+    "mechanism": "partial denaturation",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 6
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": [-1, 1]
+    },
+    "limits": {
+      "lower": {
+        "time_minutes": 4,
+        "effect": "white not fully set; runny"
+      },
+      "upper": {
+        "time_minutes": 8,
+        "effect": "yolk partially set"
+      }
+    },
+    "equipment": "pot, timer",
+    "condition": "when making soft-boiled eggs with runny yolk",
+    "decision": "Lower eggs into boiling water; cook 5-7 minutes; serve immediately",
+    "failure_state": [
+      {
+        "case": "overcooking",
+        "result": "yolk set; not dippable"
+      }
+    ],
+    "effect": "Heat penetrates from outside in; precise timing is critical for desired doneness",
+    "sensory": {
+      "texture": "set white, runny yolk",
+      "appearance": "white opaque, yolk golden liquid"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "pasta",
+    "ingredient_state": "cooked",
+    "intent": "finish_in_sauce",
+    "process": "emulsification and starch integration",
+    "mechanism": "starch interaction with fat",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 2
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 60,
+        "effect": "sauce does not adhere"
+      },
+      "upper": {
+        "temperature_c": 95,
+        "effect": "sauce separates"
+      }
+    },
+    "equipment": "saucepan, tongs",
+    "condition": "when finishing pasta dishes",
+    "decision": "Transfer pasta directly from water to sauce; cook together for 1-2 minutes; add pasta water as needed",
+    "failure_state": [
+      {
+        "case": "rinsing_pasta",
+        "result": "starch removed; sauce won't cling"
+      }
+    ],
+    "effect": "Starch on pasta surface helps emulsify and thicken sauce; finishing together allows flavors to meld",
+    "sensory": {
+      "texture": "creamy, coated",
+      "appearance": "sauce clings to pasta"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "risotto",
+    "ingredient_state": "cooked",
+    "intent": "mantecare",
+    "process": "final emulsification",
+    "mechanism": "fat incorporation",
+    "target": {
+      "temperature_c": 55,
+      "time_minutes": 1
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 45,
+        "effect": "butter does not incorporate fully"
+      },
+      "upper": {
+        "temperature_c": 65,
+        "effect": "sauce may break"
+      }
+    },
+    "equipment": "saucepan, wooden spoon",
+    "condition": "when finishing risotto",
+    "decision": "Remove from heat; vigorously stir in cold butter and cheese",
+    "failure_state": [
+      {
+        "case": "skipping_mantecare",
+        "result": "less creamy; lacking sheen"
+      }
+    ],
+    "effect": "Agitation emulsifies butter and cheese into starch-thickened liquid, creating creamy, glossy texture",
+    "sensory": {
+      "texture": "creamy, flowing",
+      "appearance": "glossy, saucier"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "soup",
+    "ingredient_state": "hot liquid",
+    "intent": "serve",
+    "process": "temperature management",
+    "mechanism": "heat retention",
+    "target": {
+      "temperature_c": 65,
+      "time_minutes": null
+    },
+    "tolerance": {
+      "temperature_c": [-5, 5],
+      "time_minutes": null
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 55,
+        "effect": "soup lukewarm; less aromatic"
+      },
+      "upper": {
+        "temperature_c": 75,
+        "effect": "risk of burns"
+      }
+    },
+    "equipment": "preheated bowls",
+    "condition": "when serving hot soup",
+    "decision": "Preheat bowls; serve soup at 60-70°C",
+    "failure_state": [
+      {
+        "case": "cold_bowls",
+        "result": "soup cools rapidly; less enjoyable"
+      }
+    ],
+    "effect": "Proper serving temperature maximizes aroma and enjoyment; preheated bowls maintain temperature",
+    "sensory": {
+      "texture": "hot, aromatic",
+      "appearance": "steaming"
+    },
+    "meta": {
+      "category": "finishing",
+      "priority": "medium"
+    },
+    "confidence": 0.9
+  },
+  {
+    "ingredient": "wine",
+    "ingredient_state": "red or white",
+    "intent": "deglażować",
+    "process": "deglazing",
+    "mechanism": "solvent extraction of fond",
+    "target": {
+      "temperature_c": 85,
+      "time_minutes": 2
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 70,
+        "effect": "fond does not dissolve fully"
+      },
+      "upper": {
+        "temperature_c": 100,
+        "effect": "alcohol burns off too quickly"
+      }
+    },
+    "equipment": "hot skillet",
+    "condition": "after searing meat to create pan sauce",
+    "decision": "Add wine to hot pan; scrape browned bits from bottom; reduce slightly",
+    "failure_state": [
+      {
+        "case": "cold_pan",
+        "result": "fond does not release"
+      }
+    ],
+    "effect": "Wine dissolves caramelized fond (browned bits) from pan, incorporating flavor into sauce",
+    "sensory": {
+      "texture": "liquid, flavorful",
+      "appearance": "dark, aromatic"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "cream",
+    "ingredient_state": "liquid",
+    "intent": "whip",
+    "process": "foaming",
+    "mechanism": "fat globule partial coalescence",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": 3
+    },
+    "tolerance": {
+      "temperature_c": [-2, 3],
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 0,
+        "effect": "cream freezes; cannot whip"
+      },
+      "upper": {
+        "temperature_c": 10,
+        "effect": "fat too soft; foam unstable"
+      }
+    },
+    "equipment": "stand mixer, chilled bowl",
+    "condition": "when making whipped cream",
+    "decision": "Whip cold cream until soft or stiff peaks form; stop before over-whipping",
+    "failure_state": [
+      {
+        "case": "over_whipping",
+        "result": "butter forms; cream separates"
+      }
+    ],
+    "effect": "Cold fat partially coalesces around air bubbles; over-whipping causes fat to fully coalesce into butter",
+    "sensory": {
+      "texture": "light, fluffy, stable",
+      "appearance": "white, holds peaks"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "chocolate",
+    "ingredient_state": "grated",
+    "intent": "melt_into_cream",
+    "process": "emulsification",
+    "mechanism": "fat and protein interaction",
+    "target": {
+      "temperature_c": 60,
+      "time_minutes": 2
+    },
+    "tolerance": {
+      "temperature_c": [-10, 10],
+      "time_minutes": [-1, 2]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 45,
+        "effect": "chocolate does not melt fully"
+      },
+      "upper": {
+        "temperature_c": 80,
+        "effect": "chocolate may seize"
+      }
+    },
+    "equipment": "saucepan",
+    "condition": "when making ganache",
+    "decision": "Pour hot cream over chocolate; let sit 1 minute; stir until smooth",
+    "failure_state": [
+      {
+        "case": "water_contact",
+        "result": "chocolate seizes; grainy"
+      }
+    ],
+    "effect": "Cream's fat and water create emulsion with cocoa butter; gentle heat melts chocolate without breaking emulsion",
+    "sensory": {
+      "texture": "smooth, glossy",
+      "appearance": "uniform"
+    },
+    "meta": {
+      "category": "cooking",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "dough",
+    "ingredient_state": "mixed, unbaked",
+    "intent": "store",
+    "process": "cold fermentation",
+    "mechanism": "slow enzymatic activity",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": 1440
+    },
+    "tolerance": {
+      "temperature_c": [-1, 2],
+      "time_minutes": [-720, 1440]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 0,
+        "effect": "fermentation stops"
+      },
+      "upper": {
+        "temperature_c": 10,
+        "effect": "fermentation too fast"
+      }
+    },
+    "equipment": "refrigerator, covered container",
+    "condition": "when storing dough for later use",
+    "decision": "Wrap tightly; refrigerate for up to 3 days; bring to room temperature before shaping",
+    "failure_state": [
+      {
+        "case": "drying_out",
+        "result": "skin forms; dough unusable"
+      }
+    ],
+    "effect": "Cold slows yeast activity, allowing flavor to develop; tight wrapping prevents drying",
+    "sensory": {
+      "texture": "elastic, extensible",
+      "appearance": "smooth, no skin",
+      "flavor": "developed"
+    },
+    "meta": {
+      "category": "prep",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "leftovers",
+    "ingredient_state": "cooked",
+    "intent": "store_safely",
+    "process": "rapid cooling",
+    "mechanism": "temperature control",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": 120
+    },
+    "tolerance": {
+      "temperature_c": null,
+      "time_minutes": [-30, 60]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 4,
+        "effect": "safe storage temperature"
+      },
+      "upper": {
+        "temperature_c": 60,
+        "effect": "danger zone"
+      }
+    },
+    "equipment": "shallow containers, ice bath",
+    "condition": "when storing cooked food",
+    "decision": "Divide into shallow containers; cool to room temperature within 2 hours; refrigerate",
+    "failure_state": [
+      {
+        "case": "large_hot_container",
+        "result": "prolonged time in danger zone"
+      }
+    ],
+    "effect": "Rapid cooling minimizes time in 4-60°C danger zone where bacteria multiply fastest",
+    "sensory": null,
+    "meta": {
+      "category": "safety",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  },
+  {
+    "ingredient": "frozen food",
+    "ingredient_state": "frozen solid",
+    "intent": "thaw_safely",
+    "process": "phase change",
+    "mechanism": "controlled melting",
+    "target": {
+      "temperature_c": 4,
+      "time_minutes": 720
+    },
+    "tolerance": {
+      "temperature_c": [-1, 1],
+      "time_minutes": [-240, 480]
+    },
+    "limits": {
+      "lower": {
+        "temperature_c": 0,
+        "effect": "food remains frozen"
+      },
+      "upper": {
+        "temperature_c": 10,
+        "effect": "surface enters danger zone"
+      }
+    },
+    "equipment": "refrigerator",
+    "condition": "when thawing frozen food",
+    "decision": "Thaw in refrigerator; for faster thawing, submerge sealed bag in cold water",
+    "failure_state": [
+      {
+        "case": "room_temperature_thaw",
+        "result": "surface in danger zone while interior frozen"
+      }
+    ],
+    "effect": "Refrigerator maintains food below 4°C, preventing bacterial growth during thawing",
+    "sensory": null,
+    "meta": {
+      "category": "safety",
+      "priority": "high"
+    },
+    "confidence": 0.95
+  }
+]
