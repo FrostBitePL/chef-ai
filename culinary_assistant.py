@@ -8,7 +8,7 @@ try:
 except ImportError:
     pass
 
-import os,json,logging,traceback,random,re,functools
+import os,json,logging,traceback,random,re,functools,uuid
 from datetime import datetime
 from openai import OpenAI
 from flask import Flask,request,jsonify,send_from_directory,g
@@ -45,6 +45,7 @@ stripe.api_key=STRIPE_SECRET_KEY
 # â”€â”€â”€ Free tier limits â”€â”€â”€
 FREE_RECIPES_PER_DAY=5
 FREE_IMPORTS_PER_DAY=2
+PLAN_TABLE="planner_plans"
 
 logging.basicConfig(level=logging.INFO,format="%(asctime)s [%(levelname)s] %(message)s")
 logger=logging.getLogger(__name__)
@@ -120,6 +121,57 @@ def db_save_session(uid,session):
             "saved_at":datetime.utcnow().isoformat()
         }).execute()
     except Exception as e: logger.error(f"Session save error: {e}")
+
+def db_save_history(uid,session):
+    try:
+        sb.table("chat_sessions").upsert({
+            "id":session["id"],"user_id":uid,"title":session.get("title","Sesja"),
+            "bot_profile":session.get("profile","guest"),"messages":session.get("messages",[]),
+            "saved_at":datetime.utcnow().isoformat()
+        }).execute()
+    except Exception as e:
+        logger.error(f"Session save error: {e}")
+
+def db_save_plan(uid,plan_id,title,plan_body):
+    payload={
+        "id":plan_id,
+        "user_id":uid,
+        "title":title,
+        "plan":plan_body,
+        "created_at":datetime.utcnow().isoformat()
+    }
+    try:
+        r=sb.table(PLAN_TABLE).upsert(payload).execute()
+        logger.info(f"Plan saved: {plan_id} for user {uid}")
+        return payload
+    except Exception as e:
+        logger.error(f"Planner save error: {e}")
+        logger.error(f"Payload keys: {list(payload.keys())}, plan_id={plan_id}")
+        return None
+
+def db_get_plans(uid):
+    try:
+        r=sb.table(PLAN_TABLE).select("id,title,created_at,plan").eq("user_id",uid).order("created_at",desc=True).limit(20).execute()
+        return r.data or []
+    except Exception as e:
+        logger.error(f"Planner fetch error: {e}")
+        return []
+
+def db_get_plan(uid,plan_id):
+    try:
+        r=sb.table(PLAN_TABLE).select("id,title,created_at,plan").eq("user_id",uid).eq("id",plan_id).single().execute()
+        return r.data
+    except Exception as e:
+        logger.error(f"Planner get error: {e}")
+        return None
+
+def db_delete_plan(uid,plan_id):
+    try:
+        sb.table(PLAN_TABLE).delete().eq("user_id",uid).eq("id",plan_id).execute()
+        return True
+    except Exception as e:
+        logger.error(f"Planner delete error: {e}")
+        return False
 
 def db_delete_session(uid,sid):
     try: sb.table("chat_sessions").delete().eq("id",sid).eq("user_id",uid).execute()
@@ -378,6 +430,7 @@ KNOWLEDGE_LAYERS = {
 }
 CULINARY_KNOWLEDGE = {}
 LAYER_K = 5  # top-K results per layer
+KB_HASH_FILE = os.path.join(CHROMA_DB_PATH, "kb_hash.json")
 
 def load_culinary_knowledge_base():
     """Load culinary knowledge JSON files from 4 category folders."""
@@ -408,6 +461,26 @@ def load_culinary_knowledge_base():
     total = sum(len(v) for v in knowledge_data.values())
     logger.info(f"Knowledge base loaded: {total} items across {len(knowledge_data)} layers")
     return knowledge_data
+
+def _compute_kb_hash(knowledge_data):
+    """Compute a content hash of all knowledge data to detect changes."""
+    h = hashlib.md5()
+    for layer in sorted(knowledge_data.keys()):
+        for item in knowledge_data[layer]:
+            h.update(json.dumps(item, sort_keys=True, ensure_ascii=False).encode())
+    return h.hexdigest()
+
+def _read_kb_hash():
+    try:
+        with open(KB_HASH_FILE, 'r') as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+def _write_kb_hash(hash_data):
+    os.makedirs(os.path.dirname(KB_HASH_FILE), exist_ok=True)
+    with open(KB_HASH_FILE, 'w') as f:
+        json.dump(hash_data, f)
 
 # ─── Per-layer document formatters (rich text for vector search) ───
 def _fmt_core(item):
@@ -544,130 +617,161 @@ def format_layer_for_chroma(layer_name, items):
 
 # ─── 4-Stage Decision Engine Prompts ───
 
-SYSTEM_PROMPT_ENGINE = """You are a culinary decision engine.
+SYSTEM_PROMPT_ENGINE = """Jesteś silnikiem decyzyjnym kuchni — Chef AI.
 
-You are Chef AI's recipe synthesis engine.
-Your job is to extract the maximum practical value from the provided 4-layer culinary knowledge base and turn it into a precise, production-grade recipe.
+NIE jesteś chatbotem z przepisami. Jesteś systemem, który myśli jak doświadczony szef kuchni z głęboką wiedzą o fizyce jedzenia, kompozycji smaków i technikach profesjonalnej kuchni.
 
-You DO NOT generate generic recipes, vague advice, or cookbook filler.
-You design dishes using 4 knowledge layers and you must squeeze each layer for concrete detail:
+Masz dostęp do 4 warstw bazy wiedzy kulinarnej:
+1. COMPOSITION — struktura dania, balans, kontrasty, architektura talerza
+2. FLAVOR — parowanie smaków, wzmacniacze (umami, Maillard, fermentacja), równowaga kwas/sól/tłuszcz/słodycz
+3. CORE — fizyka gotowania: temperatury, czasy, przemiany chemiczne, punkty krytyczne, stany awaryjne
+4. TECHNIQUES — procedury wykonania, kroki krytyczne, troubleshooting
 
-1. COMPOSITION (structure, balance, contrast)
-2. FLAVOR (pairings, boosters, balancing)
-3. CORE (physics: temperature, time, transformations)
-4. TECHNIQUES (execution procedures)
+## TRYB ROZPOZNAWANIA DANIA
 
-You MUST follow this order internally:
-1. Design the dish architecture first (composition)
-2. Then lock flavor logic and pairings (flavor)
-3. Then define the physical parameters and transformations (core)
-4. Then convert everything into executable steps (techniques)
+Przed rozpoczęciem ZAWSZE określ typ zapytania:
 
-Do NOT skip steps. Do NOT mix layers.
-Do NOT flatten the database into generic summaries.
-Every decision must be justified by the strongest available layer evidence.
+### A) DANIE KANONICZNE (carbonara, ramen tonkotsu, sos boloński, boeuf bourguignon, pad thai, risotto, pierogi ruskie, barszcz, ossobuco, cacio e pepe, french onion soup, etc.)
+Jeśli użytkownik pyta o danie z ustaloną tożsamością kulinarną:
+- NIE wymyślaj na nowo. NIE "ulepszaj" klasyki na siłę.
+- Skup się na tym CO ODRÓŻNIA wersję doskonałą od przeciętnej.
+- Wyjaśnij DLACZEGO każdy krok jest ważny — fizyka, chemia, mechanizm.
+- Podaj NAJCZĘSTSZE BŁĘDY i jak ich uniknąć.
+- Podkreśl detale, które większość ludzi pomija (np. woda z makaronu w carbonara, tempo emulsji, typ mąki).
+- ZAWSZE podawaj TRADYCYJNE PROPORCJE składników z wyjaśnieniem DLACZEGO takie a nie inne (np. sos boloński: wołowina:wieprzowina 2:1 — wieprzowina dodaje tłuszcz i słodycz, wołowina daje głębię i strukturę).
+- Traktuj to jak masterclass: "Tak robi to ktoś, kto naprawdę rozumie to danie."
+- W polu "why_this_recipe" wyjaśnij filozofię tego dania i dlaczego kanon działa.
 
-Optimisation rules:
-- Prefer exact numbers, temperatures, times, equipment settings, ratios, textures and failure points from the context.
-- If multiple fragments match, fuse them into one coherent, stronger recipe instead of averaging them into blandness.
-- Reuse the most specific terms from the knowledge base when they improve precision.
-- If context is incomplete, infer conservatively from the closest culinary logic, but keep the recipe concrete.
-- Turn raw knowledge into actions: what to mix, what to heat, what to wait for, what to watch for, what can fail.
-- Make the result feel as if an expert chef studied the provided database and distilled it into one excellent dish.
+### B) ZAPYTANIE KREATYWNE ("coś z kurczakiem", "lekki obiad", "kolacja na randkę")
+Jeśli użytkownik daje otwarte zapytanie:
+- ZAWSZE proponuj danie na poziomie dobrej restauracji, nigdy "szybki obiad z patelni".
+- Myśl jak szef kuchni: co sprawi, że to danie będzie wyjątkowe? Jaki element zaskoczenia?
+- Dodaj JEDEN nieoczywisty element, który podnosi danie (np. fermentowany czosnek, dashi zamiast bulionu, pickled element, finishing oil, teksturowy kontrast).
+- Każde danie musi mieć wyraźną architekturę: hero ingredient + supporting cast + accent.
+- Nie proponuj "kurczaka z ryżem" — proponuj "kurczak w miso-karmelowym glaze z pickled rzodkiewką i furikake".
 
-IMPORTANT RULES:
-- ALWAYS use grams/ml (never spoons)
-- ALWAYS Celsius (+Fahrenheit in parentheses)
-- ALWAYS timer_seconds in steps that require waiting
-- ALWAYS specify exact amounts in step instructions
-- Write in Polish unless user asks otherwise
-- Do NOT mention book titles or author names. Write as an expert who simply KNOWS.
-- Do NOT mention sources, retrieval, or the fact that you used a database.
-- Favor clarity, density, and specificity over shortness.
+## KOLEJNOŚĆ MYŚLENIA (ZAWSZE)
+1. Zidentyfikuj typ dania (kanoniczne vs kreatywne)
+2. Zaprojektuj architekturę dania (composition)
+3. Zablokuj logikę smakową (flavor)
+4. Zdefiniuj parametry fizyczne — temp, czas, mechanizmy (core)
+5. Przekształć w konkretne kroki wykonania (techniques)
+6. Wyeliminuj ogólnikowe frazy — zastąp precyzyjnym językiem kulinarnym
+7. Każdy krok musi UCZYĆ — nie tylko mówić co robić, ale DLACZEGO
+
+## ZASADY JAKOŚCI
+- Każdy przepis musi wyglądać jak produkt doświadczonego szefa kuchni, nie jak blog kulinarny.
+- Kroki muszą być GĘSTE w wiedzę: co się dzieje chemicznie, na co patrzeć, co może pójść nie tak.
+- Podawaj KONKRETNE wskaźniki gotowości (kolor, konsystencja, dźwięk, zapach) — nie tylko czas.
+- Jeśli danie ma element, który wymaga precyzji (emulsja, temperowanie, fermentacja) — poświęć mu dodatkową uwagę.
+
+## REGUŁY FORMATU
+- ZAWSZE gramy/ml (nigdy łyżki/szklanki)
+- ZAWSZE Celsjusz (+Fahrenheit w nawiasie)
+- ZAWSZE timer_seconds w krokach wymagających czekania
+- ZAWSZE podawaj dokładne ilości w instrukcjach kroków
+- Pisz po polsku, chyba że użytkownik prosi inaczej
+- NIE wspominaj o książkach, autorach, źródłach, bazie danych — pisz jak ekspert, który po prostu WIE.
+- Preferuj gęstość i precyzję nad zwięzłość.
 """
 
-TASK_PROMPT_TEMPLATE = """USER INPUT:
+TASK_PROMPT_TEMPLATE = """ZAPYTANIE UŻYTKOWNIKA:
 {user_input}
 
-CONSTRAINTS:
+OGRANICZENIA / PROFIL:
 {constraints}
 
 ---
 
-## COMPOSITION RULES (structure, balance, contrast, architecture)
+## COMPOSITION RULES (architektura dania, balans, kontrasty, struktura)
 {composition_data}
 
-## FLAVOR DATA (pairings, boosters, acid/salt/fat/sugar balance, aromatic logic)
+## FLAVOR DATA (parowanie smaków, wzmacniacze, balans kwas/sól/tłuszcz/słodycz, logika aromatyczna)
 {flavor_data}
 
-## CORE DATA (physics, temperatures, processes, transformation thresholds, failure states)
+## CORE DATA (fizyka, temperatury, procesy, progi transformacji, stany awaryjne)
 {core_data}
 
-## TECHNIQUES (execution procedures, critical steps, troubleshooting, timing)
+## TECHNIQUES (procedury wykonania, kroki krytyczne, troubleshooting, timing)
 {techniques_data}
 
 ---
 
-TASK:
-Design a dish as a decision system. Follow the 4-layer order strictly and use the context aggressively.
+ZADANIE:
+Zaprojektuj danie jako system decyzyjny. Wykorzystaj kontekst z bazy wiedzy agresywnie — wyciągaj z niego maksimum detali.
 
-Before writing the final JSON, internally perform this sequence:
-1. Choose the best dish concept for the user's request and constraints.
-2. Derive structure and composition from the composition layer.
-3. Derive pairing, boosts, and balance from the flavor layer.
-4. Convert the concept into temperature/time/mechanism decisions from the core layer.
-5. Convert those decisions into exact execution steps from the techniques layer.
-6. Eliminate generic phrasing and replace it with precise culinary language.
-7. Make every step teach something useful, not just tell the user what to do.
+Przed napisaniem JSON-a wykonaj wewnętrznie tę sekwencję:
+1. ROZPOZNAJ TYP: Czy to danie kanoniczne (ma ustaloną tożsamość kulinarną) czy zapytanie kreatywne?
+2. DLA DAŃ KANONICZNYCH: Nie zmieniaj istoty dania. Skup się na perfekcji wykonania, wyjaśnij DLACZEGO każdy element jest ważny, podaj najczęstsze błędy i co odróżnia wersję doskonałą od przeciętnej. Traktuj to jak masterclass.
+3. DLA ZAPYTAŃ KREATYWNYCH: Zaproponuj danie na poziomie dobrej restauracji. Dodaj minimum jeden element zaskoczenia (nietypowe parowanie, technika, finishing). Nigdy nie proponuj banalnych kombinacji.
+4. Wyprowadź strukturę z warstwy composition.
+5. Wyprowadź logikę smakową z warstwy flavor.
+6. Przekształć koncept w decyzje temp/czas/mechanizm z warstwy core.
+7. Przekształć decyzje w precyzyjne kroki z warstwy techniques.
+8. Wyeliminuj ogólnikowe frazy i zastąp precyzyjnym językiem kulinarnym.
+9. Każdy krok musi UCZYĆ — nie tylko co robić, ale DLACZEGO to działa i CO MOŻE PÓJŚĆ NIE TAK.
+10. Dodaj wskaźniki gotowości sensoryczne (kolor, zapach, konsystencja, dźwięk) oprócz czasu.
 
-Return JSON with this EXACT structure:
+Zwróć JSON z DOKŁADNIE taką strukturą:
 {{
   "type": "recipe",
-  "title": "...",
-  "subtitle": "...",
-  "why_this_recipe": "why this dish is the best answer to the request",
+  "dish_type": "canonical | creative",
+  "title": "nazwa dania",
+  "subtitle": "krótki opis z charakterem — nie nudny",
+  "why_this_recipe": "DLA KANONICZNYCH: filozofia dania i dlaczego kanon działa. DLA KREATYWNYCH: dlaczego ta propozycja jest najlepsza odpowiedź na zapytanie.",
+  "common_mistakes": ["błąd 1 i dlaczego to problem", "błąd 2"],
+  "what_makes_it_great": "co odróżnia wersję doskonałą od przeciętnej — jeden gęsty akapit",
   "decision_layers": {{
     "composition": {{
-      "structure": "dish structure description",
-      "hero": "main ingredient",
-      "elements": ["element1", "element2"],
-      "balance": "balance logic",
-      "contrast": "contrast logic"
+      "structure": "architektura dania",
+      "hero": "główny składnik i dlaczego on",
+      "elements": ["element1 + jego rola", "element2 + jego rola"],
+      "balance": "logika balansu",
+      "contrast": "logika kontrastu (tekstura, temperatura, smak)"
     }},
     "flavor": {{
-      "pairings": ["pairing1", "pairing2"],
-      "boosters": ["booster1"],
-      "balancing": ["acid/sweet/etc"]
+      "pairings": ["parowanie1 + dlaczego działa", "parowanie2"],
+      "boosters": ["wzmacniacz1 + mechanizm"],
+      "balancing": ["co równoważy co i dlaczego"]
     }},
     "core": {{
-      "key_processes": [{{"process": "...", "target_temp_c": 0, "time_min": 0, "mechanism": "..."}}],
-      "critical_points": ["point1"]
+      "key_processes": [{{"process": "...", "target_temp_c": 0, "time_min": 0, "mechanism": "co się dzieje na poziomie molekularnym/fizycznym"}}],
+      "critical_points": ["punkt krytyczny + co się stanie jeśli go przekroczysz"]
     }},
     "techniques": [
-      {{"name": "...", "why": "...", "critical_steps": ["step1"]}}
+      {{"name": "...", "why": "dlaczego ta technika a nie inna", "critical_steps": ["krok + na co uważać"]}}
     ],
     "failure_analysis": [
-      {{"case": "...", "fix": "..."}}
+      {{"case": "co może pójść nie tak", "why": "mechanizm problemu", "fix": "jak naprawić"}}
     ]
   }},
   "precision_controls": [
-    {{"control": "...", "target": "...", "why": "..."}}
+    {{"control": "...", "target": "...", "sensory_check": "jak rozpoznać bez termometru/zegarka", "why": "..."}}
   ],
-  "science": "overall science explanation",
-  "flavor_logic": "short but dense explanation of how the flavor system works",
-  "plating": "how to finish and present the dish",
+  "science": "gęste wyjaśnienie nauki stojącej za daniem — pisz jakbyś tłumaczył pasjonatowi kuchni, nie studentowi",
+  "flavor_logic": "jak system smakowy tego dania działa jako całość — nie lista, tylko narracja",
+  "plating": "jak wykończyć i podać — z konkretnymi elementami wizualnymi",
   "times": {{"prep_min": 0, "cook_min": 0, "total_min": 0}},
   "difficulty": 3,
   "servings": 2,
   "shopping_list": [{{"item": "...", "amount": "...", "section": "..."}}],
-  "ingredients": [{{"item": "...", "amount": "...", "note": "..."}}],
-  "substitutes": [{{"original": "...", "substitute": "...", "note": "..."}}],
-  "mise_en_place": ["..."],
-  "steps": [{{"number": 1, "title": "...", "instruction": "...", "equipment": "...", "timer_seconds": 0, "tip": "...", "why": "..."}}],
-  "warnings": [{{"problem": "...", "solution": "..."}}],
-  "upgrade": "...",
-  "variation": "one smart variation that uses the same knowledge base differently",
-  "storage": "how to store leftovers or prep ahead if relevant"
+  "ingredients": [{{"item": "...", "amount": "...", "note": "dlaczego ten składnik/gatunek/forma a nie inny"}}],
+  "substitutes": [
+    {{
+      "original": "oryginalny składnik",
+      "substitute": "zamiennik",
+      "flavor_impact": "jak zmieni się smak (np. mniej umami, więcej słodyczy, ostrzejszy)",
+      "texture_impact": "jak zmieni się tekstura (np. bardziej kruche, mniej soczysty, gęstszy sos)",
+      "overall_effect": "ogólny wpływ na danie — czy to nadal będzie to samo danie, czy zmieni charakter",
+      "recommendation": "kiedy warto użyć zamiennika (np. dieta, dostępność, preferencje)"
+    }}
+  ],
+  "mise_en_place": ["przygotowanie + dlaczego w tej kolejności"],
+  "steps": [{{"number": 1, "title": "...", "instruction": "GĘSTA instrukcja z dokładnymi ilościami, temperaturami, wskaźnikami sensorycznymi", "equipment": "...", "timer_seconds": 0, "tip": "pro tip od doświadczonego kucharza", "why": "co się dzieje w tym kroku i dlaczego to ważne", "watch_for": "na co patrzeć/słuchać/wąchać żeby wiedzieć że jest dobrze"}}],
+  "warnings": [{{"problem": "...", "solution": "...", "prevention": "jak uniknąć od początku"}}],
+  "upgrade": "jeden konkretny sposób na podniesienie dania o poziom (nie abstrakcja, konkret)",
+  "variation": "jedna inteligentna wariacja, która wykorzystuje tę samą bazę wiedzy inaczej",
+  "storage": "jak przechować, co przygotować wcześniej, co traci jakość z czasem"
 }}
 """
 
@@ -708,30 +812,68 @@ class CulinaryAssistant:
 
     def __init__(self, api_key):
         self.client = OpenAI(api_key=api_key, base_url=AI_BASE_URL)
-        self.embedding_function = embedding_functions.DefaultEmbeddingFunction()
+        # Use OpenAI embeddings instead of local model — saves ~350MB RAM
+        self.embedding_function = embedding_functions.OpenAIEmbeddingFunction(
+            api_key=api_key, model_name="text-embedding-3-small"
+        )
         self._search_cache = {}
 
         # 4 separate ChromaDB collections — one per knowledge layer
-        db = chromadb.PersistentClient(path=CHROMA_DB_PATH)
+        self._db = chromadb.PersistentClient(path=CHROMA_DB_PATH)
+        # Clean up legacy combined collection if it exists (saves RAM)
+        try:
+            self._db.delete_collection("culinary_knowledge")
+            logger.info("Deleted legacy combined collection")
+        except Exception:
+            pass
         self.collections = {}
         for layer, cfg in KNOWLEDGE_LAYERS.items():
-            self.collections[layer] = db.get_or_create_collection(
-                cfg["collection"], embedding_function=self.embedding_function
-            )
-
-        # Legacy single collection for backward compat (training, meal_plan)
-        self.col = db.get_or_create_collection(
-            "culinary_knowledge", embedding_function=self.embedding_function
-        )
+            col_name = cfg["collection"]
+            try:
+                col = self._db.get_or_create_collection(
+                    col_name, embedding_function=self.embedding_function
+                )
+                # Validate dimensions match — if old 384-dim data exists, recreate
+                if col.count() > 0:
+                    try:
+                        col.query(query_texts=["test"], n_results=1)
+                    except Exception:
+                        logger.warning(f"Dimension mismatch in {col_name} — recreating collection")
+                        self._db.delete_collection(col_name)
+                        col = self._db.get_or_create_collection(
+                            col_name, embedding_function=self.embedding_function
+                        )
+                self.collections[layer] = col
+            except Exception as e:
+                logger.error(f"Collection {col_name} error: {e}")
+                try:
+                    self._db.delete_collection(col_name)
+                except Exception:
+                    pass
+                self.collections[layer] = self._db.get_or_create_collection(
+                    col_name, embedding_function=self.embedding_function
+                )
 
         self._load_knowledge_base()
 
     def _load_knowledge_base(self):
-        """Load JSON files and index into 4 separate ChromaDB collections."""
+        """Load JSON files and index into 4 ChromaDB collections. Skip if unchanged."""
+        global CULINARY_KNOWLEDGE
         try:
             knowledge_data = load_culinary_knowledge_base()
-            all_docs, all_metas, all_ids = [], [], []
+            new_hash = _compute_kb_hash(knowledge_data)
+            old_hashes = _read_kb_hash()
 
+            # Check if any layer already has data and hash matches
+            all_match = old_hashes.get("hash") == new_hash
+            if all_match:
+                counts = {l: self.collections[l].count() for l in KNOWLEDGE_LAYERS}
+                if all(c > 0 for c in counts.values()):
+                    logger.info(f"Knowledge base unchanged — skipping re-index. Counts: {counts}")
+                    CULINARY_KNOWLEDGE = {}  # free memory
+                    return
+
+            logger.info("Knowledge base changed or first run — re-indexing...")
             for layer, items in knowledge_data.items():
                 col = self.collections.get(layer)
                 if not col or not items:
@@ -751,21 +893,9 @@ class CulinaryAssistant:
                 col.add(documents=docs, metadatas=metas, ids=ids)
                 logger.info(f"  [{layer}] indexed {len(docs)} documents")
 
-                # Also add to legacy combined collection
-                all_docs.extend(docs)
-                all_metas.extend(metas)
-                all_ids.extend(ids)
-
-            # Update legacy combined collection
-            if all_docs:
-                try:
-                    existing = self.col.get()
-                    if existing and existing["ids"]:
-                        self.col.delete(ids=existing["ids"])
-                except Exception:
-                    pass
-                self.col.add(documents=all_docs, metadatas=all_metas, ids=all_ids)
-                logger.info(f"  [combined] indexed {len(all_docs)} total documents")
+            _write_kb_hash({"hash": new_hash})
+            # Free raw knowledge data from memory
+            CULINARY_KNOWLEDGE = {}
 
         except Exception as e:
             logger.error(f"Knowledge base load error: {e}")
@@ -791,15 +921,17 @@ class CulinaryAssistant:
         """Search all 4 layers separately. Returns dict {layer: [texts]}."""
         return {layer: self.search_layer(layer, query, k) for layer in KNOWLEDGE_LAYERS}
 
-    # Legacy search methods (for training, meal_plan, import)
+    # Legacy search methods — now use layer collections instead of combined
     def search(self, q, n=SEARCH_RESULTS):
-        if self.col.count() == 0:
-            return []
-        cache_key = hashlib.md5((q + str(n)).encode()).hexdigest()
+        cache_key = hashlib.md5(("legacy:" + q + str(n)).encode()).hexdigest()
         if cache_key in self._search_cache:
             return self._search_cache[cache_key]
-        r = self.col.query(query_texts=[q], n_results=min(n, self.col.count()))
-        result = [{"text": r["documents"][0][i]} for i in range(len(r["documents"][0]))] if r["documents"] and r["documents"][0] else []
+        # Search across all layers and merge results
+        all_texts = []
+        per_layer = max(2, n // len(KNOWLEDGE_LAYERS))
+        for layer in KNOWLEDGE_LAYERS:
+            all_texts.extend(self.search_layer(layer, q, k=per_layer))
+        result = [{"text": t} for t in all_texts[:n]]
         if len(self._search_cache) >= self._CACHE_SIZE:
             del self._search_cache[next(iter(self._search_cache))]
         self._search_cache[cache_key] = result
@@ -967,19 +1099,42 @@ class CulinaryAssistant:
         auto_update_profile(uid, parsed)
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
 
-    def meal_plan(self, days=7, prefs="", profile="lukasz", uid=None):
+    def meal_plan(self, days=7, prefs="", profile="lukasz", uid=None, persons=2, kcal=0, meals=None, diet=""):
         prof_data = db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
         prof_ctx = profile_to_context(prof_data)
-        # Use layer search for meal planning
-        layers = self.search_all_layers("meal plan balanced dinner lunch", k=3)
+        layers = self.search_all_layers("meal plan balanced dinner lunch breakfast", k=3)
         ctx = "\n---\n".join(layers.get("composition", []) + layers.get("flavor", []))
         base = PROFILES.get(profile, PROMPT_LUKASZ).replace("{profile_context}", prof_ctx)
         prompt = base + (f"\n\n## KONTEKST WIEDZY:\n{ctx}" if ctx else "")
-        parsed, usage = self._call(prompt, [{"role": "user", "content": f"Plan posilkow na {days} dni. {prefs}. JSON type:meal_plan."}], mode="smart")
-        parsed.pop("sources", None)
         bans = prof_data.get("banned_ingredients", [])
         if isinstance(bans, str):
             bans = json.loads(bans) if bans else []
+        ban_text = ""
+        if bans:
+            ban_text = f"\nZAKAZANE SKŁADNIKI (nigdy nie używaj): {', '.join(bans)}."
+        meal_types = meals or ["obiad", "kolacja"]
+        meal_str = ", ".join(meal_types)
+        kcal_str = f" Cel kaloryczny: ~{kcal} kcal/dzień." if kcal else ""
+        diet_str = f" Dieta: {diet}." if diet else ""
+        user_msg = (
+            f"Stwórz plan posiłków na {days} dni dla {persons} osób.{diet_str}{kcal_str}{ban_text}\n"
+            f"Posiłki do zaplanowania: {meal_str}.\n"
+            f"Preferencje: {prefs or 'brak'}.\n\n"
+            f"WAŻNE: Odpowiedz WYŁĄCZNIE poprawnym JSON.\n"
+            f"Format:\n"
+            f'{{"type":"meal_plan","days":[\n'
+            f'  {{"day":"Dzień 1","meals":[\n'
+            f'    {{"meal":"obiad","title":"Nazwa dania","prep_time":30,"kcal":550,\n'
+            f'      "ingredients":[{{"amount":"200g","item":"kurczak"}},...],\n'
+            f'      "steps":["Krok 1...","Krok 2..."]\n'
+            f'    }}\n'
+            f'  ]}}\n'
+            f'],\n'
+            f'"shopping_list":[{{"amount":"400g","item":"kurczak","section":"mięso","sources":["Dzień 1 obiad"]}}]\n'
+            f'}}'
+        )
+        parsed, usage = self._call(prompt, [{"role": "user", "content": user_msg}], mode="smart")
+        parsed.pop("sources", None)
         parsed = enforce_bans(parsed, bans)
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
 
@@ -1312,8 +1467,52 @@ def create_app():
         if not a: return jsonify({"error":"Not init"}),503
         d=request.get_json(silent=True) or {}
         p=db_get_profile(g.user_id)
-        try: return jsonify({"success":True,**a.meal_plan(min(int(d.get("days",7)),14),(d.get("preferences") or ""),p.get("bot_profile","guest"),uid=g.user_id)})
-        except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad."}),500
+        try:
+            return jsonify({"success":True,**a.meal_plan(
+                days=min(int(d.get("days",7)),14),
+                prefs=(d.get("preferences") or ""),
+                profile=p.get("bot_profile","guest"),
+                uid=g.user_id,
+                persons=min(int(d.get("persons",2)),10),
+                kcal=int(d.get("kcal",0) or 0),
+                meals=d.get("meals"),
+                diet=(d.get("diet") or "")
+            )})
+        except:
+            logger.error(traceback.format_exc())
+            return jsonify({"error":"Blad generowania planu."}),500
+
+    @app.route("/api/planner",methods=["POST"])
+    @require_auth
+    def api_save_plan():
+        d=request.get_json(silent=True) or {}
+        plan_body=d.get("body")
+        if not plan_body:
+            return jsonify({"error":"Brak planu"}),400
+        plan_id=d.get("plan_id") or f"plan_{uuid.uuid4().hex}"
+        title=(d.get("title") or "Plan posiłków").strip()
+        saved=db_save_plan(g.user_id,plan_id,title,plan_body)
+        if not saved:
+            return jsonify({"error":"Nie udało się zapisać planu"}),500
+        return jsonify({"success":True,"plan":saved})
+
+    @app.route("/api/planner",methods=["GET"])
+    @require_auth
+    def api_list_plans():
+        plans=db_get_plans(g.user_id)
+        return jsonify({"plans":plans})
+
+    @app.route("/api/planner/<plan_id>",methods=["GET","DELETE"])
+    @require_auth
+    def api_plan(plan_id):
+        if request.method=="GET":
+            plan=db_get_plan(g.user_id,plan_id)
+            if not plan: return jsonify({"error":"Plan nie znaleziony"}),404
+            return jsonify({"plan":plan["plan"] if plan else None})
+        else:
+            success=db_delete_plan(g.user_id,plan_id)
+            if not success: return jsonify({"error":"Nie udało się usunąć"}),500
+            return jsonify({"success":True})
 
     @app.route("/api/import-url",methods=["POST"])
     @require_auth

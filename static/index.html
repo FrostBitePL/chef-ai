@@ -109,13 +109,60 @@
   <!-- Meal Planner -->
   <div class="view" id="view-planner">
     <div class="planner-form" id="plannerForm">
-      <div style="text-align:center;font-size:2rem;margin-bottom:8px">📅</div>
-      <div style="text-align:center;font-family:var(--serif);font-size:1.1rem;margin-bottom:16px">Plan posiłków</div>
-      <label>Ile dni?</label>
-      <select id="planDays"><option value="3">3 dni</option><option value="5">5 dni</option><option value="7" selected>7 dni</option></select>
-      <label>Preferencje (opcjonalnie)</label>
-      <input type="text" id="planPrefs" placeholder="np. dużo warzyw, szybkie obiady...">
+      <div style="text-align:center;font-size:2rem;margin-bottom:4px">📅</div>
+      <div style="text-align:center;font-family:var(--serif);font-size:1.1rem;margin-bottom:12px">Planer posiłków</div>
+
+      <div class="pf-row">
+        <div class="pf-col">
+          <label class="pf-label">Ile dni?</label>
+          <select id="planDays"><option value="1">1 dzień</option><option value="3">3 dni</option><option value="5">5 dni</option><option value="7" selected>7 dni</option><option value="14">14 dni</option></select>
+        </div>
+        <div class="pf-col">
+          <label class="pf-label">Ile osób?</label>
+          <select id="planPersons"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6+</option></select>
+        </div>
+      </div>
+
+      <label class="pf-label">Posiłki do zaplanowania</label>
+      <div class="pf-chips" id="mealTypeChips">
+        <label class="pf-chip"><input type="checkbox" value="śniadanie"> 🌅 Śniadanie</label>
+        <label class="pf-chip active"><input type="checkbox" value="obiad" checked> 🍲 Obiad</label>
+        <label class="pf-chip active"><input type="checkbox" value="kolacja" checked> 🌙 Kolacja</label>
+        <label class="pf-chip"><input type="checkbox" value="przekąska"> 🥜 Przekąski</label>
+        <label class="pf-chip"><input type="checkbox" value="deser"> 🍰 Deser</label>
+      </div>
+
+      <label class="pf-label">Dieta / styl</label>
+      <div class="pf-chips" id="dietChips">
+        <label class="pf-chip active"><input type="radio" name="diet" value="" checked> 🍽 Bez ograniczeń</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="wegetariańska"> 🥦 Wegetariańska</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="wegańska"> 🌱 Wegańska</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="keto"> 🥑 Keto</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="śródziemnomorska"> 🫒 Śródziemnomorska</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="bezglutenowa"> 🚫🌾 Bezglutenowa</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="nisko-kaloryczna"> 🔥 Nisko-kal.</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="wysokobiałkowa"> 💪 Wysokobiałkowa</label>
+      </div>
+
+      <div class="pf-row">
+        <div class="pf-col" style="flex:1">
+          <label class="pf-label">Kalorie / dzień (opcjonalnie)</label>
+          <div class="pf-kcal-row">
+            <input type="number" id="planKcal" placeholder="np. 2000" min="800" max="5000" step="100">
+            <span class="pf-kcal-unit">kcal</span>
+          </div>
+        </div>
+      </div>
+
+      <label class="pf-label">Kuchnia / preferencje (opcjonalnie)</label>
+      <input type="text" id="planPrefs" placeholder="np. dużo warzyw, polska kuchnia, szybkie dania...">
+
       <button class="planner-btn" onclick="generatePlan()">🍽 Generuj plan</button>
+
+      <div class="pf-saved-header" onclick="document.getElementById('savedPlansList').classList.toggle('open')">
+        <span>📋 Zapisane plany</span><span class="chv" style="font-size:0.65rem;color:var(--text-faint)">▼</span>
+      </div>
+      <div id="savedPlansList" class="pf-saved-list"></div>
     </div>
     <div class="planner-result" id="plannerResult"></div>
   </div>
@@ -152,6 +199,8 @@
     <button class="live-close" onclick="closeLive()">✕</button>
   </div>
   <div class="live-progress"><div class="live-progress-fill" id="liveProgressFill"></div></div>
+  <div class="live-ingredients-toggle" onclick="toggleLiveIngredients()">⚖️ Składniki ▼</div>
+  <div id="liveIngredientsPanel" style="display:none"></div>
   <div class="live-body" id="liveBody"></div>
   <div class="live-timer-bar" id="liveTimerBar" style="display:none">
     <div class="live-timer-icon">⏱</div>

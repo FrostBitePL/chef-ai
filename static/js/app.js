@@ -278,6 +278,7 @@ function showView(n){
   if(n==='favorites') renderFavorites();
   if(n==='history') loadHistory();
   if(n==='profile') loadProfileView();
+  if(n==='planner') renderSavedPlans();
 }
 
 async function loadModulesFromServer(){
