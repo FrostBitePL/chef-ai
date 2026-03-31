@@ -232,7 +232,7 @@ def profile_to_context(p):
     fb=p.get("feedback_history",[])
     if isinstance(fb,str): fb=json.loads(fb) if fb else []
 
-    if eq: parts.append("SPRZET UZYTKOWNIKA: "+", ".join(eq[:20]))
+    if eq: parts.append("⚠️ SPRZĘT UŻYTKOWNIKA (MUSISZ UŻYWAĆ W PRZEPISIE): "+", ".join(eq[:20]))
     if bans: parts.append("ABSOLUTNE ZAKAZY (NIGDY nie uzywaj!): "+", ".join(bans[:20]))
     if fav: parts.append("ULUBIONE SKLADNIKI: "+", ".join(fav[:12]))
     if cooked:
@@ -665,11 +665,38 @@ Jeśli użytkownik daje otwarte zapytanie:
 - Podawaj KONKRETNE wskaźniki gotowości (kolor, konsystencja, dźwięk, zapach) — nie tylko czas.
 - Jeśli danie ma element, który wymaga precyzji (emulsja, temperowanie, fermentacja) — poświęć mu dodatkową uwagę.
 
+## SPRZĘT UŻYTKOWNIKA (OBOWIĄZKOWO)
+- Jeśli w profilu użytkownika jest lista sprzętu — MUSISZ go aktywnie wykorzystywać w przepisie.
+- Dla KAŻDEGO urządzenia podaj DOKŁADNE parametry: temperatura, tryb, czas, poziom mocy.
+- Przykłady:
+  - Piekarnik: "Rozgrzej piekarnik do 200°C (392°F), termoobieg, środkowa półka"
+  - Sous-vide: "Ustaw cyrkulor na 58°C, gotuj 2h w woreczku próżniowym"
+  - Patelnia żeliwna: "Rozgrzej patelnię żeliwną na max przez 3 min, potem zmniejsz do średniego"
+  - Thermomix: "Thermomix: 100°C, prędkość 2, 8 minut, łopatka"
+  - Maszynka do makaronu (Atlas 150): "Przepuść ciasto przez Atlas 150 od poziomu 1 do 5, składając na pół po każdym przejściu"
+  - Grill: "Grill bezpośredni 280°C, ruszt natłuszczony, 3 min na stronę"
+- W polu "equipment" każdego kroku ZAWSZE wpisz konkretne urządzenie z profilu użytkownika + ustawienia.
+- Jeśli użytkownik ma specjalistyczny sprzęt (sous-vide, Thermomix, wędzarnia, grill) — preferuj techniki które go wykorzystują.
+- NIE ignoruj sprzętu użytkownika. Jeśli ma patelnię żeliwną — używaj jej zamiast "patelni". Jeśli ma termometr — podaj dokładne temperatury wewnętrzne.
+
+## PRZYPRAWY I PRZYPRAWIENIE (OBOWIĄZKOWO)
+- KAŻDY przepis MUSI zawierać WSZYSTKIE użyte przyprawy i przyprawy z DOKŁADNYMI ilościami w gramach.
+- Nigdy nie pisz "dopraw do smaku", "sól i pieprz" bez ilości. Podaj konkretnie: "sól 5g", "pieprz czarny świeżo mielony 2g".
+- KAŻDA przyprawa, zioło, olej, ocet, sos — MUSI pojawić się w trzech miejscach:
+  1. "ingredients" — z dokładną ilością i notatką dlaczego ta przyprawa
+  2. "shopping_list" — w sekcji "Przyprawy" lub "Pantry"
+  3. "steps" — w instrukcji kroku z dokładną ilością (np. "dodaj 3g kuminu i 2g wędzonej papryki")
+- Typowe przyprawy do uwzględnienia: sól, pieprz, olej/masło do smażenia, oliwa, czosnek, cebula, zioła (tymianek, rozmaryn, oregano, bazylia), przyprawy (kumin, papryka, kurkuma, cynamon etc.), sosy (sojowy, rybny, Worcestershire), octy, cukier, mąka do obtaczania.
+- NIE zakładaj, że użytkownik ma przyprawy w domu. Traktuj je jak pełnoprawne składniki.
+
 ## REGUŁY FORMATU
 - ZAWSZE gramy/ml (nigdy łyżki/szklanki)
 - ZAWSZE Celsjusz (+Fahrenheit w nawiasie)
 - ZAWSZE timer_seconds w krokach wymagających czekania
-- ZAWSZE podawaj dokładne ilości w instrukcjach kroków
+- ZAWSZE podawaj dokładne ilości W NAWIASACH w instrukcjach kroków — użytkownik może nie robić mise en place!
+  Przykład: "Dodaj masło (30g) na rozgrzaną patelnię, gdy się spieni dodaj czosnek (3 ząbki, drobno posiekany) i sól (3g)"
+  Przykład: "Wlej oliwę (15ml) i dodaj paprykę wędzoną (2g), kumin (3g) i pieprz cayenne (1g)"
+  NIGDY nie pisz "dodaj czosnek" bez ilości. Każdy składnik w kroku MUSI mieć ilość w nawiasie.
 - Pisz po polsku, chyba że użytkownik prosi inaczej
 - NIE wspominaj o książkach, autorach, źródłach, bazie danych — pisz jak ekspert, który po prostu WIE.
 - Preferuj gęstość i precyzję nad zwięzłość.
@@ -754,8 +781,9 @@ Zwróć JSON z DOKŁADNIE taką strukturą:
   "times": {{"prep_min": 0, "cook_min": 0, "total_min": 0}},
   "difficulty": 3,
   "servings": 2,
-  "shopping_list": [{{"item": "...", "amount": "...", "section": "..."}}],
-  "ingredients": [{{"item": "...", "amount": "...", "note": "dlaczego ten składnik/gatunek/forma a nie inny"}}],
+  "shopping_list": [{{"item": "...", "amount": "...", "section": "mięso/nabiał/warzywa/przyprawy/pantry/..."}}],
+  "ingredients": [{{"item": "...", "amount": "...g/ml", "note": "dlaczego ten składnik/gatunek/forma a nie inny"}}],
+  // WAŻNE: shopping_list i ingredients MUSZĄ zawierać WSZYSTKIE przyprawy, zioła, oleje, sosy z dokładnymi ilościami.
   "substitutes": [
     {{
       "original": "oryginalny składnik",
@@ -767,7 +795,7 @@ Zwróć JSON z DOKŁADNIE taką strukturą:
     }}
   ],
   "mise_en_place": ["przygotowanie + dlaczego w tej kolejności"],
-  "steps": [{{"number": 1, "title": "...", "instruction": "GĘSTA instrukcja z dokładnymi ilościami, temperaturami, wskaźnikami sensorycznymi", "equipment": "...", "timer_seconds": 0, "tip": "pro tip od doświadczonego kucharza", "why": "co się dzieje w tym kroku i dlaczego to ważne", "watch_for": "na co patrzeć/słuchać/wąchać żeby wiedzieć że jest dobrze"}}],
+  "steps": [{{"number": 1, "title": "...", "instruction": "Każdy składnik z ilością W NAWIASIE np: Dodaj masło (30g), czosnek (3 ząbki), sól (3g). Użytkownik czyta krok i od razu wie ile czego dodać.", "equipment": "konkretne urządzenie + ustawienia", "timer_seconds": 0, "tip": "pro tip", "why": "co się dzieje i dlaczego", "watch_for": "wskaźniki sensoryczne gotowości"}}],
   "warnings": [{{"problem": "...", "solution": "...", "prevention": "jak uniknąć od początku"}}],
   "upgrade": "jeden konkretny sposób na podniesienie dania o poziom (nie abstrakcja, konkret)",
   "variation": "jedna inteligentna wariacja, która wykorzystuje tę samą bazę wiedzy inaczej",
@@ -910,12 +938,50 @@ class CulinaryAssistant:
         cache_key = hashlib.md5(f"{layer}:{query}:{k}".encode()).hexdigest()
         if cache_key in self._search_cache:
             return self._search_cache[cache_key]
-        r = col.query(query_texts=[query], n_results=min(k, col.count()))
-        texts = r["documents"][0] if r["documents"] and r["documents"][0] else []
+        try:
+            r = col.query(query_texts=[query], n_results=min(k, col.count()))
+            texts = r["documents"][0] if r["documents"] and r["documents"][0] else []
+        except Exception as e:
+            logger.warning(f"ChromaDB query error in {layer}: {e} — attempting recovery")
+            try:
+                self._rebuild_layer(layer)
+                col = self.collections.get(layer)
+                if col and col.count() > 0:
+                    r = col.query(query_texts=[query], n_results=min(k, col.count()))
+                    texts = r["documents"][0] if r["documents"] and r["documents"][0] else []
+                else:
+                    texts = []
+            except Exception as e2:
+                logger.error(f"ChromaDB recovery failed for {layer}: {e2}")
+                texts = []
         if len(self._search_cache) >= self._CACHE_SIZE:
             del self._search_cache[next(iter(self._search_cache))]
         self._search_cache[cache_key] = texts
         return texts
+
+    def _rebuild_layer(self, layer):
+        """Rebuild a single ChromaDB layer from knowledge base files."""
+        import shutil
+        logger.info(f"Rebuilding ChromaDB layer: {layer}")
+        cfg = KNOWLEDGE_LAYERS.get(layer)
+        if not cfg:
+            return
+        col_name = cfg["collection"]
+        try:
+            self._db.delete_collection(col_name)
+        except Exception:
+            pass
+        col = self._db.get_or_create_collection(col_name, embedding_function=self.embedding_function)
+        self.collections[layer] = col
+        knowledge_data = load_culinary_knowledge_base()
+        items = knowledge_data.get(layer, [])
+        if items:
+            docs, metas, ids = format_layer_for_chroma(layer, items)
+            if docs:
+                col.add(documents=docs, metadatas=metas, ids=ids)
+                logger.info(f"  [{layer}] re-indexed {len(docs)} documents")
+        global CULINARY_KNOWLEDGE
+        CULINARY_KNOWLEDGE = {}
 
     def search_all_layers(self, query, k=LAYER_K):
         """Search all 4 layers separately. Returns dict {layer: [texts]}."""

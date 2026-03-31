@@ -15,18 +15,15 @@ async function send(){
   document.getElementById('quickTags').style.display='none';
   addMsg('user',q);chatHistory.push({role:'user',content:q});
 
-  // Streaming message bubble
-  const streamDiv=document.createElement('div');streamDiv.className='msg';
-  const streamText=document.createElement('div');streamText.className='msg-text msg-streaming';
-  streamText.textContent='⏳ Generuję...';
-  streamDiv.appendChild(streamText);
-  document.getElementById('messages').appendChild(streamDiv);scrollBottom();
+  // Loading indicator (no raw JSON preview — just a clean loader)
+  const loadDiv=document.createElement('div');loadDiv.className='msg';loadDiv.innerHTML=loadingDots();
+  document.getElementById('messages').appendChild(loadDiv);scrollBottom();
 
   try{
     const r=await fetch(API+'/api/ask-stream',{method:'POST',headers:authHeaders(),body:JSON.stringify({question:q,conversation_history:chatHistory.slice(-20)})});
     
     if(!r.ok){
-      const d=await r.json();streamDiv.remove();
+      const d=await r.json();loadDiv.remove();
       if(d.is_limit){showLimitMessage(d.message);return}
       if(d.error){addMsg('t',d.error);return}
       return;
@@ -46,17 +43,17 @@ async function send(){
         if(!line.startsWith('data: ')) continue;
         try{
           const msg=JSON.parse(line.slice(6));
-          if(msg.chunk){fullText+=msg.chunk;streamText.textContent=fullText.slice(0,300)+(fullText.length>300?'...':'');scrollBottom()}
+          if(msg.chunk) fullText+=msg.chunk;
           if(msg.done&&msg.data) finalData=msg.data;
-          if(msg.error){streamDiv.remove();addMsg('t','Błąd: '+msg.error);return}
+          if(msg.error){loadDiv.remove();addMsg('t','Błąd: '+msg.error);return}
         }catch{}
       }
     }
 
-    streamDiv.remove();
+    loadDiv.remove();
     if(finalData){handleResponse(finalData);autoSaveSession()}
     else if(fullText){try{handleResponse(JSON.parse(fullText))}catch{addMsg('t',fullText)};autoSaveSession()}
-  }catch{streamDiv.remove();addMsg('t','Błąd połączenia.')}
+  }catch{loadDiv.remove();addMsg('t','Błąd połączenia.')}
   scrollBottom();
 }
 

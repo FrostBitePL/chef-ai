@@ -4,6 +4,7 @@ let chatHistory=[],favorites=[];
 let timers={},timerIdCounter=0,stepModeData=null,stepModeIndex=0;
 let currentModule=null,currentPhase='theory',trainingHistory=[],progress={modules:{}};
 let chatSessionId=null;
+let _appReady=false;
 let MODULES=[],CATEGORIES=[],LEVELS=[],LEVEL_NAMES={};
 
 // ─── Supabase Auth ───
@@ -55,13 +56,14 @@ async function initSupabase(){
     }
     // Listen for auth changes
     sbClient.auth.onAuthStateChange(async(event,session)=>{
-      if(event==='SIGNED_IN'&&session){
+      if(event==='SIGNED_OUT'){
+        authToken=null;currentUser=null;userProfile=null;_appReady=false;
+        showAuthScreen();
+      } else if(session){
         authToken=session.access_token;
         currentUser=session.user;
-        await onLogin();
-      } else if(event==='SIGNED_OUT'){
-        authToken=null;currentUser=null;userProfile=null;
-        showAuthScreen();
+        // Only run full login once — token refreshes just update the token silently
+        if(!_appReady) await onLogin();
       }
     });
   }catch(e){console.error('Supabase init error:',e);showAuthScreen('Błąd połączenia')}
@@ -87,6 +89,8 @@ async function onLogin(){
 }
 
 function enterApp(){
+  if(_appReady) return; // prevent re-enter on token refresh
+  _appReady=true;
   document.getElementById('onboardingOverlay').style.display='none';
   document.getElementById('appMain').style.display='flex';
   loadSubStatus().then(()=>renderUserInfo());
