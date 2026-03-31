@@ -1,5 +1,5 @@
 ﻿#!/usr/bin/env python3
-"""Chef AI v11 â€” Supabase Auth + PostgreSQL + Stripe"""
+"""Chef AI v11 — Supabase Auth + PostgreSQL + Stripe"""
 
 # Load environment variables from .env file
 try:
@@ -42,7 +42,7 @@ STRIPE_WEBHOOK_SECRET=os.environ.get("STRIPE_WEBHOOK_SECRET","")
 STRIPE_PRICE_ID=os.environ.get("STRIPE_PRICE_ID","price_1TFBHf91D0CH9ZxXCpC7iZRV")
 stripe.api_key=STRIPE_SECRET_KEY
 
-# â”€â”€â”€ Free tier limits â”€â”€â”€
+# ─── Free tier limits ───
 FREE_RECIPES_PER_DAY=5
 FREE_IMPORTS_PER_DAY=2
 PLAN_TABLE="planner_plans"
@@ -279,7 +279,7 @@ def _ban_keywords(ban_list):
             inside=ban.split("(")[1].rstrip(")").lower()
             for part in re.split(r'[,;:/]',inside):
                 w=part.strip()
-                if w and w not in ('kaĹĽda forma','kaĹĽda','forma','surowa','smaĹĽona','proszek','Ĺ›wieĹĽa','mielona','i'):
+                if w and w not in ('każda forma','każda','forma','surowa','smażona','proszek','świeża','mielona','i'):
                     keywords.append(w)
     return list(set(keywords))
 
@@ -313,31 +313,31 @@ def enforce_bans(data,banned_ingredients):
         if data.get("mise_en_place"):
             data["mise_en_place"]=[m for m in data["mise_en_place"] if not _matches_ban(m,keywords)]
         if removed:
-            warn={"problem":"UsuniÄ™to zakazane skĹ‚adniki: "+", ".join(removed),"solution":"Te skĹ‚adniki zostaĹ‚y automatycznie usuniÄ™te z przepisu."}
+            warn={"problem":"Usunięto zakazane składniki: "+", ".join(removed),"solution":"Te składniki zostały automatycznie usunięte z przepisu."}
             if not data.get("warnings"): data["warnings"]=[]
             data["warnings"].insert(0,warn)
     return data
 
-# â”€â”€â”€ Skill Tree â”€â”€â”€
+# ─── Skill Tree ───
 SKILL_CATEGORIES=[
-    {"id":"basics","name":"Techniki bazowe","icon":"đź”Ą","color":"#c45050"},
-    {"id":"sousvide","name":"Sous-vide","icon":"đźŚˇ","color":"#5cb870"},
-    {"id":"sauces","name":"Sosy","icon":"đźĄ„","color":"#d4a24e"},
-    {"id":"baking","name":"Ciasta i wypieki","icon":"đźŤ°","color":"#c45e8a"},
-    {"id":"pasta","name":"Makaron domowy","icon":"đźŤť","color":"#d4a24e"},
-    {"id":"italian","name":"Kuchnia wĹ‚oska","icon":"đź‡®đź‡ą","color":"#5cb870"},
-    {"id":"asian","name":"Kuchnia azjatycka","icon":"đźĄ˘","color":"#c45050"},
-    {"id":"grill","name":"Grillowanie i BBQ","icon":"đź”Ą","color":"#d4a24e"},
-    {"id":"fermentation","name":"Fermentacja","icon":"đź«™","color":"#8b3a62"},
-    {"id":"molecular","name":"Hydrokoloidy","icon":"đź§Ş","color":"#5e8ac4"},
-    {"id":"fish","name":"Ryby i krewetki","icon":"đźź","color":"#5cb870"},
-    {"id":"vegetables","name":"Warzywa","icon":"đźĄ¬","color":"#5cb870"},
-    {"id":"knives","name":"NoĹĽe i ciÄ™cie","icon":"đź”Ş","color":"#8a7e84"},
-    {"id":"plating","name":"Platowanie","icon":"đźŽ¨","color":"#c45e8a"},
-    {"id":"mealprep","name":"Meal prep","icon":"đź“¦","color":"#5e8ac4"},
+    {"id":"basics","name":"Techniki bazowe","icon":"🍳","color":"#c45050"},
+    {"id":"sousvide","name":"Sous-vide","icon":"🥇","color":"#5cb870"},
+    {"id":"sauces","name":"Sosy","icon":"🥄","color":"#d4a24e"},
+    {"id":"baking","name":"Ciasta i wypieki","icon":"🍰","color":"#c45e8a"},
+    {"id":"pasta","name":"Makaron domowy","icon":"🍝","color":"#d4a24e"},
+    {"id":"italian","name":"Kuchnia włoska","icon":"🇮🇹","color":"#5cb870"},
+    {"id":"asian","name":"Kuchnia azjatycka","icon":"🥘","color":"#c45050"},
+    {"id":"grill","name":"Grillowanie i BBQ","icon":"🔥","color":"#d4a24e"},
+    {"id":"fermentation","name":"Fermentacja","icon":"🫙","color":"#8b3a62"},
+    {"id":"molecular","name":"Hydrokoloidy","icon":"🧪","color":"#5e8ac4"},
+    {"id":"fish","name":"Ryby i krewetki","icon":"🦐","color":"#5cb870"},
+    {"id":"vegetables","name":"Warzywa","icon":"🥬","color":"#5cb870"},
+    {"id":"knives","name":"Noże i cięcie","icon":"🔪","color":"#8a7e84"},
+    {"id":"plating","name":"Platowanie","icon":"🍽️","color":"#c45e8a"},
+    {"id":"mealprep","name":"Meal prep","icon":"📦","color":"#5e8ac4"},
 ]
 SKILL_LEVELS=["basic","intermediate","advanced"]
-SKILL_LEVEL_NAMES={"basic":"Podstawy","intermediate":"Ĺšredni","advanced":"Zaawansowany"}
+SKILL_LEVEL_NAMES={"basic":"Podstawy","intermediate":"Średni","advanced":"Zaawansowany"}
 
 def _mods():
     modules=[]
@@ -363,7 +363,7 @@ def _mods():
         for lvl in SKILL_LEVELS:
             mid=f"{cid}_{lvl}"
             sq=queries.get(cid,{}).get(lvl,["cooking technique"])
-            modules.append({"id":mid,"category":cid,"level":lvl,"title":f"{cat['name']} â€” {SKILL_LEVEL_NAMES[lvl]}","subtitle":f"{cat['icon']} {SKILL_LEVEL_NAMES[lvl]}","icon":cat["icon"],"search_queries":sq})
+            modules.append({"id":mid,"category":cid,"level":lvl,"title":f"{cat['name']} — {SKILL_LEVEL_NAMES[lvl]}","subtitle":f"{cat['icon']} {SKILL_LEVEL_NAMES[lvl]}","icon":cat["icon"],"search_queries":sq})
     return modules
 
 TRAINING_MODULES=_mods()
@@ -380,14 +380,14 @@ RESPONSE_RULES=f"""
 - FEEDBACK -> {{"type":"training_feedback","analysis":"...","tips":["..."],"next_steps":"..."}}
 - MEAL PLAN -> {{"type":"meal_plan","days":[{{"day":"...","meals":[{{"meal":"...","title":"...","prep_time":0}}]}}],"shopping_list":[{{"item":"...","amount":"...","section":"..."}}]}}
 - POROWNANIE TECHNIK -> {{"type":"comparison","topic":"...","variants":[{{"method":"...","difficulty":2,"time_min":25,"texture":"...","flavor":"...","best_for":"...","steps_summary":"...","pro":"...","con":"...","equipment":"..."}}],"verdict":"..."}}
-Gdy uzytkownik pyta o porownanie, roznice, "na ile sposobow", "co lepsze" â€” uzyj type:comparison z 2-4 wariantami.
+Gdy użytkownik pyta o porównanie, różnice, "na ile sposobów", "co lepsze" — użyj type:comparison z 2-4 wariantami.
 Opcjonalne: "kcal_per_serving" jesli user poda limit.
 
 ## ZASADY:
 - ZAWSZE czysty JSON, zero tekstu poza nim
 - ZAWSZE gramy/ml (nigdy lyzki)
 - ZAWSZE C (+F w nawiasie)
-- UZYJ wiedzy z kontekstu do wyjasniania nauki i technik, ale NIGDY nie podawaj tytulow ksiazek ani nazwisk autorow. Pisz jak ekspert ktory po prostu WIE â€” nie powoluj sie na zrodla.
+- UŻYJ wiedzy z kontekstu do wyjaśniania nauki i technik, ale NIGDY nie podawaj tytułów książek ani nazwisk autorów. Pisz jak ekspert który po prostu WIE — nie powołuj się na źródła.
 - ZAWSZE timer_seconds w krokach z czekaniem
 - ZAWSZE w instrukcji kroku podawaj DOKLADNA ILOSC skladnika w nawiasie przy kazdym dodaniu
 - NIE dodawaj pola "sources" do odpowiedzi.
@@ -398,14 +398,14 @@ Masz gleboka wiedze kulinarna. Uzywaj jej do wyjasniania nauki za gotowaniem.
 ## PROFIL:
 - Lokalizacja: Zarow (Swidnica, Wroclaw)
 - Nie liczymy kalorii domyslnie
-## ZAKAZY i SPRZET z profilu uzytkownika ponizej â€” BEZWZGLEDNIE przestrzegaj zakazow! Jesli uzytkownik ma sprzet, podawaj KONKRETNE ustawienia (poziomy, temperatury, tryby).
+## ZAKAZY i SPRZĘT z profilu użytkownika poniżej — BEZWZGLEDNIE przestrzegaj zakazów! Jeśli użytkownik ma sprzęt, podawaj KONKRETNE ustawienia (poziomy, temperatury, tryby).
 ## PAMIEC UZYTKOWNIKA:
 {profile_context}
 """+RESPONSE_RULES
 
 PROMPT_GUEST="""Jestes ekspertem kulinarnym. PRZEDE WSZYSTKIM PYSZNIE.
 Masz gleboka wiedze kulinarna. Ogolne instrukcje, domyslnie 2 porcje.
-Jesli uzytkownik ma zakazy lub sprzet w profilu â€” BEZWZGLEDNIE przestrzegaj zakazow i podawaj ustawienia sprzetu.
+Jeśli użytkownik ma zakazy lub sprzęt w profilu — BEZWZGLEDNIE przestrzegaj zakazów i podawaj ustawienia sprzętu.
 ## PAMIEC UZYTKOWNIKA:
 {profile_context}
 """+RESPONSE_RULES
@@ -429,7 +429,426 @@ KNOWLEDGE_LAYERS = {
     "techniques":  {"folder": "Techniki",   "collection": "kb_techniques"},
 }
 CULINARY_KNOWLEDGE = {}
-LAYER_K = 5  # top-K results per layer
+# Layer-specific K values - optimized for context reduction
+LAYER_K_CONFIG = {
+    "core": 3,
+    "techniques": 2, 
+    "composition": 2,
+    "flavor": 2
+}
+LAYER_K = 5  # fallback for backward compatibility
+
+def trim_context(text, max_chars=2000):
+    """Trim text to prevent context overflow."""
+    if not text:
+        return text
+    if len(text) <= max_chars:
+        return text
+    return text[:max_chars] + "...[trimmed]"
+
+# ─── 2-STEP PIPELINE PROMPTS ───
+
+PLANNER_PROMPT = """# SYSTEM
+
+Jesteś silnikiem planowania kulinarnego.
+
+Twoim zadaniem NIE jest pisanie przepisu.
+
+Twoim zadaniem jest:
+👉 zbudować STRUKTURĘ DECYZJI dla dania
+
+---
+
+# DOSTĘPNE WARSTWY WIEDZY
+
+Masz dostęp do:
+
+CORE → fizyka (temperatura, procesy, transformacje)
+COMPOSITION → struktura dania, balans
+TECHNIQUES → jak wykonać operacje
+FLAVOR → pairing i balans smaków
+
+---
+
+# CEL
+
+Na podstawie zapytania użytkownika:
+
+👉 zaprojektuj danie jako SYSTEM DECYZJI
+
+---
+
+# WYMAGANIA (OBOWIĄZKOWE)
+
+Musisz wygenerować:
+
+## 1. DISH IDENTITY
+
+- dish_type (np. "protein_centered", "soup", "pasta")
+- main_ingredient
+- style (np. "classic", "modern", "comfort")
+
+---
+
+## 2. STRUCTURE (z COMPOSITION)
+
+- structure_rule (np. "protein_centered_plate")
+- elements (lista elementów dania)
+
+---
+
+## 3. CORE DECISIONS (MIN 3, MAX 3)
+
+Każda decyzja MUSI:
+
+- zawierać konkretną temperaturę
+- być powiązana z procesem fizycznym
+- mieć wpływ na efekt końcowy
+
+Zabronione:
+- ogólne decyzje ("cook properly")
+- brak temperatury
+
+Wymuś różnorodność typów:
+
+MUSISZ wygenerować:
+- 1 decyzję: protein doneness
+- 1 decyzję: browning / Maillard
+- 1 decyzję: moisture / texture control
+
+Każda decyzja:
+
+{
+  "ingredient": "",
+  "intent": "",
+  "target_temp": number,
+  "reason": "",
+  "decision_type": "protein_doneness|browning|moisture"
+}
+
+---
+
+## 4. TECHNIQUES (MIN 2, MAX 2)
+
+{
+  "technique": "",
+  "applies_to": "",
+  "goal": ""
+}
+
+---
+
+## 5. FLAVOR LOGIC
+
+- pairings
+- contrast
+- balancing_elements
+
+---
+
+## 5. EXECUTION FLOW (OBOWIĄZKOWE)
+
+Musisz zdefiniować kolejność wykonywania:
+
+"execution_flow": [
+  "sear_protein",
+  "build_sauce", 
+  "combine_and_finish"
+]
+
+---
+
+## 6. FAILURE RISKS (MAX 2)
+
+Lista realnych zagrożeń
+
+---
+
+# ZASADY
+
+- NIE piszesz przepisu
+- NIE piszesz kroków
+- TYLKO decyzje
+
+---
+
+# OUTPUT
+
+Zwróć JSON:
+
+{
+  "dish_identity": {},
+  "structure": {},
+  "core_decisions": [],
+  "techniques": [],
+  "flavor_logic": {},
+  "execution_flow": [],
+  "failure_risks": []
+}"""
+
+EXECUTOR_PROMPT = """# SYSTEM
+
+Jesteś deterministycznym wykonawcą planu kulinarnego.
+
+Dostajesz PLAN (JSON).
+
+Twoim zadaniem NIE jest kreatywność.
+
+Twoim zadaniem jest:
+
+👉 PRZEŁOŻYĆ PLAN 1:1 NA PRZEPIS
+
+---
+
+# KRYTYCZNE ZASADY (MUSISZ PRZESTRZEGAĆ)
+
+1. KAŻDA core_decision MUSI pojawić się w przepisie:
+   - ta sama temperatura
+   - ten sam składnik
+   - ten sam cel
+
+2. KAŻDA technika MUSI być użyta w steps
+
+3. NIE WOLNO:
+   - zmieniać temperatur
+   - pomijać decyzji
+   - dodawać nowych technik
+
+4. Jeśli nie użyjesz elementu planu → OUTPUT JEST BŁĘDNY
+
+---
+
+# MAPOWANIE (OBOWIĄZKOWE)
+
+Dla każdej decyzji:
+
+{
+  "ingredient": "chicken",
+  "target_temp": 65
+}
+
+👉 MUSISZ mieć krok:
+
+"Piecz kurczaka do 65°C (wewnętrznie)"
+
+---
+
+# OUTPUT DODATKOWY (OBOWIĄZKOWY)
+
+"decisions_used": {
+  "core": [
+    "chicken 65°C protein coagulation",
+    ...
+  ],
+  "techniques": [
+    "roasting",
+    ...
+  ]
+}
+
+---
+
+# STRUKTURA OUTPUTU
+
+{
+  "type": "recipe",
+  "title": "",
+  "subtitle": "",
+  "times": {"prep_min": 0, "cook_min": 0, "total_min": 0},
+  "difficulty": 3,
+  "servings": 2,
+  "science": "",
+  "flavor_logic": "",
+  "plating": "",
+  "decisions_used": {
+    "core": [],
+    "techniques": []
+  },
+  "shopping_list": [],
+  "ingredients": [],
+  "substitutes": [],
+  "mise_en_place": [],
+  "steps": [],
+  "warnings": [],
+  "upgrade": ""
+}
+
+---
+
+# W STEPS MUSI BYĆ:
+
+- sprzęt
+- temperatura
+- czas
+- co się dzieje (WHY)
+- na co patrzeć (WATCH_FOR)
+
+---
+
+# FAILURE CONTROL
+
+Uwzględnij failure_risks z planu i zapobiegaj im w krokach.
+
+---
+
+# INPUT
+
+<<PLAN JSON>>"""
+
+def smart_trim(entry):
+    """Smart trim that preserves decision-relevant fields."""
+    if isinstance(entry, str):
+        return entry[:500] + "...[trimmed]" if len(entry) > 500 else entry
+    
+    if isinstance(entry, dict):
+        # Keep only decision-critical fields
+        trimmed = {}
+        critical_fields = ["target", "limits", "failure_state", "decision", "process", "temperature", "time", "technique"]
+        
+        for field in critical_fields:
+            if field in entry:
+                value = entry[field]
+                if isinstance(value, str) and len(value) > 200:
+                    trimmed[field] = value[:200] + "...[trimmed]"
+                else:
+                    trimmed[field] = value
+        
+        return trimmed
+    
+    return str(entry)[:500] + "...[trimmed]" if len(str(entry)) > 500 else str(entry)
+
+# ─── 2-STEP PIPELINE VALIDATION ───
+
+def validate_plan(plan):
+    """Validate plan meets minimum requirements."""
+    errors = []
+    
+    # Check required sections
+    required_sections = ["dish_identity", "structure", "core_decisions", "techniques", "flavor_logic", "execution_flow", "failure_risks"]
+    for section in required_sections:
+        if section not in plan:
+            errors.append(f"Missing required section: {section}")
+    
+    # Check exact core decisions (3 max)
+    core_count = len(plan.get("core_decisions", []))
+    if core_count != 3:
+        errors.append(f"Need exactly 3 core decisions, got {core_count}")
+    
+    # Check exact techniques (2 max)
+    tech_count = len(plan.get("techniques", []))
+    if tech_count != 2:
+        errors.append(f"Need exactly 2 techniques, got {tech_count}")
+    
+    # Check execution flow
+    flow_count = len(plan.get("execution_flow", []))
+    if flow_count < 2:
+        errors.append(f"Need at least 2 execution steps, got {flow_count}")
+    
+    # Check failure risks limit
+    risk_count = len(plan.get("failure_risks", []))
+    if risk_count > 2:
+        errors.append(f"Too many failure risks, max 2 allowed, got {risk_count}")
+    
+    # Validate core decisions structure
+    for i, decision in enumerate(plan.get("core_decisions", [])):
+        if not isinstance(decision, dict):
+            errors.append(f"Core decision {i} must be dict")
+            continue
+        
+        required_fields = ["ingredient", "intent", "target_temp", "reason", "decision_type"]
+        for field in required_fields:
+            if field not in decision:
+                errors.append(f"Core decision {i} missing field: {field}")
+        
+        if "target_temp" in decision and not isinstance(decision["target_temp"], (int, float)):
+            errors.append(f"Core decision {i} target_temp must be number")
+        
+        # Check decision type is valid
+        valid_types = ["protein_doneness", "browning", "moisture"]
+        decision_type = decision.get("decision_type", "")
+        if decision_type not in valid_types:
+            errors.append(f"Core decision {i} invalid decision_type: {decision_type}")
+        
+        # Check temperature is reasonable
+        temp = decision.get("target_temp", 0)
+        if temp < 0 or temp > 250:
+            errors.append(f"Core decision {i} unreasonable temperature: {temp}°C")
+    
+    # Validate techniques structure
+    for i, technique in enumerate(plan.get("techniques", [])):
+        if not isinstance(technique, dict):
+            errors.append(f"Technique {i} must be dict")
+            continue
+        
+        required_fields = ["technique", "applies_to", "goal"]
+        for field in required_fields:
+            if field not in technique:
+                errors.append(f"Technique {i} missing field: {field}")
+    
+    if errors:
+        raise ValueError(f"Plan validation failed: {'; '.join(errors)}")
+    
+    return True
+
+def validate_recipe(recipe, plan):
+    """Validate recipe uses all elements from plan using structured decisions_used."""
+    errors = []
+    
+    # Get decisions_used from recipe (structured validation)
+    used = recipe.get("decisions_used", {})
+    core_used = used.get("core", [])
+    tech_used = used.get("techniques", [])
+    
+    # CORE DECISIONS - check count matches
+    required_core = len(plan.get("core_decisions", []))
+    if len(core_used) < required_core:
+        errors.append(f"Missing core decisions: used {len(core_used)}, required {required_core}")
+    
+    # TECHNIQUES - check count matches
+    required_tech = len(plan.get("techniques", []))
+    if len(tech_used) < required_tech:
+        errors.append(f"Missing techniques: used {len(tech_used)}, required {required_tech}")
+    
+    # Verify specific core decisions are mentioned
+    for i, decision in enumerate(plan.get("core_decisions", [])):
+        ingredient = decision.get("ingredient", "").lower()
+        target_temp = str(decision.get("target_temp", ""))
+        
+        found = False
+        for used_decision in core_used:
+            used_text = used_decision.lower()
+            if ingredient in used_text and target_temp in used_text:
+                found = True
+                break
+        
+        if not found:
+            errors.append(f"Core decision {i} not properly declared: {ingredient} @ {target_temp}°C")
+    
+    # Verify specific techniques are mentioned
+    for i, technique in enumerate(plan.get("techniques", [])):
+        tech_name = technique.get("technique", "").lower()
+        
+        found = False
+        for used_tech in tech_used:
+            if tech_name in used_tech.lower():
+                found = True
+                break
+        
+        if not found:
+            errors.append(f"Technique {i} not properly declared: {tech_name}")
+    
+    # Check structure rule is preserved
+    structure_rule = plan.get("structure", {}).get("structure_rule", "")
+    if structure_rule:
+        recipe_text = str(recipe).lower()
+        if structure_rule.lower() not in recipe_text:
+            errors.append(f"Structure rule not preserved: {structure_rule}")
+    
+    if errors:
+        raise ValueError(f"Recipe validation failed: {'; '.join(errors)}")
+    
+    return True
+
 KB_HASH_FILE = os.path.join(CHROMA_DB_PATH, "kb_hash.json")
 
 def load_culinary_knowledge_base():
@@ -710,28 +1129,43 @@ OGRANICZENIA / PROFIL:
 
 ---
 
-## COMPOSITION RULES (architektura dania, balans, kontrasty, struktura)
-{composition_data}
-
-## FLAVOR DATA (parowanie smaków, wzmacniacze, balans kwas/sól/tłuszcz/słodycz, logika aromatyczna)
-{flavor_data}
-
-## CORE DATA (fizyka, temperatury, procesy, progi transformacji, stany awaryjne)
+## CORE DATA (fizyka, temperatury, procesy, progi transformacji, stany awaryjne) - ABSOLUTNY PRIORYTET
 {core_data}
 
-## TECHNIQUES (procedury wykonania, kroki krytyczne, troubleshooting, timing)
+## COMPOSITION RULES (architektura dania, balans, kontrasty, struktura) - PRIORYTET 2
+{composition_data}
+
+## TECHNIQUES (procedury wykonania, kroki krytyczne, troubleshooting, timing) - PRIORYTET 3
 {techniques_data}
+
+## FLAVOR DATA (parowanie smaków, wzmacniacze, balans kwas/sól/tłuszcz/słodycz, logika aromatyczna) - PRIORYTET 4
+{flavor_data}
+
+## WAŻNE: HIERARCHIA PRIORYTETÓW
+Jeśli wystąpi konflikt między danymi z różnych warstw:
+1. CORE ma absolutny priorytet nad TECHNIQUES (fizyka > procedura)
+2. COMPOSITION ma priorytet nad FLAVOR (struktura > smak)
+3. CORE > COMPOSITION > TECHNIQUES > FLAVOR
 
 ---
 
 ZADANIE:
 Zaprojektuj danie jako system decyzyjny. Wykorzystaj kontekst z bazy wiedzy agresywnie — wyciągaj z niego maksimum detali.
 
+## OBOWIĄZKOWE WYKORZYSTANIE WARSTW:
+MUSISZ jawnie wykorzystać w przepisie:
+- **minimum 2 decyzje z CORE** (temperatura, proces, progi transformacji, stany awaryjne)
+- **minimum 1 regułę z COMPOSITION** (architektura dania, balans, kontrasty, struktura)
+- **minimum 1 technikę z TECHNIQUES** (procedura wykonania, kroki krytyczne, timing)
+
+Jeśli tego nie zrobisz, odpowiedź jest niepoprawna. Każda decyzja musi być widoczna w JSON.
+
 Przed napisaniem JSON-a wykonaj wewnętrznie tę sekwencję:
 1. ROZPOZNAJ TYP: Czy to danie kanoniczne (ma ustaloną tożsamość kulinarną) czy zapytanie kreatywne?
 2. DLA DAŃ KANONICZNYCH: Nie zmieniaj istoty dania. Skup się na perfekcji wykonania, wyjaśnij DLACZEGO każdy element jest ważny, podaj najczęstsze błędy i co odróżnia wersję doskonałą od przeciętnej. Traktuj to jak masterclass.
 3. DLA ZAPYTAŃ KREATYWNYCH: Zaproponuj danie na poziomie dobrej restauracji. Dodaj minimum jeden element zaskoczenia (nietypowe parowanie, technika, finishing). Nigdy nie proponuj banalnych kombinacji.
 4. Wyprowadź strukturę z warstwy composition.
+5. ZIDENTYFIKUJ i ZAPISZ które konkretnie decyzje z każdej warstwy wykorzystujesz.
 5. Wyprowadź logikę smakową z warstwy flavor.
 6. Przekształć koncept w decyzje temp/czas/mechanizm z warstwy core.
 7. Przekształć decyzje w precyzyjne kroki z warstwy techniques.
@@ -778,6 +1212,12 @@ Zwróć JSON z DOKŁADNIE taką strukturą:
   "science": "gęste wyjaśnienie nauki stojącej za daniem — pisz jakbyś tłumaczył pasjonatowi kuchni, nie studentowi",
   "flavor_logic": "jak system smakowy tego dania działa jako całość — nie lista, tylko narracja",
   "plating": "jak wykończyć i podać — z konkretnymi elementami wizualnymi",
+  "decisions_used": {{
+    "core": ["konkretna decyzja 1 z CORE", "konkretna decyzja 2 z CORE"],
+    "composition": ["konkretna reguła z COMPOSITION"],
+    "techniques": ["konkretna technika z TECHNIQUES"],
+    "flavor": ["konkretna decyzja smakowa z FLAVOR (opcjonalnie)"]
+  }},
   "times": {{"prep_min": 0, "cook_min": 0, "total_min": 0}},
   "difficulty": 3,
   "servings": 2,
@@ -837,6 +1277,7 @@ def invalidate_profile_cache(uid):
 
 class CulinaryAssistant:
     _CACHE_SIZE = 128
+    _MAX_CACHE_MB = 20  # CRITICAL: Prevent memory leak
 
     def __init__(self, api_key):
         self.client = OpenAI(api_key=api_key, base_url=AI_BASE_URL)
@@ -930,11 +1371,16 @@ class CulinaryAssistant:
 
     # ─── Layer-specific search (TOP-K per layer) ───
 
-    def search_layer(self, layer, query, k=LAYER_K):
+    def search_layer(self, layer, query, k=None):
         """Search a single knowledge layer. Returns list of text strings."""
         col = self.collections.get(layer)
         if not col or col.count() == 0:
             return []
+        
+        # Use layer-specific K value if not provided
+        if k is None:
+            k = LAYER_K_CONFIG.get(layer, LAYER_K)
+        
         cache_key = hashlib.md5(f"{layer}:{query}:{k}".encode()).hexdigest()
         if cache_key in self._search_cache:
             return self._search_cache[cache_key]
@@ -954,9 +1400,22 @@ class CulinaryAssistant:
             except Exception as e2:
                 logger.error(f"ChromaDB recovery failed for {layer}: {e2}")
                 texts = []
+        # CRITICAL: Trim cache entries to prevent memory leak
+        trimmed_texts = [t[:500] for t in texts]  # Store only first 500 chars
+        
+        # Check memory usage and enforce MB limit
         if len(self._search_cache) >= self._CACHE_SIZE:
             del self._search_cache[next(iter(self._search_cache))]
-        self._search_cache[cache_key] = texts
+        
+        # Additional memory check
+        current_cache_size = sum(len(str(k)) + len(str(v)) for k, v in self._search_cache.items()) / 1024 / 1024
+        if current_cache_size > self._MAX_CACHE_MB:
+            # Clear half the cache if over limit
+            keys_to_remove = list(self._search_cache.keys())[:len(self._search_cache)//2]
+            for k in keys_to_remove:
+                del self._search_cache[k]
+        
+        self._search_cache[cache_key] = trimmed_texts
         return texts
 
     def _rebuild_layer(self, layer):
@@ -1049,6 +1508,115 @@ class CulinaryAssistant:
                 yield text
         return full
 
+    # ─── 2-STEP PIPELINE: generate_recipe() ───
+
+    def generate_recipe(self, question, history=None, profile="lukasz", uid=None):
+        """2-step pipeline: planner → executor → validation."""
+        prof_data = db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
+        prof_ctx = profile_to_context(prof_data)
+        bans = prof_data.get("banned_ingredients", [])
+        if isinstance(bans, str):
+            bans = json.loads(bans) if bans else []
+
+        # STEP 1: Layer-specific retrieval
+        words = question.lower().split()
+        main_ingredient = next((w for w in words if w in ["kurczak", "wołowina", "wieprzowina", "ryba", "warzywa", "makaron"]), "")
+        dish_type = next((w for w in words if w in ["zupa", "stek", "gulasz", "sałatka", "danie", "przystawka"]), "")
+        
+        layer_queries = {
+            "core": f"{main_ingredient} temperature doneness process" if main_ingredient else question,
+            "techniques": f"{main_ingredient} cooking technique" if main_ingredient else question,
+            "composition": f"{dish_type} structure balance" if dish_type else question,
+            "flavor": f"{main_ingredient} pairing flavor" if main_ingredient else question
+        }
+        
+        layers = {}
+        for layer, query in layer_queries.items():
+            layers[layer] = self.search_layer(layer, query)
+        
+        # Build context for planner
+        core_data = trim_context('\n---\n'.join(layers.get('core', [])), 2000)
+        comp_data = trim_context('\n---\n'.join(layers.get('composition', [])), 1500)
+        tech_data = trim_context('\n---\n'.join(layers.get('techniques', [])), 1500)
+        flavor_data = trim_context('\n---\n'.join(layers.get('flavor', [])), 1000)
+        banned_text = ', '.join(bans) if bans else 'none'
+        
+        context = f"""# KNOWLEDGE CONTEXT
+
+## CORE DATA (fizyka, temperatury, procesy)
+{core_data}
+
+## COMPOSITION RULES (architektura dania, balans)
+{comp_data}
+
+## TECHNIQUES (procedury wykonania, kroki krytyczne)
+{tech_data}
+
+## FLAVOR DATA (parowanie smaków, balans)
+{flavor_data}
+
+## USER PROFILE
+{prof_ctx}
+
+## BANNED INGREDIENTS
+{banned_text}
+
+---
+
+# USER QUERY
+{question}
+"""
+
+        # STEP 2: PLANNER - generate decision structure (with cache)
+        cache_key = hashlib.md5(f"plan_{question}_{prof_ctx}".encode()).hexdigest()
+        if cache_key in getattr(self, '_plan_cache', {}):
+            plan = self._plan_cache[cache_key]
+            plan_usage = None
+        else:
+            planner_msgs = [{"role": "user", "content": context}]
+            plan, plan_usage = self._call(PLANNER_PROMPT, planner_msgs)
+            # Cache the plan
+            if not hasattr(self, '_plan_cache'):
+                self._plan_cache = {}
+            self._plan_cache[cache_key] = plan
+        
+        # STEP 3: Validate plan
+        try:
+            validate_plan(plan)
+        except ValueError as e:
+            logger.error(f"Plan validation failed: {e}")
+            # Fallback to original ask method
+            return self.ask(question, history, profile, uid)
+        
+        # STEP 4: EXECUTOR - generate recipe from plan
+        executor_prompt = EXECUTOR_PROMPT.replace("<<PLAN JSON>>", json.dumps(plan, ensure_ascii=False, indent=2))
+        executor_msgs = [{"role": "user", "content": executor_prompt}]
+        recipe, recipe_usage = self._call(executor_prompt, executor_msgs)
+        
+        # STEP 5: Validate recipe against plan
+        try:
+            validate_recipe(recipe, plan)
+        except ValueError as e:
+            logger.error(f"Recipe validation failed: {e}")
+            # Still return recipe but log error
+        
+        # STEP 6: Post-processing
+        recipe = enforce_bans(recipe, bans)
+        auto_update_profile(uid, recipe)
+        
+        # Combine usage
+        total_usage = {
+            "prompt_tokens": (plan_usage.prompt_tokens if plan_usage else 0) + (recipe_usage.prompt_tokens if recipe_usage else 0),
+            "completion_tokens": (plan_usage.completion_tokens if plan_usage else 0) + (recipe_usage.completion_tokens if recipe_usage else 0)
+        }
+        
+        return {
+            "data": recipe,
+            "profile": profile,
+            "usage": total_usage,
+            "plan": plan  # Include plan for debugging
+        }
+
     # ─── 4-STAGE PIPELINE: ask() ───
 
     def ask(self, question, history=None, profile="lukasz", uid=None):
@@ -1059,13 +1627,29 @@ class CulinaryAssistant:
         if isinstance(bans, str):
             bans = json.loads(bans) if bans else []
 
-        # STAGE 1: Layer-specific retrieval (top-K per layer)
-        layers = self.search_all_layers(question, k=LAYER_K)
-
-        composition_ctx = "\n---\n".join(layers.get("composition", []))
-        flavor_ctx = "\n---\n".join(layers.get("flavor", []))
-        core_ctx = "\n---\n".join(layers.get("core", []))
-        techniques_ctx = "\n---\n".join(layers.get("techniques", []))
+        # STAGE 1: Layer-specific retrieval with layer-specific queries
+        # Extract key terms for better retrieval
+        words = question.lower().split()
+        main_ingredient = next((w for w in words if w in ["kurczak", "wołowina", "wieprzowina", "ryba", "warzywa", "makaron"]), "")
+        dish_type = next((w for w in words if w in ["zupa", "stek", "gulasz", "sałatka", "danie", "przystawka"]), "")
+        
+        # Layer-specific queries for targeted retrieval
+        layer_queries = {
+            "core": f"{main_ingredient} temperature doneness process" if main_ingredient else question,
+            "techniques": f"{main_ingredient} cooking technique" if main_ingredient else question,
+            "composition": f"{dish_type} structure balance" if dish_type else question,
+            "flavor": f"{main_ingredient} pairing flavor" if main_ingredient else question
+        }
+        
+        # Retrieve with layer-specific queries
+        layers = {}
+        for layer, query in layer_queries.items():
+            layers[layer] = self.search_layer(layer, query)
+        
+        composition_ctx = trim_context("\n---\n".join(layers.get("composition", [])), 2000)
+        flavor_ctx = trim_context("\n---\n".join(layers.get("flavor", [])), 1500)
+        core_ctx = trim_context("\n---\n".join(layers.get("core", [])), 2000)
+        techniques_ctx = trim_context("\n---\n".join(layers.get("techniques", [])), 1500)  # CRITICAL: techniques was 13KB
 
         # Build constraints from user profile
         constraints_parts = []
@@ -1112,11 +1696,29 @@ class CulinaryAssistant:
         if isinstance(bans, str):
             bans = json.loads(bans) if bans else []
 
-        layers = self.search_all_layers(question, k=LAYER_K)
-        composition_ctx = "\n---\n".join(layers.get("composition", []))
-        flavor_ctx = "\n---\n".join(layers.get("flavor", []))
-        core_ctx = "\n---\n".join(layers.get("core", []))
-        techniques_ctx = "\n---\n".join(layers.get("techniques", []))
+        # STAGE 1: Layer-specific retrieval with layer-specific queries (streaming version)
+        # Extract key terms for better retrieval
+        words = question.lower().split()
+        main_ingredient = next((w for w in words if w in ["kurczak", "wołowina", "wieprzowina", "ryba", "warzywa", "makaron"]), "")
+        dish_type = next((w for w in words if w in ["zupa", "stek", "gulasz", "sałatka", "danie", "przystawka"]), "")
+        
+        # Layer-specific queries for targeted retrieval
+        layer_queries = {
+            "core": f"{main_ingredient} temperature doneness process" if main_ingredient else question,
+            "techniques": f"{main_ingredient} cooking technique" if main_ingredient else question,
+            "composition": f"{dish_type} structure balance" if dish_type else question,
+            "flavor": f"{main_ingredient} pairing flavor" if main_ingredient else question
+        }
+        
+        # Retrieve with layer-specific queries
+        layers = {}
+        for layer, query in layer_queries.items():
+            layers[layer] = self.search_layer(layer, query)
+        
+        composition_ctx = trim_context("\n---\n".join(layers.get("composition", [])), 2000)
+        flavor_ctx = trim_context("\n---\n".join(layers.get("flavor", [])), 1500)
+        core_ctx = trim_context("\n---\n".join(layers.get("core", [])), 2000)
+        techniques_ctx = trim_context("\n---\n".join(layers.get("techniques", [])), 1500)  # CRITICAL: techniques was 13KB
 
         constraints_parts = []
         if prof_ctx:
@@ -1427,7 +2029,7 @@ def create_app():
                 if not customer_id:
                     return jsonify({"error": "No customer_id"}), 200
 
-                # znajdĹş usera po stripe_customer_id
+                # znajdź usera po stripe_customer_id
                 r = sb.table("profiles").select("id").eq("stripe_customer_id", customer_id).execute()
 
                 if r.data:
@@ -1465,7 +2067,34 @@ def create_app():
         pr=p.get("bot_profile","guest")
         h=[{"role":m["role"],"content":m["content"]} for m in (d.get("conversation_history") or []) if isinstance(m,dict) and m.get("role") in ("user","assistant")][-MAX_HISTORY:]
         try:
-            result=a.ask(q,h,profile=pr,uid=g.user_id)
+            # Use 2-step pipeline by default, fallback to 4-layer if needed
+            try:
+                result=a.generate_recipe(q,h,profile=pr,uid=g.user_id)
+            except Exception as e:
+                logger.error(f"2-step pipeline failed: {e}, falling back to 4-layer")
+                result=a.ask(q,h,profile=pr,uid=g.user_id)
+            increment_daily(g.user_id,"recipes")
+            return jsonify({"success":True,**result})
+        except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad serwera."}),500
+
+    @app.route("/api/ask-2step",methods=["POST"])
+    @require_auth
+    def api_ask_2step():
+        """Explicit 2-step pipeline endpoint for testing."""
+        a=app.config.get("assistant")
+        if not a: return jsonify({"error":"Not init"}),503
+        allowed,count,limit=check_daily_limit(g.user_id,"recipes")
+        if not allowed: return jsonify({"error":"limit","message":f"Dzienny limit {limit} przepisów wyczerpany. Przejdź na PRO!","is_limit":True}),429
+        d=request.get_json(silent=True) or {}
+        q=(d.get("question") or "").strip()
+        if not q: return jsonify({"error":"No question"}),400
+        p=db_get_profile_cached(g.user_id)
+        pr=p.get("bot_profile","guest")
+        h=[{"role":m["role"],"content":m["content"]} for m in (d.get("conversation_history") or []) if isinstance(m,dict) and m.get("role") in ("user","assistant")][-MAX_HISTORY:]
+        
+        # Force 2-step pipeline
+        try:
+            result=a.generate_recipe(q,h,profile=pr,uid=g.user_id)
             increment_daily(g.user_id,"recipes")
             return jsonify({"success":True,**result})
         except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad serwera."}),500
@@ -1621,7 +2250,7 @@ def create_app():
             text=_re.sub(r'<[^>]+>',' ',text)
             text=_re.sub(r'\s+',' ',text).strip()
             recipe_start=None
-            for marker in ['SkĹ‚adniki','Ingredients','Przygotowanie','Preparation','Instrukcje']:
+            for marker in ['Składniki','Ingredients','Przygotowanie','Preparation','Instrukcje']:
                 pos=text.find(marker)
                 if pos>0: recipe_start=max(0,pos-200); break
             if recipe_start: text=text[recipe_start:recipe_start+4000]
