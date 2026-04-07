@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 chroma_db/
 test_*.py
+server.log
+prompt_output.txt
+prompt_test.py

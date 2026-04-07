@@ -25,12 +25,12 @@ except ImportError:
 PROJECT_ROOT=os.path.dirname(os.path.abspath(__file__))
 KNOWLEDGE_BASE_ROOT=PROJECT_ROOT
 CHROMA_DB_PATH=os.path.join(PROJECT_ROOT,"chroma_db")
-MAX_HISTORY=20; SEARCH_RESULTS=8
+MAX_HISTORY=8; SEARCH_RESULTS=8
 
 # ─── AI Model ───
 OPENAI_API_KEY=os.environ.get("OPENAI_API_KEY","")
-AI_MODEL="gpt-4o"
-AI_MAX_TOKENS=4096
+AI_MODEL="gpt-4o-mini"
+AI_MAX_TOKENS=2048
 AI_BASE_URL="https://api.openai.com/v1"
 
 SUPABASE_URL=os.environ.get("SUPABASE_URL","")
@@ -446,145 +446,947 @@ def trim_context(text, max_chars=2000):
         return text
     return text[:max_chars] + "...[trimmed]"
 
+# ─── SOS (SAVE OUR FOOD) SYSTEM ───
+
+SOS_PROMPT = """# SYSTEM
+
+Jesteś AWARYJNYM systemem ratunkowym kuchni.
+
+Twoim jedynym zadaniem jest:
+👉 RATOWANIE DANIA W KRYZYSIE
+
+---
+
+# RECONHEJZ KRYZYSU
+
+Zapytanie użytkownika zawiera słowa-klucze:
+- "spaliłem", "przypaliłem", "ugorzone"
+- "za dużo soli", "zasolone", "słone"
+- "zepsute", "źle pachnie", "zgniłe"
+- "surowe", "niedopieczone", "krwawe"
+- "gorzkie", "kwaśne", "dziwne"
+- "co zrobić", "ratować", "naprawić"
+
+---
+
+# PRIORYTET: NATYCHMIASTOWA POMOC
+
+1. DIAGNOZA: Co dokładnie się stało?
+2. OCENA: Czy da się uratować?
+3. INSTRUKCJA: Krok po kroku jak ratować
+4. ALTERNATYWA: Jeśli nie da się ratować
+
+---
+
+# FORMAT ODPOWIEDZI
+
+{
+  "type": "sos_response",
+  "emergency_level": "low|medium|high|critical",
+  "can_be_saved": true|false,
+  "diagnosis": "co się stało",
+  "immediate_actions": ["krok 1", "krok 2"],
+  "salvage_method": "jak uratować",
+  "if_unsalvageable": "co zrobić jak nie da się ratować",
+  "prevention": "jak uniknąć next time"
+}
+
+---
+
+# PRZYKŁADY
+
+## PRZYPALONE:
+- Emergency: medium
+- Can be saved: true
+- Immediate: ["zgaś ogień", "zdejmij z palnika"]
+- Salvage: "odetnij spalone części", "dodaj sos"
+
+## ZASOLONE:
+- Emergency: low
+- Can be saved: true
+- Immediate: ["nie dodaw więcej soli"]
+- Salvage: "dodaj ziemniaki", "rozciernij śmietaną"
+
+## SUROWE MIĘSO:
+- Emergency: high
+- Can be saved: true
+- Immediate: ["zatrzymaj gotowanie"]
+- Salvage: "dokończ w niższej temp", "dodaj czas"
+
+---
+
+# ZASADY
+
+- ODPOWIADAJ NATYCHMIAST
+- BARDZIMO KONKRETNY
+- PODAJ KROKI
+- NIE PISZ OGÓLNIKÓW
+
+USER QUERY: {question}"""
+
+def detect_sos_intent(query, context=None):
+    """Advanced SOS intent detection with scoring system."""
+    q = query.lower()
+    score = 0
+    detected_issues = []
+    
+    # BURNED - high confidence
+    if any(w in q for w in ["spali", "przypal", "czarn", "ugor", "spalony", "przypalony"]):
+        score += 3
+        detected_issues.append("burned")
+    
+    # SALTY - high confidence  
+    if any(w in q for w in ["za słone", "przesolone", "zasolone", "soli", "słone"]):
+        score += 3
+        detected_issues.append("salty")
+    
+    # RAW - high confidence
+    if any(w in q for w in ["surowe", "niedopieczone", "krwawe", "surowy", "niedopieczone"]):
+        score += 3
+        detected_issues.append("raw")
+    
+    # BITTER - medium confidence
+    if any(w in q for w in ["gorzki", "gorzknie", "gorycz"]):
+        score += 2
+        detected_issues.append("bitter")
+    
+    # EMULSION BREAK - medium confidence
+    if any(w in q for w in ["rozwarstwił", "warstwy", "rozwarstwienie", "zważył"]):
+        score += 2
+        detected_issues.append("emulsion_break")
+    
+    # GENERAL PROBLEMS - low confidence
+    if any(w in q for w in ["nie tak", "dziwne", "zepsuło", "coś jest", "problem", "coś"]):
+        score += 1
+        detected_issues.append("general")
+    
+    # HELP REQUESTS - low confidence
+    if any(w in q for w in ["co zrobić", "ratować", "ratuj", "naprawić", "pomocy", "uratować", "co robić", "pomocy"]):
+        score += 1
+        detected_issues.append("help_request")
+    
+    # CONTEXT AWARENESS - boost if context matches problem
+    if context and detected_issues:
+        context_lower = str(context).lower()
+        for issue in detected_issues:
+            if issue == "burned" and any(w in context_lower for w in ["pieczony", "smażony", "grill"]):
+                score += 1
+            elif issue == "salty" and any(w in context_lower for w in ["sos", "zupa", "przyprawy"]):
+                score += 1
+            elif issue == "raw" and any(w in context_lower for w in ["mięso", "kurczak", "wołowina"]):
+                score += 1
+            elif issue == "emulsion_break" and any(w in context_lower for w in ["sos", "majonez", "holenderski"]):
+                score += 1
+    
+    # Determine emergency level
+    if score >= 4:
+        level = "critical"
+    elif score >= 3:
+        level = "high"
+    elif score >= 2:
+        level = "medium"
+    elif score >= 1:
+        level = "low"
+    else:
+        return None
+    
+    return {
+        "detected": True,
+        "score": score,
+        "level": level,
+        "issues": detected_issues,
+        "query": query
+    }
+
+def generate_sos_response(question, context=None, intent_result=None):
+    """Generate production-ready SOS response with action flow and time pressure UX."""
+    import json
+    
+    # Use intent detection if provided, otherwise fallback
+    if not intent_result:
+        intent_result = detect_sos_intent(question, context)
+    
+    if not intent_result:
+        return generate_fallback_sos(question)
+    
+    level = intent_result["level"]
+    issues = intent_result["issues"]
+    
+    # Time pressure mode
+    if level == "critical":
+        mode = "IMMEDIATE"
+        urgency_prefix = "STOP! "
+    elif level == "high":
+        mode = "FAST_FIX"
+        urgency_prefix = "MASZ 2-3 MINUTY! "
+    else:
+        mode = "GUIDE"
+        urgency_prefix = ""
+    
+    # Context-aware responses
+    context_lower = str(context).lower() if context else ""
+    
+    # BURNED FOOD
+    if "burned" in issues:
+        if "sos" in context_lower or "zupa" in context_lower:
+            return {
+                "type": "sos_response",
+                "emergency_level": level,
+                "mode": mode,
+                "diagnosis": f"{urgency_prefix}Sos/zupa została przypalona",
+                "salvage": {
+                    "possible": True,
+                    "confidence": "medium",
+                    "message": "Da się uratować jeśli zareagujesz teraz"
+                },
+                "action_flow": [
+                    f"{urgency_prefix}Zdejmij z ognia NATYCHMIAST",
+                    "Przelej do czystej miski omijając spalone dno",
+                    "Nie mieszaj przypalonych części",
+                    "Dodaj świeże zioła (pietruszka, koperek)"
+                ],
+                "next_steps": [
+                    "Użyj niższej temperatury następnym razem",
+                    "Mieszaj regularnie",
+                    "Nie zostawiaj bez nadzoru"
+                ],
+                "linked_decisions": {
+                    "core": ["thermal_burn", "maillard_reaction"],
+                    "techniques": ["temperature_control", "monitoring"]
+                }
+            }
+        else:
+            return {
+                "type": "sos_response",
+                "emergency_level": level,
+                "mode": mode,
+                "diagnosis": f"{urgency_prefix}Danie zostało przypalone",
+                "salvage": {
+                    "possible": True,
+                    "confidence": "medium",
+                    "message": "Da się uratować jeśli nie wszystko jest spalone"
+                },
+                "action_flow": [
+                    f"{urgency_prefix}Zdejmij z ognia/piekarnika",
+                    "Nie mieszaj przypalonych części",
+                    "Odetnij spalone części nożem",
+                    "Dodaj sos lub świeże zioła by zakryć smak"
+                ],
+                "next_steps": [
+                    "Ustaw niższą temperaturę",
+                    "Użyj timera",
+                    "Mieszaj regularnie"
+                ],
+                "linked_decisions": {
+                    "core": ["thermal_burn", "surface_caramelization"],
+                    "techniques": ["temperature_control", "timing"]
+                }
+            }
+    
+    # SALTY FOOD
+    elif "salty" in issues:
+        if "sos" in context_lower:
+            return {
+                "type": "sos_response",
+                "emergency_level": level,
+                "mode": mode,
+                "diagnosis": f"{urgency_prefix}Sos jest zbyt słony",
+                "salvage": {
+                    "possible": True,
+                    "confidence": "high",
+                    "message": "Łatwo uratować - dodaj tłuszcz"
+                },
+                "action_flow": [
+                    "Nie dodaw więcej soli",
+                    "Dodaj śmietanę lub jogurt (1 łyżka na 200ml)",
+                    "Rozcieńcz odrobiną wody lub bulionu",
+                    "Dodaj cukier (1/2 łyżeczki) by zbalansować"
+                ],
+                "next_steps": [
+                    "Sol stopniowo i próbuj",
+                    "Używaj mniej soli niż myślisz",
+                    "Sprawdzaj przed podaniem"
+                ],
+                "linked_decisions": {
+                    "core": ["salt_balance", "flavor_correction"],
+                    "techniques": ["seasoning", "taste_testing"]
+                }
+            }
+        elif "zupa" in context_lower:
+            return {
+                "type": "sos_response",
+                "emergency_level": level,
+                "mode": mode,
+                "diagnosis": f"{urgency_prefix}Zupa jest zbyt słona",
+                "salvage": {
+                    "possible": True,
+                    "confidence": "high",
+                    "message": "Da się uratować dodając ziemniaki"
+                },
+                "action_flow": [
+                    "Nie dodaw więcej soli",
+                    "Wyłącz ogień",
+                    "Dodaj surowe ziemniaki w kostkę",
+                    "Gotuj 10 minut by wchłonęły sól"
+                ],
+                "next_steps": [
+                    "Możesz rozcieńczyć wodą lub mlekiem",
+                    "Dodaj ryż by wchłonął sól",
+                    "Sol stopniowo następnym razem"
+                ],
+                "linked_decisions": {
+                    "core": ["osmosis", "salt_absorption"],
+                    "techniques": ["seasoning", "balancing"]
+                }
+            }
+        else:
+            return {
+                "type": "sos_response",
+                "emergency_level": level,
+                "mode": mode,
+                "diagnosis": f"{urgency_prefix}Danie jest zbyt słone",
+                "salvage": {
+                    "possible": True,
+                    "confidence": "medium",
+                    "message": "Można uratować dodając składniki wchłaniające"
+                },
+                "action_flow": [
+                    "Nie dodaw więcej soli",
+                    "Dodaj surowe ziemniaki w kostkę",
+                    "Gotuj 10-15 minut",
+                    "Dodaj ryż lub chleb by wchłonął sól"
+                ],
+                "next_steps": [
+                    "Dla mięs dodaj śmietanę lub jogurt",
+                    "Sol stopniowo i próbuj",
+                    "Używaj mniej soli niż myślisz"
+                ],
+                "linked_decisions": {
+                    "core": ["salt_balance", "osmosis"],
+                    "techniques": ["seasoning", "correction"]
+                }
+            }
+    
+    # RAW FOOD
+    elif "raw" in issues:
+        if "kurczak" in context_lower or "drób" in context_lower:
+            return {
+                "type": "sos_response",
+                "emergency_level": "critical",
+                "mode": "IMMEDIATE",
+                "diagnosis": "STOP! Kurczak jest surowy - niebezpieczne!",
+                "salvage": {
+                    "possible": True,
+                    "confidence": "high",
+                    "message": "Można uratować - dopiecz do 74°C"
+                },
+                "action_flow": [
+                    "STOP! Zwiększ temperaturę do 180°C",
+                    "Sprawdź termometrem - musi być 74°C w środku",
+                    "Dokończ pieczenie do bezpiecznej temperatury",
+                    "Jeśli bardzo surowe - pokrój na mniejsze kawałki"
+                ],
+                "next_steps": [
+                    "Używaj termometru do mięsa",
+                    "Sprawdzaj czas gotowania",
+                    "Testuj próbki przed podaniem"
+                ],
+                "linked_decisions": {
+                    "core": ["protein_coagulation", "food_safety"],
+                    "techniques": ["temperature_control", "doneness_testing"]
+                }
+            }
+        else:
+            return {
+                "type": "sos_response",
+                "emergency_level": level,
+                "mode": mode,
+                "diagnosis": f"{urgency_prefix}Danie jest surowe/niedopieczone",
+                "salvage": {
+                    "possible": True,
+                    "confidence": "high",
+                    "message": "Da się uratować dopiekając"
+                },
+                "action_flow": [
+                    "Zwiększ temperaturę",
+                    "Dłuższy czas gotowania",
+                    "Dla mięsa dopiecz w 160°C dłużej",
+                    "Dla warzyw dodaj wodę i duś pod przykryciem"
+                ],
+                "next_steps": [
+                    "Sprawdzaj termometrem",
+                    "Testuj próbki",
+                    "Używaj timera"
+                ],
+                "linked_decisions": {
+                    "core": ["protein_coagulation", "cooking_time"],
+                    "techniques": ["temperature_control", "timing"]
+                }
+            }
+    
+    # EMULSION BREAK
+    elif "emulsion_break" in issues:
+        if "holenderski" in context_lower or "majonez" in context_lower:
+            return {
+                "type": "sos_response",
+                "emergency_level": "high",
+                "mode": "FAST_FIX",
+                "diagnosis": f"{urgency_prefix}Sos emulsyjny się rozwarstwił",
+                "salvage": {
+                    "possible": True,
+                    "confidence": "medium",
+                    "message": "Trudno uratować - zacznij od nowa"
+                },
+                "action_flow": [
+                    "Zatrzymaj mieszanie",
+                    "Nie dodaw więcej płynu",
+                    "Zacznij od nowa z żółtkami",
+                    "Dodawaj olej kroplami, ciągle ubijając"
+                ],
+                "next_steps": [
+                    "Utrzymuj stałą temperaturę",
+                    "Dodawaj olej bardzo powoli",
+                    "Ubijaj energicznie"
+                ],
+                "linked_decisions": {
+                    "core": ["emulsion_break", "fat_water_separation"],
+                    "techniques": ["emulsifying", "temperature_control"]
+                }
+            }
+        else:
+            return {
+                "type": "sos_response",
+                "emergency_level": level,
+                "mode": mode,
+                "diagnosis": f"{urgency_prefix}Sos się rozwarstwił",
+                "salvage": {
+                    "possible": True,
+                    "confidence": "medium",
+                    "message": "Można spróbować uratować blenderem"
+                },
+                "action_flow": [
+                    "Zatrzymaj gotowanie",
+                    "Nie mieszaj dalej",
+                    "Spróbuj zabić blenderem na wysokich obrotach",
+                    "Dodaj skrobię (1 łyżeczka mąki w wodzie)"
+                ],
+                "next_steps": [
+                    "Mieszaj stopniowo",
+                    "Utrzymuj odpowiednią temperaturę",
+                    "Użyj jako bazy do innego sosu"
+                ],
+                "linked_decisions": {
+                    "core": ["emulsion_stability", "viscosity_control"],
+                    "techniques": ["blending", "stabilizing"]
+                }
+            }
+    
+    # BITTER
+    elif "bitter" in issues:
+        return {
+            "type": "sos_response",
+            "emergency_level": level,
+            "mode": mode,
+            "diagnosis": f"{urgency_prefix}Danie ma gorzki smak",
+            "salvage": {
+                "possible": True,
+                "confidence": "high",
+                "message": "Łatwo zbalansować słodyczą"
+            },
+            "action_flow": [
+                "Zidentyfikuj źródło goryczy",
+                "Przestań dodawać przyprawy",
+                "Dodaj słodycz (miód, cukier, marchew)",
+                "Dodaj tłuszcz (śmietana, olej) by złagodzić"
+            ],
+            "next_steps": [
+                "Kwaśność może zbalansować gorycz",
+                "Użyj świeżych składników",
+                "Dodawaj przyprawy stopniowo"
+            ],
+            "linked_decisions": {
+                "core": ["flavor_balance", "taste_correction"],
+                "techniques": ["seasoning", "balancing"]
+            }
+        }
+    
+    # GENERAL PROBLEM
+    else:
+        return {
+            "type": "sos_response",
+            "emergency_level": level,
+            "mode": mode,
+            "diagnosis": f"{urgency_prefix}Problem kulinarny wymagający pomocy",
+            "salvage": {
+                "possible": True,
+                "confidence": "medium",
+                "message": "Pomogę Ci to naprawić krok po kroku"
+            },
+            "action_flow": [
+                "Opisz dokładnie co się stało",
+                "Zatrzymaj gotowanie",
+                "Sprawdź wszystkie składniki",
+                "Wykonaj krok po kroku moje instrukcje"
+            ],
+            "next_steps": [
+                "Śledź przepis krok po kroku",
+                "Używaj timera",
+                "Sprawdzaj przed każdym krokiem"
+            ],
+            "linked_decisions": {
+                "core": ["troubleshooting", "process_control"],
+                "techniques": ["monitoring", "adjustment"]
+            }
+        }
+
+def enrich_sos_with_llm(question, context, sos_response):
+    """Optional micro-LLM enrichment for SOS responses (1-2s)."""
+    try:
+        enrichment_prompt = f"""User problem: "{question}"
+Context: {context if context else "No context"}
+Current diagnosis: {sos_response.get('diagnosis', '')}
+
+Provide specific details:
+- What exactly happened
+- Why it happened  
+- Exact proportions for fix
+- What to do RIGHT NOW
+
+Keep response under 200 words. Be very specific."""
+        
+        msgs = [{"role": "user", "content": enrichment_prompt}]
+        enriched, _ = self._call("", msgs)  # Empty system prompt for speed
+        
+        # Merge enrichment
+        if enriched.get("specific_fix"):
+            sos_response["salvage_method"] += f"\n\nSPECIFIC: {enriched['specific_fix']}"
+        if enriched.get("why_happened"):
+            sos_response["why_happened"] = enriched["why_happened"]
+        if enriched.get("right_now"):
+            sos_response["right_now"] = enriched["right_now"]
+            
+        sos_response["llm_enriched"] = True
+        return sos_response
+        
+    except Exception as e:
+        logger.warning(f"SOS LLM enrichment failed: {e}")
+        sos_response["llm_enriched"] = False
+        return sos_response
+
+def generate_recipe_adjustment(sos_intent, context):
+    """Generate recipe adjustment based on SOS issue for auto-recovery."""
+    adjustments = {
+        "burned": {
+            "temperature_adjustment": -20,  # Lower temp by 20°C
+            "time_adjustment": 0.8,  # Reduce time by 20%
+            "monitoring": "increase",
+            "note": "Zmniejsz temperaturę i skróć czas by uniknąć przypalenia"
+        },
+        "salty": {
+            "salt_reduction": 0.5,  # Reduce salt by 50%
+            "balancing_ingredients": ["śmietana", "cukier", "kwas"],
+            "note": "Dodaj mniej soli i zbalansuj smaki"
+        },
+        "raw": {
+            "temperature_adjustment": +15,  # Increase temp by 15°C
+            "time_adjustment": 1.3,  # Increase time by 30%
+            "donness_check": "required",
+            "note": "Zwiększ temperaturę i czas by osiągnąć bezpieczną doność"
+        },
+        "emulsion_break": {
+            "technique_change": "emulsifying",
+            "temperature_control": "strict",
+            "addition_rate": "slow",
+            "note": "Dodawaj tłuszcz bardzo powoli, kontroluj temperaturę"
+        },
+        "bitter": {
+            "bitter_reduction": 0.7,  # Reduce bitter ingredients by 30%
+            "sweetness_increase": 0.2,  # Add 20% balancing sweetness
+            "note": "Zmniejsz gorycz i dodaj słodycz dla balansu"
+        }
+    }
+    
+    # Get primary issue
+    primary_issue = sos_intent["issues"][0] if sos_intent["issues"] else "general"
+    
+    return adjustments.get(primary_issue, {
+        "note": "Sprawdź technikę i parametry"
+    })
+
+def generate_fallback_sos(question):
+    """Fallback SOS response for edge cases."""
+    return {
+        "type": "sos_response",
+        "emergency_level": "low",
+        "mode": "GUIDE",
+        "diagnosis": "Problem kulinarny wymagający pomocy",
+        "salvage": {
+            "possible": True,
+            "confidence": "medium",
+            "message": "Pomogę Ci to naprawić"
+        },
+        "action_flow": [
+            "Opisz dokładnie co się stało",
+            "Zatrzymaj gotowanie",
+            "Sprawdź wszystkie składniki"
+        ],
+        "next_steps": [
+            "Śledź przepis krok po kroku",
+            "Używaj timera",
+            "Sprawdzaj przed każdym krokiem"
+        ],
+        "linked_decisions": {
+            "core": ["troubleshooting"],
+            "techniques": ["monitoring"]
+        }
+    }
+
+# ─── ADAPTIVE AI SYSTEM ───
+
+import json
+import hashlib
+from datetime import datetime, timedelta
+from collections import defaultdict, Counter
+
+# User Failure Memory System
+USER_FAILURE_MEMORY = defaultdict(dict)
+FAILURE_PATTERNS = {
+    "undercooked_meat": [
+        "raw", "surowy", "niedopieczone", "krwawe", "miękkie", "guma", "surowe mięso"
+    ],
+    "overcooked_meat": [
+        "przesuszone", "suche", "gumowe", "twarde", "spalone", "przypalone", "drewniane"
+    ],
+    "salty_food": [
+        "słone", "zasolone", "przesolone", "za dużo soli", "soli", "słone"
+    ],
+    "emulsion_break": [
+        "rozwarstwił", "warstwy", "rozwarstwienie", "zważył", "rozpadł", "oddzielił"
+    ],
+    "bitter_food": [
+        "gorzkie", "gorycz", "gorzknie", "gorzki", "gorycz"
+    ],
+    "burned_food": [
+        "spali", "przypal", "czarn", "ugor", "spalone", "przypalone"
+    ]
+}
+
+class UserFailureMemory:
+    """Adaptive learning system for user cooking failures."""
+    
+    def __init__(self):
+        self.memory = defaultdict(dict)
+        self.patterns = defaultdict(list)
+        self.confidence_threshold = 0.7
+        
+    def record_failure(self, user_id, sos_intent, context, timestamp=None):
+        """Record a cooking failure for learning."""
+        if not timestamp:
+            timestamp = datetime.now()
+            
+        # Extract primary issue
+        primary_issue = sos_intent["issues"][0] if sos_intent["issues"] else "general"
+        
+        # Find pattern category
+        pattern_category = self._categorize_failure(primary_issue, sos_intent["issues"])
+        
+        # Store failure record
+        failure_record = {
+            "timestamp": timestamp.isoformat(),
+            "level": sos_intent["level"],
+            "issues": sos_intent["issues"],
+            "pattern_category": pattern_category,
+            "context": context,
+            "score": sos_intent["score"]
+        }
+        
+        # Update user memory
+        if user_id not in self.memory:
+            self.memory[user_id] = {"failures": [], "patterns": defaultdict(int)}
+        
+        self.memory[user_id]["failures"].append(failure_record)
+        self.memory[user_id]["patterns"][pattern_category] += 1
+        
+        # Update global patterns
+        self.patterns[pattern_category].append(failure_record)
+        
+        logger.info(f"Recorded failure for user {user_id}: {pattern_category}")
+        
+        return failure_record
+    
+    def _categorize_failure(self, primary_issue, all_issues):
+        """Categorize failure into pattern groups."""
+        for pattern, keywords in FAILURE_PATTERNS.items():
+            if primary_issue in pattern:
+                return pattern
+        
+        # Check all issues for pattern match
+        for issue in all_issues:
+            for pattern, keywords in FAILURE_PATTERNS.items():
+                if any(keyword in issue for keyword in keywords):
+                    return pattern
+        
+        return "general_failure"
+    
+    def get_user_risk_profile(self, user_id):
+        """Get user's risk profile based on failure history."""
+        if user_id not in self.memory:
+            return {"risk_areas": [], "confidence": 0.0}
+        
+        patterns = self.memory[user_id]["patterns"]
+        total_failures = sum(patterns.values())
+        
+        if total_failures == 0:
+            return {"risk_areas": [], "confidence": 0.0}
+        
+        # Calculate risk areas with confidence
+        risk_areas = []
+        for pattern, count in patterns.items():
+            confidence = count / total_failures
+            if confidence >= self.confidence_threshold:
+                risk_areas.append({
+                    "pattern": pattern,
+                    "confidence": confidence,
+                    "count": count,
+                    "severity": self._calculate_severity(pattern, count, total_failures)
+                })
+        
+        return {
+            "risk_areas": risk_areas,
+            "confidence": len(risk_areas) / len(patterns) if patterns else 0.0,
+            "total_failures": total_failures
+        }
+    
+    def _calculate_severity(self, pattern, count, total):
+        """Calculate severity score for pattern."""
+        base_severity = count / total
+        recency_bonus = self._get_recency_bonus(pattern)
+        return min(1.0, base_severity + recency_bonus)
+    
+    def _get_recency_bonus(self, pattern):
+        """Get bonus for recent failures."""
+        # Simple implementation - could be more sophisticated
+        return 0.1
+    
+    def generate_adaptive_adjustments(self, user_id, plan_context):
+        """Generate adaptive adjustments based on user failure patterns."""
+        risk_profile = self.get_user_risk_profile(user_id)
+        adjustments = {}
+        
+        for risk in risk_profile["risk_areas"]:
+            pattern = risk["pattern"]
+            confidence = risk["confidence"]
+            
+            if pattern == "undercooked_meat":
+                adjustments.update({
+                    "temperature_margin": +5,  # Increase temp by 5°C
+                    "time_multiplier": 1.1,    # Increase time by 10%
+                    "donness_check": "mandatory",
+                    "warning": f"⚠️ Uważaj: często niedopieczasz mięso (confidence: {confidence:.1f})"
+                })
+            
+            elif pattern == "overcooked_meat":
+                adjustments.update({
+                    "temperature_margin": -10,  # Decrease temp by 10°C
+                    "time_multiplier": 0.9,     # Decrease time by 10%
+                    "monitoring": "frequent",
+                    "warning": f"⚠️ Uważaj: często przepalasz mięso (confidence: {confidence:.1f})"
+                })
+            
+            elif pattern == "salty_food":
+                adjustments.update({
+                    "salt_reduction": 0.7,      # Reduce salt by 30%
+                    "taste_check": "mandatory",
+                    "balancing_ingredients": ["śmietana", "cukier"],
+                    "warning": f"⚠️ Uważaj: często solisz za dużo (confidence: {confidence:.1f})"
+                })
+            
+            elif pattern == "emulsion_break":
+                adjustments.update({
+                    "technique_emphasis": "emulsifying",
+                    "temperature_control": "strict",
+                    "addition_rate": "very slow",
+                    "warning": f"⚠️ Uważaj: sosy często się rozwarstwiają (confidence: {confidence:.1f})"
+                })
+            
+            elif pattern == "burned_food":
+                adjustments.update({
+                    "temperature_margin": -15,  # Decrease temp by 15°C
+                    "monitoring": "continuous",
+                    "timer": "mandatory",
+                    "warning": f"⚠️ Uważaj: często przepalasz dania (confidence: {confidence:.1f})"
+                })
+        
+        return adjustments, risk_profile
+
+# Global instance
+user_failure_memory = UserFailureMemory()
+
+# ─── PERFORMANCE OPTIMIZATIONS ───
+
+from concurrent.futures import ThreadPoolExecutor
+import threading
+
+def parallel_search(assistant, layer_queries):
+    """Parallel search across all layers - 4x speed improvement."""
+    def search_layer(layer_query):
+        layer, query = layer_query
+        return layer, assistant.search_layer(layer, query)
+    
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        futures = [
+            executor.submit(search_layer, (layer, query))
+            for layer, query in layer_queries.items()
+        ]
+        
+        results = {}
+        for future in futures:
+            layer, texts = future.result()
+            results[layer] = texts
+    
+    return results
+
+def ultra_trim(text, max_chars=600):
+    """Aggressive trim for maximum speed."""
+    if not text:
+        return text
+    if len(text) <= max_chars:
+        return text
+    return text[:max_chars] + "...[trimmed]"
+
+def is_simple_query(query):
+    """Check if query is simple enough to skip executor."""
+    words = query.lower().split()
+    simple_patterns = [
+        len(words) <= 4,
+        any(word in words for word in ["kurczak", "ryba", "mięso", "warzywa"]),
+        not any(word in query.lower() for word in ["skomplikowany", "specjalny", "restauracyjny"])
+    ]
+    return all(simple_patterns)
+
+def generate_fast_recipe(plan):
+    """Generate fast recipe directly from plan - skip executor."""
+    return {
+        "type": "recipe",
+        "title": f"Szybkie {plan.get('dish_identity', {}).get('main_ingredient', 'danie')}",
+        "subtitle": "Szybka wersja",
+        "times": {"prep_min": 10, "cook_min": 20, "total_min": 30},
+        "difficulty": 2,
+        "servings": 2,
+        "steps": [
+            {
+                "number": 1,
+                "title": "Przygotuj składniki",
+                "instruction": "Przygotuj wszystkie składniki według przepisu"
+            },
+            {
+                "number": 2, 
+                "title": "Smaż/W piecz",
+                "instruction": f"Smaż lub piecz {plan.get('dish_identity', {}).get('main_ingredient', 'składniki')} według technik: {', '.join([t.get('technique', '') for t in plan.get('techniques', [])])}"
+            },
+            {
+                "number": 3,
+                "title": "Podawaj",
+                "instruction": "Podawaj na ciepło"
+            }
+        ],
+        "decisions_used": {
+            "core": [f"{d.get('ingredient', '')} {d.get('target_temp', '')}°C" for d in plan.get('core_decisions', [])],
+            "techniques": [t.get('technique', '') for t in plan.get('techniques', [])]
+        },
+        "fast_mode": True
+    }
+
 # ─── 2-STEP PIPELINE PROMPTS ───
 
 PLANNER_PROMPT = """# SYSTEM
 
 Jesteś silnikiem planowania kulinarnego.
 
-Twoim zadaniem NIE jest pisanie przepisu.
+ZAPYTANIE: {question}
+
+# MAX OUTPUT SIZE:
+- core_decisions: EXACTLY 3
+- techniques: EXACTLY 2  
+- execution_flow: EXACTLY 3 steps
+- failure_risks: MAX 2
+
+Keep responses minimal.
+
+# JSON OUTPUT:
+{{
+  "dish_identity": {{"dish_type": "", "main_ingredient": "", "style": ""}},
+  "structure": {{"structure_rule": "", "elements": []}},
+  "core_decisions": [
+    {{"ingredient": "", "intent": "", "target_temp": 65, "reason": "", "decision_type": "protein_doneness"}},
+    {{"ingredient": "", "intent": "", "target_temp": 180, "reason": "", "decision_type": "browning"}},
+    {{"ingredient": "", "intent": "", "target_temp": 75, "reason": "", "decision_type": "moisture"}}
+  ],
+  "techniques": [
+    {{"technique": "", "applies_to": "", "goal": ""}},
+    {{"technique": "", "applies_to": "", "goal": ""}}
+  ],
+  "flavor_logic": {{"pairings": "", "contrast": "", "balancing_elements": ""}},
+  "execution_flow": ["sear", "cook", "finish"],
+  "failure_risks": []
+}}
+
+# KONTEKST:
+{context}"""
+
+EXECUTOR_PROMPT_FAST = """# SYSTEM
+
+Jesteś SZYBKIM wykonawcą planu kulinarnego.
+
+Dostajesz PLAN (JSON).
 
 Twoim zadaniem jest:
-👉 zbudować STRUKTURĘ DECYZJI dla dania
+👉 SZYBKO wygenerować przepis
 
 ---
 
-# DOSTĘPNE WARSTWY WIEDZY
+# SZYBKOŚĆ PRIORYTET
 
-Masz dostęp do:
-
-CORE → fizyka (temperatura, procesy, transformacje)
-COMPOSITION → struktura dania, balans
-TECHNIQUES → jak wykonać operacje
-FLAVOR → pairing i balans smaków
+- MAX 5 kroków
+- KRÓTKIE instrukcje
+- BRAK długich opisów
 
 ---
 
-# CEL
+# KRYTYCZNE ZASADY
 
-Na podstawie zapytania użytkownika:
-
-👉 zaprojektuj danie jako SYSTEM DECYZJI
-
----
-
-# WYMAGANIA (OBOWIĄZKOWE)
-
-Musisz wygenerować:
-
-## 1. DISH IDENTITY
-
-- dish_type (np. "protein_centered", "soup", "pasta")
-- main_ingredient
-- style (np. "classic", "modern", "comfort")
+1. Użyj WSZYSTKICH core_decisions
+2. Użyj WSZYSTKICH techniques  
+3. Zachowaj temperatury z planu
 
 ---
 
-## 2. STRUCTURE (z COMPOSITION)
-
-- structure_rule (np. "protein_centered_plate")
-- elements (lista elementów dania)
-
----
-
-## 3. CORE DECISIONS (MIN 3, MAX 3)
-
-Każda decyzja MUSI:
-
-- zawierać konkretną temperaturę
-- być powiązana z procesem fizycznym
-- mieć wpływ na efekt końcowy
-
-Zabronione:
-- ogólne decyzje ("cook properly")
-- brak temperatury
-
-Wymuś różnorodność typów:
-
-MUSISZ wygenerować:
-- 1 decyzję: protein doneness
-- 1 decyzję: browning / Maillard
-- 1 decyzję: moisture / texture control
-
-Każda decyzja:
+# SZYBKI FORMAT OUTPUTU
 
 {
-  "ingredient": "",
-  "intent": "",
-  "target_temp": number,
-  "reason": "",
-  "decision_type": "protein_doneness|browning|moisture"
+  "type": "recipe",
+  "title": "",
+  "subtitle": "Szybka wersja",
+  "times": {"prep_min": 10, "cook_min": 20, "total_min": 30},
+  "difficulty": 2,
+  "servings": 2,
+  "steps": [
+    {"number": 1, "title": "Krok 1", "instruction": "Krótka instrukcja"},
+    {"number": 2, "title": "Krok 2", "instruction": "Krótka instrukcja"},
+    {"number": 3, "title": "Krok 3", "instruction": "Krótka instrukcja"}
+  ],
+  "decisions_used": {
+    "core": [],
+    "techniques": []
+  },
+  "fast_mode": true
 }
 
 ---
 
-## 4. TECHNIQUES (MIN 2, MAX 2)
+# INPUT
 
-{
-  "technique": "",
-  "applies_to": "",
-  "goal": ""
-}
-
----
-
-## 5. FLAVOR LOGIC
-
-- pairings
-- contrast
-- balancing_elements
-
----
-
-## 5. EXECUTION FLOW (OBOWIĄZKOWE)
-
-Musisz zdefiniować kolejność wykonywania:
-
-"execution_flow": [
-  "sear_protein",
-  "build_sauce", 
-  "combine_and_finish"
-]
-
----
-
-## 6. FAILURE RISKS (MAX 2)
-
-Lista realnych zagrożeń
-
----
-
-# ZASADY
-
-- NIE piszesz przepisu
-- NIE piszesz kroków
-- TYLKO decyzje
-
----
-
-# OUTPUT
-
-Zwróć JSON:
-
-{
-  "dish_identity": {},
-  "structure": {},
-  "core_decisions": [],
-  "techniques": [],
-  "flavor_logic": {},
-  "execution_flow": [],
-  "failure_risks": []
-}"""
+<<PLAN JSON>>"""
 
 EXECUTOR_PROMPT = """# SYSTEM
 
@@ -1121,125 +1923,65 @@ Jeśli użytkownik daje otwarte zapytanie:
 - Preferuj gęstość i precyzję nad zwięzłość.
 """
 
-TASK_PROMPT_TEMPLATE = """ZAPYTANIE UŻYTKOWNIKA:
-{user_input}
+TASK_PROMPT_TEMPLATE = """ZAPYTANIE: {user_input}
 
-OGRANICZENIA / PROFIL:
+PROFIL / OGRANICZENIA:
 {constraints}
 
----
-
-## CORE DATA (fizyka, temperatury, procesy, progi transformacji, stany awaryjne) - ABSOLUTNY PRIORYTET
+BAZA WIEDZY:
+## CORE (fizyka, temperatury, procesy):
 {core_data}
-
-## COMPOSITION RULES (architektura dania, balans, kontrasty, struktura) - PRIORYTET 2
+## COMPOSITION (architektura, balans):
 {composition_data}
-
-## TECHNIQUES (procedury wykonania, kroki krytyczne, troubleshooting, timing) - PRIORYTET 3
+## TECHNIQUES (procedury, kroki krytyczne):
 {techniques_data}
-
-## FLAVOR DATA (parowanie smaków, wzmacniacze, balans kwas/sól/tłuszcz/słodycz, logika aromatyczna) - PRIORYTET 4
+## FLAVOR (parowanie smaków, balans):
 {flavor_data}
 
-## WAŻNE: HIERARCHIA PRIORYTETÓW
-Jeśli wystąpi konflikt między danymi z różnych warstw:
-1. CORE ma absolutny priorytet nad TECHNIQUES (fizyka > procedura)
-2. COMPOSITION ma priorytet nad FLAVOR (struktura > smak)
-3. CORE > COMPOSITION > TECHNIQUES > FLAVOR
+Jesteś szefem kuchni z gwiazdką Michelin. Myślisz jak kucharz, nie jak przepisownik.
+Zwróć TYLKO poniższy JSON — zero tekstu poza nim.
 
----
+## ROZPOZNAJ TYP I DZIAŁAJ:
 
-ZADANIE:
-Zaprojektuj danie jako system decyzyjny. Wykorzystaj kontekst z bazy wiedzy agresywnie — wyciągaj z niego maksimum detali.
+### DANIE KANONICZNE (carbonara, risotto, boeuf bourguignon, pad thai, ramen, cacio e pepe...):
+- NIE ulepszaj klasyki na siłę — skup się na PERFEKCJI wykonania
+- Wyjaśnij CO odróżnia wersję doskonałą od przeciętnej (konkret, nie ogólniki)
+- Podaj detale które większość pomija: proporcje, temperatura emulsji, timing
+- Subtitle: apetyczny, nie opisowy. "Jedwabisty sos który klei się do makaronu jak aksamit" zamiast "Klasyczny włoski makaron"
+- Science: jeden zaskakujący fakt który zmienia sposób gotowania. "Searing nie zamyka porów — to mit. Skórka brązowieje przez odparowanie wody powierzchniowej"
 
-## OBOWIĄZKOWE WYKORZYSTANIE WARSTW:
-MUSISZ jawnie wykorzystać w przepisie:
-- **minimum 2 decyzje z CORE** (temperatura, proces, progi transformacji, stany awaryjne)
-- **minimum 1 regułę z COMPOSITION** (architektura dania, balans, kontrasty, struktura)
-- **minimum 1 technikę z TECHNIQUES** (procedura wykonania, kroki krytyczne, timing)
+### ZAPYTANIE KREATYWNE ("coś z kurczakiem", "szybki obiad", "coś azjatyckiego"):
+- Zaproponuj danie restauracyjnego poziomu — nigdy banalnych kombinacji
+- ZAWSZE dodaj jeden nieoczywisty element: fermentowany składnik, finishing oil, pickled accent, teksturowy kontrast, technika z innej kuchni
+- Przykład: nie "kurczak z warzywami" ale "kurczak w miso-karmelowym glaze z pickled rzodkiewką i chrupiącymi kaparami"
+- Subtitle: opis który wywołuje apetyt przez teksturę i kontrast. "Chrupiąca skóra, soczysty środek, kwasowy kick który wszystko rozświetla"
+- Science: mechanizm który sprawia że danie działa. Konkretna chemia lub fizyka, nie opis składników.
 
-Jeśli tego nie zrobisz, odpowiedź jest niepoprawna. Każda decyzja musi być widoczna w JSON.
+## ZASADY KROKÓW:
+- Ilości W NAWIASACH przy każdym dodaniu: "Dodaj masło (30g), czosnek (3 ząbki, drobno posiekany), sól (4g)"
+- W polu "why": wyjaśnij mechanizm — co się dzieje chemicznie/fizycznie, nie tylko "dlaczego to robimy"
+- W polu "tip": wskaźniki sensoryczne — co widzisz/słyszysz/czujesz gdy idzie dobrze. "Skóra powinna skwierczeć głośno — cisza = za niska temp, para = za dużo wilgoci"
+- Sprzęt z profilu użytkownika: KONKRETNE ustawienia (poziom mocy, temperatura, tryb, czas)
+- ZAKAZY z profilu: bezwzględnie, zero wyjątków
 
-Przed napisaniem JSON-a wykonaj wewnętrznie tę sekwencję:
-1. ROZPOZNAJ TYP: Czy to danie kanoniczne (ma ustaloną tożsamość kulinarną) czy zapytanie kreatywne?
-2. DLA DAŃ KANONICZNYCH: Nie zmieniaj istoty dania. Skup się na perfekcji wykonania, wyjaśnij DLACZEGO każdy element jest ważny, podaj najczęstsze błędy i co odróżnia wersję doskonałą od przeciętnej. Traktuj to jak masterclass.
-3. DLA ZAPYTAŃ KREATYWNYCH: Zaproponuj danie na poziomie dobrej restauracji. Dodaj minimum jeden element zaskoczenia (nietypowe parowanie, technika, finishing). Nigdy nie proponuj banalnych kombinacji.
-4. Wyprowadź strukturę z warstwy composition.
-5. ZIDENTYFIKUJ i ZAPISZ które konkretnie decyzje z każdej warstwy wykorzystujesz.
-5. Wyprowadź logikę smakową z warstwy flavor.
-6. Przekształć koncept w decyzje temp/czas/mechanizm z warstwy core.
-7. Przekształć decyzje w precyzyjne kroki z warstwy techniques.
-8. Wyeliminuj ogólnikowe frazy i zastąp precyzyjnym językiem kulinarnym.
-9. Każdy krok musi UCZYĆ — nie tylko co robić, ale DLACZEGO to działa i CO MOŻE PÓJŚĆ NIE TAK.
-10. Dodaj wskaźniki gotowości sensoryczne (kolor, zapach, konsystencja, dźwięk) oprócz czasu.
+## FORMAT:
+- Gramy/ml, °C (+°F), tylko czysty JSON
 
-Zwróć JSON z DOKŁADNIE taką strukturą:
 {{
   "type": "recipe",
-  "dish_type": "canonical | creative",
-  "title": "nazwa dania",
-  "subtitle": "krótki opis z charakterem — nie nudny",
-  "why_this_recipe": "DLA KANONICZNYCH: filozofia dania i dlaczego kanon działa. DLA KREATYWNYCH: dlaczego ta propozycja jest najlepsza odpowiedź na zapytanie.",
-  "common_mistakes": ["błąd 1 i dlaczego to problem", "błąd 2"],
-  "what_makes_it_great": "co odróżnia wersję doskonałą od przeciętnej — jeden gęsty akapit",
-  "decision_layers": {{
-    "composition": {{
-      "structure": "architektura dania",
-      "hero": "główny składnik i dlaczego on",
-      "elements": ["element1 + jego rola", "element2 + jego rola"],
-      "balance": "logika balansu",
-      "contrast": "logika kontrastu (tekstura, temperatura, smak)"
-    }},
-    "flavor": {{
-      "pairings": ["parowanie1 + dlaczego działa", "parowanie2"],
-      "boosters": ["wzmacniacz1 + mechanizm"],
-      "balancing": ["co równoważy co i dlaczego"]
-    }},
-    "core": {{
-      "key_processes": [{{"process": "...", "target_temp_c": 0, "time_min": 0, "mechanism": "co się dzieje na poziomie molekularnym/fizycznym"}}],
-      "critical_points": ["punkt krytyczny + co się stanie jeśli go przekroczysz"]
-    }},
-    "techniques": [
-      {{"name": "...", "why": "dlaczego ta technika a nie inna", "critical_steps": ["krok + na co uważać"]}}
-    ],
-    "failure_analysis": [
-      {{"case": "co może pójść nie tak", "why": "mechanizm problemu", "fix": "jak naprawić"}}
-    ]
-  }},
-  "precision_controls": [
-    {{"control": "...", "target": "...", "sensory_check": "jak rozpoznać bez termometru/zegarka", "why": "..."}}
-  ],
-  "science": "gęste wyjaśnienie nauki stojącej za daniem — pisz jakbyś tłumaczył pasjonatowi kuchni, nie studentowi",
-  "flavor_logic": "jak system smakowy tego dania działa jako całość — nie lista, tylko narracja",
-  "plating": "jak wykończyć i podać — z konkretnymi elementami wizualnymi",
-  "decisions_used": {{
-    "core": ["konkretna decyzja 1 z CORE", "konkretna decyzja 2 z CORE"],
-    "composition": ["konkretna reguła z COMPOSITION"],
-    "techniques": ["konkretna technika z TECHNIQUES"],
-    "flavor": ["konkretna decyzja smakowa z FLAVOR (opcjonalnie)"]
-  }},
+  "title": "...",
+  "subtitle": "opis wywołujący apetyt — tekstura, kontrast, charakter",
+  "science": "jeden zaskakujący mechanizm który zmienia sposób gotowania — konkretna chemia/fizyka",
   "times": {{"prep_min": 0, "cook_min": 0, "total_min": 0}},
   "difficulty": 3,
   "servings": 2,
-  "shopping_list": [{{"item": "...", "amount": "...", "section": "mięso/nabiał/warzywa/przyprawy/pantry/..."}}],
-  "ingredients": [{{"item": "...", "amount": "...g/ml", "note": "dlaczego ten składnik/gatunek/forma a nie inny"}}],
-  // WAŻNE: shopping_list i ingredients MUSZĄ zawierać WSZYSTKIE przyprawy, zioła, oleje, sosy z dokładnymi ilościami.
-  "substitutes": [
-    {{
-      "original": "oryginalny składnik",
-      "substitute": "zamiennik",
-      "flavor_impact": "jak zmieni się smak (np. mniej umami, więcej słodyczy, ostrzejszy)",
-      "texture_impact": "jak zmieni się tekstura (np. bardziej kruche, mniej soczysty, gęstszy sos)",
-      "overall_effect": "ogólny wpływ na danie — czy to nadal będzie to samo danie, czy zmieni charakter",
-      "recommendation": "kiedy warto użyć zamiennika (np. dieta, dostępność, preferencje)"
-    }}
-  ],
-  "mise_en_place": ["przygotowanie + dlaczego w tej kolejności"],
-  "steps": [{{"number": 1, "title": "...", "instruction": "Każdy składnik z ilością W NAWIASIE np: Dodaj masło (30g), czosnek (3 ząbki), sól (3g). Użytkownik czyta krok i od razu wie ile czego dodać.", "equipment": "konkretne urządzenie + ustawienia", "timer_seconds": 0, "tip": "pro tip", "why": "co się dzieje i dlaczego", "watch_for": "wskaźniki sensoryczne gotowości"}}],
-  "warnings": [{{"problem": "...", "solution": "...", "prevention": "jak uniknąć od początku"}}],
-  "upgrade": "jeden konkretny sposób na podniesienie dania o poziom (nie abstrakcja, konkret)",
-  "variation": "jedna inteligentna wariacja, która wykorzystuje tę samą bazę wiedzy inaczej",
-  "storage": "jak przechować, co przygotować wcześniej, co traci jakość z czasem"
+  "shopping_list": [{{"item": "...", "amount": "...", "section": "mięso/warzywa/nabiał/przyprawy/pantry"}}],
+  "ingredients": [{{"item": "...", "amount": "...g/ml", "note": "dlaczego ten konkretny składnik/gatunek/forma"}}],
+  "substitutes": [{{"original": "...", "substitute": "...", "flavor_impact": "...", "texture_impact": "...", "overall_effect": "...", "recommendation": "..."}}],
+  "mise_en_place": ["krok przygotowawczy + dlaczego w tej kolejności"],
+  "steps": [{{"number": 1, "title": "...", "instruction": "instrukcja z ilościami w nawiasach przy każdym składniku", "equipment": "konkretne urządzenie z profilu + dokładne ustawienia", "timer_seconds": 0, "tip": "wskaźniki sensoryczne — co widzisz/słyszysz/czujesz", "why": "mechanizm chemiczny/fizyczny tego kroku"}}],
+  "warnings": [{{"problem": "najczęstszy błąd w tym miejscu", "solution": "jak naprawić jeśli już się stało"}}],
+  "upgrade": "jeden konkretny element który podnosi danie na wyższy poziom — składnik, technika lub finishing"
 }}
 """
 
@@ -1511,14 +2253,52 @@ class CulinaryAssistant:
     # ─── 2-STEP PIPELINE: generate_recipe() ───
 
     def generate_recipe(self, question, history=None, profile="lukasz", uid=None):
-        """2-step pipeline: planner → executor → validation."""
+        """2-step pipeline: SOS check (HIGHEST PRIORITY) → planner → executor → validation."""
+        # STEP 0: SOS Emergency Check (HIGHEST PRIORITY)
+        sos_intent = detect_sos_intent(question)
+        if sos_intent:
+            logger.info(f"SOS emergency detected in 2-step pipeline: {question} (level: {sos_intent['level']})")
+            
+            # Get context from history if available
+            context = None
+            if history and len(history) > 0:
+                last_response = history[-1].get("content", "") if isinstance(history[-1], dict) else str(history[-1])
+                context = last_response
+            
+            sos_response = generate_sos_response(question, context, sos_intent)
+            
+            # Behavior by emergency level
+            response_data = {
+                "data": sos_response,
+                "profile": profile,
+                "usage": {"prompt_tokens": 0, "completion_tokens": 0},
+                "plan": {},
+                "cache_hits": {"plan": False, "recipe": False},
+                "sos_mode": True,
+                "sos_level": sos_intent["level"],
+                "sos_score": sos_intent["score"],
+                "sos_issues": sos_intent["issues"]
+            }
+            
+            # Critical level - skip all limits and show alert
+            if sos_intent["level"] == "critical":
+                response_data["skip_limits"] = True
+                response_data["priority_response"] = True
+                logger.warning(f"CRITICAL SOS in 2-step pipeline: {question}")
+            
+            # Auto-recovery: Generate recipe adjustment for future
+            recipe_adjustment = generate_recipe_adjustment(sos_intent, context)
+            response_data["recipe_adjustment"] = recipe_adjustment
+            
+            return response_data
+        
         prof_data = db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
         prof_ctx = profile_to_context(prof_data)
         bans = prof_data.get("banned_ingredients", [])
         if isinstance(bans, str):
             bans = json.loads(bans) if bans else []
 
-        # STEP 1: Layer-specific retrieval
+        # STEP 1: Layer-specific retrieval (PARALLEL for speed)
         words = question.lower().split()
         main_ingredient = next((w for w in words if w in ["kurczak", "wołowina", "wieprzowina", "ryba", "warzywa", "makaron"]), "")
         dish_type = next((w for w in words if w in ["zupa", "stek", "gulasz", "sałatka", "danie", "przystawka"]), "")
@@ -1530,15 +2310,14 @@ class CulinaryAssistant:
             "flavor": f"{main_ingredient} pairing flavor" if main_ingredient else question
         }
         
-        layers = {}
-        for layer, query in layer_queries.items():
-            layers[layer] = self.search_layer(layer, query)
+        # PARALLEL SEARCH - 4x speed improvement
+        layers = parallel_search(self, layer_queries)
         
-        # Build context for planner
-        core_data = trim_context('\n---\n'.join(layers.get('core', [])), 2000)
-        comp_data = trim_context('\n---\n'.join(layers.get('composition', [])), 1500)
-        tech_data = trim_context('\n---\n'.join(layers.get('techniques', [])), 1500)
-        flavor_data = trim_context('\n---\n'.join(layers.get('flavor', [])), 1000)
+        # Build context for planner (ULTRA TRIM for max speed)
+        core_data = ultra_trim('\n---\n'.join(layers.get('core', [])), 600)
+        comp_data = ultra_trim('\n---\n'.join(layers.get('composition', [])), 400)
+        tech_data = ultra_trim('\n---\n'.join(layers.get('techniques', [])), 400)
+        flavor_data = ultra_trim('\n---\n'.join(layers.get('flavor', [])), 300)
         banned_text = ', '.join(bans) if bans else 'none'
         
         context = f"""# KNOWLEDGE CONTEXT
@@ -1573,8 +2352,10 @@ class CulinaryAssistant:
             plan = self._plan_cache[cache_key]
             plan_usage = None
         else:
-            planner_msgs = [{"role": "user", "content": context}]
-            plan, plan_usage = self._call(PLANNER_PROMPT, planner_msgs)
+            # Use simplified prompt with context injection
+            planner_prompt = PLANNER_PROMPT.format(question=question, context=context)
+            planner_msgs = [{"role": "user", "content": planner_prompt}]
+            plan, plan_usage = self._call("", planner_msgs)  # Empty system prompt, user prompt contains everything
             # Cache the plan
             if not hasattr(self, '_plan_cache'):
                 self._plan_cache = {}
@@ -1588,10 +2369,32 @@ class CulinaryAssistant:
             # Fallback to original ask method
             return self.ask(question, history, profile, uid)
         
-        # STEP 4: EXECUTOR - generate recipe from plan
-        executor_prompt = EXECUTOR_PROMPT.replace("<<PLAN JSON>>", json.dumps(plan, ensure_ascii=False, indent=2))
-        executor_msgs = [{"role": "user", "content": executor_prompt}]
-        recipe, recipe_usage = self._call(executor_prompt, executor_msgs)
+        # STEP 4: EXECUTOR - generate recipe from plan (FAST MODE for simple queries)
+        plan_hash = hashlib.md5(json.dumps(plan, sort_keys=True).encode()).hexdigest()
+        recipe_cache_key = f"recipe_{plan_hash}_{question}_{prof_ctx}"
+        
+        if recipe_cache_key in getattr(self, '_recipe_cache', {}):
+            recipe = self._recipe_cache[recipe_cache_key]
+            recipe_usage = None
+        else:
+            # Check if we can use fast mode or skip executor entirely
+            use_fast_mode = is_simple_query(question)
+            skip_executor = use_fast_mode and len(question.split()) <= 3
+            
+            if skip_executor:
+                # Generate fast recipe directly from plan - skip LLM call
+                recipe = generate_fast_recipe(plan)
+                recipe_usage = None
+            else:
+                # Use fast executor prompt for speed
+                executor_prompt = (EXECUTOR_PROMPT_FAST if use_fast_mode else EXECUTOR_PROMPT).replace("<<PLAN JSON>>", json.dumps(plan, ensure_ascii=False, indent=2))
+                executor_msgs = [{"role": "user", "content": executor_prompt}]
+                recipe, recipe_usage = self._call("", executor_msgs)  # Empty system prompt for speed
+            
+            # Cache the recipe
+            if not hasattr(self, '_recipe_cache'):
+                self._recipe_cache = {}
+            self._recipe_cache[recipe_cache_key] = recipe
         
         # STEP 5: Validate recipe against plan
         try:
@@ -1614,13 +2417,59 @@ class CulinaryAssistant:
             "data": recipe,
             "profile": profile,
             "usage": total_usage,
-            "plan": plan  # Include plan for debugging
+            "plan": plan,  # Include plan for debugging
+            "cache_hits": {
+                "plan": cache_key in getattr(self, '_plan_cache', {}),
+                "recipe": recipe_cache_key in getattr(self, '_recipe_cache', {})
+            },
+            "performance": {
+                "parallel_search": True,
+                "fast_mode": is_simple_query(question),
+                "skipped_executor": skip_executor,
+                "ultra_trim": True
+            }
         }
 
     # ─── 4-STAGE PIPELINE: ask() ───
 
     def ask(self, question, history=None, profile="lukasz", uid=None):
-        """Main pipeline: 4-layer retrieval → structured prompt → decision engine."""
+        """Main pipeline: SOS check (HIGHEST PRIORITY) → normal pipeline."""
+        # STEP 0: SOS Emergency Check (HIGHEST PRIORITY)
+        sos_intent = detect_sos_intent(question)
+        if sos_intent:
+            logger.info(f"SOS emergency detected: {question} (level: {sos_intent['level']})")
+            
+            # Get context from history if available
+            context = None
+            if history and len(history) > 0:
+                last_response = history[-1].get("content", "") if isinstance(history[-1], dict) else str(history[-1])
+                context = last_response
+            
+            sos_response = generate_sos_response(question, context, sos_intent)
+            
+            # Behavior by emergency level
+            response_data = {
+                "data": sos_response,
+                "profile": profile,
+                "usage": {"prompt_tokens": 0, "completion_tokens": 0},
+                "sos_mode": True,
+                "sos_level": sos_intent["level"],
+                "sos_score": sos_intent["score"],
+                "sos_issues": sos_intent["issues"]
+            }
+            
+            # Critical level - skip all limits and show alert
+            if sos_intent["level"] == "critical":
+                response_data["skip_limits"] = True
+                response_data["priority_response"] = True
+                logger.warning(f"CRITICAL SOS: {question}")
+            
+            # Auto-recovery: Generate recipe adjustment for future
+            recipe_adjustment = generate_recipe_adjustment(sos_intent, context)
+            response_data["recipe_adjustment"] = recipe_adjustment
+            
+            return response_data
+        
         prof_data = db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
         prof_ctx = profile_to_context(prof_data)
         bans = prof_data.get("banned_ingredients", [])
@@ -1641,15 +2490,13 @@ class CulinaryAssistant:
             "flavor": f"{main_ingredient} pairing flavor" if main_ingredient else question
         }
         
-        # Retrieve with layer-specific queries
-        layers = {}
-        for layer, query in layer_queries.items():
-            layers[layer] = self.search_layer(layer, query)
-        
+        # Retrieve with layer-specific queries — PARALLEL for speed
+        layers = parallel_search(self, layer_queries)
+
         composition_ctx = trim_context("\n---\n".join(layers.get("composition", [])), 2000)
         flavor_ctx = trim_context("\n---\n".join(layers.get("flavor", [])), 1500)
         core_ctx = trim_context("\n---\n".join(layers.get("core", [])), 2000)
-        techniques_ctx = trim_context("\n---\n".join(layers.get("techniques", [])), 1500)  # CRITICAL: techniques was 13KB
+        techniques_ctx = trim_context("\n---\n".join(layers.get("techniques", [])), 1500)
 
         # Build constraints from user profile
         constraints_parts = []
@@ -1688,7 +2535,7 @@ class CulinaryAssistant:
             },
         }
 
-    def ask_stream_prompt(self, question, history=None, profile="lukasz", uid=None):
+    def ask_stream_prompt(self, question, history=None, profile="lukasz", uid=None, filters=None, pantry=None):
         """Build prompt for streaming — returns (system_prompt, messages, prof_data)."""
         prof_data = db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
         prof_ctx = profile_to_context(prof_data)
@@ -1696,37 +2543,61 @@ class CulinaryAssistant:
         if isinstance(bans, str):
             bans = json.loads(bans) if bans else []
 
-        # STAGE 1: Layer-specific retrieval with layer-specific queries (streaming version)
-        # Extract key terms for better retrieval
+        # Layer-specific retrieval — PARALLEL
         words = question.lower().split()
         main_ingredient = next((w for w in words if w in ["kurczak", "wołowina", "wieprzowina", "ryba", "warzywa", "makaron"]), "")
         dish_type = next((w for w in words if w in ["zupa", "stek", "gulasz", "sałatka", "danie", "przystawka"]), "")
-        
-        # Layer-specific queries for targeted retrieval
         layer_queries = {
             "core": f"{main_ingredient} temperature doneness process" if main_ingredient else question,
             "techniques": f"{main_ingredient} cooking technique" if main_ingredient else question,
             "composition": f"{dish_type} structure balance" if dish_type else question,
             "flavor": f"{main_ingredient} pairing flavor" if main_ingredient else question
         }
-        
-        # Retrieve with layer-specific queries
-        layers = {}
-        for layer, query in layer_queries.items():
-            layers[layer] = self.search_layer(layer, query)
-        
+        layers = parallel_search(self, layer_queries)
+
         composition_ctx = trim_context("\n---\n".join(layers.get("composition", [])), 2000)
         flavor_ctx = trim_context("\n---\n".join(layers.get("flavor", [])), 1500)
         core_ctx = trim_context("\n---\n".join(layers.get("core", [])), 2000)
-        techniques_ctx = trim_context("\n---\n".join(layers.get("techniques", [])), 1500)  # CRITICAL: techniques was 13KB
+        techniques_ctx = trim_context("\n---\n".join(layers.get("techniques", [])), 1500)
 
         constraints_parts = []
         if prof_ctx:
             constraints_parts.append(prof_ctx)
         if bans:
-            constraints_parts.append("BANNED INGREDIENTS: " + ", ".join(bans))
-        constraints = "\n".join(constraints_parts) if constraints_parts else "none"
+            constraints_parts.append("ABSOLUTNE ZAKAZY (nigdy nie używaj): " + ", ".join(bans))
 
+        # ─── Filters injection ───
+        if filters:
+            f_parts = []
+            if filters.get("time"): f_parts.append(f"CZAS: maksymalnie {filters['time']} minut")
+            if filters.get("course"): f_parts.append(f"RODZAJ DANIA: {filters['course']}")
+            if filters.get("protein"): f_parts.append(f"GŁÓWNY SKŁADNIK: {filters['protein']}")
+            if filters.get("technique"): f_parts.append(f"TECHNIKA: użyj techniki {filters['technique']}")
+            if filters.get("cuisine"): f_parts.append(f"KUCHNIA: {filters['cuisine']}")
+            if filters.get("difficulty"): f_parts.append(f"TRUDNOŚĆ: poziom {filters['difficulty']}/5")
+            if filters.get("diet"): f_parts.append(f"DIETA: {filters['diet']}")
+            if filters.get("goal"): f_parts.append(f"CEL: {filters['goal']}")
+            if f_parts:
+                constraints_parts.append("## FILTRY UŻYTKOWNIKA (BEZWZGLĘDNIE PRZESTRZEGAJ):\n" + "\n".join(f_parts))
+
+        # ─── Pantry injection ───
+        if pantry:
+            ingredients = pantry.get("ingredients", [])
+            shopping_mode = pantry.get("shopping_mode", False)
+            if ingredients:
+                if shopping_mode:
+                    constraints_parts.append(
+                        f"## SPIŻARNIA (tryb zakupowy):\nMam w domu: {', '.join(ingredients)}\n"
+                        "Użyj tego co mam jako bazę. Możesz zaproponować dokupienie max 3-5 składników które dramatycznie podniosą danie.\n"
+                        "W shopping_list oznacz każdy składnik polem \"have\": true (mam) lub false (do kupienia)."
+                    )
+                else:
+                    constraints_parts.append(
+                        f"## SPIŻARNIA (gotuję z tego co mam):\nDOSTĘPNE SKŁADNIKI: {', '.join(ingredients)}\n"
+                        "UŻYWAJ WYŁĄCZNIE tych składników. Nie proponuj nic poza nimi (poza solą, pieprzem, olejem jako pantry basics)."
+                    )
+
+        constraints = "\n".join(constraints_parts) if constraints_parts else "none"
         task_prompt = build_pipeline_prompt(
             user_input=question,
             constraints=constraints,
@@ -1805,6 +2676,59 @@ class CulinaryAssistant:
         parsed.pop("sources", None)
         parsed = enforce_bans(parsed, bans)
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
+
+    def proposals(self, question, uid=None, filters=None, pantry=None):
+        """Fast proposal step: detect specific vs vague query, return 5 dish ideas or skip."""
+        prof_data = db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
+        bans = prof_data.get("banned_ingredients", [])
+        if isinstance(bans, str): bans = json.loads(bans) if bans else []
+
+        constraints_parts = []
+        if bans: constraints_parts.append("ZAKAZY: " + ", ".join(bans))
+        if filters:
+            f = []
+            if filters.get("time"): f.append(f"max {filters['time']} min")
+            if filters.get("course"): f.append(f"rodzaj: {filters['course']}")
+            if filters.get("protein"): f.append(f"składnik: {filters['protein']}")
+            if filters.get("technique"): f.append(f"technika: {filters['technique']}")
+            if filters.get("cuisine"): f.append(f"kuchnia: {filters['cuisine']}")
+            if filters.get("diet"): f.append(f"dieta: {filters['diet']}")
+            if filters.get("goal"): f.append(filters['goal'])
+            if f: constraints_parts.append("FILTRY: " + ", ".join(f))
+        if pantry:
+            ings = pantry.get("ingredients", [])
+            if ings:
+                mode = "zakupowy" if pantry.get("shopping_mode") else "tylko z dostępnych"
+                constraints_parts.append(f"SPIŻARNIA ({mode}): {', '.join(ings)}")
+
+        constraints = "\n".join(constraints_parts) if constraints_parts else "brak"
+
+        prompt = f"""ZAPYTANIE: {question}
+OGRANICZENIA: {constraints}
+
+Zdecyduj: czy to konkretne danie czy ogólne zapytanie?
+
+KONKRETNE (is_specific: true) = użytkownik podał PEŁNĄ, JEDNOZNACZNĄ nazwę konkretnego dania z kuchni: "carbonara", "risotto alla milanese", "pad thai", "boeuf bourguignon", "pierogi ruskie z ziemniakami", "pizza margherita", "bigos", "żurek".
+NIE KONKRETNE mimo że to jedno słowo: "stek" (jakiego? jaka technika?), "kurczak", "zupa", "makaron", "ryba", "deser" — to są kategorie, nie konkretne dania.
+
+OGÓLNE (is_specific: false) = "coś z kurczakiem", "szybki obiad", "mam marchewkę i jajka", "coś włoskiego", "deser", "co zrobić z resztkami", "stek", "kurczak", "pasta", "zupa", "ryba", "coś słodkiego" etc.
+
+Dla KONKRETNEGO zwróć:
+{{"is_specific": true, "dish": "dokładna nazwa dania"}}
+
+Dla OGÓLNEGO zwróć 5 różnorodnych propozycji restauracyjnego poziomu. Żadnych banalnych kombinacji. Każda propozycja inna technika lub styl:
+{{"is_specific": false, "proposals": [
+  {{"id": 1, "title": "Nazwa dania", "subtitle": "apetyczny opis w jednym zdaniu — tekstura, kontrast, charakter", "time_min": 30, "difficulty": 3, "cuisine": "kuchnia", "wow": "element zaskoczenia"}},
+  {{"id": 2, "title": "...", "subtitle": "...", "time_min": 0, "difficulty": 0, "cuisine": "...", "wow": "..."}},
+  {{"id": 3, "title": "...", "subtitle": "...", "time_min": 0, "difficulty": 0, "cuisine": "...", "wow": "..."}},
+  {{"id": 4, "title": "...", "subtitle": "...", "time_min": 0, "difficulty": 0, "cuisine": "...", "wow": "..."}},
+  {{"id": 5, "title": "...", "subtitle": "...", "time_min": 0, "difficulty": 0, "cuisine": "...", "wow": "..."}}
+]}}
+
+Tylko czysty JSON."""
+
+        parsed, usage = self._call("", [{"role": "user", "content": prompt}])
+        return parsed, usage
 
     def surprise(self, profile="lukasz", uid=None):
         return self.ask(random.choice(SURPRISE_THEMES), profile=profile, uid=uid)
@@ -2067,12 +2991,7 @@ def create_app():
         pr=p.get("bot_profile","guest")
         h=[{"role":m["role"],"content":m["content"]} for m in (d.get("conversation_history") or []) if isinstance(m,dict) and m.get("role") in ("user","assistant")][-MAX_HISTORY:]
         try:
-            # Use 2-step pipeline by default, fallback to 4-layer if needed
-            try:
-                result=a.generate_recipe(q,h,profile=pr,uid=g.user_id)
-            except Exception as e:
-                logger.error(f"2-step pipeline failed: {e}, falling back to 4-layer")
-                result=a.ask(q,h,profile=pr,uid=g.user_id)
+            result=a.ask(q,h,profile=pr,uid=g.user_id)
             increment_daily(g.user_id,"recipes")
             return jsonify({"success":True,**result})
         except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad serwera."}),500
@@ -2099,6 +3018,22 @@ def create_app():
             return jsonify({"success":True,**result})
         except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad serwera."}),500
 
+    @app.route("/api/sos",methods=["POST"])
+    @require_auth
+    def api_sos():
+        """Emergency cooking help - SOS system."""
+        a=app.config.get("assistant")
+        if not a: return jsonify({"error":"Not init"}),503
+        d=request.get_json(silent=True) or {}
+        q=(d.get("question") or "").strip()
+        if not q: return jsonify({"error":"No question"}),400
+        
+        try:
+            # Direct SOS response - no limits, no cache
+            sos_response = generate_sos_response(q)
+            return jsonify({"success":True,"data":sos_response,"sos_mode":True})
+        except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad serwera."}),500
+
     @app.route("/api/ask-stream",methods=["POST"])
     @require_auth
     def api_ask_stream():
@@ -2113,8 +3048,10 @@ def create_app():
         p=db_get_profile_cached(g.user_id)
         pr=p.get("bot_profile","guest")
         h=[{"role":m["role"],"content":m["content"]} for m in (d.get("conversation_history") or []) if isinstance(m,dict) and m.get("role") in ("user","assistant")][-MAX_HISTORY:]
+        filters=d.get("filters") or None
+        pantry=d.get("pantry") or None
         # Use 4-layer pipeline for streaming
-        system_prompt,msgs,prof_data=a.ask_stream_prompt(q,h,profile=pr,uid=g.user_id)
+        system_prompt,msgs,prof_data=a.ask_stream_prompt(q,h,profile=pr,uid=g.user_id,filters=filters,pantry=pantry)
         uid=g.user_id
         def generate():
             full=""
@@ -2424,6 +3361,179 @@ def create_app():
     def stats():
         a=app.config.get("assistant")
         return jsonify({"chunks":a.total_chunks() if a else 0,"model":AI_MODEL})
+
+    # ─── Proposals ───
+    @app.route("/api/proposals", methods=["POST"])
+    @require_auth
+    def api_proposals():
+        a = app.config.get("assistant")
+        if not a: return jsonify({"error": "Not init"}), 503
+        d = request.get_json(silent=True) or {}
+        q = (d.get("question") or "").strip()
+        if not q: return jsonify({"error": "No question"}), 400
+        filters = d.get("filters") or None
+        pantry = d.get("pantry") or None
+        try:
+            logger.info(f"[proposals] query='{q}' filters={filters} pantry_items={len(pantry.get('ingredients',[]) if pantry else [])}")
+            parsed, _ = a.proposals(q, uid=g.user_id, filters=filters, pantry=pantry)
+            logger.info(f"[proposals] result: is_specific={parsed.get('is_specific')} dish={parsed.get('dish','—')} proposals_count={len(parsed.get('proposals',[]))}")
+            return jsonify({"success": True, "data": parsed})
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            return jsonify({"error": str(e)}), 500
+
+    # ─── Drink Pairing ───
+    @app.route("/api/pairing",methods=["POST"])
+    @require_auth
+    def api_pairing():
+        a=app.config.get("assistant")
+        if not a: return jsonify({"error":"Not init"}),503
+        d=request.get_json(silent=True) or {}
+        recipe_title=d.get("title","")
+        recipe_summary=d.get("summary","")  # ingredients + cuisine
+        if not recipe_title: return jsonify({"error":"Brak przepisu"}),400
+        prompt=f"""Jesteś sommelierem i ekspertem od parowania napojów.
+Przepis: {recipe_title}
+Składniki/styl: {recipe_summary}
+
+Zaproponuj parowanie napojów. Zwróć JSON:
+{{"pairings":[
+  {{"category":"wino","name":"konkretna nazwa/styl","why":"dlaczego pasuje — konkretny mechanizm smakowy","serve":"temperatura, kieliszek"}},
+  {{"category":"piwo","name":"styl piwa","why":"...","serve":"..."}},
+  {{"category":"bezalkoholowe","name":"napój","why":"...","serve":"..."}}
+]}}"""
+        try:
+            parsed,_=a._call("",[ {"role":"user","content":prompt}])
+            return jsonify({"success":True,"data":parsed})
+        except Exception as e:
+            return jsonify({"error":str(e)}),500
+
+    # ─── Cooking Timeline ───
+    @app.route("/api/timeline",methods=["POST"])
+    @require_auth
+    def api_timeline():
+        a=app.config.get("assistant")
+        if not a: return jsonify({"error":"Not init"}),503
+        d=request.get_json(silent=True) or {}
+        steps=d.get("steps",[])
+        title=d.get("title","")
+        if not steps: return jsonify({"error":"Brak kroków"}),400
+        steps_text="\n".join(f"{s.get('number','?')}. {s.get('title','')} — {s.get('instruction','')} (timer: {s.get('timer_seconds',0)}s)" for s in steps)
+        prompt=f"""Masz listę kroków przepisu "{title}". Stwórz optymalny harmonogram gotowania pokazując co można robić równolegle.
+Kroki:\n{steps_text}
+
+Zwróć JSON:
+{{"total_active_min": 0, "total_elapsed_min": 0,
+  "timeline": [
+    {{"minute": 0, "parallel": [{{"step_num":1,"action":"krótki opis","duration_min":5,"type":"active|passive"}}]}}
+  ],
+  "tips": ["wskazówka o kolejności/równoległości"]
+}}
+active = wymaga uwagi, passive = czeka samo (piekarnik, garnek)"""
+        try:
+            parsed,_=a._call("",[ {"role":"user","content":prompt}])
+            return jsonify({"success":True,"data":parsed})
+        except Exception as e:
+            return jsonify({"error":str(e)}),500
+
+    # ─── Fix Recipe Step ───
+    @app.route("/api/fix",methods=["POST"])
+    @require_auth
+    def api_fix():
+        a=app.config.get("assistant")
+        if not a: return jsonify({"error":"Not init"}),503
+        d=request.get_json(silent=True) or {}
+        step=d.get("step","")
+        problem=d.get("problem","")
+        recipe_title=d.get("recipe_title","")
+        if not problem: return jsonify({"error":"Opisz problem"}),400
+        prompt=f"""Jesteś awaryjnym pomocnikiem kulinarnym. Użytkownik gotuje "{recipe_title}" i ma problem przy kroku: "{step}".
+Problem: {problem}
+Odpowiedz krótko i konkretnie — co zrobić TERAZ. Zwróć JSON:
+{{"diagnosis":"co się stało i dlaczego","fix_now":["krok 1 — natychmiast","krok 2"],"can_save":true,"prevention":"jak uniknąć następnym razem"}}"""
+        try:
+            parsed,_=a._call("",[ {"role":"user","content":prompt}])
+            return jsonify({"success":True,"data":parsed})
+        except Exception as e:
+            return jsonify({"error":str(e)}),500
+
+    # ─── Recipe Variant (healthier / richer) ───
+    @app.route("/api/variant",methods=["POST"])
+    @require_auth
+    def api_variant():
+        a=app.config.get("assistant")
+        if not a: return jsonify({"error":"Not init"}),503
+        d=request.get_json(silent=True) or {}
+        mode=d.get("mode","healthier")  # healthier | richer
+        recipe=d.get("recipe",{})
+        if not recipe: return jsonify({"error":"Brak przepisu"}),400
+        p=db_get_profile_cached(g.user_id)
+        bans=p.get("banned_ingredients",[])
+        if isinstance(bans,str): bans=json.loads(bans) if bans else []
+        direction={"healthier":"zdrowszą, lżejszą wersję (mniej kalorii, zdrowsze tłuszcze, więcej warzyw, mniej cukru)","richer":"bogatszą, bardziej luksusową wersję (lepsze składniki, głębszy smak, techniki restauracyjne)"}[mode]
+        prompt=f"""Na bazie przepisu "{recipe.get('title','')}" stwórz {direction}.
+Zachowaj ten sam szkielet — zmień tylko składniki/techniki. Zakazy: {', '.join(bans) or 'brak'}.
+Zwróć pełny JSON przepisu (ten sam format co oryginał) z dodanym polem "variant_note": "co i dlaczego zmieniłem"."""
+        h=[{"role":"user","content":f"Oto przepis bazowy:\n{json.dumps(recipe,ensure_ascii=False)[:2000]}"}]
+        try:
+            allowed,_,limit=check_daily_limit(g.user_id,"recipes")
+            if not allowed: return jsonify({"error":"limit","is_limit":True,"message":f"Dzienny limit {limit} przepisów wyczerpany"}),429
+            parsed,_=a._call("",h+[{"role":"user","content":prompt}])
+            parsed["type"]="recipe"
+            parsed=enforce_bans(parsed,bans)
+            increment_daily(g.user_id,"recipes")
+            return jsonify({"success":True,"data":parsed})
+        except Exception as e:
+            return jsonify({"error":str(e)}),500
+
+    # ─── Pantry (save/get user ingredients) ───
+    @app.route("/api/pantry",methods=["GET"])
+    @require_auth
+    def get_pantry():
+        p=db_get_profile(g.user_id)
+        pantry=p.get("pantry",{"ingredients":[],"shopping_mode":False})
+        if isinstance(pantry,str):
+            try: pantry=json.loads(pantry)
+            except: pantry={"ingredients":[],"shopping_mode":False}
+        return jsonify({"pantry":pantry})
+
+    @app.route("/api/pantry",methods=["POST"])
+    @require_auth
+    def save_pantry():
+        d=request.get_json(silent=True) or {}
+        pantry={"ingredients":d.get("ingredients",[]),"shopping_mode":d.get("shopping_mode",False)}
+        db_update_profile(g.user_id,{"pantry":pantry})
+        invalidate_profile_cache(g.user_id)
+        return jsonify({"success":True})
+
+    # ─── Recipe Notes ───
+    @app.route("/api/notes",methods=["POST"])
+    @require_auth
+    def save_note():
+        d=request.get_json(silent=True) or {}
+        recipe_title=d.get("recipe_title","")
+        note=d.get("note","")
+        if not recipe_title: return jsonify({"error":"Brak tytułu"}),400
+        p=db_get_profile(g.user_id)
+        notes=p.get("recipe_notes",{})
+        if isinstance(notes,str):
+            try: notes=json.loads(notes)
+            except: notes={}
+        notes[recipe_title]={"text":note,"updated_at":datetime.utcnow().isoformat()}
+        db_update_profile(g.user_id,{"recipe_notes":notes})
+        invalidate_profile_cache(g.user_id)
+        return jsonify({"success":True})
+
+    @app.route("/api/notes/<path:recipe_title>",methods=["GET"])
+    @require_auth
+    def get_note(recipe_title):
+        p=db_get_profile(g.user_id)
+        notes=p.get("recipe_notes",{})
+        if isinstance(notes,str):
+            try: notes=json.loads(notes)
+            except: notes={}
+        note=notes.get(recipe_title,{})
+        return jsonify({"note":note})
 
     @app.route("/")
     def index(): return send_from_directory("static","index.html")

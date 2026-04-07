@@ -15,13 +15,56 @@ async function send(){
   document.getElementById('quickTags').style.display='none';
   addMsg('user',q);chatHistory.push({role:'user',content:q});
 
-  // Loading indicator (no raw JSON preview — just a clean loader)
-  const loadDiv=document.createElement('div');loadDiv.className='msg';loadDiv.innerHTML=loadingDots();
+  // ── STEP 1: proposals ──
+  const loadDiv=document.createElement('div');loadDiv.className='msg';
+  const previewEl=document.createElement('div');
+  previewEl.className='stream-preview';
+  previewEl.innerHTML=loadingDots();
+  loadDiv.appendChild(previewEl);
   document.getElementById('messages').appendChild(loadDiv);scrollBottom();
 
+  let proposalResult=null;
   try{
-    const r=await fetch(API+'/api/ask-stream',{method:'POST',headers:authHeaders(),body:JSON.stringify({question:q,conversation_history:chatHistory.slice(-20)})});
-    
+    const pr=await fetch(API+'/api/proposals',{method:'POST',headers:authHeaders(),
+      body:JSON.stringify({question:q,filters:getActiveFilters?.(),pantry:getActivePantry?.()})});
+    const pd=await pr.json();
+    console.log('[proposals] status:',pr.status,'response:',pd);
+    if(pr.ok && pd.success) proposalResult=pd.data;
+    else console.warn('[proposals] failed:',pd);
+  }catch(e){console.error('[proposals] fetch error:',e);}
+
+  console.log('[proposals] result:',proposalResult);
+
+  // If specific dish or proposals failed → go straight to recipe
+  if(!proposalResult||proposalResult.is_specific){
+    const dish=proposalResult?.dish||q;
+    console.log('[proposals] going direct to recipe for:',dish);
+    await streamRecipe(dish,loadDiv,previewEl);
+    return;
+  }
+
+  // ── STEP 2: show proposals ──
+  loadDiv.remove();
+  renderProposals(q,proposalResult.proposals);
+  scrollBottom();
+}
+
+async function streamRecipe(q,loadDiv,previewEl){
+  if(!loadDiv){
+    loadDiv=document.createElement('div');loadDiv.className='msg';
+    previewEl=document.createElement('div');previewEl.className='stream-preview';
+    previewEl.innerHTML=loadingDots();
+    loadDiv.appendChild(previewEl);
+    document.getElementById('messages').appendChild(loadDiv);scrollBottom();
+  }else{
+    previewEl.innerHTML=loadingDots();
+  }
+
+  try{
+    const r=await fetch(API+'/api/ask-stream',{method:'POST',headers:authHeaders(),
+      body:JSON.stringify({question:q,conversation_history:chatHistory.slice(-20),
+        filters:getActiveFilters?.(),pantry:getActivePantry?.()})});
+
     if(!r.ok){
       const d=await r.json();loadDiv.remove();
       if(d.is_limit){showLimitMessage(d.message);return}
@@ -31,7 +74,7 @@ async function send(){
 
     const reader=r.body.getReader();
     const decoder=new TextDecoder();
-    let buffer='',fullText='',finalData=null;
+    let buffer='',fullText='',finalData=null,firstChunk=true;
 
     while(true){
       const{done,value}=await reader.read();
@@ -43,7 +86,13 @@ async function send(){
         if(!line.startsWith('data: ')) continue;
         try{
           const msg=JSON.parse(line.slice(6));
-          if(msg.chunk) fullText+=msg.chunk;
+          if(msg.chunk){
+            fullText+=msg.chunk;
+            if(firstChunk){previewEl.innerHTML='';firstChunk=false}
+            const preview=fullText.replace(/[{}\[\]"]/g,' ').replace(/\s+/g,' ').slice(-300);
+            previewEl.textContent=preview;
+            scrollBottom();
+          }
           if(msg.done&&msg.data) finalData=msg.data;
           if(msg.error){loadDiv.remove();addMsg('t','Błąd: '+msg.error);return}
         }catch{}
@@ -55,6 +104,66 @@ async function send(){
     else if(fullText){try{handleResponse(JSON.parse(fullText))}catch{addMsg('t',fullText)};autoSaveSession()}
   }catch{loadDiv.remove();addMsg('t','Błąd połączenia.')}
   scrollBottom();
+}
+
+function renderProposals(originalQuery,proposals){
+  const msgs=document.getElementById('messages');
+  const div=document.createElement('div');div.className='msg proposals-wrap';
+  const stars=n=>'★'.repeat(n)+'☆'.repeat(5-n);
+  let h='<div class="proposals-header">Wybierz co dziś gotujemy:</div>';
+  h+='<div class="proposals-grid">';
+  (proposals||[]).forEach(p=>{
+    h+=`<div class="proposal-card" onclick="chooseProposal(this,'${esc(p.title).replace(/'/g,"\\'")}')">
+      <div class="prop-title">${esc(p.title)}</div>
+      <div class="prop-sub">${esc(p.subtitle)}</div>
+      <div class="prop-meta">
+        ${p.time_min?`<span>⏱ ${p.time_min}min</span>`:''}
+        ${p.difficulty?`<span>${stars(p.difficulty)}</span>`:''}
+        ${p.cuisine?`<span>🌍 ${esc(p.cuisine)}</span>`:''}
+      </div>
+      ${p.wow?`<div class="prop-wow">✨ ${esc(p.wow)}</div>`:''}
+    </div>`;
+  });
+  h+='</div>';
+  h+=`<div class="proposals-actions">
+    <button class="prop-more-btn" onclick="loadMoreProposals(this,'${esc(originalQuery).replace(/'/g,"\\'")}')">🔄 Inne pomysły</button>
+    <button class="prop-skip-btn" onclick="skipProposals(this,'${esc(originalQuery).replace(/'/g,"\\'")}')">✏️ Żaden — generuj z zapytania</button>
+  </div>`;
+  div.innerHTML=h;
+  msgs.appendChild(div);
+}
+
+async function chooseProposal(card,title){
+  // Mark selected
+  card.classList.add('selected');
+  card.closest('.proposals-wrap').querySelectorAll('.proposal-card').forEach(c=>{
+    if(c!==card)c.style.opacity='0.4';
+  });
+  card.closest('.proposals-wrap').querySelectorAll('.proposals-actions').forEach(a=>a.remove());
+  chatHistory.push({role:'user',content:title});
+  await streamRecipe(title,null,null);
+}
+
+async function loadMoreProposals(btn,originalQuery){
+  const wrap=btn.closest('.proposals-wrap');
+  wrap.querySelector('.proposals-actions').innerHTML=loadingDots();
+  try{
+    const pr=await fetch(API+'/api/proposals',{method:'POST',headers:authHeaders(),
+      body:JSON.stringify({question:originalQuery+' (inne propozycje niż poprzednie)',
+        filters:getActiveFilters?.(),pantry:getActivePantry?.()})});
+    const pd=await pr.json();
+    wrap.remove();
+    if(pd.success&&pd.data?.proposals) renderProposals(originalQuery,pd.data.proposals);
+  }catch{
+    if(wrap)wrap.querySelector('.proposals-actions').innerHTML=
+      `<button class="prop-more-btn" onclick="loadMoreProposals(this,'${esc(originalQuery).replace(/'/g,"\\'")}')">🔄 Spróbuj ponownie</button>`;
+  }
+  scrollBottom();
+}
+
+async function skipProposals(btn,originalQuery){
+  btn.closest('.proposals-wrap').remove();
+  await streamRecipe(originalQuery,null,null);
 }
 
 async function surprise(){
@@ -90,8 +199,8 @@ async function importFromUrl(){
 }
 
 function handleResponse(data){
-  if(data.type==='recipe'){renderRecipeCard(data);chatHistory.push({role:'assistant',content:JSON.stringify(data)})}
-  else if(data.type==='comparison'){renderComparison(data);chatHistory.push({role:'assistant',content:JSON.stringify(data)})}
+  if(data.type==='recipe'){renderRecipeCard(data);chatHistory.push({role:'assistant',content:'[Przepis: '+data.title+']'})}
+  else if(data.type==='comparison'){renderComparison(data);chatHistory.push({role:'assistant',content:'[Porównanie: '+data.topic+']'})}
   else{addMsg('t',data.content||JSON.stringify(data));chatHistory.push({role:'assistant',content:data.content||''})}
 }
 
@@ -120,13 +229,26 @@ function renderRecipeCard(r){
   h+='<button class="action-btn live-cook-btn" onclick="openLive(this)">🔴 Gotuj!</button>';
   h+='<button class="action-btn" onclick="copyRecipe(this)">📋</button>';
   h+='<button class="action-btn" onclick="rateRecipe(this)">⭐</button>';
-  h+='</div><div>';
+  h+='<button class="action-btn" onclick="showPairing(this)" title="Parowanie napojów">🍷</button>';
+  h+='<button class="action-btn" onclick="showTimeline(this)" title="Harmonogram">📊</button>';
+  h+='<button class="action-btn" onclick="openNotes(this)" title="Notatki">📝</button>';
+  h+='</div>';
+  // Scaling row
+  h+='<div class="scaling-row">';
+  h+='<span class="scaling-label">🍽 Porcje:</span>';
+  h+='<button class="scale-btn" onclick="scaleRecipe(this,-1)">−</button>';
+  h+='<span class="scale-val">'+(r.servings||2)+'</span>';
+  h+='<button class="scale-btn" onclick="scaleRecipe(this,+1)">+</button>';
+  h+='<button class="variant-btn" onclick="makeVariant(this,\'healthier\')" title="Zdrowsza wersja">🥗</button>';
+  h+='<button class="variant-btn" onclick="makeVariant(this,\'richer\')" title="Bogatsza wersja">👑</button>';
+  h+='</div>';
+  h+='<div>';
   if(r.science) h+=bSec('🧪 Nauka','<div style="font-size:0.82rem;line-height:1.6;color:var(--text-dim)">'+esc(r.science)+'</div>');
   if(r.shopping_list?.length) h+=bSec('🛒 Zakupy',bShop(r.shopping_list),1);
   if(r.ingredients?.length) h+=bSec('⚖️ Składniki',bIng(r.ingredients));
   if(r.substitutes?.length) h+=bSec('🔁 Zamienniki',bSubs(r.substitutes));
   if(r.mise_en_place?.length) h+=bSec('📋 Przygotowanie','<ul style="padding-left:14px;font-size:0.82rem;line-height:1.7;color:var(--text-dim)">'+r.mise_en_place.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul>');
-  if(r.steps?.length) h+=bSec('👨‍🍳 Metoda',bSteps(r.steps),1);
+  if(r.steps?.length) h+=bSec('👨‍🍳 Metoda',bSteps(r.steps,r.title),1);
   if(r.warnings?.length) h+=bSec('⚠️',r.warnings.map(w=>'<div style="padding:4px 0;font-size:0.82rem"><span style="color:var(--danger);font-weight:600">'+esc(w.problem)+'</span> → '+esc(w.solution)+'</div>').join(''));
   if(r.upgrade) h+=bSec('💡','<div style="font-size:0.82rem;color:var(--text-dim)">'+esc(r.upgrade)+'</div>');
   h+='</div></div>';
@@ -156,7 +278,7 @@ function bSec(t,c,o){return'<div class="recipe-section"><button class="section-t
 function bShop(it){return it.map(i=>'<div class="shop-item" onclick="this.classList.toggle(\'checked\')"><div class="shop-check">✓</div><div class="shop-amount">'+esc(i.amount)+'</div><div class="shop-name">'+esc(i.item)+'</div>'+(i.section?'<div class="shop-section-tag">'+esc(i.section)+'</div>':'')+'</div>').join('')}
 function bIng(it){return it.map(i=>'<div style="display:flex;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.82rem"><span style="font-weight:600;min-width:50px;color:var(--gold)">'+esc(i.amount)+'</span><span>'+esc(i.item)+(i.note?' <span style="color:var(--text-faint)">· '+esc(i.note)+'</span>':'')+'</span></div>').join('')}
 function bSubs(it){return it.map(s=>{let h='<div style="padding:6px 0 6px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.82rem">';h+='<div style="font-weight:600;color:var(--gold)">'+esc(s.original)+' → '+esc(s.substitute)+'</div>';if(s.flavor_impact)h+='<div><span style="font-weight:600;color:var(--accent">Smak:</span> '+esc(s.flavor_impact)+'</div>';if(s.texture_impact)h+='<div><span style="font-weight:600;color:var(--accent">Tekstura:</span> '+esc(s.texture_impact)+'</div>';if(s.overall_effect)h+='<div><span style="font-weight:600;color:var(--accent">Ogólny efekt:</span> '+esc(s.overall_effect)+'</div>';if(s.recommendation)h+='<div><span style="font-weight:600;color:var(--accent">Kiedy:</span> '+esc(s.recommendation)+'</div>';return h+'</div>'}).join('')}
-function bSteps(st){return st.map(s=>{let h='<div class="step"><span class="step-num">'+s.number+'</span><span class="step-title">'+esc(s.title||'')+'</span><div class="step-text">'+esc(s.instruction)+'</div>';if(s.equipment)h+='<div class="step-equip">🔥 '+esc(s.equipment)+'</div>';if(s.why)h+='<div class="step-why">'+esc(s.why)+'</div>';if(s.tip)h+='<div class="step-tip">💡 '+esc(s.tip)+'</div>';if(s.timer_seconds)h+='<button class="step-timer-btn" onclick="startTimer('+s.timer_seconds+',\''+esc(s.title||'').replace(/'/g,'')+'\',this)">⏱'+fmtT(s.timer_seconds)+'</button>';return h+'</div>'}).join('')}
+function bSteps(st,recipeTitle){return st.map(s=>{let h='<div class="step"><span class="step-num">'+s.number+'</span><span class="step-title">'+esc(s.title||'')+'</span><div class="step-text">'+esc(s.instruction)+'</div>';if(s.equipment)h+='<div class="step-equip">🔥 '+esc(s.equipment)+'</div>';if(s.why)h+='<div class="step-why">'+esc(s.why)+'</div>';if(s.tip)h+='<div class="step-tip">💡 '+esc(s.tip)+'</div>';const actions=[];if(s.timer_seconds)actions.push('<button class="step-timer-btn" onclick="startTimer('+s.timer_seconds+',\''+esc(s.title||'').replace(/'/g,'')+'\',this)">⏱'+fmtT(s.timer_seconds)+'</button>');actions.push('<button class="step-fix-btn" onclick="fixStep('+s.number+',\''+esc(s.title||'').replace(/'/g,'')+'\',\''+esc(recipeTitle||'').replace(/'/g,'')+'\')">🆘</button>');if(actions.length)h+='<div class="step-actions">'+actions.join('')+'</div>';return h+'</div>'}).join('')}
 
 // ─── Rate recipe ───
 function rateRecipe(btn){
