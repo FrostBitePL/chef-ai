@@ -30,7 +30,7 @@ MAX_HISTORY=8; SEARCH_RESULTS=8
 # ─── AI Model ───
 OPENAI_API_KEY=os.environ.get("OPENAI_API_KEY","")
 AI_MODEL="gpt-4o-mini"
-AI_MAX_TOKENS=2048
+AI_MAX_TOKENS=4096
 AI_BASE_URL="https://api.openai.com/v1"
 
 SUPABASE_URL=os.environ.get("SUPABASE_URL","")
@@ -2557,7 +2557,7 @@ class CulinaryAssistant:
             },
         }
 
-    def ask_stream_prompt(self, question, history=None, profile="lukasz", uid=None, filters=None, pantry=None):
+    def ask_stream_prompt(self, question, history=None, profile="lukasz", uid=None, filters=None, pantry=None, kcal_target=0, servings=0):
         """Build prompt for streaming — returns (system_prompt, messages, prof_data)."""
         prof_data = db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
         prof_ctx = profile_to_context(prof_data)
@@ -2606,6 +2606,20 @@ class CulinaryAssistant:
             if filters.get("goal"): f_parts.append(f"CEL: {filters['goal']}")
             if f_parts:
                 constraints_parts.append("## FILTRY UŻYTKOWNIKA (BEZWZGLĘDNIE PRZESTRZEGAJ):\n" + "\n".join(f_parts))
+
+        # ─── Calorie target injection ───
+        if kcal_target and kcal_target >= 50:
+            srv = max(servings, 1)
+            total_kcal = kcal_target * srv
+            constraints_parts.append(
+                f"## CEL KALORYCZNY (BEZWZGLĘDNIE PRZESTRZEGAJ):\n"
+                f"Użytkownik ustawił CEL KALORYCZNY: {kcal_target} kcal NA PORCJĘ.\n"
+                f"- Przepis MUSI być na DOKŁADNIE {srv} {'porcję' if srv == 1 else 'porcje'} (\"servings\": {srv}).\n"
+                f"- Każda porcja musi mieć około {kcal_target} kcal (tolerancja ±10%).\n"
+                f"- Łącznie całe danie: ~{total_kcal} kcal.\n"
+                f"- Dobierz ilości składników tak, żeby trafić w ten cel kaloryczny.\n"
+                f"- W polu nutrition.kcal podaj wartość kaloryczną NA PORCJĘ (czyli ~{kcal_target})."
+            )
 
         # ─── Pantry injection ───
         if pantry:
@@ -2704,7 +2718,7 @@ class CulinaryAssistant:
         parsed = enforce_bans(parsed, bans)
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
 
-    def proposals(self, question, uid=None, filters=None, pantry=None):
+    def proposals(self, question, uid=None, filters=None, pantry=None, kcal_target=0):
         """Fast proposal step: detect specific vs vague query, return 5 dish ideas or skip."""
         prof_data = db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
         bans = prof_data.get("banned_ingredients", [])
@@ -2712,6 +2726,8 @@ class CulinaryAssistant:
 
         constraints_parts = []
         if bans: constraints_parts.append("ZAKAZY: " + ", ".join(bans))
+        if kcal_target and kcal_target >= 50:
+            constraints_parts.append(f"CEL KALORYCZNY: ~{kcal_target} kcal na 1 porcję — proponuj dania które realnie mogą zmieścić się w tym limicie")
         if filters:
             f = []
             if filters.get("time"): f.append(f"max {filters['time']} min")
@@ -2757,8 +2773,12 @@ Tylko czysty JSON."""
         parsed, usage = self._call("", [{"role": "user", "content": prompt}])
         return parsed, usage
 
-    def surprise(self, profile="lukasz", uid=None):
-        return self.ask(random.choice(SURPRISE_THEMES), profile=profile, uid=uid)
+    def surprise(self, profile="lukasz", uid=None, kcal_target=0, servings=0):
+        theme = random.choice(SURPRISE_THEMES)
+        if kcal_target and kcal_target >= 50:
+            srv = max(servings, 1)
+            theme += f" (CEL KALORYCZNY: {kcal_target} kcal na porcję, {srv} {'porcja' if srv == 1 else 'porcje'}. servings={srv}. Dobierz ilości składników żeby każda porcja miała ~{kcal_target} kcal.)"
+        return self.ask(theme, profile=profile, uid=uid)
 
     def import_url(self, url, page_text, profile="guest", uid=None):
         prof_data = db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
@@ -2781,20 +2801,26 @@ Tylko czysty JSON."""
         prompt = base + ban_text + import_knowledge + """
 
 ## ZADANIE: WIERNY IMPORT PRZEPISU Z INTERNETU
-Przeksztalc ponizszy przepis na JSON type:recipe.
+Przekształć poniższy przepis na JSON type:recipe.
 
-NAJWAZNIEJSZA ZASADA: WIERNOSC ORYGINALOWI!
-- Uzyj DOKLADNIE tych samych skladnikow co oryginal. NIE usuwaj, NIE zamieniaj, NIE dodawaj skladnikow od siebie!
-- Jedyny wyjatek: skladniki z listy ZAKAZANYCH.
-- Zachowaj IDENTYCZNA kolejnosc i sposob przygotowania co oryginal!
-- NIE LACZ krokow. NIE UPRASZCZAJ. Odtwarzaj procedury 1:1.
-- Przelicz na gramy/ml: lyzka=15ml, lyzeczka=5ml, szklanka=250ml, szczypta=1g.
-- Dodaj 'science', 'why', 'tip', 'warnings', 'upgrade' ale NIE zmieniaj oryginalnych skladnikow/krokow.
-- ZAWSZE podawaj ilosci w nawiasach w instrukcjach krokow.
-- NIE dodawaj pola 'sources' do odpowiedzi."""
-        parsed, usage = self._call(prompt, [{"role": "user", "content": f"URL: {url}\n\nTRESC PRZEPISU:\n{page_text[:5000]}"}], mode="smart")
+### NAJWAŻNIEJSZA ZASADA: 100% WIERNOŚĆ ORYGINAŁOWI!
+1. Użyj DOKŁADNIE tych samych składników co oryginał, w tych samych ilościach. NIE usuwaj, NIE zamieniaj, NIE dodawaj składników od siebie!
+2. Jedyny wyjątek: składniki z listy ZAKAZANYCH — zamień i opisz w 'substitutes'.
+3. Zachowaj IDENTYCZNĄ kolejność i sposób przygotowania co oryginał!
+4. KAŻDY punkt z oryginalnego przepisu = OSOBNY krok w JSON. NIE ŁĄCZ kroków. NIE UPRASZCZAJ. Jeśli oryginał ma 10 kroków, Twój JSON też ma mieć 10 kroków.
+5. Przelicz jednostki: łyżka=15ml, łyżeczka=5ml, szklanka=250ml, szczypta=1g.
+6. ZAWSZE podawaj ilości w nawiasach w opisie kroków, np. "Dodać sos sojowy (30 ml) i miód (30 ml)."
+7. W polu "ingredients" wymień WSZYSTKIE składniki z oryginału — także te z podsekcji (np. "Sos", "Do podania", "Marynata").
+8. Zachowaj oryginalną liczbę porcji (servings).
+9. Dodaj 'science', 'why', 'tip', 'warnings' do kroków — ale NIE zmieniaj oryginalnych składników/kroków.
+10. NIE dodawaj pola 'sources' do odpowiedzi.
+11. Jeśli oryginał podaje kategorie składników (np. "Sos:", "Do podania:"), użyj ich w polu "note" składnika."""
+        parsed, usage = self._call(prompt, [{"role": "user", "content": f"URL: {url}\n\nTREŚĆ PRZEPISU:\n{page_text[:8000]}"}], mode="smart")
         parsed.pop("sources", None)
         parsed.pop("book_references", None)
+        # Force type=recipe if AI forgot it but data looks like a recipe
+        if not parsed.get("type") and (parsed.get("title") or parsed.get("ingredients") or parsed.get("steps")):
+            parsed["type"] = "recipe"
         parsed = enforce_bans(parsed, bans)
         auto_update_profile(uid, parsed)
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
@@ -3077,8 +3103,10 @@ def create_app():
         h=[{"role":m["role"],"content":m["content"]} for m in (d.get("conversation_history") or []) if isinstance(m,dict) and m.get("role") in ("user","assistant")][-MAX_HISTORY:]
         filters=d.get("filters") or None
         pantry=d.get("pantry") or None
+        kcal_target=int(d.get("kcal_target") or 0)
+        servings=int(d.get("servings") or 0)
         # Use 4-layer pipeline for streaming
-        system_prompt,msgs,prof_data=a.ask_stream_prompt(q,h,profile=pr,uid=g.user_id,filters=filters,pantry=pantry)
+        system_prompt,msgs,prof_data=a.ask_stream_prompt(q,h,profile=pr,uid=g.user_id,filters=filters,pantry=pantry,kcal_target=kcal_target,servings=servings)
         uid=g.user_id
         def generate():
             full=""
@@ -3112,9 +3140,12 @@ def create_app():
         if not a: return jsonify({"error":"Not init"}),503
         allowed,count,limit=check_daily_limit(g.user_id,"recipes")
         if not allowed: return jsonify({"error":"limit","message":f"Dzienny limit {limit} przepisĂłw wyczerpany. PrzejdĹş na PRO!","is_limit":True}),429
+        d=request.get_json(silent=True) or {}
+        kcal_target=int(d.get("kcal_target") or 0)
+        servings=int(d.get("servings") or 0)
         p=db_get_profile(g.user_id)
         try:
-            result=a.surprise(profile=p.get("bot_profile","guest"),uid=g.user_id)
+            result=a.surprise(profile=p.get("bot_profile","guest"),uid=g.user_id,kcal_target=kcal_target,servings=servings)
             increment_daily(g.user_id,"recipes")
             return jsonify({"success":True,**result})
         except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad."}),500
@@ -3190,37 +3221,130 @@ def create_app():
             resp.raise_for_status()
             html=resp.text
             import re as _re
+
+            def _html_to_text(h):
+                t=_re.sub(r'<br\s*/?>','\n',h,flags=_re.I)
+                t=_re.sub(r'<li[^>]*>','\n- ',t,flags=_re.I)
+                t=_re.sub(r'<h\d[^>]*>','\n## ',t,flags=_re.I)
+                t=_re.sub(r'<[^>]+>',' ',t)
+                t=_re.sub(r'[ \t]+',' ',t)
+                t=_re.sub(r'\n +','\n',t)
+                t=_re.sub(r'\n{3,}','\n\n',t)
+                return t.strip()
+
+            def _is_recipe_type(t):
+                if isinstance(t,str): return t=="Recipe"
+                if isinstance(t,list): return "Recipe" in t
+                return False
+
+            # ─── STRATEGY 1: LD+JSON structured data ───
             ld_text=""
             for ld_match in _re.finditer(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',html,_re.S|_re.I):
                 try:
                     ld_data=json.loads(ld_match.group(1))
-                    if isinstance(ld_data,list): ld_data=next((x for x in ld_data if isinstance(x,dict) and x.get("@type","")=="Recipe"),None)
-                    elif isinstance(ld_data,dict) and "@graph" in ld_data: ld_data=next((x for x in ld_data["@graph"] if isinstance(x,dict) and x.get("@type","")=="Recipe"),None)
-                    if ld_data and (ld_data.get("@type")=="Recipe" or ld_data.get("recipeIngredient")):
-                        ld_text="DANE STRUKTURALNE PRZEPISU:\n"
-                        ld_text+=f"Nazwa: {ld_data.get('name','')}\nOpis: {ld_data.get('description','')}\n"
-                        if ld_data.get("recipeIngredient"): ld_text+="Skladniki:\n"+"\n".join(f"- {i}" for i in ld_data["recipeIngredient"])+"\n"
+                    if isinstance(ld_data,list): ld_data=next((x for x in ld_data if isinstance(x,dict) and _is_recipe_type(x.get("@type",""))),None)
+                    elif isinstance(ld_data,dict) and "@graph" in ld_data: ld_data=next((x for x in ld_data["@graph"] if isinstance(x,dict) and _is_recipe_type(x.get("@type",""))),None)
+                    elif isinstance(ld_data,dict) and not _is_recipe_type(ld_data.get("@type","")): ld_data=None
+                    if ld_data and (_is_recipe_type(ld_data.get("@type","")) or ld_data.get("recipeIngredient")):
+                        ld_text="DANE STRUKTURALNE PRZEPISU (LD+JSON):\n"
+                        ld_text+=f"Nazwa: {ld_data.get('name','')}\n"
+                        if ld_data.get('description'): ld_text+=f"Opis: {ld_data['description']}\n"
+                        if ld_data.get('prepTime'): ld_text+=f"Czas przygotowania: {ld_data['prepTime']}\n"
+                        if ld_data.get('cookTime'): ld_text+=f"Czas gotowania: {ld_data['cookTime']}\n"
+                        if ld_data.get('totalTime'): ld_text+=f"Czas całkowity: {ld_data['totalTime']}\n"
+                        if ld_data.get("recipeIngredient"): ld_text+="Składniki:\n"+"\n".join(f"- {i}" for i in ld_data["recipeIngredient"])+"\n"
                         if ld_data.get("recipeInstructions"):
                             ld_text+="Kroki:\n"
                             for idx,step in enumerate(ld_data["recipeInstructions"],1):
                                 if isinstance(step,dict): ld_text+=f"{idx}. {step.get('text','')}\n"
                                 elif isinstance(step,str): ld_text+=f"{idx}. {step}\n"
                         if ld_data.get("recipeYield"): ld_text+=f"Porcje: {ld_data['recipeYield']}\n"
+                        if ld_data.get("recipeCategory"): ld_text+=f"Kategoria: {ld_data['recipeCategory']}\n"
+                        if ld_data.get("recipeCuisine"): ld_text+=f"Kuchnia: {ld_data['recipeCuisine']}\n"
                         break
                 except: continue
-            text=html
-            for tag in ['nav','header','footer','aside','script','style','noscript']:
-                text=_re.sub(rf'<{tag}[^>]*>.*?</{tag}>','',text,flags=_re.S|_re.I)
-            text=_re.sub(r'<[^>]+>',' ',text)
-            text=_re.sub(r'\s+',' ',text).strip()
-            recipe_start=None
-            for marker in ['Składniki','Ingredients','Przygotowanie','Preparation','Instrukcje']:
-                pos=text.find(marker)
-                if pos>0: recipe_start=max(0,pos-200); break
-            if recipe_start: text=text[recipe_start:recipe_start+4000]
-            else: text=text[:4000]
-            full_text=(ld_text+"\n\nTEKST ZE STRONY:\n"+text) if ld_text else text
-            result=a.import_url(url,full_text[:7000],p.get("bot_profile","guest"),uid=g.user_id)
+
+            # ─── STRATEGY 2: Extract from recipe-specific CSS classes ───
+            css_text=""
+            # Title from h1
+            h1=_re.search(r'<h1[^>]*>(.*?)</h1>',html,_re.S|_re.I)
+            if h1: css_text+=f"TYTUŁ: {_re.sub(r'<[^>]+>','',h1.group(1)).strip()}\n"
+            # Subtitle from h2
+            h2s=_re.findall(r'<h2[^>]*>(.*?)</h2>',html,_re.S|_re.I)
+            for h2 in h2s[:2]:
+                t=_re.sub(r'<[^>]+>','',h2).strip()
+                if t and len(t)<200 and 'zobacz' not in t.lower(): css_text+=f"PODTYTUŁ: {t}\n"
+
+            # Extract ingredients from CSS class patterns
+            ing_sections=[]
+            for pat in [
+                r'<div[^>]*class="[^"]*group-skladniki[^"]*"[^>]*>(.*?)(?:</div>\s*){2,}',
+                r'<div[^>]*class="[^"]*ingredients?[^"]*"[^>]*>(.*?)(?:</div>\s*){1,}',
+                r'<div[^>]*class="[^"]*recipe-ingredients?[^"]*"[^>]*>(.*?)(?:</div>\s*){1,}',
+                r'<ul[^>]*class="[^"]*ingredients?[^"]*"[^>]*>(.*?)</ul>',
+            ]:
+                for m in _re.finditer(pat,html,_re.S|_re.I):
+                    t=_html_to_text(m.group(1))
+                    if t and len(t)>20: ing_sections.append(t)
+            # Also try itemprop=recipeIngredient
+            itemprop_ings=_re.findall(r'itemprop=["\']recipeIngredient["\'][^>]*>(.*?)</(?:li|span|div|p)',html,_re.S|_re.I)
+            if itemprop_ings:
+                ing_sections.append("\n".join(f"- {_re.sub(r'<[^>]+>','',i).strip()}" for i in itemprop_ings))
+            if ing_sections:
+                css_text+="\nSKŁADNIKI:\n"+"\n".join(ing_sections)+"\n"
+
+            # Extract instructions from CSS class patterns
+            inst_sections=[]
+            for pat in [
+                r'<div[^>]*class="[^"]*group-przepis[^"]*"[^>]*>(.*?)(?:</div>\s*){2,}',
+                r'<div[^>]*class="[^"]*instructions?[^"]*"[^>]*>(.*?)(?:</div>\s*){1,}',
+                r'<div[^>]*class="[^"]*recipe-instructions?[^"]*"[^>]*>(.*?)(?:</div>\s*){1,}',
+                r'<div[^>]*class="[^"]*method[^"]*"[^>]*>(.*?)(?:</div>\s*){1,}',
+                r'<div[^>]*class="[^"]*steps?[^"]*"[^>]*>(.*?)(?:</div>\s*){1,}',
+            ]:
+                for m in _re.finditer(pat,html,_re.S|_re.I):
+                    t=_html_to_text(m.group(1))
+                    if t and len(t)>30: inst_sections.append(t)
+            if inst_sections:
+                css_text+="\nPRZYGOTOWANIE:\n"+"\n".join(inst_sections)+"\n"
+
+            # Extract servings/yield info
+            for pat in [r'<div[^>]*class="[^"]*ilosc-porcji[^"]*"[^>]*>(.*?)</div>',r'<span[^>]*class="[^"]*yield[^"]*"[^>]*>(.*?)</span>']:
+                m=_re.search(pat,html,_re.S|_re.I)
+                if m:
+                    t=_re.sub(r'<[^>]+>','',m.group(1)).strip()
+                    if t: css_text+=f"\nPORCJE: {t}\n"; break
+
+            # ─── STRATEGY 3: Fallback — clean text from main content area ───
+            fallback_text=""
+            if not ld_text and not css_text:
+                text=html
+                for tag in ['nav','header','footer','aside','script','style','noscript','form','iframe']:
+                    text=_re.sub(rf'<{tag}[^>]*>.*?</{tag}>','',text,flags=_re.S|_re.I)
+                # Remove navigation menus (common: ul with depth classes, breadcrumbs)
+                text=_re.sub(r'<ul[^>]*class="[^"]*depth[^"]*"[^>]*>.*?</ul>','',text,flags=_re.S|_re.I)
+                text=_re.sub(r'<[^>]+>',' ',text)
+                text=_re.sub(r'\s+',' ',text).strip()
+                # Try to find recipe content area
+                for marker in ['Składniki','Przygotowanie','Sposób przygotowania','Ingredients','Instructions']:
+                    pos=text.find(marker)
+                    if pos>0:
+                        # Make sure this isn't a nav menu by checking context
+                        context_before=text[max(0,pos-50):pos]
+                        if 'Kasze' not in context_before and 'Warzywa' not in context_before:
+                            fallback_text=text[max(0,pos-200):pos+5000]
+                            break
+                if not fallback_text: fallback_text=text[:5000]
+
+            # ─── Combine best available data ───
+            parts=[]
+            if ld_text: parts.append(ld_text)
+            if css_text: parts.append(css_text)
+            if fallback_text and not css_text: parts.append(f"TEKST ZE STRONY:\n{fallback_text}")
+            full_text="\n\n".join(parts) if parts else "Nie udało się wyekstrahować treści przepisu."
+            logger.info(f"[import] url={url} ld={len(ld_text)} css={len(css_text)} fallback={len(fallback_text)} total={len(full_text)}")
+
+            result=a.import_url(url,full_text[:10000],p.get("bot_profile","guest"),uid=g.user_id)
             increment_daily(g.user_id,"imports")
             return jsonify({"success":True,**result})
         except http_requests.RequestException as e:
@@ -3401,8 +3525,9 @@ def create_app():
         filters = d.get("filters") or None
         pantry = d.get("pantry") or None
         try:
-            logger.info(f"[proposals] query='{q}' filters={filters} pantry_items={len(pantry.get('ingredients',[]) if pantry else [])}")
-            parsed, _ = a.proposals(q, uid=g.user_id, filters=filters, pantry=pantry)
+            kcal_target = int(d.get("kcal_target") or 0)
+            logger.info(f"[proposals] query='{q}' filters={filters} pantry_items={len(pantry.get('ingredients',[]) if pantry else [])} kcal={kcal_target}")
+            parsed, _ = a.proposals(q, uid=g.user_id, filters=filters, pantry=pantry, kcal_target=kcal_target)
             logger.info(f"[proposals] result: is_specific={parsed.get('is_specific')} dish={parsed.get('dish','—')} proposals_count={len(parsed.get('proposals',[]))}")
             return jsonify({"success": True, "data": parsed})
         except Exception as e:

@@ -13,7 +13,7 @@ let authToken=null;
 let currentUser=null; // supabase user object
 let userProfile=null; // profile from our DB
 
-const WELCOME_MSG="Cześć! 🍳 Co gotujemy?\n\nZnam Twój sprzęt, zakazy, preferencje. Pamiętam co ostatnio gotowałeś!";
+const WELCOME_MSG="Cześć! 🍳 Co dziś gotujemy?\n\nPowiedz mi co chcesz ugotować, a przygotuję przepis dopasowany do Twojego sprzętu i preferencji.\n\nMożesz też kliknąć jedną z podpowiedzi poniżej, aby szybko zacząć.";
 const QTAGS={
   lukasz:[{e:"🍗",l:"Kurczak",q:"Pyszny kurczak"},{e:"🍝",l:"Pasta",q:"Makaron Atlas 150"},{e:"🥩",l:"Sous-vide",q:"Stek sous-vide"},{e:"🧊",l:"Lodówka",q:"Mam kurczaka, masło, czosnek i cytrynę. Co zrobić?"},{e:"⚡",l:"Szybkie",q:"Szybki obiad 30 min"},{e:"🔀",l:"Porównaj",q:"Porównaj 3 sposoby na pierś z kurczaka: patelnia, piekarnik, sous-vide"},{e:"🍰",l:"Deser",q:"Pyszny deser"}],
   guest:[{e:"🍗",l:"Kurczak",q:"Pyszny kurczak"},{e:"🍝",l:"Makaron",q:"Prosty makaron"},{e:"🥩",l:"Stek",q:"Idealny stek"},{e:"🌍",l:"Azja",q:"Danie azjatyckie"},{e:"🔀",l:"Porównaj",q:"Porównaj 3 sposoby na stek: patelnia, grill, sous-vide"},{e:"🍰",l:"Deser",q:"Prosty deser"}]
@@ -211,7 +211,7 @@ function renderUserInfo(){
   } else {
     h+='<button class="upgrade-btn" onclick="openUpgrade()">⭐ PRO</button>';
   }
-  h+='<button class="user-logout-btn" onclick="logout()" title="Wyloguj">⏻</button>';
+  h+='<button class="user-logout-btn" onclick="logout()">Wyloguj</button>';
   el.innerHTML=h;
 }
 
@@ -308,11 +308,13 @@ async function loadModulesFromServer(){
   try{const r=await fetch(API+'/api/modules');const d=await r.json();MODULES=d.modules||[];CATEGORIES=d.categories||[];LEVELS=d.levels||[];LEVEL_NAMES=d.level_names||{}}catch{}
 }
 
-async function checkServer(){const s=document.getElementById('status');s.className='status-bar show waking';s.textContent='⏳ Łączę...';try{const r=await fetch(API+'/api/health');const d=await r.json();s.className='status-bar show online';s.textContent='✓ '+d.chunks+' fragmentów · DeepSeek';setTimeout(()=>s.classList.remove('show'),2500)}catch{s.className='status-bar show offline';s.textContent='✗ Offline'}}
+async function checkServer(){const s=document.getElementById('status');s.className='status-bar show waking';s.textContent='Łączę...';try{const r=await fetch(API+'/api/health');s.className='status-bar show online';s.textContent='✓ Połączono';setTimeout(()=>s.classList.remove('show'),1500)}catch{s.className='status-bar show offline';s.textContent='Brak połączenia z serwerem'}}
 
-function toggleKcal(){const r=document.getElementById('kcalRow'),b=document.getElementById('kcalToggle'),v=r.style.display!=='none';r.style.display=v?'none':'flex';b.classList.toggle('active',!v)}
-function clearKcal(){document.getElementById('kcalInput').value='';document.getElementById('kcalRow').style.display='none';document.getElementById('kcalToggle').classList.remove('active')}
-function getKcal(){const v=document.getElementById('kcalInput')?.value?.trim();return(!v||isNaN(v)||+v<50)?'':`(limit:${v}kcal)`}
+function toggleKcal(){const r=document.getElementById('kcalRow'),b=document.getElementById('kcalToggle'),v=r.style.display!=='none';r.style.display=v?'none':'flex';b.classList.toggle('active',!v);if(!v)updateKcalSummary()}
+function clearKcal(){document.getElementById('kcalInput').value='';document.getElementById('kcalServings').value='1';document.getElementById('kcalSummary').textContent='';document.getElementById('kcalRow').style.display='none';document.getElementById('kcalToggle').classList.remove('active')}
+function getKcalValue(){const v=document.getElementById('kcalInput')?.value?.trim();return(!v||isNaN(v)||+v<50)?0:parseInt(v,10)}
+function getServingsValue(){return parseInt(document.getElementById('kcalServings')?.value||'1',10)||1}
+function updateKcalSummary(){const k=getKcalValue(),s=getServingsValue(),el=document.getElementById('kcalSummary');if(k>0){el.textContent='= '+(k*s)+' kcal łącznie'}else{el.textContent=''}}
 
 function esc(s){if(!s)return'';const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 function scrollBottom(){const m=document.getElementById('messages');setTimeout(()=>m.scrollTop=m.scrollHeight,40)}

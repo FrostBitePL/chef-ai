@@ -39,26 +39,26 @@ async function generatePlan(){
   try{
     const r=await fetch(API+'/api/meal-plan',{method:'POST',headers:authHeaders(),body:JSON.stringify(params)});
     const d=await r.json();
-    if(d.error){res.innerHTML=`<div style="color:var(--danger);padding:20px">${esc(d.error)}</div><button class="action-btn" style="margin:10px" onclick="resetPlanner()">← Wróć</button>`;return}
+    if(d.error){res.innerHTML=`<div style="color:var(--danger);padding:20px">${esc(d.error)}</div><button class="action-btn" style="margin:10px" onclick="resetPlanner()">← Wróć do formularza</button>`;return}
     _planData=d.data;
     renderMealPlan(_planData,res);
   }catch(e){
     console.error('Plan error:',e);
-    res.innerHTML='<div style="color:var(--danger);padding:20px">Błąd generowania planu.</div><button class="action-btn" style="margin:10px" onclick="resetPlanner()">← Wróć</button>';
+    res.innerHTML='<div style="color:var(--danger);padding:20px">Błąd generowania planu.</div><button class="action-btn" style="margin:10px" onclick="resetPlanner()">← Wróć do formularza</button>';
   }
 }
 
 // ─── Render plan ───
 function renderMealPlan(data,el){
   _planData=data;_mealIdx=0;
-  let h=`<div class="meal-plan-card"><div class="meal-plan-header"><h2>📅 Plan posiłków</h2><div class="recipe-actions"><button class="action-btn" onclick="saveCurrentPlan()">💾 Zapisz</button><button class="action-btn" onclick="resetPlanner()">← Nowy</button><button class="action-btn" onclick="copyPlan()">📋 Kopiuj</button></div></div>`;
+  let h=`<div class="meal-plan-card"><div class="meal-plan-header"><h2>📅 Plan posiłków</h2><div class="recipe-actions"><button class="action-btn" onclick="saveCurrentPlan()">💾 Zapisz plan</button><button class="action-btn" onclick="resetPlanner()">← Nowy plan</button><button class="action-btn" onclick="copyPlan()">📋 Kopiuj tekst</button></div></div>`;
   if(data.days?.length) data.days.forEach((day,di)=>{
     h+=`<div class="meal-day"><div class="meal-day-title">${esc(day.day)}</div>`;
     if(day.meals?.length) day.meals.forEach((m,mi)=>{
       const uid='rd_'+di+'_'+mi;
       const hasRecipe=m.ingredients?.length || m.steps?.length || m.recipe;
       h+=`<div class="meal-item" style="flex-wrap:wrap"><span class="meal-type">${esc(m.meal||'')}</span><span style="flex:1">${esc(m.title||'')}${m.prep_time?' · '+m.prep_time+'m':''}${m.kcal?' · <span style="color:var(--warning)">'+m.kcal+' kcal</span>':''}</span>`;
-      if(hasRecipe) h+=`<button class="action-btn" style="margin-left:auto" onclick="toggleRecipeDetail('${uid}')">👁 Przepis</button>`;
+      if(hasRecipe) h+=`<button class="action-btn" style="margin-left:auto" onclick="toggleRecipeDetail('${uid}')">👁 Pokaż przepis</button>`;
       h+=buildRecipeDetail(m,uid);
       h+='</div>';
     });
@@ -101,7 +101,7 @@ function buildRecipeDetail(m,uid){
   }
   if(steps.length){
     const coords=uid.replace('rd_','').split('_');
-    h+=`<button class="action-btn live-cook-btn" style="margin-top:10px" onclick="openLiveFromPlan(${coords[0]},${coords[1]})">🔴 Gotujemy!</button>`;
+    h+=`<button class="action-btn live-cook-btn" style="margin-top:10px" onclick="openLiveFromPlan(${coords[0]},${coords[1]})">🔴 Zacznij gotować!</button>`;
   }
   h+='</div>';
   return h;
@@ -214,7 +214,7 @@ async function renderSavedPlans(){
     if(d.error){list.innerHTML=`<div style="padding:8px;color:var(--danger);font-size:0.8rem">${esc(d.error)}</div>`;return}
     const plans=d.plans||[];
     if(!plans.length){list.innerHTML='<div style="padding:8px;color:var(--text-faint);font-size:0.8rem">Brak zapisanych planów.</div>';return}
-    list.innerHTML=plans.map(p=>`<div class="pf-saved-item"><span class="pf-saved-title" onclick="loadSavedPlan('${esc(p.id)}')">${esc(p.title)}</span><span class="pf-saved-date">${new Date(p.created_at).toLocaleDateString()}</span><button class="pf-saved-del" onclick="deleteSavedPlan('${esc(p.id)}')">✕</button></div>`).join('');
+    list.innerHTML=plans.map(p=>`<div class="pf-saved-item"><span class="pf-saved-title" onclick="loadSavedPlan('${esc(p.id)}')">${esc(p.title)}</span><span class="pf-saved-date">${new Date(p.created_at).toLocaleDateString()}</span><button class="pf-saved-del" onclick="deleteSavedPlan('${esc(p.id)}')" title="Usuń plan">🗑</button></div>`).join('');
   }catch(e){
     console.error('Saved plans error:',e);
     list.innerHTML='<div style="padding:8px;color:var(--danger);font-size:0.8rem">Błąd.</div>';
@@ -230,12 +230,12 @@ async function loadSavedPlan(id){
   try{
     const r=await fetch(`${API}/api/planner/${id}`,{headers:authHeaders()});
     const d=await r.json();
-    if(d.error){res.innerHTML=`<div style="color:var(--danger);padding:20px">${esc(d.error)}</div><button class="action-btn" style="margin:10px" onclick="resetPlanner()">← Wróć</button>`;return}
+    if(d.error){res.innerHTML=`<div style="color:var(--danger);padding:20px">${esc(d.error)}</div><button class="action-btn" style="margin:10px" onclick="resetPlanner()">← Wróć do formularza</button>`;return}
     _planData=d.plan;
     renderMealPlan(d.plan,res);
   }catch(e){
     console.error('Load plan error:',e);
-    res.innerHTML='<div style="color:var(--danger);padding:20px">Błąd wczytywania.</div><button class="action-btn" style="margin:10px" onclick="resetPlanner()">← Wróć</button>';
+    res.innerHTML='<div style="color:var(--danger);padding:20px">Błąd wczytywania.</div><button class="action-btn" style="margin:10px" onclick="resetPlanner()">← Wróć do formularza</button>';
   }
 }
 

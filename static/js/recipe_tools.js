@@ -12,24 +12,33 @@ function scaleRecipe(btn, delta) {
   const newServings = Math.max(1, Math.min(12, currentServings[rid] + delta));
   if (newServings === currentServings[rid]) return;
 
-  const ratio = newServings / (currentServings[rid]);
+  const ratio = newServings / currentServings[rid];
   currentServings[rid] = newServings;
 
-  // Scale ingredients
-  r.ingredients = (r.ingredients || []).map(ing => {
-    const scaled = scaleAmount(ing.amount, ratio);
-    return { ...ing, amount: scaled };
-  });
-  r.shopping_list = (r.shopping_list || []).map(item => {
-    return { ...item, amount: scaleAmount(item.amount, ratio) };
-  });
+  // Scale data in store
+  r.ingredients = (r.ingredients || []).map(ing => ({ ...ing, amount: scaleAmount(ing.amount, ratio) }));
+  r.shopping_list = (r.shopping_list || []).map(item => ({ ...item, amount: scaleAmount(item.amount, ratio) }));
   r.servings = newServings;
 
-  // Re-render card in place
-  const newCard = document.createElement('div');
-  newCard.className = 'msg';
-  newCard.innerHTML = buildRecipeHTML(r);
-  card.closest('.msg').replaceWith(newCard);
+  // Update only the parts that changed — no full re-render
+  const scaleVal = card.querySelector('.scale-val');
+  if (scaleVal) scaleVal.textContent = newServings;
+
+  // Update ingredients section body
+  const ingSection = [...card.querySelectorAll('.section-body')].find(el =>
+    el.previousElementSibling?.textContent?.includes('Składniki')
+  );
+  if (ingSection) ingSection.innerHTML = bIng(r.ingredients);
+
+  // Update shopping list section body
+  const shopSection = [...card.querySelectorAll('.section-body')].find(el =>
+    el.previousElementSibling?.textContent?.includes('Zakupy')
+  );
+  if (shopSection) shopSection.innerHTML = bShopExport(rid) + bShop(r.shopping_list);
+
+  // Update servings meta pill
+  const pills = card.querySelectorAll('.meta-pill');
+  pills.forEach(p => { if (p.textContent.startsWith('🍽')) p.textContent = '🍽' + newServings; });
 }
 
 function scaleAmount(amountStr, ratio) {

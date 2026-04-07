@@ -10,10 +10,11 @@ function sendQ(q){document.getElementById('input').value=q;document.getElementBy
 async function send(){
   const inp=document.getElementById('input');
   let q=inp.value.trim();if(!q)return;
-  const kcal=getKcal();if(kcal)q+=' '+kcal;
+  const kcalVal=getKcalValue(),servingsVal=getServingsValue();
   inp.value='';document.getElementById('sendBtn').disabled=true;inp.style.height='auto';
   document.getElementById('quickTags').style.display='none';
-  addMsg('user',q);chatHistory.push({role:'user',content:q});
+  const kcalLabel=kcalVal?(' ('+kcalVal+' kcal/porcję, '+servingsVal+(servingsVal===1?' porcja)':' porcje)')):'';
+  addMsg('user',q+kcalLabel);chatHistory.push({role:'user',content:q+kcalLabel});
 
   // ── STEP 1: proposals ──
   const loadDiv=document.createElement('div');loadDiv.className='msg';
@@ -26,7 +27,7 @@ async function send(){
   let proposalResult=null;
   try{
     const pr=await fetch(API+'/api/proposals',{method:'POST',headers:authHeaders(),
-      body:JSON.stringify({question:q,filters:getActiveFilters?.(),pantry:getActivePantry?.()})});
+      body:JSON.stringify({question:q,filters:getActiveFilters?.(),pantry:getActivePantry?.(),kcal_target:kcalVal||undefined,servings:kcalVal?servingsVal:undefined})});
     const pd=await pr.json();
     console.log('[proposals] status:',pr.status,'response:',pd);
     if(pr.ok && pd.success) proposalResult=pd.data;
@@ -61,9 +62,10 @@ async function streamRecipe(q,loadDiv,previewEl){
   }
 
   try{
+    const kcalTarget=getKcalValue(),srvTarget=getServingsValue();
     const r=await fetch(API+'/api/ask-stream',{method:'POST',headers:authHeaders(),
       body:JSON.stringify({question:q,conversation_history:chatHistory.slice(-20),
-        filters:getActiveFilters?.(),pantry:getActivePantry?.()})});
+        filters:getActiveFilters?.(),pantry:getActivePantry?.(),kcal_target:kcalTarget||undefined,servings:kcalTarget?srvTarget:undefined})});
 
     if(!r.ok){
       const d=await r.json();loadDiv.remove();
@@ -168,11 +170,13 @@ async function skipProposals(btn,originalQuery){
 
 async function surprise(){
   document.getElementById('quickTags').style.display='none';
-  addMsg('user','🎲 Zaskoczy mnie!');
+  const kcal=getKcalValue(),srv=getServingsValue();
+  const kcalInfo=kcal?' ('+kcal+' kcal/porcję, '+srv+(srv===1?' porcja)':' porcje)'):'';
+  addMsg('user','🎲 Zaskocz mnie!'+kcalInfo);
   const lid='l'+Date.now(),msgs=document.getElementById('messages'),ld=document.createElement('div');
   ld.id=lid;ld.className='msg';ld.innerHTML=loadingDots();msgs.appendChild(ld);scrollBottom();
   try{
-    const r=await fetch(API+'/api/surprise',{method:'POST',headers:authHeaders(),body:JSON.stringify({})});
+    const r=await fetch(API+'/api/surprise',{method:'POST',headers:authHeaders(),body:JSON.stringify({kcal_target:kcal||undefined,servings:kcal?srv:undefined})});
     const d=await r.json();document.getElementById(lid)?.remove();
     if(d.is_limit){showLimitMessage(d.message);return}
     if(d.error){addMsg('t',d.error);return}
@@ -185,11 +189,13 @@ async function importFromUrl(){
   const url=prompt('Wklej URL przepisu:');
   if(!url||!url.trim()) return;
   document.getElementById('quickTags').style.display='none';
-  addMsg('user','🔗 Importuj: '+url.trim());
+  const kcal=getKcalValue(),srv=getServingsValue();
+  const kcalInfo=kcal?' ('+kcal+' kcal/porcję, '+srv+(srv===1?' porcja)':' porcje)'):'';
+  addMsg('user','🔗 Importuj: '+url.trim()+kcalInfo);
   const lid='l'+Date.now(),msgs=document.getElementById('messages'),ld=document.createElement('div');
   ld.id=lid;ld.className='msg';ld.innerHTML=loadingDots();msgs.appendChild(ld);scrollBottom();
   try{
-    const r=await fetch(API+'/api/import-url',{method:'POST',headers:authHeaders(),body:JSON.stringify({url:url.trim()})});
+    const r=await fetch(API+'/api/import-url',{method:'POST',headers:authHeaders(),body:JSON.stringify({url:url.trim(),kcal_target:kcal||undefined,servings:kcal?srv:undefined})});
     const d=await r.json();document.getElementById(lid)?.remove();
     if(d.is_limit){showLimitMessage(d.message);return}
     if(d.error){addMsg('t',d.error);return}
@@ -233,16 +239,16 @@ function renderRecipeCard(r){
   }
   h+='</div>';
   h+='<div class="recipe-actions">';
-  h+='<button class="action-btn '+(fav?'saved':'')+'" onclick="toggleFav(this)">'+(fav?'❤️':'🤍')+'</button>';
+  h+='<button class="action-btn '+(fav?'saved':'')+' " onclick="toggleFav(this)">'+(fav?'❤️ Zapisano':'🤍 Zapisz')+'</button>';
   h+='<button class="action-btn" onclick="openStepMode(this)">👨‍🍳 Kroki</button>';
   h+='<button class="action-btn live-cook-btn" onclick="openLive(this)">🔴 Gotuj!</button>';
-  h+='<button class="action-btn" onclick="copyRecipe(this)" title="Kopiuj">📋</button>';
-  h+='<button class="action-btn" onclick="shareRecipe(this)" title="Udostępnij">🔗</button>';
-  h+='<button class="action-btn" onclick="showCost(this)" title="Kalkulator kosztów">💰</button>';
-  h+='<button class="action-btn" onclick="rateRecipe(this)">⭐</button>';
-  h+='<button class="action-btn" onclick="showPairing(this)" title="Parowanie napojów">🍷</button>';
-  h+='<button class="action-btn" onclick="showTimeline(this)" title="Harmonogram">📊</button>';
-  h+='<button class="action-btn" onclick="openNotes(this)" title="Notatki">📝</button>';
+  h+='<button class="action-btn" onclick="copyRecipe(this)">📋 Kopiuj</button>';
+  h+='<button class="action-btn" onclick="shareRecipe(this)">🔗 Udostępnij</button>';
+  h+='<button class="action-btn" onclick="showCost(this)">💰 Koszt</button>';
+  h+='<button class="action-btn" onclick="rateRecipe(this)">⭐ Oceń</button>';
+  h+='<button class="action-btn" onclick="showPairing(this)">🍷 Napoje</button>';
+  h+='<button class="action-btn" onclick="showTimeline(this)">📊 Plan</button>';
+  h+='<button class="action-btn" onclick="openNotes(this)">📝 Notatki</button>';
   h+='</div>';
   // Scaling row
   h+='<div class="scaling-row">';
@@ -250,8 +256,8 @@ function renderRecipeCard(r){
   h+='<button class="scale-btn" onclick="scaleRecipe(this,-1)">−</button>';
   h+='<span class="scale-val">'+(r.servings||2)+'</span>';
   h+='<button class="scale-btn" onclick="scaleRecipe(this,+1)">+</button>';
-  h+='<button class="variant-btn" onclick="makeVariant(this,\'healthier\')" title="Zdrowsza wersja">🥗</button>';
-  h+='<button class="variant-btn" onclick="makeVariant(this,\'richer\')" title="Bogatsza wersja">👑</button>';
+  h+='<button class="variant-btn" onclick="makeVariant(this,\'healthier\')">🥗 Zdrowsza</button>';
+  h+='<button class="variant-btn" onclick="makeVariant(this,\'richer\')">👑 Bogatsza</button>';
   h+='</div>';
   h+='<div>';
   if(r.science) h+=bSec('🧪 Nauka','<div style="font-size:0.82rem;line-height:1.6;color:var(--text-dim)">'+esc(r.science)+'</div>');
@@ -276,11 +282,11 @@ function buildRecipeHTML(r){
   if(r.times) h+='<div class="meta-pill">⏱'+(r.times.total_min||'?')+'m</div>';
   h+='<div class="meta-pill">'+stars+'</div><div class="meta-pill">🍽'+(r.servings||2)+'</div>';
   h+='</div></div>';
-  h+='<div class="recipe-actions"><button class="action-btn" onclick="toggleFav(this)">🤍</button><button class="action-btn" onclick="openStepMode(this)">👨‍🍳 Kroki</button><button class="action-btn live-cook-btn" onclick="openLive(this)">🔴 Gotuj!</button></div><div>';
-  if(r.science) h+=bSec('🧪','<div style="font-size:0.82rem;line-height:1.6;color:var(--text-dim)">'+esc(r.science)+'</div>');
-  if(r.shopping_list?.length) h+=bSec('🛒',bShop(r.shopping_list),1);
-  if(r.ingredients?.length) h+=bSec('⚖️',bIng(r.ingredients));
-  if(r.steps?.length) h+=bSec('👨‍🍳',bSteps(r.steps),1);
+  h+='<div class="recipe-actions"><button class="action-btn" onclick="toggleFav(this)">🤍 Zapisz</button><button class="action-btn" onclick="openStepMode(this)">👨‍🍳 Kroki</button><button class="action-btn live-cook-btn" onclick="openLive(this)">🔴 Gotuj!</button></div><div>';
+  if(r.science) h+=bSec('🧪 Nauka','<div style="font-size:0.82rem;line-height:1.6;color:var(--text-dim)">'+esc(r.science)+'</div>');
+  if(r.shopping_list?.length) h+=bSec('🛒 Zakupy',bShop(r.shopping_list),1);
+  if(r.ingredients?.length) h+=bSec('⚖️ Składniki',bIng(r.ingredients));
+  if(r.steps?.length) h+=bSec('👨‍🍳 Metoda',bSteps(r.steps),1);
   return h+'</div></div>';
 }
 
