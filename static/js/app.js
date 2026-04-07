@@ -97,6 +97,7 @@ function enterApp(){
   renderQuickTags();
   addWelcome();
   checkServer();
+  checkSharedRecipe();
   newSession();
   loadProgress();
   // Check for payment return
@@ -105,6 +106,24 @@ function enterApp(){
     setTimeout(()=>{addMsg('t','🎉 Witaj w Chef AI PRO! Gotujemy bez limitów.');loadSubStatus().then(()=>renderUserInfo())},500);
     window.history.replaceState({},'','/');
   }
+}
+
+// ─── Shared recipe from URL (?share=TOKEN) ───
+async function checkSharedRecipe(){
+  const params=new URLSearchParams(window.location.search);
+  const token=params.get('share');
+  if(!token) return;
+  window.history.replaceState({},'','/');
+  try{
+    const r=await fetch(API+'/api/share/'+token);
+    const d=await r.json();
+    if(d.success&&d.recipe){
+      addMsg('t','🔗 Udostępniony przepis:');
+      handleResponse(d.recipe);
+    } else {
+      addMsg('t','⚠️ Link wygasł lub jest nieprawidłowy.');
+    }
+  }catch{addMsg('t','⚠️ Nie udało się załadować przepisu.');}
 }
 
 // ─── Auth Screen ───

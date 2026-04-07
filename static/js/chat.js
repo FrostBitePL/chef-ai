@@ -221,13 +221,24 @@ function renderRecipeCard(r){
   h+='<div class="recipe-meta">';
   if(r.times) h+='<div class="meta-pill">⏱'+( r.times.total_min||'?')+'m</div>';
   h+='<div class="meta-pill">'+stars+'</div><div class="meta-pill">🍽'+(r.servings||2)+'</div>';
-  if(r.kcal_per_serving) h+='<div class="meta-pill" style="color:var(--warning)">🔥'+r.kcal_per_serving+'</div>';
-  h+='</div></div>';
+  if(r.nutrition?.kcal) h+='<div class="meta-pill meta-kcal">🔥'+r.nutrition.kcal+' kcal</div>';
+  h+='</div>';
+  if(r.nutrition?.kcal){
+    h+='<div class="nutrition-bar">';
+    h+='<span class="nutr-item"><b>'+r.nutrition.kcal+'</b> kcal</span>';
+    if(r.nutrition.protein_g) h+='<span class="nutr-item nutr-protein"><b>'+r.nutrition.protein_g+'g</b> białko</span>';
+    if(r.nutrition.fat_g) h+='<span class="nutr-item nutr-fat"><b>'+r.nutrition.fat_g+'g</b> tłuszcze</span>';
+    if(r.nutrition.carbs_g) h+='<span class="nutr-item nutr-carbs"><b>'+r.nutrition.carbs_g+'g</b> węglowodany</span>';
+    h+='<span class="nutr-note">/ porcja</span></div>';
+  }
+  h+='</div>';
   h+='<div class="recipe-actions">';
   h+='<button class="action-btn '+(fav?'saved':'')+'" onclick="toggleFav(this)">'+(fav?'❤️':'🤍')+'</button>';
   h+='<button class="action-btn" onclick="openStepMode(this)">👨‍🍳 Kroki</button>';
   h+='<button class="action-btn live-cook-btn" onclick="openLive(this)">🔴 Gotuj!</button>';
-  h+='<button class="action-btn" onclick="copyRecipe(this)">📋</button>';
+  h+='<button class="action-btn" onclick="copyRecipe(this)" title="Kopiuj">📋</button>';
+  h+='<button class="action-btn" onclick="shareRecipe(this)" title="Udostępnij">🔗</button>';
+  h+='<button class="action-btn" onclick="showCost(this)" title="Kalkulator kosztów">💰</button>';
   h+='<button class="action-btn" onclick="rateRecipe(this)">⭐</button>';
   h+='<button class="action-btn" onclick="showPairing(this)" title="Parowanie napojów">🍷</button>';
   h+='<button class="action-btn" onclick="showTimeline(this)" title="Harmonogram">📊</button>';
@@ -244,7 +255,7 @@ function renderRecipeCard(r){
   h+='</div>';
   h+='<div>';
   if(r.science) h+=bSec('🧪 Nauka','<div style="font-size:0.82rem;line-height:1.6;color:var(--text-dim)">'+esc(r.science)+'</div>');
-  if(r.shopping_list?.length) h+=bSec('🛒 Zakupy',bShop(r.shopping_list),1);
+  if(r.shopping_list?.length) h+=bSec('🛒 Zakupy',bShopExport(rid)+bShop(r.shopping_list),1);
   if(r.ingredients?.length) h+=bSec('⚖️ Składniki',bIng(r.ingredients));
   if(r.substitutes?.length) h+=bSec('🔁 Zamienniki',bSubs(r.substitutes));
   if(r.mise_en_place?.length) h+=bSec('📋 Przygotowanie','<ul style="padding-left:14px;font-size:0.82rem;line-height:1.7;color:var(--text-dim)">'+r.mise_en_place.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul>');
@@ -273,6 +284,15 @@ function buildRecipeHTML(r){
   return h+'</div></div>';
 }
 
+// ─── Shopping list export bar ───
+function bShopExport(rid){
+  return `<div class="shop-export-bar">
+    <button class="shop-exp-btn" onclick="exportShoppingList('${rid}','copy')" title="Kopiuj do schowka">📋 Kopiuj</button>
+    <button class="shop-exp-btn" onclick="exportShoppingList('${rid}','share')" title="Udostępnij">📤 Wyślij</button>
+    <button class="shop-exp-btn" onclick="exportShoppingList('${rid}','print')" title="Drukuj">🖨️ Drukuj</button>
+  </div>`;
+}
+
 // Section builders
 function bSec(t,c,o){return'<div class="recipe-section"><button class="section-toggle '+(o?'open':'')+'" onclick="this.classList.toggle(\'open\');this.nextElementSibling.classList.toggle(\'open\')">'+t+'<span class="chv">▼</span></button><div class="section-body '+(o?'open':'')+'">'+c+'</div></div>'}
 function bShop(it){return it.map(i=>'<div class="shop-item" onclick="this.classList.toggle(\'checked\')"><div class="shop-check">✓</div><div class="shop-amount">'+esc(i.amount)+'</div><div class="shop-name">'+esc(i.item)+'</div>'+(i.section?'<div class="shop-section-tag">'+esc(i.section)+'</div>':'')+'</div>').join('')}
@@ -298,7 +318,35 @@ function stepNav(d){stepModeIndex+=d;if(stepModeIndex<0)stepModeIndex=0;if(stepM
 function rStep(){const s=stepModeData.steps[stepModeIndex],t=stepModeData.steps.length;document.getElementById('stepFill').style.width=((stepModeIndex+1)/t*100)+'%';document.getElementById('stepPrev').disabled=stepModeIndex===0;document.getElementById('stepNext').textContent=stepModeIndex===t-1?'✓ Gotowe':'Dalej →';let h='<span class="step-num">'+s.number+'</span><div class="step-title">'+esc(s.title||'')+'</div><div class="step-text">'+esc(s.instruction)+'</div>';if(s.equipment)h+='<div class="step-equip" style="margin-top:12px">🔥 '+esc(s.equipment)+'</div>';if(s.why)h+='<div class="step-why" style="margin-top:8px">'+esc(s.why)+'</div>';if(s.tip)h+='<div class="step-tip" style="margin-top:5px">💡 '+esc(s.tip)+'</div>';if(s.timer_seconds)h+='<button class="step-timer-btn" style="margin-top:10px" onclick="startTimer('+s.timer_seconds+',\''+esc(s.title||'').replace(/'/g,'')+'\',this)">⏱'+fmtT(s.timer_seconds)+'</button>';document.getElementById('stepContent').innerHTML=h}
 
 // ─── Timers ───
-function startTimer(s,l,b){if(b.classList.contains('running'))return;b.classList.add('running');const id=timerIdCounter++;let rem=s;const ov=document.getElementById('timerOverlay');ov.classList.add('active');const ch=document.createElement('div');ch.className='timer-chip';ch.id='t'+id;ch.innerHTML='<span class="time">'+fmtT(rem)+'</span><span class="label">'+esc(l)+'</span><button class="stop-btn" onclick="stopTimer('+id+')">✕</button>';ov.appendChild(ch);timers[id]=setInterval(()=>{rem--;const t=document.querySelector('#t'+id+' .time');if(t)t.textContent=fmtT(rem);if(rem<=0){clearInterval(timers[id]);const c=document.getElementById('t'+id);if(c){c.classList.add('done');c.querySelector('.time').textContent='✓'}b.classList.remove('running');b.textContent='✓';if('vibrate'in navigator)navigator.vibrate([200,100,200])}},1000)}
+function startTimer(s,l,b){
+  if(b.classList.contains('running'))return;
+  b.classList.add('running');
+  const id=timerIdCounter++;let rem=s;
+  const ov=document.getElementById('timerOverlay');ov.classList.add('active');
+  const ch=document.createElement('div');ch.className='timer-chip';ch.id='t'+id;
+  ch.innerHTML='<span class="time">'+fmtT(rem)+'</span><span class="label">'+esc(l)+'</span><button class="stop-btn" onclick="stopTimer('+id+')">✕</button>';
+  ov.appendChild(ch);
+  // Request notification permission on first timer
+  if(Notification.permission==='default') Notification.requestPermission();
+  timers[id]=setInterval(()=>{
+    rem--;
+    const t=document.querySelector('#t'+id+' .time');
+    if(t)t.textContent=fmtT(rem);
+    if(rem<=0){
+      clearInterval(timers[id]);
+      const c=document.getElementById('t'+id);
+      if(c){c.classList.add('done');c.querySelector('.time').textContent='✓'}
+      b.classList.remove('running');b.textContent='✓';
+      if('vibrate'in navigator)navigator.vibrate([200,100,200]);
+      // Push notification via SW
+      if(navigator.serviceWorker?.controller){
+        navigator.serviceWorker.controller.postMessage({type:'TIMER_DONE',label:l||'Krok gotowy!'});
+      } else if(Notification.permission==='granted'){
+        new Notification('⏱ Chef AI — Timer gotowy!',{body:l||'Czas minął!'});
+      }
+    }
+  },1000);
+}
 function stopTimer(id){clearInterval(timers[id]);document.getElementById('t'+id)?.remove();const o=document.getElementById('timerOverlay');if(!o.children.length)o.classList.remove('active')}
 
 // ─── Comparison Cards ───

@@ -477,3 +477,32 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .prop-more-btn{background:none;border:1px solid var(--border);color:var(--text-dim);padding:7px 14px;border-radius:20px;font-size:0.78rem;cursor:pointer;transition:all 0.15s}
 .prop-more-btn:hover{border-color:var(--gold);color:var(--gold)}
 .prop-skip-btn{background:none;border:none;color:var(--text-faint);padding:7px 14px;font-size:0.78rem;cursor:pointer;text-decoration:underline}
+
+/* ═══ Nutrition Bar ═══ */
+.nutrition-bar{display:flex;flex-wrap:wrap;gap:8px;padding:7px 0 4px;border-top:1px solid rgba(255,255,255,0.05);margin-top:4px}
+.nutr-item{font-size:0.72rem;color:var(--text-dim);display:flex;align-items:center;gap:3px}
+.nutr-item b{color:var(--text);font-weight:600}
+.nutr-protein b{color:#5cb870}
+.nutr-fat b{color:#f0a050}
+.nutr-carbs b{color:#5e8ac4}
+.nutr-note{font-size:0.65rem;color:var(--text-faint);margin-left:auto}
+.meta-kcal{color:var(--warning)!important}
+
+/* ═══ Shopping Export Bar ═══ */
+.shop-export-bar{display:flex;gap:6px;padding:6px 0 10px;flex-wrap:wrap}
+.shop-exp-btn{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text-dim);padding:5px 11px;border-radius:16px;font-size:0.72rem;cursor:pointer;transition:all 0.15s}
+.shop-exp-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ═══ Cost Modal ═══ */
+.cost-summary{text-align:center;padding:12px 0 16px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.cost-total{font-size:1.6rem;font-weight:700;color:var(--gold)}
+.cost-total span{font-size:0.75rem;font-weight:400;color:var(--text-faint);margin-left:4px}
+.cost-per{font-size:0.85rem;color:var(--text-dim);margin-top:4px}
+.cost-rating{font-size:0.75rem;margin-top:6px;font-weight:600}
+.cost-breakdown{display:flex;flex-direction:column;gap:4px;margin-top:14px}
+.cost-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.8rem}
+.cost-item{color:var(--text)}
+.cost-amount{color:var(--text-faint);font-size:0.72rem}
+.cost-price{color:var(--gold);font-weight:600;white-space:nowrap}
+.cost-note{grid-column:1/-1;font-size:0.7rem;color:var(--text-faint);padding-bottom:2px}
+.cost-tips{margin-top:12px;font-size:0.75rem;color:var(--text-dim);display:flex;flex-direction:column;gap:4px}

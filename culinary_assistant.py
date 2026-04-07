@@ -1975,6 +1975,7 @@ Zwróć TYLKO poniższy JSON — zero tekstu poza nim.
   "times": {{"prep_min": 0, "cook_min": 0, "total_min": 0}},
   "difficulty": 3,
   "servings": 2,
+  "nutrition": {{"kcal": 0, "protein_g": 0, "fat_g": 0, "carbs_g": 0}},
   "shopping_list": [{{"item": "...", "amount": "...", "section": "mięso/warzywa/nabiał/przyprawy/pantry"}}],
   "ingredients": [{{"item": "...", "amount": "...g/ml", "note": "dlaczego ten konkretny składnik/gatunek/forma"}}],
   "substitutes": [{{"original": "...", "substitute": "...", "flavor_impact": "...", "texture_impact": "...", "overall_effect": "...", "recommendation": "..."}}],
@@ -1984,6 +1985,27 @@ Zwróć TYLKO poniższy JSON — zero tekstu poza nim.
   "upgrade": "jeden konkretny element który podnosi danie na wyższy poziom — składnik, technika lub finishing"
 }}
 """
+
+def get_season_hint():
+    month = datetime.now().month
+    hints = {
+        1:  "zima — w sezonie: kapusta, marchew, buraki, cebula, jabłka, cytrusy, dziczyzna",
+        2:  "zima — w sezonie: kapusta, marchew, buraki, cebula, jabłka, cytrusy, orzechy",
+        3:  "wczesna wiosna — w sezonie: szparagi (pierwsze), szczypiorek, rzodkiewki, szpinak",
+        4:  "wiosna — w sezonie: szparagi, szpinak, szczaw, rzodkiewki, rabarbar, bób",
+        5:  "wiosna — w sezonie: szparagi, truskawki (pierwsze), bób, groch, koperek",
+        6:  "wczesne lato — w sezonie: truskawki, czereśnie, ogórki, groch, sałata, koperek",
+        7:  "lato — w sezonie: pomidory, ogórki, papryka, cukinia, maliny, borówki, kukurydza",
+        8:  "późne lato — w sezonie: pomidory, papryka, bakłażan, śliwki, grzyby leśne, kukurydza",
+        9:  "jesień — w sezonie: dynia, grzyby leśne, jabłka, gruszki, śliwki, marchew, seler, buraki",
+        10: "jesień — w sezonie: dynia, grzyby, buraki, kapusta, jabłka, orzechy, dziczyzna",
+        11: "późna jesień — w sezonie: kapusta, buraki, marchew, jabłka, orzechy, dziczyzna",
+        12: "zima — w sezonie: kapusta, marchew, buraki, jabłka, cytrusy, orzechy, dziczyzna",
+    }
+    return hints.get(month, "")
+
+# In-memory share store (recipes shared via public link)
+shared_recipes_store: dict = {}
 
 def build_pipeline_prompt(user_input, constraints, composition_ctx, flavor_ctx, core_ctx, techniques_ctx):
     """Build the full task prompt with all 4 knowledge layers injected."""
@@ -2565,6 +2587,11 @@ class CulinaryAssistant:
             constraints_parts.append(prof_ctx)
         if bans:
             constraints_parts.append("ABSOLUTNE ZAKAZY (nigdy nie używaj): " + ", ".join(bans))
+
+        # ─── Seasonality injection ───
+        season_hint = get_season_hint()
+        if season_hint:
+            constraints_parts.append(f"SEZON: {season_hint} — preferuj składniki sezonowe gdy pasuje do zapytania")
 
         # ─── Filters injection ───
         if filters:
@@ -3534,6 +3561,55 @@ Zwróć pełny JSON przepisu (ten sam format co oryginał) z dodanym polem "vari
             except: notes={}
         note=notes.get(recipe_title,{})
         return jsonify({"note":note})
+
+    # ─── Cost Calculator ───
+    @app.route("/api/cost", methods=["POST"])
+    @require_auth
+    def api_cost():
+        a = app.config.get("assistant")
+        if not a: return jsonify({"error": "Not init"}), 503
+        d = request.get_json(silent=True) or {}
+        ingredients = d.get("ingredients", [])
+        servings = d.get("servings", 2)
+        if not ingredients: return jsonify({"error": "Brak składników"}), 400
+        ing_list = "\n".join([f"- {i.get('item','')} {i.get('amount','')}" for i in ingredients])
+        prompt = f"""Jesteś ekspertem od cen w polskich supermarketach (Biedronka, Lidl, Kaufland, 2025).
+Oszacuj koszt następujących składników dla przepisu na {servings} porcji.
+
+Składniki:
+{ing_list}
+
+Uwaga: często musimy kupić całe opakowanie (min. 500g mięsa, 1 puszka, 1 główka czosnku).
+Podaj koszt CAŁOŚCI zakupów i koszt NA PORCJĘ.
+
+Zwróć JSON:
+{{"cost_total_pln": 24.50, "cost_per_serving_pln": 12.25, "breakdown": [
+  {{"item": "nazwa", "amount": "ile potrzeba", "price_pln": 3.99, "note": "np. cały kurczak 1.2kg"}},
+  {{"item": "czosnek", "amount": "3 ząbki", "price_pln": 1.49, "note": "główka ~15 ząbków"}}
+], "budget_rating": "tanie/średnie/drogie", "tips": ["jak kupić taniej lub czym zastąpić"]}}"""
+        try:
+            parsed, _ = a._call("", [{"role": "user", "content": prompt}])
+            return jsonify({"success": True, "data": parsed})
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            return jsonify({"error": str(e)}), 500
+
+    # ─── Recipe Share ───
+    @app.route("/api/share", methods=["POST"])
+    @require_auth
+    def api_share():
+        d = request.get_json(silent=True) or {}
+        recipe = d.get("recipe")
+        if not recipe: return jsonify({"error": "Brak przepisu"}), 400
+        token = uuid.uuid4().hex[:12]
+        shared_recipes_store[token] = recipe
+        return jsonify({"success": True, "token": token})
+
+    @app.route("/api/share/<token>")
+    def api_get_shared(token):
+        recipe = shared_recipes_store.get(token)
+        if not recipe: return jsonify({"error": "Link wygasł lub jest nieprawidłowy"}), 404
+        return jsonify({"success": True, "recipe": recipe})
 
     @app.route("/")
     def index(): return send_from_directory("static","index.html")

@@ -178,6 +178,104 @@ async function saveNote(title) {
   } catch { showStatus('Błąd zapisu'); }
 }
 
+// ─── Share Recipe ───
+async function shareRecipe(btn) {
+  const r = getRecipe(btn);
+  if (!r) return;
+  try {
+    const resp = await fetch(API + '/api/share', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ recipe: r })
+    });
+    const d = await resp.json();
+    if (!d.success) { showStatus('Błąd udostępniania'); return; }
+    const url = window.location.origin + '/?share=' + d.token;
+    if (navigator.share) {
+      await navigator.share({ title: r.title, text: r.subtitle || '', url });
+    } else {
+      await navigator.clipboard.writeText(url);
+      showStatus('🔗 Link skopiowany do schowka!');
+    }
+  } catch (e) { showStatus('Błąd udostępniania'); }
+}
+
+// ─── Cost Calculator ───
+async function showCost(btn) {
+  const r = getRecipe(btn);
+  if (!r) return;
+  const modal = createModal('💰 Kalkulator kosztów', '<div class="modal-loading">' + loadingDots() + '</div>');
+  try {
+    const resp = await fetch(API + '/api/cost', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ ingredients: r.ingredients || [], servings: r.servings || 2 })
+    });
+    const d = await resp.json();
+    if (!d.success) { modal.setContent('<p>Błąd: ' + esc(d.error || '') + '</p>'); return; }
+    const c = d.data;
+    const ratingColor = { tanie: 'var(--accent)', średnie: 'var(--warning)', drogie: 'var(--danger)' };
+    let html = `<div class="cost-summary">
+      <div class="cost-total">${c.cost_total_pln?.toFixed(2)} zł <span>łącznie</span></div>
+      <div class="cost-per">${c.cost_per_serving_pln?.toFixed(2)} zł / porcja</div>
+      ${c.budget_rating ? `<div class="cost-rating" style="color:${ratingColor[c.budget_rating]||'var(--gold)'}">● ${c.budget_rating}</div>` : ''}
+    </div>`;
+    if (c.breakdown?.length) {
+      html += '<div class="cost-breakdown">';
+      c.breakdown.forEach(item => {
+        html += `<div class="cost-row">
+          <span class="cost-item">${esc(item.item)}</span>
+          <span class="cost-amount">${esc(item.amount||'')}</span>
+          <span class="cost-price">${item.price_pln?.toFixed(2)} zł</span>
+          ${item.note ? `<span class="cost-note">${esc(item.note)}</span>` : ''}
+        </div>`;
+      });
+      html += '</div>';
+    }
+    if (c.tips?.length) {
+      html += '<div class="cost-tips">' + c.tips.map(t => `<div>💡 ${esc(t)}</div>`).join('') + '</div>';
+    }
+    modal.setContent(html);
+  } catch (e) { modal.setContent('<p>Błąd połączenia</p>'); }
+}
+
+// ─── Export Shopping List ───
+function exportShoppingList(rid, mode) {
+  const r = recipeStore[rid];
+  if (!r?.shopping_list?.length) return;
+
+  const grouped = {};
+  r.shopping_list.forEach(i => {
+    const sec = i.section || 'inne';
+    if (!grouped[sec]) grouped[sec] = [];
+    grouped[sec].push(`${i.amount ? i.amount + ' ' : ''}${i.item}`);
+  });
+
+  const lines = [`🛒 Lista zakupów: ${r.title}`, ''];
+  Object.entries(grouped).forEach(([sec, items]) => {
+    lines.push(`── ${sec.toUpperCase()} ──`);
+    items.forEach(i => lines.push('• ' + i));
+    lines.push('');
+  });
+  const text = lines.join('\n');
+
+  if (mode === 'copy') {
+    navigator.clipboard.writeText(text).then(() => showStatus('📋 Lista skopiowana!'));
+  } else if (mode === 'share') {
+    if (navigator.share) {
+      navigator.share({ title: 'Lista zakupów: ' + r.title, text });
+    } else {
+      navigator.clipboard.writeText(text).then(() => showStatus('📋 Lista skopiowana!'));
+    }
+  } else if (mode === 'print') {
+    const w = window.open('', '_blank');
+    w.document.write(`<html><head><title>Lista zakupów: ${r.title}</title>
+      <style>body{font-family:sans-serif;padding:20px;max-width:400px}h1{font-size:1.2rem}
+      pre{white-space:pre-wrap;font-size:0.95rem;line-height:1.8}</style></head>
+      <body><h1>🛒 Lista zakupów</h1><h2>${r.title}</h2><pre>${text}</pre></body></html>`);
+    w.document.close();
+    w.print();
+  }
+}
+
 // ─── Modal helper ───
 function createModal(title, content) {
   const existing = document.getElementById('recipeModal');
