@@ -3,70 +3,126 @@
     "rule": "yeast_dough_hydration_ratio",
     "category": "baking_structure",
     "applies_to": ["ciasto drożdżowe", "yeast dough", "drożdżówka", "babka", "bułki"],
-    "description": "Polish sweet yeast dough (ciasto drożdżowe) uses enriched dough formula: flour + liquid + fat + eggs + sugar + yeast. Hydration 55-60% creates soft, tearable crumb.",
+    "description": "Polish sweet yeast dough (ciasto drożdżowe) is an enriched dough: flour + liquid + fat + eggs + sugar + yeast. Hydration 55-60% creates soft, tearable crumb. Critical rules: butter added AFTER gluten develops, yeast never touches salt or fat directly, windowpane test is the only reliable doneness indicator for kneading.",
     "proportions": {
       "base_500g_flour": {
+        "flour_type": "mąka poznańska typ 500 — medium gluten, ideal for enriched dough",
         "flour_g": 500,
         "milk_ml": 250,
         "butter_g": 100,
         "eggs": 2,
+        "egg_yolks_extra": 1,
         "sugar_g": 80,
         "fresh_yeast_g": 25,
         "dry_yeast_g": 7,
-        "salt_g": 5
+        "salt_g": 5,
+        "note": "Extra yolk adds richness and color without excess water. Salt added to flour, never to yeast."
       },
-      "fat_role": "fat coats gluten strands — add after initial mixing, never with yeast",
-      "sugar_limit": "max 20% of flour weight — higher sugar inhibits yeast"
+      "fat_role": "Fat coats gluten strands — inhibits development if added too early. Add softened (not melted) butter only after 5 min initial kneading when gluten network has begun forming.",
+      "sugar_limit": "Max 20% of flour weight (100g per 500g flour). Higher sugar dehydrates yeast cells osmotically — use osmotolerant yeast (SAF Gold) for very sweet doughs.",
+      "milk_temperature": "35-38°C exactly — use thermometer. Below 25°C: yeast dormant. Above 43°C: yeast begins dying. Above 50°C: yeast fully killed."
     },
     "technique": {
-      "yeast_activation": "dissolve fresh yeast in warm milk (35-38°C) with 1 tsp sugar — wait 10 min until foamy",
-      "mixing_order": "flour + eggs + yeast mixture → knead 5 min → add softened butter in pieces → knead 10 min until windowpane",
-      "windowpane_test": "stretch small piece of dough — should form thin translucent membrane without tearing",
-      "first_rise": "covered, 28-30°C, 60-90 min until doubled",
-      "shaping": "punch down gently, shape, place in tin",
-      "second_rise": "30-45 min until dough crowns 2cm above tin rim",
-      "baking": "180-190°C, 30-40 min depending on size"
+      "yeast_activation": "Crumble fresh yeast into warm milk (35-38°C) with 1 tsp sugar and 2 tbsp flour — whisk, wait 10-15 min until visibly foamy and doubled. If no foam after 15 min, yeast is dead — discard and start again.",
+      "mixing_order": "Flour + eggs + salt + yeast mixture → mix until shaggy, knead 5 min → add softened butter in 4-5 small pieces, one at a time, each piece fully incorporated before next → knead 8-12 min until smooth",
+      "windowpane_test": "Pinch off walnut-sized piece, stretch slowly between fingers — should stretch to translucent membrane thin enough to see light through without tearing. If it tears immediately, knead 3 more minutes and test again.",
+      "first_rise": "Covered with damp cloth or plastic wrap, 26-28°C, 60-90 min until exactly doubled in volume. Poke test: finger indent springs back slowly = ready. Springs back fast = needs more time. Doesn't spring back = overproofed.",
+      "degassing": "Fold dough gently 2-3 times (like an envelope) — do NOT punch down aggressively, this tears gluten structure",
+      "shaping": "Shape on lightly floured surface with minimal flour. Tight surface tension is key — tuck dough under itself to create tension on top.",
+      "second_rise": "In tin or on tray, covered, 26-28°C, 30-45 min. Ready when dough crowns 1.5-2cm above tin rim and slowly springs back when gently pressed with oiled finger.",
+      "egg_wash": "1 egg yolk + 1 tbsp milk + pinch salt, brushed gently with soft brush just before baking — gives deep golden color",
+      "baking": "180°C top-bottom heat, 30-40 min depending on size. For large loaf, cover with foil after 20 min if browning too fast.",
+      "doneness": "Internal temperature 88-92°C measured with thermometer. Sounds hollow when tapped on bottom. Do not rely on color alone — interior may be raw despite golden crust.",
+      "cold_retard_option": "After shaping, refrigerate covered overnight (4-8°C) for second rise. Bake cold from fridge next morning — develops complex flavor through slow fermentation, more convenient for morning baking."
     },
     "failure_modes": [
       {
-        "case": "milk too hot (>45°C)",
-        "result": "yeast killed, dough doesn't rise",
-        "fix": "always test milk temperature on wrist — should feel warm not hot"
+        "case": "milk too hot (>43°C)",
+        "result": "yeast partially or fully killed — dough rises very slowly or not at all",
+        "fix": "always measure milk temperature with thermometer — wrist test is unreliable"
       },
       {
-        "case": "butter added too early",
-        "result": "fat coats flour, gluten can't develop, dense crumb",
-        "fix": "add butter only after 5 minutes of initial kneading"
+        "case": "butter added too early (before initial kneading)",
+        "result": "fat coats flour particles before gluten can form — dense, crumbly, brioche-like but without structure",
+        "fix": "knead flour+eggs+yeast+milk for minimum 5 minutes before adding any butter"
       },
       {
-        "case": "insufficient kneading",
-        "result": "poor gluten structure, crumbles when cut",
-        "fix": "knead until windowpane test passes — 10-15 min by hand, 8 min mixer"
+        "case": "butter added melted instead of softened",
+        "result": "incorporates too quickly, coats gluten unevenly, greasy crumb",
+        "fix": "butter must be 18-20°C — pliable but holds shape when pressed. Never melt."
       },
       {
-        "case": "overproofed",
-        "result": "collapsed structure, sour taste, large holes",
-        "fix": "watch volume not time — stop at doubled, not tripled"
+        "case": "insufficient kneading — windowpane fails",
+        "result": "poor gluten structure, dense crumb, tears easily when sliced",
+        "fix": "always verify with windowpane test — time guidelines are secondary to the physical test"
+      },
+      {
+        "case": "overproofed (first or second rise)",
+        "result": "collapsed structure, sour taste, large irregular holes, collapses in oven",
+        "fix": "watch volume not time. If overproofed: reshape, let rise again from scratch (though flavor is compromised)"
       },
       {
         "case": "too much flour added during kneading",
-        "result": "dry, tough, dense crumb",
-        "fix": "dough will be sticky at first — resist adding flour, keep kneading"
+        "result": "dry, tight, dense crumb — most common beginner mistake",
+        "fix": "enriched dough MUST be sticky at start — resist adding flour. Stickiness disappears after 8 min kneading as gluten develops."
+      },
+      {
+        "case": "salt added directly to yeast",
+        "result": "osmotic stress kills or weakens yeast — sluggish rise",
+        "fix": "mix salt into flour first, yeast into liquid separately"
+      },
+      {
+        "case": "baked before second rise complete",
+        "result": "dense interior, 'flying crust' (crust separates from crumb)",
+        "fix": "wait until dough crowns visibly above tin rim before baking"
       }
     ],
-    "confidence": 0.98
+    "confidence": 0.99
   },
   {
     "rule": "yeast_dough_enrichment_scale",
     "category": "baking_structure",
     "applies_to": ["ciasto drożdżowe", "enriched dough spectrum"],
-    "description": "The richer the dough (more fat+eggs), the slower the rise and longer the bake. Lean doughs rise fast; enriched doughs rise slowly but stay moist longer.",
+    "description": "Fat and egg content determine dough behavior, rise time, and final texture. Richer doughs need longer fermentation, gentler handling, and lower baking temperatures to prevent over-browning before interior sets.",
     "spectrum": [
-      {"type": "lean", "fat_percent": 0, "eggs": 0, "rise_time_min": 45, "example": "baguette, pizza"},
-      {"type": "slightly enriched", "fat_percent": 5, "eggs": 1, "rise_time_min": 60, "example": "dinner rolls"},
-      {"type": "enriched", "fat_percent": 15, "eggs": 2, "rise_time_min": 90, "example": "drożdżówka"},
-      {"type": "highly enriched", "fat_percent": 30, "eggs": 4, "rise_time_min": 120, "example": "babka, brioche"}
+      {
+        "type": "lean",
+        "fat_percent_of_flour": 0,
+        "eggs": 0,
+        "first_rise_min": 45,
+        "baking_temp_c": 230,
+        "crumb": "open, chewy, crispy crust",
+        "example": "baguette, ciabatta, pizza"
+      },
+      {
+        "type": "slightly enriched",
+        "fat_percent_of_flour": 5,
+        "eggs": 1,
+        "first_rise_min": 60,
+        "baking_temp_c": 200,
+        "crumb": "softer, slightly tender",
+        "example": "bułki maślane, dinner rolls"
+      },
+      {
+        "type": "enriched",
+        "fat_percent_of_flour": 15,
+        "eggs": 2,
+        "first_rise_min": 90,
+        "baking_temp_c": 180,
+        "crumb": "soft, pull-apart, slightly sweet",
+        "example": "drożdżówka, chałka"
+      },
+      {
+        "type": "highly enriched",
+        "fat_percent_of_flour": 30,
+        "eggs": 4,
+        "first_rise_min": 120,
+        "baking_temp_c": 170,
+        "crumb": "silky, rich, stays moist 3-4 days",
+        "example": "babka, brioche, panettone"
+      }
     ],
-    "confidence": 0.97
+    "pro_note": "The richer the dough, the more important cold retard becomes — overnight refrigeration at 4°C slows fermentation, develops flavor complexity impossible with room-temperature speed rising.",
+    "confidence": 0.99
   }
 ]

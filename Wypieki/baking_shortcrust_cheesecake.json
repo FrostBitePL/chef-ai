@@ -3,50 +3,65 @@
     "rule": "shortcrust_pastry_fat_ratio",
     "category": "baking_structure",
     "applies_to": ["ciasto kruche", "shortcrust pastry", "tart shell", "spód do tarty", "ciastka kruche"],
-    "description": "Polish kruche ciasto uses 3:2:1 ratio (flour:fat:sugar) or 2:1 flour:fat for unsweetened. Cold fat coated in flour creates flaky, tender texture by inhibiting gluten.",
+    "description": "Shortcrust relies on inhibiting gluten: cold fat coats flour particles before hydration, blocking gluten bond formation. The result is tender, crumbly, not chewy. Three rules above all: cold fat, minimal mixing after liquid added, mandatory rest.",
     "proportions": {
       "sweet_shortcrust_3_2_1": {
+        "flour_type": "mąka tortowa typ 450 — low protein essential for tenderness",
         "flour_g": 300,
-        "butter_g": 200,
+        "cold_butter_g": 200,
         "powdered_sugar_g": 100,
         "egg_yolks": 2,
-        "salt_pinch": 1,
-        "vanilla": "optional"
+        "cold_water_ml": 0,
+        "salt_g": 1,
+        "vanilla_extract_tsp": 0.5,
+        "note": "Yolks provide fat (emulsification) + binding without adding water. No water = less gluten activation."
       },
       "savoury_shortcrust_2_1": {
+        "flour_type": "mąka luksusowa typ 550",
         "flour_g": 200,
         "cold_butter_g": 100,
-        "cold_water_ml": 40,
-        "salt_g": 3
-      }
+        "cold_water_ml": 30,
+        "salt_g": 3,
+        "note": "Add water ice-cold, 1 tbsp at a time — stop the moment dough just holds together"
+      },
+      "ratio_logic": "3:2:1 (flour:butter:sugar) for sweet. 2:1 (flour:butter) for savoury. More butter = more tender but harder to handle. Less butter = sturdier, less tender."
     },
     "technique": {
-      "fat_temperature": "butter must be cold (4-6°C) — warm butter melts into flour, no flakiness",
-      "mixing_method": "rub cold butter into flour with fingertips or pulse in food processor until breadcrumb texture — pea-sized butter pieces for flakiness",
-      "liquid_addition": "add egg yolks/water 1 tbsp at a time, mix only until dough just comes together",
-      "resting": "wrap, refrigerate minimum 30 min — gluten relaxes, fat firms up",
-      "blind_baking": "line with parchment + weights, bake 180°C 15 min, remove weights, 5 min more"
+      "butter_temperature": "4-6°C — straight from fridge. If butter starts to soften during mixing, refrigerate bowl and dough for 10 min and continue. Warm butter = greasy, not flaky.",
+      "mixing_method_fingertips": "Rub cold butter into flour with fingertips quickly — lift and rub, don't squeeze. Stop when mixture looks like coarse breadcrumbs with some pea-sized butter pieces remaining. Pea-sized pieces = layered flakiness after baking.",
+      "mixing_method_processor": "Pulse cold butter + flour 8-10 short pulses until breadcrumb texture. Do NOT run processor continuously — heat from motor warms butter.",
+      "liquid_addition": "Add egg yolks (or cold water) all at once, mix with fork or hands only until dough just comes together — 30 seconds maximum. Visible cracks in dough are fine at this stage.",
+      "resting": "Flatten into disc, wrap in cling film, refrigerate minimum 1 hour — ideally overnight. Gluten relaxes (prevents shrinkage), butter firms up (easier to roll), flavors develop.",
+      "rolling": "Roll on lightly floured surface or between two sheets of parchment. Start from center, rotate dough 90° each roll. Target 3-4mm thickness for tart shells, 4-5mm for ciastka.",
+      "lining_tin": "Lift dough on rolling pin, drape over tin. Press gently into corners without stretching — stretched dough shrinks back when baked. Trim excess with knife.",
+      "blind_baking": "Line with parchment, fill with baking weights or dried beans to the very top. Bake 180°C 15-18 min, remove weights + parchment, bake 5-8 min more until base is pale gold and dry to touch. Egg wash base (1 yolk brushed) after removing weights seals against wet fillings.",
+      "doneness": "Pale gold, not white (underdone) or brown (overdone). Edges slightly darker than base is normal. Base must be fully dry and opaque — any translucency = underdone."
     },
     "failure_modes": [
       {
-        "case": "warm butter",
-        "result": "greasy, crumbles, no structure",
-        "fix": "chill butter and even the bowl before starting"
+        "case": "butter too warm during mixing",
+        "result": "fat absorbs into flour completely — no flakiness, greasy crumb, collapses when filled",
+        "fix": "keep everything cold — chill bowl, chill flour, work quickly"
       },
       {
         "case": "overmixed after adding liquid",
-        "result": "tough, cardboard texture",
-        "fix": "stop mixing the moment dough holds together — overworking develops gluten"
+        "result": "tough, cardboard, shrinks dramatically in oven",
+        "fix": "stop the moment dough holds together — 20-30 seconds after adding liquid is enough"
       },
       {
-        "case": "skipped resting",
-        "result": "shrinks in tin during baking",
-        "fix": "always rest minimum 30 min refrigerated, ideally overnight"
+        "case": "skipped or shortened resting",
+        "result": "shrinks back in tin during blind baking, sides collapse",
+        "fix": "minimum 1 hour rest refrigerated — overnight is ideal. If in a hurry, freeze for 20 min instead."
       },
       {
-        "case": "too much liquid",
-        "result": "sticky dough, tough crust",
-        "fix": "add water drop by drop — sweet shortcrust needs no water if enough egg yolks"
+        "case": "blind baking without weights or insufficient weights",
+        "result": "base puffs up, sides slide down",
+        "fix": "fill weights all the way to top of pastry, not just bottom"
+      },
+      {
+        "case": "wrong flour (typ 550 or higher for sweet shortcrust)",
+        "result": "tough, biscuit-like, chewy instead of crumbly",
+        "fix": "use mąka tortowa typ 450 for all sweet shortcrust and ciastka"
       }
     ],
     "confidence": 0.99
@@ -54,48 +69,74 @@
   {
     "rule": "polish_cheesecake_twarog",
     "category": "baking_structure",
-    "applies_to": ["sernik", "Polish cheesecake", "sernik na zimno", "sernik pieczony"],
-    "description": "Authentic Polish sernik uses twaróg (farmer's cheese) not cream cheese. Fat twaróg (tłusty) is essential — low-fat causes cracking and dry texture. The ratio is 1kg twaróg per 4-5 eggs.",
+    "applies_to": ["sernik", "Polish cheesecake", "sernik pieczony", "sernik warszawski"],
+    "description": "Authentic Polish sernik uses twaróg (fresh farmer's cheese), not cream cheese. Tłusty twaróg (full-fat) is non-negotiable — low-fat creates watery mass that cracks and dries. The mass must be silky smooth before baking. Cooling protocol is as important as the recipe itself.",
     "proportions": {
       "classic_sernik_1kg": {
-        "twarog_fatty_g": 1000,
+        "twarog_type": "twaróg tłusty (full-fat) — NOT chudy, NOT półtłusty, NOT twaróg ziarnisty",
+        "twarog_g": 1000,
         "eggs": 5,
+        "egg_yolks_extra": 1,
         "sugar_g": 200,
-        "butter_g": 100,
+        "butter_softened_g": 100,
         "potato_starch_g": 40,
         "vanilla_sugar_g": 16,
-        "note": "grind twaróg through mincer or blend until perfectly smooth — lumps cause uneven baking"
+        "lemon_zest": "1 lemon",
+        "note": "Extra yolk adds richness and binding. Lemon zest brightens flavor without adding liquid."
+      },
+      "pro_variant_double_cream": {
+        "twarog_g": 800,
+        "double_cream_g": 200,
+        "note": "Replace 20% twaróg with double cream (śmietanka 36%) for silkier, richer texture approaching Polish-NY hybrid"
       }
     },
     "technique": {
-      "cheese_prep": "pass twaróg through meat grinder twice or blend until silky — critical for smooth texture",
-      "mixing": "beat butter + sugar until pale, add yolks one by one, fold in twaróg, fold in starch, fold in stiff egg whites last",
-      "egg_whites": "whip to stiff peaks, fold gently — gives lightness without density of all-yolk sernik",
-      "baking": "160°C conventional, 50-60 min — sernik is done when edges set but center jiggles slightly",
-      "cooling": "turn off oven, crack door open, cool in oven 30 min — prevents cracking from temperature shock"
+      "cheese_prep": "Pass twaróg through meat grinder TWICE, or blend in food processor until completely smooth. A single grain of un-ground twaróg creates a texture fault visible in cross-section. This step cannot be skipped or rushed.",
+      "all_ingredients_room_temp": "Butter, eggs, twaróg must all be 20-22°C before mixing. Cold twaróg + warm butter = lumps that never fully incorporate.",
+      "mixing_order": "Beat softened butter + sugar + vanilla until pale and fluffy (3 min). Add egg yolks one at a time, beating 30 sec after each. Add ground twaróg in 3 additions, folding gently. Sift in potato starch, fold. Whip egg whites to firm (not stiff) peaks, fold in 3 additions — lightens texture.",
+      "egg_white_stage": "Firm peaks, not stiff — stiff whites create air pockets that crack during baking. Whites should curl when whisk is lifted.",
+      "baking_standard": "160°C top-bottom heat (NO fan), 55-65 min. Sernik is done when edges are fully set and puffed, center jiggles like set jelly (not liquid) when tin is shaken.",
+      "baking_water_bath": "Place sernik tin in larger roasting tin filled with 2cm boiling water. Bake 155°C, 70-80 min. Eliminates cracking entirely — steam maintains humidity, prevents surface from drying and splitting.",
+      "cooling_critical": "Turn OFF oven. Prop oven door open 3-5cm with wooden spoon. Leave sernik inside undisturbed for 1 hour. Then remove from oven, cool at room temperature 1 hour. Then refrigerate minimum 4 hours before slicing. Sudden temperature changes = surface cracks. Slicing warm = crumbles.",
+      "doneness": "Edges set and slightly pulled from sides of tin. Center jiggles gently as a whole unit (like set gelatin) — not liquid. Internal temp 70-72°C. Toothpick inserted 3cm from edge comes out clean."
     },
     "failure_modes": [
       {
-        "case": "low-fat twaróg or cottage cheese",
-        "result": "watery, cracks, dry texture",
-        "fix": "always use tłusty twaróg (full-fat farmer's cheese)"
+        "case": "low-fat twaróg (chudy or półtłusty)",
+        "result": "high water content → steam during baking → cracks, watery texture, falls flat after cooling",
+        "fix": "always use tłusty twaróg — if unavailable, drain any twaróg overnight in cheesecloth to remove excess water"
       },
       {
-        "case": "twaróg not ground smooth",
-        "result": "grainy texture, uneven set",
-        "fix": "grind twice through mincer or use blender"
+        "case": "twaróg not fully ground smooth",
+        "result": "grainy, heterogeneous texture — visible in every slice",
+        "fix": "grind twice through mincer or use food processor — test by pressing small amount between fingers, must feel like thick cream"
       },
       {
-        "case": "oven too hot or baked too long",
-        "result": "cracks on surface, dry interior",
-        "fix": "160°C max, remove when center still wobbles, cool gradually in oven"
+        "case": "baked at too high temperature or too long",
+        "result": "cracks on surface, dry rubbery interior, soufflé-collapse after removing from oven",
+        "fix": "160°C maximum, remove when center still wobbles. Better under- than over-baked — it sets during cooling."
       },
       {
-        "case": "no starch",
-        "result": "too soft, doesn't slice cleanly",
-        "fix": "add 40g potato starch per 1kg twaróg"
+        "case": "cooled too quickly or removed from oven immediately",
+        "result": "surface cracks from thermal shock — hot protein structure contracts too fast",
+        "fix": "cool gradually in turned-off oven with door ajar for 1 hour minimum"
+      },
+      {
+        "case": "no potato starch",
+        "result": "too soft, slumps when sliced, doesn't hold shape on plate",
+        "fix": "40g potato starch per 1kg twaróg is minimum — can increase to 50g for firmer slice"
+      },
+      {
+        "case": "egg whites whipped to stiff peaks",
+        "result": "large air pockets in baked sernik, surface cracks along air bubble lines",
+        "fix": "whip to firm peaks only — whites should hold shape but not be dry or lumpy"
+      },
+      {
+        "case": "sliced while warm or at room temperature",
+        "result": "crumbles, falls apart, not clean slices",
+        "fix": "refrigerate minimum 4 hours, ideally overnight. Slice cold with warm wet knife."
       }
     ],
-    "confidence": 0.98
+    "confidence": 0.99
   }
 ]
