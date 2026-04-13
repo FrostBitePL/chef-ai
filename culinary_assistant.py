@@ -2152,8 +2152,11 @@ Jeśli zapytanie dotyczy biszkoptu, ciasta drożdżowego, sernika lub ciasta kru
 - Studzenie: ODWRÓĆ formę NATYCHMIAST po wyjęciu z piekarnika. Postaw dnem do góry na szyjce butelki lub nóżkach. Studzić odwrócone do PEŁNEGO ostygnięcia — MINIMUM 60 minut. NIE 15, NIE 30.
 - Mąka: wyłącznie tortowa typ 450.
 - Wanilia i sól: dodawać NA POCZĄTKU ubijania — razem z jajkami, przed cukrem, przed zwiększeniem prędkości.
+- Mąka: dodawać w DOKŁADNIE 3 partiach, każdą w pełni wmieszać przed dodaniem następnej. NIE dodawać całej naraz.
 - Stuknięcie formą: po przelaniu ciasta stuknąć formą 1-2 razy o blat — uwalnia duże pęcherze powietrza. NIE mieszać.
 - Masło klarowane (opcja): jeśli dodajesz roztopione masło, ZAWSZE rób slurry — wymieszaj masło (40°C, nie gorące) z 2 łyżkami ciasta w osobnej miseczce, dopiero wtedy wciągnij do reszty. Gorące masło wlane wprost do piany natychmiast niszczy pęcherzyki.
+- Klasa jajek: zawsze podawaj klasę M lub L (55-65g/sztuka) w składnikach.
+- WARTOŚCI ODŻYWCZE: klasyczny biszkopt 5-jajkowy bez tłuszczu ma ~1250 kcal NA CAŁY TORT. Na 8 porcji = ~156 kcal/porcja, białko 6g, tłuszcz 3g, węglowodany 26g. NIE wpisuj 2500 kcal na porcję — to wartość niemożliwa dla biszkoptu bez tłuszczu.
 
 ### CIASTO DROŻDŻOWE:
 - Mleko 35-38°C — mierz termometrem, wrist test jest zawodny.
