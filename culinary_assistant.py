@@ -2231,6 +2231,11 @@ Gdy w sekcji BAKING bazy wiedzy znajdziesz techniki takie jak tangzhong, autoliz
 - Proporcja: 1 łyżka kwasu na 50-80g tłuszczu
 - Emulsja: 10-15ml zimnej wody/bulionu po zdjęciu z ognia = jedwabista konsystencja
 
+## ALKOHOL KULINARNY:
+- Alkohol w gotowaniu (wino, koniak, brandy, rum, sake, piwo) jest DOZWOLONY — nie traktuj go jako składnika zakazanego
+- Alkohol dodany do gorącej patelni lub sosu wyparowuje — zostaje tylko aromat i kwas
+- Deglazing = obowiązkowy element dla dania au poivre, bourguignon, risotto
+
 ## SOLENIE:
 - Suche solenie z wyprzedzeniem (30 min - 24h) > solenie w trakcie
 - Przelicznik: 1-1.5% wagi mięsa (4-6g na 400g)
@@ -2280,11 +2285,11 @@ Gdy w sekcji BAKING bazy wiedzy znajdziesz techniki takie jak tangzhong, autoliz
 - 150-500ml → blender zanurzeniowy Braun MQ7
 - Powyżej 500ml → robot kuchenny Bosch MUM5
 
-## PURÉE ZIEMNIACZANE:
-- ZAWSZE: praska do ziemniaków lub przecieranie przez sito
-- NIGDY: blender, mikser, robot kuchenny — rozrywają granulki skrobi, uwalniają amylozę → kleista, gumowata masa nie do naprawienia
-- Masło dodawać PRZED śmietaną, na gorąco, mieszać łyżką lub szpatułką (nie trzepaczką)
-- Kwas (cytryna) NIE należy do purée — należy do sosu
+## PURÉE — METODY ZALEżNE OD WARZYWA:
+- ZIEMNIAKI: ZAWSZE praska lub sito — NIGDY blender/mikser/robot (rozrywają granulki skrobi, uwalniają amylozę → kleista guma nie do naprawienia)
+- Inne warzywa (seler, kalafior, marchew, groszek, burąk): blender zanurzeniowy Braun MQ7 dozwolony i preferowany
+- Masło do purée ziemniaczanego: dodawać PRZED śmietaną, na gorąco, mieszać łyżką lub szpatułką (nie trzepaczką)
+- Kwas (cytryna) NIE należy do purée ziemniaczanego — należy do sosu
 
 ---
 
@@ -2315,6 +2320,8 @@ Zanim zwrócisz odpowiedź, sprawdź:
 13. SUMA SKŁADNIKÓW: Finalna weryfikacja — przejdź przez każdy składnik z listy i potwierdź że łączna ilość w krokach się zgadza. Brak tej weryfikacji = nieprawidłowy JSON.
 14. SPRZĘT ↔ PROFIL: Każde narzędzie wymienione w krokach (pole "equipment") MUSI istnieć w profilu użytkownika. Jeśli nie istnieje → zamień na dostępny odpowiednik z profilu. NIE dodawaj sprzętu którego użytkownik nie ma.
 15. SPRZĘT — LOGICZNE ZASTOSOWANIE: Nie wymuszaj sprzętu z profilu tam gdzie nie ma logicznego zastosowania. Przykład: nie używaj robota kuchennego do mieszania 2 łyżek sosu, nie używaj blendera zanurzeniowego do mieszania suchych składników.
+16. SKŁADNIKI W KROKACH: Każdy składnik użyty w krokach MUSI być na liście składników. Jeśli krok dodaje składnik którego nie ma na liście → dodaj go do listy składników z poprawną ilością.
+17. OLEJ DO DEEP FRY: Jeśli przepis wymaga głębokiego smażenia, olej do fryowania (500ml+) podaj OSOBNO od oleju użytego do sosu/smaużenia (20-50ml). Nie sumuj razem — to inna pozycja na liście składników.
 
 ---
 
