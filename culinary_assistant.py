@@ -2148,6 +2148,8 @@ Jeśli danie ma nazwę własną, MUSISZ zawrzeć WSZYSTKIE elementy definicyjne:
 - Carbonara = jajka + pecorino + guanciale + pieprz. Bez śmietany, bez boczku, bez parmezanu.
 - Béarnaise = klarowane masło + żółtka + estragon + ocet. Bez estragonu to nie béarnaise.
 - Boeuf bourguignon = wołowina + czerwone wino burgundzkie + lardons + pieczarki + perłowa cebula. Brak któregokolwiek = inne danie.
+- Ramen = tare + bulion (chintan lub paitan) + makaron + aromatyzowany olej. Brak tare = zupa z makaronem, nie ramen.
+- Pho = bulion na kościach z anyżem/cynamonem + makaron ryżowy banh pho + zioła świeże (mięta, bazylia tajska, kiełki).
 - Jeśli brakuje kluczowego elementu: dodaj go lub zmień nazwę dania.
 
 ## ZAPYTANIE KREATYWNE ("coś z kurczakiem", "szybki obiad", "coś azjatyckiego"):
@@ -2240,6 +2242,22 @@ Gdy w sekcji BAKING bazy wiedzy znajdziesz techniki takie jak tangzhong, autoliz
 - Suche solenie z wyprzedzeniem (30 min - 24h) > solenie w trakcie
 - Przelicznik: 1-1.5% wagi mięsa (4-6g na 400g)
 
+## BULIONY:
+- Tonkotsu/paitan (mleczny): AGRESYWNE wrzenie (rolling boil), moc 8-10, 8-12h — intensywne wrzenie emulguje tłuszcz i kolagen = mleczny nieprzejrzysty kolor. NIE przykrywać.
+- Chintan/klarowny (przejrzysty): delikatne wrzenie 90-95°C, moc 4-5, nigdy nie gotować agresywnie — tłuszcz nie emulguje, bulion pozostaje klarowny.
+- To PRZECIWNE techniki — mylenie = nienaprawialna wada gotowego bulionu
+
+## RAMEN — ELEMENTY OBOWIĄZKOWE:
+- Tare (baza smakowa) wlać NA DNO miski PRZED bulionem — shio/shoyu/miso, 30-40ml na porcję, skoncentrowane
+- Gorący bulion wlać na tare (nie odwrotnie)
+- Makaron: NIE opłukiwać przed podaniem w gorącym bulionie — skrobia na powierzchni wiąże bulion. Opłukiwanie tylko do tsukemen (makaron do maczania) i dań zimnych.
+- Aromatyzowany olej/tłuszcz: obowiązkowy czwarty element (mayu, rayu, masło czosnkowe, smalec)
+
+## OLEJE AROMATYZOWANE:
+- Proporcja olej:suchy składnik minimum 3:1 wagowo
+- Poniżej tego stosunku = pasta aromatyczna, nie olej — inne zastosowanie
+- Temperatura infuzji: 60-80°C (nie wyżej — aromat się niszczy powyżej 90°C)
+
 ## SOUS-VIDE CZASY (orientacyjne):
 - Polędwica/tenderloin: 54-56°C, 60-90 min (delikatna, bez tkanki łącznej — dłużej = mushy)
 - Antrykot/ribeye: 55-57°C, 90-120 min
@@ -2321,7 +2339,8 @@ Zanim zwrócisz odpowiedź, sprawdź:
 14. SPRZĘT ↔ PROFIL: Każde narzędzie wymienione w krokach (pole "equipment") MUSI istnieć w profilu użytkownika. Jeśli nie istnieje → zamień na dostępny odpowiednik z profilu. NIE dodawaj sprzętu którego użytkownik nie ma.
 15. SPRZĘT — LOGICZNE ZASTOSOWANIE: Nie wymuszaj sprzętu z profilu tam gdzie nie ma logicznego zastosowania. Przykład: nie używaj robota kuchennego do mieszania 2 łyżek sosu, nie używaj blendera zanurzeniowego do mieszania suchych składników.
 16. SKŁADNIKI W KROKACH: Każdy składnik użyty w krokach MUSI być na liście składników. Jeśli krok dodaje składnik którego nie ma na liście → dodaj go do listy składników z poprawną ilością.
-17. OLEJ DO DEEP FRY: Jeśli przepis wymaga głębokiego smażenia, olej do fryowania (500ml+) podaj OSOBNO od oleju użytego do sosu/smaużenia (20-50ml). Nie sumuj razem — to inna pozycja na liście składników.
+17. OLEJ DO DEEP FRY: Jeśli przepis wymaga głębokiego smażenia, olej do fryowania (500ml+) podaj OSOBNO od oleju użytego do sosu/smażenia (20-50ml). Nie sumuj razem — to inna pozycja na liście składników.
+18. DANIA KANONICZNE — WERYFIKACJA GLOBALNA: Jeśli danie ma nazwę własną z konkretnej kuchni (ramen, pho, risotto, bouillabaisse, pad thai, bibimbap, tagine) → sprawdź czy zawiera WSZYSTKIE elementy definicyjne. Ramen = tare + bulion + makaron + aromatyzowany olej. Pho = bulion na kościach z anyżem/cynamonem + makaron ryżowy + zioła świeże. Pad thai = tamarind + ryżowy makaron + jajko + kiełki + orzeszki. Brak kluczowego elementu = zmień nazwę lub dodaj element.
 
 ---
 
@@ -2334,7 +2353,7 @@ g/ml, °C (+°F), czysty JSON — zero tekstu poza JSON.
   "title": "...",
   "subtitle": "opis wywołujący apetyt — tekstura, kontrast, charakter",
   "science": "jeden zaskakujący mechanizm który zmienia sposób gotowania — konkretna chemia/fizyka",
-  "times": {{"prep_min": 0, "cook_min": 0, "total_min": 0}},
+  "times": {{"prep_min": 0, "cook_min": 0, "total_min": 0, "active_min": 0, "passive_min": 0, "schedule": "opcjonalnie dla dań >1 dnia: Dzień 1: X. Dzień 2: Y"}},  
   "difficulty": 3,
   "servings": 2,
   "nutrition": {{"kcal": 0, "protein_g": 0, "fat_g": 0, "carbs_g": 0}},
