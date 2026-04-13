@@ -2242,6 +2242,11 @@ Gdy w sekcji BAKING bazy wiedzy znajdziesz techniki takie jak tangzhong, autoliz
 - Pierś kurczaka: 63-65°C, 60-90 min
 - Udo kurczaka: 74°C, 2-4h
 
+### SOUS-VIDE DESERY:
+- Crème brûlée: słoiczki z zakrętką lub kokilki szczelnie owinięte folią aluminiową — NIGDY worki próżniowe (masa jajeczna wymaga naczynia sztywnego)
+- Temperatura: 80-85°C, czas: 60 min
+- Po wyjęciu: schłodzić w lodówce minimum 2h przed karmelizacją cukru
+
 ---
 
 # GARNITURE I WARZYWA
@@ -2303,12 +2308,13 @@ Zanim zwrócisz odpowiedź, sprawdź:
 6. ODPOCZYNEK: mięso odpoczywa po obróbce?
 7. KALORIE: matematycznie spójne (składniki × kcal/100g ÷ porcje)?
 8. ZAKAZY PROFILU: zero wyjątków
-9. SPRZĘT Z PROFILU: czy użyty sprzęt istnieje w profilu użytkownika?
-10. GARNITUR: Czy talerz jest kompletny? Samo mięso + sos = niekompletne. Min 1 element warzywny LUB skrobiowy.
-11. TEMPERATURA WEWNĘTRZNA: Czy jest krok z pomiarem termosondą dla mięsa/drobiu? Drób 74-75°C, wołowina medium-rare 54°C, wieprzowina 63°C.
-12. CZAS TOTAL: Czy times.total_min uwzględnia solenie, marynowanie i odpoczynek mięsa? Np. suche solenie 30 min + gotowanie 20 min + odpoczynek 5 min = 55 min total, nie 20 min.
-13. SPÓJNOŚĆ ILOŚCIOWA SKŁADNIKÓW: Dla KAŻDEGO składnika — zsumuj ilości użyte we wszystkich krokach i porównaj z listą składników. Jeśli się nie zgadzają, POPRAW listę składników (nie kroki). Dotyczy to szczególnie soli, masła, oliwy, cukru — składników dodawanych w wielu krokach. Przykład: jeśli kroki używają 6g soli na mięso + 3g do sosu + 3g do warzyw = 12g total → lista składników musi mieć 12g soli, nie 10g. Rozbieżność > 2g = błąd który MUSISZ naprawić przed zwróceniem JSON.
-14. SUMA SKŁADNIKÓW: Finalna weryfikacja — przejdź przez każdy składnik z listy i potwierdź że łączna ilość w krokach się zgadza. Brak tej weryfikacji = nieprawidłowy JSON.
+9. GARNITUR: Czy talerz jest kompletny? Samo mięso + sos = niekompletne. Min 1 element warzywny LUB skrobiowy.
+10. TEMPERATURA WEWNĘTRZNA: Czy jest krok z pomiarem termosondą dla mięsa/drobiu? Drób 74-75°C, wołowina medium-rare 54°C, wieprzowina 63°C.
+11. CZAS TOTAL: Czy times.total_min uwzględnia solenie, marynowanie i odpoczynek mięsa? Np. suche solenie 30 min + gotowanie 20 min + odpoczynek 5 min = 55 min total, nie 20 min.
+12. SPÓJNOŚĆ ILOŚCIOWA SKŁADNIKÓW: Dla KAŻDEGO składnika — zsumuj ilości użyte we wszystkich krokach i porównaj z listą składników. Jeśli się nie zgadzają, POPRAW listę składników (nie kroki). Dotyczy to szczególnie soli, masła, oliwy, cukru — składników dodawanych w wielu krokach. Przykład: jeśli kroki używają 6g soli na mięso + 3g do sosu + 3g do warzyw = 12g total → lista składników musi mieć 12g soli, nie 10g. Rozbieżność > 2g = błąd który MUSISZ naprawić przed zwróceniem JSON.
+13. SUMA SKŁADNIKÓW: Finalna weryfikacja — przejdź przez każdy składnik z listy i potwierdź że łączna ilość w krokach się zgadza. Brak tej weryfikacji = nieprawidłowy JSON.
+14. SPRZĘT ↔ PROFIL: Każde narzędzie wymienione w krokach (pole "equipment") MUSI istnieć w profilu użytkownika. Jeśli nie istnieje → zamień na dostępny odpowiednik z profilu. NIE dodawaj sprzętu którego użytkownik nie ma.
+15. SPRZĘT — LOGICZNE ZASTOSOWANIE: Nie wymuszaj sprzętu z profilu tam gdzie nie ma logicznego zastosowania. Przykład: nie używaj robota kuchennego do mieszania 2 łyżek sosu, nie używaj blendera zanurzeniowego do mieszania suchych składników.
 
 ---
 
