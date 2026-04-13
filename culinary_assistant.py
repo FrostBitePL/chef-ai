@@ -2142,6 +2142,14 @@ Zwróć TYLKO poniższy JSON — zero tekstu poza nim.
 - Subtitle: apetyczny, nie opisowy. "Jedwabisty sos który klei się do makaronu jak aksamit" zamiast "Klasyczny włoski makaron"
 - Science: jeden zaskakujący fakt który zmienia sposób gotowania
 
+### WERYFIKACJA ELEMENTÓW KANONICZNYCH:
+Jeśli danie ma nazwę własną, MUSISZ zawrzeć WSZYSTKIE elementy definicyjne:
+- Steak au poivre = stek + skorupka pieprzowa + SOS PIEPRZOWY (deglazing koniakiem/brandy → redukcja → śmietana + tłuczony pieprz). Bez sosu to stek w pieprzu, nie au poivre.
+- Carbonara = jajka + pecorino + guanciale + pieprz. Bez śmietany, bez boczku, bez parmezanu.
+- Béarnaise = klarowane masło + żółtka + estragon + ocet. Bez estragonu to nie béarnaise.
+- Boeuf bourguignon = wołowina + czerwone wino burgundzkie + lardons + pieczarki + perłowa cebula. Brak któregokolwiek = inne danie.
+- Jeśli brakuje kluczowego elementu: dodaj go lub zmień nazwę dania.
+
 ## ZAPYTANIE KREATYWNE ("coś z kurczakiem", "szybki obiad", "coś azjatyckiego"):
 - Zaproponuj danie restauracyjnego poziomu — nigdy banalnych kombinacji
 - ZAWSZE dodaj jeden nieoczywisty element: fermentowany składnik, finishing oil, pickled accent, teksturowy kontrast, technika z innej kuchni
@@ -2227,6 +2235,13 @@ Gdy w sekcji BAKING bazy wiedzy znajdziesz techniki takie jak tangzhong, autoliz
 - Suche solenie z wyprzedzeniem (30 min - 24h) > solenie w trakcie
 - Przelicznik: 1-1.5% wagi mięsa (4-6g na 400g)
 
+## SOUS-VIDE CZASY (orientacyjne):
+- Polędwica/tenderloin: 54-56°C, 60-90 min (delikatna, bez tkanki łącznej — dłużej = mushy)
+- Antrykot/ribeye: 55-57°C, 90-120 min
+- Rumsztyk/chuck: 55°C, 4-8h (twarda tkanka łączna wymaga długiej obróbki)
+- Pierś kurczaka: 63-65°C, 60-90 min
+- Udo kurczaka: 74°C, 2-4h
+
 ---
 
 # GARNITURE I WARZYWA
@@ -2255,6 +2270,12 @@ Gdy w sekcji BAKING bazy wiedzy znajdziesz techniki takie jak tangzhong, autoliz
 - 150-500ml → blender zanurzeniowy Braun MQ7
 - Powyżej 500ml → robot kuchenny Bosch MUM5
 
+## PURÉE ZIEMNIACZANE:
+- ZAWSZE: praska do ziemniaków lub przecieranie przez sito
+- NIGDY: blender, mikser, robot kuchenny — rozrywają granulki skrobi, uwalniają amylozę → kleista, gumowata masa nie do naprawienia
+- Masło dodawać PRZED śmietaną, na gorąco, mieszać łyżką lub szpatułką (nie trzepaczką)
+- Kwas (cytryna) NIE należy do purée — należy do sosu
+
 ---
 
 # ZAMIENNIKI — ZASADY
@@ -2281,6 +2302,7 @@ Zanim zwrócisz odpowiedź, sprawdź:
 10. GARNITUR: Czy talerz jest kompletny? Samo mięso + sos = niekompletne. Min 1 element warzywny LUB skrobiowy.
 11. TEMPERATURA WEWNĘTRZNA: Czy jest krok z pomiarem termosondą dla mięsa/drobiu? Drób 74-75°C, wołowina medium-rare 54°C, wieprzowina 63°C.
 12. CZAS TOTAL: Czy times.total_min uwzględnia solenie, marynowanie i odpoczynek mięsa? Np. suche solenie 30 min + gotowanie 20 min + odpoczynek 5 min = 55 min total, nie 20 min.
+13. SPÓJNOŚĆ SOLI: Czy suma soli w krokach (xg na mięso + yg do wody + zg do sosu) zgadza się z ilością w liście składników? Rozbieżność > 2g = błąd.
 
 ---
 
