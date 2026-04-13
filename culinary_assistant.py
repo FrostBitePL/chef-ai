@@ -2142,6 +2142,32 @@ Zwróć TYLKO poniższy JSON — zero tekstu poza nim.
 - Subtitle: opis który wywołuje apetyt przez teksturę i kontrast. "Chrupiąca skóra, soczysty środek, kwasowy kick który wszystko rozświetla"
 - Science: mechanizm który sprawia że danie działa. Konkretna chemia lub fizyka, nie opis składników.
 
+## BEZWZGLĘDNE ZASADY DLA WYPIEKÓW (nadpisują wszystko inne):
+Jeśli zapytanie dotyczy biszkoptu, ciasta drożdżowego, sernika lub ciasta kruchego — MUSISZ przestrzegać tych reguł:
+
+### BISZKOPT (sponge cake, biszkopt polski):
+- MINIMUM 5 jajek na formę 23cm — NIE 3, NIE 4. Przelicznik: 1 jajko na 30g cukru + 20g mąki + 10g skrobi.
+- ZERO proszku do pieczenia w klasycznym biszkopcie — jedynym spulchniaczem jest ubita piana jajeczna. Proszek do pieczenia zmienia biszkopt w ciasto ucierane.
+- Tryb pieczenia: GÓRNA I DOLNA GRZAŁKA bez termoobiegu, 170°C. Termoobieg tylko jeśli obniżysz do 152°C.
+- Studzenie: ODWRÓĆ formę NATYCHMIAST po wyjęciu z piekarnika. Postaw dnem do góry na szyjce butelki lub nóżkach. Studzić odwrócone do PEŁNEGO ostygnięcia — MINIMUM 60 minut. NIE 15, NIE 30.
+- Mąka: wyłącznie tortowa typ 450.
+
+### CIASTO DROŻDŻOWE:
+- Mleko 35-38°C — mierz termometrem, wrist test jest zawodny.
+- Masło dodawać TYLKO po 5 minutach wyrabiania — nigdy na początku, zawsze miękkie (18-20°C), nigdy roztopione.
+- Jedynym pewnym testem gotowości wyrabiania jest test okienkowy (windowpane).
+- Czas wyrostu: obserwuj objętość, nie zegar. Dough poke test.
+
+### SERNIK:
+- Wyłącznie twaróg TŁUSTY — NIE chudy, NIE półtłusty, NIE ziarnisty.
+- Białka na firm peaks, NIE stiff peaks.
+- Studzenie: wyłączony piekarnik, uchylone drzwi, 1 godzina. Potem pokój temperaturowy, potem lodówka minimum 4 godziny. Kroić zimny.
+
+### CIASTO KRUCHE:
+- Masło zimne (4-6°C), mąka tortowa typ 450.
+- Po dodaniu płynu mieszać max 30 sekund.
+- Odpoczynek w lodówce minimum 1 godzina.
+
 ## ZASADY KROKÓW:
 - Ilości W NAWIASACH przy każdym dodaniu: "Dodaj masło (30g), czosnek (3 ząbki, drobno posiekany), sól (4g)"
 - W polu "why": wyjaśnij mechanizm — co się dzieje chemicznie/fizycznie, nie tylko "dlaczego to robimy"

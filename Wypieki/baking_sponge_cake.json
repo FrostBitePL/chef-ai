@@ -110,6 +110,13 @@
         "fix": "use 6-egg recipe for 23cm tin when 3 layers are needed"
       }
     ],
+    "critical_rules": [
+      "MINIMUM 5 eggs for 23cm tin — 3 eggs cannot support 150g flour, biszkopt will be flat and dense. Rule: 1 egg per 30g flour+starch total.",
+      "NEVER add baking powder to classic Polish biszkopt — baking powder means it is no longer a biszkopt, it becomes a different cake (ciasto ucierane). Baking powder substitutes for egg foam, not supplements it.",
+      "NEVER cool right-side up — invert IMMEDIATELY after removing from oven. Place tin upside down on bottle neck or elevated rack. Leave inverted until COMPLETELY cold (minimum 60 minutes, not 15 minutes). Gravity collapses warm foam — inversion is not optional.",
+      "TOP-BOTTOM HEAT ONLY — no fan/convection at 170°C. If only fan available: reduce to 152°C.",
+      "Cooling time minimum 60 minutes — not 15, not 30. Cutting warm biszkopt crushes and tears crumb."
+    ],
     "storage": "wrap in cling film while still slightly warm to trap moisture, room temperature 2 days or freeze up to 1 month",
     "confidence": 0.99
   },
