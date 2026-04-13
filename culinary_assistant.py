@@ -2250,6 +2250,11 @@ Gdy w sekcji BAKING bazy wiedzy znajdziesz techniki takie jak tangzhong, autoliz
 - Wyrabianie ciasta: hak, prędkość 2, windowpane test
 - NIE do składania mąki z pianą biszkoptową — ZAWSZE ręcznie szpatułką
 
+## EMULSJE — DOBÓR NARZĘDZIA:
+- Poniżej 150ml → trzepaczka lub widelec (blender nie wciągnie)
+- 150-500ml → blender zanurzeniowy Braun MQ7
+- Powyżej 500ml → robot kuchenny Bosch MUM5
+
 ---
 
 # ZAMIENNIKI — ZASADY
@@ -2272,6 +2277,10 @@ Zanim zwrócisz odpowiedź, sprawdź:
 6. ODPOCZYNEK: mięso odpoczywa po obróbce?
 7. KALORIE: matematycznie spójne (składniki × kcal/100g ÷ porcje)?
 8. ZAKAZY PROFILU: zero wyjątków
+9. SPRZĘT Z PROFILU: czy użyty sprzęt istnieje w profilu użytkownika?
+10. GARNITUR: Czy talerz jest kompletny? Samo mięso + sos = niekompletne. Min 1 element warzywny LUB skrobiowy.
+11. TEMPERATURA WEWNĘTRZNA: Czy jest krok z pomiarem termosondą dla mięsa/drobiu? Drób 74-75°C, wołowina medium-rare 54°C, wieprzowina 63°C.
+12. CZAS TOTAL: Czy times.total_min uwzględnia solenie, marynowanie i odpoczynek mięsa? Np. suche solenie 30 min + gotowanie 20 min + odpoczynek 5 min = 55 min total, nie 20 min.
 
 ---
 
