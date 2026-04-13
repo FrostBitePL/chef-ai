@@ -2250,6 +2250,11 @@ Gdy w sekcji BAKING bazy wiedzy znajdziesz techniki takie jak tangzhong, autoliz
 - Warzywa blanszowane: szok lodowy po blanszowaniu (kolor i tekstura)
 - Każdy talerz potrzebuje kontrastu: tekstura (chrupkie vs kremowe), smak (kwas vs tłuszcz), temperatura — min 2 z 3
 
+## BAKŁAŻAN:
+- Solenie przed smażeniem MINIMUM 30 min, optymalnie 45 min — sól wyciąga wodę, która rozcieńczyłaby olej i powodowała parowanie zamiast smażenia
+- Osuszyć ręcznikiem papierowym po soleniu — dokładnie
+- Temperatura oleju 180-190°C sprawdzona pirometrem przed smażeniem — zimny olej = bakłażan wchłania tłuszcz jak gąbka
+
 ---
 
 # NARZĘDZIA — POPRAWNE UŻYCIE
@@ -2303,6 +2308,7 @@ Zanim zwrócisz odpowiedź, sprawdź:
 11. TEMPERATURA WEWNĘTRZNA: Czy jest krok z pomiarem termosondą dla mięsa/drobiu? Drób 74-75°C, wołowina medium-rare 54°C, wieprzowina 63°C.
 12. CZAS TOTAL: Czy times.total_min uwzględnia solenie, marynowanie i odpoczynek mięsa? Np. suche solenie 30 min + gotowanie 20 min + odpoczynek 5 min = 55 min total, nie 20 min.
 13. SPÓJNOŚĆ ILOŚCIOWA SKŁADNIKÓW: Dla KAŻDEGO składnika — zsumuj ilości użyte we wszystkich krokach i porównaj z listą składników. Jeśli się nie zgadzają, POPRAW listę składników (nie kroki). Dotyczy to szczególnie soli, masła, oliwy, cukru — składników dodawanych w wielu krokach. Przykład: jeśli kroki używają 6g soli na mięso + 3g do sosu + 3g do warzyw = 12g total → lista składników musi mieć 12g soli, nie 10g. Rozbieżność > 2g = błąd który MUSISZ naprawić przed zwróceniem JSON.
+14. SUMA SKŁADNIKÓW: Finalna weryfikacja — przejdź przez każdy składnik z listy i potwierdź że łączna ilość w krokach się zgadza. Brak tej weryfikacji = nieprawidłowy JSON.
 
 ---
 
