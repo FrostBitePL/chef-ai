@@ -56,11 +56,13 @@
     },
     "technique": {
       "egg_temperature": "room temperature (20-22°C) — cold eggs whip to 30% less volume",
-      "vanilla": "add 1 tsp vanilla extract or seeds from half a vanilla pod — masks eggy smell, adds aroma",
-      "whipping_stage": "whip whole eggs with sugar 10-12 minutes until ribbon stage — mixture triples in volume, pale yellow, falls in thick ribbons",
+      "vanilla": "add vanilla extract (5ml) together with salt at the very start of whipping — before sugar, before speed increase. This is the correct moment; adding later risks deflating foam.",
+      "salt_role": "2g salt added at start of whipping — relaxes egg proteins, making foam easier to form and more stable. Do not exceed 2g.",
+      "whipping_stage": "whip whole eggs + salt + vanilla on medium speed 2 min, then add sugar gradually over 3 min, increase to high speed, whip 5-7 more minutes until ribbon stage — mixture triples in volume, pale yellow, falls in thick ribbons",
       "ribbon_test": "lift whisk — mixture falls in a thick ribbon that holds its shape on the surface for 3 seconds before dissolving",
       "flour_folding": "sift flour+starch together 3 times, fold in 3 additions with rubber spatula using J-motion, max 40 strokes total — stop the moment no dry flour is visible",
-      "pouring": "pour batter from low height in one spot — do not spread with spatula, this deflates bubbles",
+      "pouring": "pour batter from low height (5cm) in one spot — do not spread with spatula. After pouring, tap tin gently on counter 1-2 times to release large trapped air bubbles. Do NOT stir.",
+      "clarified_butter_optional": "Optional upgrade: fold in 10g melted clarified butter (ghee) to improve moisture and elasticity. TECHNIQUE: take 2 tbsp of batter into a separate small bowl, whisk in the melted butter (cooled to 40°C, not hot), then fold this 'slurry' back into the main batter. NEVER pour hot butter directly into foam — it kills air bubbles on contact.",
       "tin_prep": "line bottom with parchment only — do NOT grease sides, ungreased sides act as grip surface for climbing batter"
     },
     "cooling": {
