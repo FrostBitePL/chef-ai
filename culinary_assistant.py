@@ -2302,7 +2302,7 @@ Zanim zwrócisz odpowiedź, sprawdź:
 10. GARNITUR: Czy talerz jest kompletny? Samo mięso + sos = niekompletne. Min 1 element warzywny LUB skrobiowy.
 11. TEMPERATURA WEWNĘTRZNA: Czy jest krok z pomiarem termosondą dla mięsa/drobiu? Drób 74-75°C, wołowina medium-rare 54°C, wieprzowina 63°C.
 12. CZAS TOTAL: Czy times.total_min uwzględnia solenie, marynowanie i odpoczynek mięsa? Np. suche solenie 30 min + gotowanie 20 min + odpoczynek 5 min = 55 min total, nie 20 min.
-13. SPÓJNOŚĆ SOLI: Czy suma soli w krokach (xg na mięso + yg do wody + zg do sosu) zgadza się z ilością w liście składników? Rozbieżność > 2g = błąd.
+13. SPÓJNOŚĆ ILOŚCIOWA SKŁADNIKÓW: Dla KAŻDEGO składnika — zsumuj ilości użyte we wszystkich krokach i porównaj z listą składników. Jeśli się nie zgadzają, POPRAW listę składników (nie kroki). Dotyczy to szczególnie soli, masła, oliwy, cukru — składników dodawanych w wielu krokach. Przykład: jeśli kroki używają 6g soli na mięso + 3g do sosu + 3g do warzyw = 12g total → lista składników musi mieć 12g soli, nie 10g. Rozbieżność > 2g = błąd który MUSISZ naprawić przed zwróceniem JSON.
 
 ---
 
