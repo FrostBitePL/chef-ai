@@ -29,7 +29,7 @@ MAX_HISTORY=8; SEARCH_RESULTS=8
 
 # ─── AI Model ───
 OPENAI_API_KEY=os.environ.get("OPENAI_API_KEY","")
-AI_MODEL="gpt-4o-mini"
+AI_MODEL="gpt-4.1-mini"
 AI_MAX_TOKENS=4096
 AI_BASE_URL="https://api.openai.com/v1"
 
@@ -94,7 +94,7 @@ def optional_auth(f):
     return wrapper
 
 # â”€â”€â”€ Database Operations â”€â”€â”€
-DEFAULT_PROFILE={"equipment":[],"banned_ingredients":[],"favorite_ingredients":[],"favorite_techniques":[],"mastered_skills":[],"discovered_preferences":[],"cooked_recipes":[],"ratings":[],"feedback_history":[],"stats":{"total_recipes":0}}
+DEFAULT_PROFILE={"equipment":[],"banned_ingredients":[],"favorite_ingredients":[],"favorite_techniques":[],"mastered_skills":[],"discovered_preferences":[],"cooked_recipes":[],"ratings":[],"feedback_history":[],"stats":{"total_recipes":0},"lang":"en"}
 
 def db_get_profile(uid):
     try:
@@ -427,6 +427,7 @@ KNOWLEDGE_LAYERS = {
     "composition": {"folder": "Kompozycja", "collection": "kb_composition"},
     "flavor":      {"folder": "Smak",       "collection": "kb_flavor"},
     "techniques":  {"folder": "Techniki",   "collection": "kb_techniques"},
+    "baking":      {"folder": "Wypieki",    "collection": "kb_baking"},
 }
 CULINARY_KNOWLEDGE = {}
 # Layer-specific K values - optimized for context reduction
@@ -434,7 +435,8 @@ LAYER_K_CONFIG = {
     "core": 3,
     "techniques": 2, 
     "composition": 2,
-    "flavor": 2
+    "flavor": 2,
+    "baking": 3,
 }
 LAYER_K = 5  # fallback for backward compatibility
 
@@ -955,7 +957,7 @@ Provide specific details:
 Keep response under 200 words. Be very specific."""
         
         msgs = [{"role": "user", "content": enrichment_prompt}]
-        enriched, _ = self._call("", msgs)  # Empty system prompt for speed
+        enriched, _ = self._call_text("", msgs)  # Empty system prompt for speed
         
         # Merge enrichment
         if enriched.get("specific_fix"):
@@ -1246,6 +1248,146 @@ def parallel_search(assistant, layer_queries):
     
     return results
 
+# ─── Smart Query Extraction ───
+# Build reverse alias index at startup: {"kurczak" → "chicken", "poulet" → "chicken", ...}
+_ALIAS_INDEX = {}  # populated by build_alias_index()
+_DISH_TYPES_ML = {
+    "pl": {"zupa":"soup","stek":"steak","gulasz":"stew","sałatka":"salad","danie":"dish","przystawka":"appetizer","deser":"dessert","makaron":"pasta","risotto":"risotto","pizza":"pizza","burger":"burger","taco":"taco","curry":"curry","ramen":"ramen"},
+    "en": {"soup":"soup","steak":"steak","stew":"stew","salad":"salad","appetizer":"appetizer","dessert":"dessert","pasta":"pasta"},
+    "de": {"Suppe":"soup","Steak":"steak","Eintopf":"stew","Salat":"salad","Vorspeise":"appetizer","Nachtisch":"dessert","Nudeln":"pasta"},
+    "es": {"sopa":"soup","filete":"steak","guiso":"stew","ensalada":"salad","postre":"dessert","pasta":"pasta"},
+    "fr": {"soupe":"soup","steak":"steak","ragoût":"stew","salade":"salad","entrée":"appetizer","dessert":"dessert","pâtes":"pasta"},
+}
+
+def build_alias_index():
+    """Build reverse index from all flavor JSON files: alias → ingredient_id."""
+    global _ALIAS_INDEX
+    idx = {}
+    base = os.path.join(KNOWLEDGE_BASE_ROOT, "Smak")
+    if not os.path.exists(base):
+        return idx
+    for fn in os.listdir(base):
+        if not fn.endswith('.json'):
+            continue
+        try:
+            with open(os.path.join(base, fn), 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            items = data if isinstance(data, list) else [data]
+            for item in items:
+                ing = item.get('ingredient', '')
+                if not ing:
+                    continue
+                # Index the ingredient name itself
+                idx[ing.lower()] = ing
+                idx[ing.replace('_', ' ').lower()] = ing
+                # Index all aliases
+                aliases = item.get('aliases', {})
+                for lang, names in aliases.items():
+                    for name in names:
+                        idx[name.lower()] = ing
+                # Legacy aliases_pl
+                for name in item.get('aliases_pl', []):
+                    idx[name.lower()] = ing
+        except Exception:
+            continue
+    _ALIAS_INDEX = idx
+    logger.info(f"Alias index built: {len(idx)} entries → {len(set(idx.values()))} ingredients")
+    return idx
+
+def extract_query_terms(question):
+    """Extract ingredient and dish type from user query using alias index.
+    Returns (main_ingredient_en, dish_type_en) for optimized layer queries.
+    Handles Polish declension (kurczakiem→kurczak), German/French/Spanish forms,
+    and checks 345+ ingredients in all languages."""
+    if not _ALIAS_INDEX:
+        build_alias_index()
+    
+    q_lower = question.lower()
+    words = q_lower.split()
+    
+    # Polish suffix stripping for common declension patterns
+    # This handles: kurczakiem→kurczak, soczewicy→soczewic, borowikami→borowik, etc.
+    PL_SUFFIXES = [
+        'iem', 'em', 'ów', 'ami', 'ach', 'om', 'ami', 'ów',  # noun cases
+        'iem', 'ką', 'ek', 'ki', 'ów', 'ce', 'cy', 'ów',
+        'ami', 'ach', 'om',  # plural cases
+        'ę', 'ą', 'y', 'i', 'u', 'ę',  # singular cases
+    ]
+    
+    def strip_pl_suffix(word):
+        """Generate possible stems by stripping Polish suffixes."""
+        stems = {word}
+        for suffix in sorted(PL_SUFFIXES, key=len, reverse=True):
+            if word.endswith(suffix) and len(word) - len(suffix) >= 3:
+                stems.add(word[:-len(suffix)])
+                # Also try adding back common endings
+                base = word[:-len(suffix)]
+                for ending in ['', 'a', 'o', 'ek', 'ka', 'ko', 'i', 'y']:
+                    stems.add(base + ending)
+        return stems
+    
+    # PASS 1: Exact phrase match (2-3 words, then 1 word)
+    main_ingredient = ""
+    best_match_len = 0
+    for n in (3, 2, 1):
+        for i in range(len(words) - n + 1):
+            phrase = ' '.join(words[i:i+n])
+            if phrase in _ALIAS_INDEX and len(phrase) > best_match_len:
+                main_ingredient = _ALIAS_INDEX[phrase]
+                best_match_len = len(phrase)
+    
+    # PASS 2: Stem matching (Polish declension) — only if pass 1 failed
+    if not main_ingredient:
+        for word in words:
+            if len(word) < 3:
+                continue
+            stems = strip_pl_suffix(word)
+            for stem in stems:
+                if stem in _ALIAS_INDEX:
+                    main_ingredient = _ALIAS_INDEX[stem]
+                    break
+            if main_ingredient:
+                break
+    
+    # PASS 3: Substring matching — check if any alias is contained in a word
+    # Handles: "orzeszkami" contains "orzeszk" from "orzeszki ziemne"
+    if not main_ingredient:
+        for word in words:
+            if len(word) < 4:
+                continue
+            for alias, ing in _ALIAS_INDEX.items():
+                if len(alias) < 4:
+                    continue
+                # Check if word starts with alias or alias starts with word
+                if word.startswith(alias[:min(len(alias), len(word)-1)]) or alias.startswith(word[:min(len(word), len(alias)-1)]):
+                    if len(alias) >= 4:  # avoid false positives on short strings
+                        main_ingredient = ing
+                        break
+            if main_ingredient:
+                break
+    
+    # Find dish type across all languages
+    dish_type = ""
+    for lang, dish_map in _DISH_TYPES_ML.items():
+        for term, eng in dish_map.items():
+            if term.lower() in q_lower:
+                dish_type = eng
+                break
+        if dish_type:
+            break
+    
+    return main_ingredient, dish_type
+
+def build_layer_queries(question, main_ingredient, dish_type):
+    """Build optimized per-layer search queries."""
+    return {
+        "core": f"{main_ingredient} temperature doneness process" if main_ingredient else question,
+        "techniques": f"{main_ingredient} cooking technique" if main_ingredient else question,
+        "composition": f"{dish_type} structure balance" if dish_type else question,
+        "flavor": f"{main_ingredient} pairing flavor" if main_ingredient else question,
+        "baking": f"{main_ingredient} baking ratio structure failure" if main_ingredient else question,
+    }
+
 def ultra_trim(text, max_chars=600):
     """Aggressive trim for maximum speed."""
     if not text:
@@ -1257,9 +1399,10 @@ def ultra_trim(text, max_chars=600):
 def is_simple_query(query):
     """Check if query is simple enough to skip executor."""
     words = query.lower().split()
+    main_ing, _ = extract_query_terms(query)
     simple_patterns = [
         len(words) <= 4,
-        any(word in words for word in ["kurczak", "ryba", "mięso", "warzywa"]),
+        bool(main_ing),  # found a known ingredient
         not any(word in query.lower() for word in ["skomplikowany", "specjalny", "restauracyjny"])
     ]
     return all(simple_patterns)
@@ -1758,9 +1901,19 @@ def _fmt_composition(item):
     return "\n".join(p for p in parts if p.split(": ",1)[-1].strip())
 
 def _fmt_flavor(item):
-    """Format a FLAVOR (Smak) item."""
+    """Format a FLAVOR (Smak) item. Includes multilingual aliases for cross-language search."""
     parts = []
     parts.append(f"INGREDIENT: {item.get('ingredient','')}")
+    # Index all language aliases so ChromaDB matches queries in any language
+    aliases = item.get('aliases', {})
+    if aliases:
+        all_names = []
+        for lang, names in aliases.items():
+            all_names.extend(names)
+        parts.append(f"NAMES: {', '.join(all_names)}")
+    # Legacy aliases_pl support
+    elif item.get('aliases_pl'):
+        parts.append(f"NAMES: {', '.join(item['aliases_pl'])}")
     parts.append(f"CATEGORY: {item.get('category','')}")
     fp = item.get('flavor_profile', {})
     if fp:
@@ -1776,6 +1929,13 @@ def _fmt_flavor(item):
     ac = item.get('aroma_compounds', [])
     if ac:
         parts.append(f"AROMA COMPOUNDS: {', '.join(ac)}")
+    # Cross-layer references
+    rc = item.get('related_core', [])
+    if rc:
+        parts.append(f"RELATED CORE: {', '.join(rc)}")
+    rt = item.get('related_techniques', [])
+    if rt:
+        parts.append(f"RELATED TECHNIQUES: {', '.join(rt)}")
     return "\n".join(p for p in parts if p.split(": ",1)[-1].strip())
 
 def _fmt_technique(item):
@@ -1804,11 +1964,34 @@ def _fmt_technique(item):
         parts.append(f"OUTPUT: texture={out.get('texture','')}, appearance={out.get('appearance','')}, flavor={out.get('flavor','')}")
     return "\n".join(p for p in parts if p.split(": ",1)[-1].strip())
 
+def _fmt_baking(item):
+    """Format a BAKING (Wypieki) item."""
+    parts = []
+    parts.append(f"RULE: {item.get('rule','')}")
+    parts.append(f"CATEGORY: {item.get('category','')}")
+    parts.append(f"APPLIES TO: {', '.join(item.get('applies_to', []))}")
+    parts.append(f"DESCRIPTION: {item.get('description','')}")
+    if item.get('ingredient'): parts.append(f"INGREDIENT: {item.get('ingredient','')}")
+    if item.get('intent'): parts.append(f"INTENT: {item.get('intent','')}")
+    if item.get('mechanism'): parts.append(f"MECHANISM: {item.get('mechanism','')}")
+    if item.get('critical_rule'): parts.append(f"CRITICAL RULE: {item.get('critical_rule','')}")
+    tech = item.get('technique', {})
+    if isinstance(tech, dict):
+        for k, v in tech.items():
+            parts.append(f"TECHNIQUE {k.upper()}: {v}")
+    props = item.get('proportions', {})
+    if props:
+        parts.append(f"PROPORTIONS: {json.dumps(props, ensure_ascii=False)}")
+    for fm in item.get('failure_modes', []):
+        parts.append(f"FAILURE: {fm.get('case','')} -> {fm.get('result','')} FIX: {fm.get('fix','')}")
+    return "\n".join(p for p in parts if p.split(": ",1)[-1].strip())
+
 _LAYER_FORMATTERS = {
     "core": _fmt_core,
     "composition": _fmt_composition,
     "flavor": _fmt_flavor,
     "techniques": _fmt_technique,
+    "baking": _fmt_baking,
 }
 
 def format_layer_for_chroma(layer_name, items):
@@ -1937,6 +2120,8 @@ BAZA WIEDZY:
 {techniques_data}
 ## FLAVOR (parowanie smaków, balans):
 {flavor_data}
+## BAKING (wypieki: proporcje, techniki, błędy):
+{baking_data}
 
 Jesteś szefem kuchni z gwiazdką Michelin. Myślisz jak kucharz, nie jak przepisownik.
 Zwróć TYLKO poniższy JSON — zero tekstu poza nim.
@@ -2007,8 +2192,21 @@ def get_season_hint():
 # In-memory share store (recipes shared via public link)
 shared_recipes_store: dict = {}
 
-def build_pipeline_prompt(user_input, constraints, composition_ctx, flavor_ctx, core_ctx, techniques_ctx):
-    """Build the full task prompt with all 4 knowledge layers injected."""
+LANG_INSTRUCTIONS = {
+    "en": "\n\n## LANGUAGE OVERRIDE\nThe user's interface language is ENGLISH. You MUST respond entirely in English — all recipe titles, subtitles, ingredient names, step instructions, tips, warnings, and every other text field in the JSON. Use metric units (grams, ml, °C) but write everything in English.",
+    "de": "\n\n## LANGUAGE OVERRIDE\nThe user's interface language is GERMAN. You MUST respond entirely in German (Deutsch) — all recipe titles, subtitles, ingredient names, step instructions, tips, warnings, and every other text field in the JSON. Use metric units.",
+    "es": "\n\n## LANGUAGE OVERRIDE\nThe user's interface language is SPANISH. You MUST respond entirely in Spanish (Español) — all recipe titles, subtitles, ingredient names, step instructions, tips, warnings, and every other text field in the JSON. Use metric units.",
+    "fr": "\n\n## LANGUAGE OVERRIDE\nThe user's interface language is FRENCH. You MUST respond entirely in French (Français) — all recipe titles, subtitles, ingredient names, step instructions, tips, warnings, and every other text field in the JSON. Use metric units.",
+}
+
+def get_lang_instruction(lang):
+    """Return language override instruction for non-Polish languages."""
+    if not lang or lang == "pl":
+        return ""
+    return LANG_INSTRUCTIONS.get(lang, f"\n\n## LANGUAGE OVERRIDE\nThe user's interface language is '{lang}'. You MUST respond entirely in that language — all text fields in the JSON.")
+
+def build_pipeline_prompt(user_input, constraints, composition_ctx, flavor_ctx, core_ctx, techniques_ctx, baking_ctx=None):
+    """Build the full task prompt with all knowledge layers injected."""
     return TASK_PROMPT_TEMPLATE.format(
         user_input=user_input,
         constraints=constraints,
@@ -2016,6 +2214,7 @@ def build_pipeline_prompt(user_input, constraints, composition_ctx, flavor_ctx, 
         flavor_data=flavor_ctx or "(no flavor data found)",
         core_data=core_ctx or "(no core data found)",
         techniques_data=techniques_ctx or "(no techniques data found)",
+        baking_data=baking_ctx or "(no baking data found)",
     )
 
 # ─── Assistant ───â”€â”€â”€
@@ -2088,6 +2287,8 @@ class CulinaryAssistant:
                 )
 
         self._load_knowledge_base()
+        # Build reverse alias index for smart query extraction
+        build_alias_index()
 
     def _load_knowledge_base(self):
         """Load JSON files and index into 4 ChromaDB collections. Skip if unchanged."""
@@ -2240,11 +2441,12 @@ class CulinaryAssistant:
 
     def _call(self, prompt, msgs, mode=None):
         resp = self.client.chat.completions.create(
-            model=AI_MODEL, max_tokens=AI_MAX_TOKENS,
+            model=AI_MODEL, max_tokens=AI_MAX_TOKENS, temperature=0.7,
             messages=[{"role": "system", "content": prompt}] + msgs,
-            temperature=0.7, response_format={"type": "json_object"}
+            response_format={"type": "json_object"}
         )
         raw = resp.choices[0].message.content
+        logger.info(f"[_call] raw response (first 300): {repr(raw[:300]) if raw else 'EMPTY'}")
         try:
             parsed = json.loads(raw)
         except Exception:
@@ -2257,12 +2459,35 @@ class CulinaryAssistant:
                 parsed = {"type": "text", "content": raw}
         return parsed, resp.usage
 
+    def _call_text(self, prompt, msgs):
+        """Like _call but without response_format constraint — for models that handle JSON natively."""
+        resp = self.client.chat.completions.create(
+            model=AI_MODEL, max_tokens=AI_MAX_TOKENS, temperature=0.7,
+            messages=[{"role": "system", "content": prompt}] + msgs,
+        )
+        raw = resp.choices[0].message.content or ""
+        logger.info(f"[_call_text] raw (first 300): {repr(raw[:300])}")
+        c = raw.strip()
+        if c.startswith("```"):
+            c = c.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
+        try:
+            return json.loads(c), resp.usage
+        except Exception:
+            import re
+            m = re.search(r'\{.*\}', c, re.DOTALL)
+            if m:
+                try:
+                    return json.loads(m.group()), resp.usage
+                except Exception:
+                    pass
+            return {"type": "text", "content": raw}, resp.usage
+
     def _call_stream(self, prompt, msgs, mode=None):
         """Streaming version — yields chunks of text as they arrive."""
         resp = self.client.chat.completions.create(
-            model=AI_MODEL, max_tokens=AI_MAX_TOKENS,
+            model=AI_MODEL, max_tokens=AI_MAX_TOKENS, temperature=0.7,
             messages=[{"role": "system", "content": prompt}] + msgs,
-            temperature=0.7, response_format={"type": "json_object"}, stream=True
+            stream=True
         )
         full = ""
         for chunk in resp:
@@ -2321,16 +2546,8 @@ class CulinaryAssistant:
             bans = json.loads(bans) if bans else []
 
         # STEP 1: Layer-specific retrieval (PARALLEL for speed)
-        words = question.lower().split()
-        main_ingredient = next((w for w in words if w in ["kurczak", "wołowina", "wieprzowina", "ryba", "warzywa", "makaron"]), "")
-        dish_type = next((w for w in words if w in ["zupa", "stek", "gulasz", "sałatka", "danie", "przystawka"]), "")
-        
-        layer_queries = {
-            "core": f"{main_ingredient} temperature doneness process" if main_ingredient else question,
-            "techniques": f"{main_ingredient} cooking technique" if main_ingredient else question,
-            "composition": f"{dish_type} structure balance" if dish_type else question,
-            "flavor": f"{main_ingredient} pairing flavor" if main_ingredient else question
-        }
+        main_ingredient, dish_type = extract_query_terms(question)
+        layer_queries = build_layer_queries(question, main_ingredient, dish_type)
         
         # PARALLEL SEARCH - 4x speed improvement
         layers = parallel_search(self, layer_queries)
@@ -2377,7 +2594,7 @@ class CulinaryAssistant:
             # Use simplified prompt with context injection
             planner_prompt = PLANNER_PROMPT.format(question=question, context=context)
             planner_msgs = [{"role": "user", "content": planner_prompt}]
-            plan, plan_usage = self._call("", planner_msgs)  # Empty system prompt, user prompt contains everything
+            plan, plan_usage = self._call_text("", planner_msgs)  # Empty system prompt, user prompt contains everything
             # Cache the plan
             if not hasattr(self, '_plan_cache'):
                 self._plan_cache = {}
@@ -2411,7 +2628,7 @@ class CulinaryAssistant:
                 # Use fast executor prompt for speed
                 executor_prompt = (EXECUTOR_PROMPT_FAST if use_fast_mode else EXECUTOR_PROMPT).replace("<<PLAN JSON>>", json.dumps(plan, ensure_ascii=False, indent=2))
                 executor_msgs = [{"role": "user", "content": executor_prompt}]
-                recipe, recipe_usage = self._call("", executor_msgs)  # Empty system prompt for speed
+                recipe, recipe_usage = self._call_text("", executor_msgs)  # Empty system prompt for speed
             
             # Cache the recipe
             if not hasattr(self, '_recipe_cache'):
@@ -2499,18 +2716,10 @@ class CulinaryAssistant:
             bans = json.loads(bans) if bans else []
 
         # STAGE 1: Layer-specific retrieval with layer-specific queries
-        # Extract key terms for better retrieval
-        words = question.lower().split()
-        main_ingredient = next((w for w in words if w in ["kurczak", "wołowina", "wieprzowina", "ryba", "warzywa", "makaron"]), "")
-        dish_type = next((w for w in words if w in ["zupa", "stek", "gulasz", "sałatka", "danie", "przystawka"]), "")
+        main_ingredient, dish_type = extract_query_terms(question)
         
         # Layer-specific queries for targeted retrieval
-        layer_queries = {
-            "core": f"{main_ingredient} temperature doneness process" if main_ingredient else question,
-            "techniques": f"{main_ingredient} cooking technique" if main_ingredient else question,
-            "composition": f"{dish_type} structure balance" if dish_type else question,
-            "flavor": f"{main_ingredient} pairing flavor" if main_ingredient else question
-        }
+        layer_queries = build_layer_queries(question, main_ingredient, dish_type)
         
         # Retrieve with layer-specific queries — PARALLEL for speed
         layers = parallel_search(self, layer_queries)
@@ -2519,6 +2728,7 @@ class CulinaryAssistant:
         flavor_ctx = trim_context("\n---\n".join(layers.get("flavor", [])), 1500)
         core_ctx = trim_context("\n---\n".join(layers.get("core", [])), 2000)
         techniques_ctx = trim_context("\n---\n".join(layers.get("techniques", [])), 1500)
+        baking_ctx = trim_context("\n---\n".join(layers.get("baking", [])), 1500)
 
         # Build constraints from user profile
         constraints_parts = []
@@ -2528,7 +2738,7 @@ class CulinaryAssistant:
             constraints_parts.append("BANNED INGREDIENTS: " + ", ".join(bans))
         constraints = "\n".join(constraints_parts) if constraints_parts else "none"
 
-        # STAGE 2-4: Build layered prompt (composition → flavor → core → techniques)
+        # STAGE 2-4: Build layered prompt (composition → flavor → core → techniques → baking)
         task_prompt = build_pipeline_prompt(
             user_input=question,
             constraints=constraints,
@@ -2536,13 +2746,14 @@ class CulinaryAssistant:
             flavor_ctx=flavor_ctx,
             core_ctx=core_ctx,
             techniques_ctx=techniques_ctx,
+            baking_ctx=baking_ctx,
         )
 
         system_prompt = SYSTEM_PROMPT_ENGINE
         msgs = list(history or []) + [{"role": "user", "content": task_prompt}]
 
         # FINAL: LLM call with decision engine
-        parsed, usage = self._call(system_prompt, msgs)
+        parsed, usage = self._call_text(system_prompt, msgs)
         parsed.pop("sources", None)
         parsed.pop("book_references", None)
         parsed = enforce_bans(parsed, bans)
@@ -2557,7 +2768,7 @@ class CulinaryAssistant:
             },
         }
 
-    def ask_stream_prompt(self, question, history=None, profile="lukasz", uid=None, filters=None, pantry=None, kcal_target=0, servings=0):
+    def ask_stream_prompt(self, question, history=None, profile="lukasz", uid=None, filters=None, pantry=None, kcal_target=0, servings=0, lang=None):
         """Build prompt for streaming — returns (system_prompt, messages, prof_data)."""
         prof_data = db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
         prof_ctx = profile_to_context(prof_data)
@@ -2566,21 +2777,15 @@ class CulinaryAssistant:
             bans = json.loads(bans) if bans else []
 
         # Layer-specific retrieval — PARALLEL
-        words = question.lower().split()
-        main_ingredient = next((w for w in words if w in ["kurczak", "wołowina", "wieprzowina", "ryba", "warzywa", "makaron"]), "")
-        dish_type = next((w for w in words if w in ["zupa", "stek", "gulasz", "sałatka", "danie", "przystawka"]), "")
-        layer_queries = {
-            "core": f"{main_ingredient} temperature doneness process" if main_ingredient else question,
-            "techniques": f"{main_ingredient} cooking technique" if main_ingredient else question,
-            "composition": f"{dish_type} structure balance" if dish_type else question,
-            "flavor": f"{main_ingredient} pairing flavor" if main_ingredient else question
-        }
+        main_ingredient, dish_type = extract_query_terms(question)
+        layer_queries = build_layer_queries(question, main_ingredient, dish_type)
         layers = parallel_search(self, layer_queries)
 
         composition_ctx = trim_context("\n---\n".join(layers.get("composition", [])), 2000)
         flavor_ctx = trim_context("\n---\n".join(layers.get("flavor", [])), 1500)
         core_ctx = trim_context("\n---\n".join(layers.get("core", [])), 2000)
         techniques_ctx = trim_context("\n---\n".join(layers.get("techniques", [])), 1500)
+        baking_ctx = trim_context("\n---\n".join(layers.get("baking", [])), 1500)
 
         constraints_parts = []
         if prof_ctx:
@@ -2646,14 +2851,16 @@ class CulinaryAssistant:
             flavor_ctx=flavor_ctx,
             core_ctx=core_ctx,
             techniques_ctx=techniques_ctx,
+            baking_ctx=baking_ctx,
         )
 
         msgs = list(history or []) + [{"role": "user", "content": task_prompt}]
-        return SYSTEM_PROMPT_ENGINE, msgs, prof_data
+        system_prompt = SYSTEM_PROMPT_ENGINE + get_lang_instruction(lang)
+        return system_prompt, msgs, prof_data
 
     # ─── Other methods (training, meal plan, surprise, import) ───
 
-    def train(self, mod_id, phase, question="", history=None, profile="lukasz", uid=None):
+    def train(self, mod_id, phase, question="", history=None, profile="lukasz", uid=None, lang=None):
         mod = next((m for m in TRAINING_MODULES if m["id"] == mod_id), None)
         if not mod:
             return {"data": {"type": "text", "content": "Nieznany modul."}, "profile": profile, "usage": {}}
@@ -2669,7 +2876,8 @@ class CulinaryAssistant:
             msgs.append({"role": "user", "content": f"Cwiczenie: {mod['title']}"})
         else:
             msgs.append({"role": "user", "content": question or "Jak mi poszlo?"})
-        parsed, usage = self._call(prompt, msgs, mode="smart")
+        prompt_with_lang = prompt + get_lang_instruction(lang)
+        parsed, usage = self._call_text(prompt_with_lang, msgs)
         parsed.pop("sources", None)
         parsed.pop("book_references", None)
         bans = prof_data.get("banned_ingredients", [])
@@ -2679,7 +2887,7 @@ class CulinaryAssistant:
         auto_update_profile(uid, parsed)
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
 
-    def meal_plan(self, days=7, prefs="", profile="lukasz", uid=None, persons=2, kcal=0, meals=None, diet=""):
+    def meal_plan(self, days=7, prefs="", profile="lukasz", uid=None, persons=2, kcal=0, meals=None, diet="", lang=None):
         prof_data = db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
         prof_ctx = profile_to_context(prof_data)
         layers = self.search_all_layers("meal plan balanced dinner lunch breakfast", k=3)
@@ -2713,7 +2921,8 @@ class CulinaryAssistant:
             f'"shopping_list":[{{"amount":"400g","item":"kurczak","section":"mięso","sources":["Dzień 1 obiad"]}}]\n'
             f'}}'
         )
-        parsed, usage = self._call(prompt, [{"role": "user", "content": user_msg}], mode="smart")
+        system_with_lang = prompt + get_lang_instruction(lang)
+        parsed, usage = self._call_text(system_with_lang, [{"role": "user", "content": user_msg}])
         parsed.pop("sources", None)
         parsed = enforce_bans(parsed, bans)
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
@@ -2746,41 +2955,34 @@ class CulinaryAssistant:
 
         constraints = "\n".join(constraints_parts) if constraints_parts else "brak"
 
-        prompt = f"""ZAPYTANIE: {question}
-OGRANICZENIA: {constraints}
+        prompt = f"""You are a culinary assistant. The user typed: "{question}". Constraints: {constraints}.
 
-Zdecyduj: czy to konkretne danie czy ogólne zapytanie?
+Is this a specific dish name (like "carbonara", "pad thai", "pierogi ruskie") or a general query (like "chicken", "dessert", "something Italian", "quick lunch")?
 
-KONKRETNE (is_specific: true) = użytkownik podał PEŁNĄ, JEDNOZNACZNĄ nazwę konkretnego dania z kuchni: "carbonara", "risotto alla milanese", "pad thai", "boeuf bourguignon", "pierogi ruskie z ziemniakami", "pizza margherita", "bigos", "żurek".
-NIE KONKRETNE mimo że to jedno słowo: "stek" (jakiego? jaka technika?), "kurczak", "zupa", "makaron", "ryba", "deser" — to są kategorie, nie konkretne dania.
+If specific dish: return JSON: {{"is_specific": true, "dish": "exact dish name"}}
 
-OGÓLNE (is_specific: false) = "coś z kurczakiem", "szybki obiad", "mam marchewkę i jajka", "coś włoskiego", "deser", "co zrobić z resztkami", "stek", "kurczak", "pasta", "zupa", "ryba", "coś słodkiego" etc.
+If general query: return JSON with 5 diverse restaurant-quality dish proposals:
+{{"is_specific": false, "proposals": [{{"id": 1, "title": "dish name", "subtitle": "one appetizing sentence", "time_min": 30, "difficulty": 3, "cuisine": "cuisine type", "wow": "surprise element"}}, {{"id": 2, "title": "...", "subtitle": "...", "time_min": 25, "difficulty": 2, "cuisine": "...", "wow": "..."}}, {{"id": 3, "title": "...", "subtitle": "...", "time_min": 40, "difficulty": 4, "cuisine": "...", "wow": "..."}}, {{"id": 4, "title": "...", "subtitle": "...", "time_min": 20, "difficulty": 2, "cuisine": "...", "wow": "..."}}, {{"id": 5, "title": "...", "subtitle": "...", "time_min": 35, "difficulty": 3, "cuisine": "...", "wow": "..."}}]}}
 
-Dla KONKRETNEGO zwróć:
-{{"is_specific": true, "dish": "dokładna nazwa dania"}}
+Return only valid JSON, nothing else."""
 
-Dla OGÓLNEGO zwróć 5 różnorodnych propozycji restauracyjnego poziomu. Żadnych banalnych kombinacji. Każda propozycja inna technika lub styl:
-{{"is_specific": false, "proposals": [
-  {{"id": 1, "title": "Nazwa dania", "subtitle": "apetyczny opis w jednym zdaniu — tekstura, kontrast, charakter", "time_min": 30, "difficulty": 3, "cuisine": "kuchnia", "wow": "element zaskoczenia"}},
-  {{"id": 2, "title": "...", "subtitle": "...", "time_min": 0, "difficulty": 0, "cuisine": "...", "wow": "..."}},
-  {{"id": 3, "title": "...", "subtitle": "...", "time_min": 0, "difficulty": 0, "cuisine": "...", "wow": "..."}},
-  {{"id": 4, "title": "...", "subtitle": "...", "time_min": 0, "difficulty": 0, "cuisine": "...", "wow": "..."}},
-  {{"id": 5, "title": "...", "subtitle": "...", "time_min": 0, "difficulty": 0, "cuisine": "...", "wow": "..."}}
-]}}
-
-Tylko czysty JSON."""
-
-        parsed, usage = self._call("", [{"role": "user", "content": prompt}])
+        try:
+            parsed, usage = self._call_text("You are a culinary assistant. Respond only with valid JSON.", [{"role": "user", "content": prompt}])
+            logger.info(f"[proposals] parsed keys: {list(parsed.keys()) if isinstance(parsed,dict) else type(parsed)} is_specific={parsed.get('is_specific') if isinstance(parsed,dict) else '?'}")
+        except Exception as e:
+            logger.error(f"[proposals] _call_text error: {e}")
+            raise
         return parsed, usage
 
-    def surprise(self, profile="lukasz", uid=None, kcal_target=0, servings=0):
+    def surprise(self, profile="lukasz", uid=None, kcal_target=0, servings=0, lang=None):
         theme = random.choice(SURPRISE_THEMES)
         if kcal_target and kcal_target >= 50:
             srv = max(servings, 1)
             theme += f" (CEL KALORYCZNY: {kcal_target} kcal na porcję, {srv} {'porcja' if srv == 1 else 'porcje'}. servings={srv}. Dobierz ilości składników żeby każda porcja miała ~{kcal_target} kcal.)"
+        theme += get_lang_instruction(lang)
         return self.ask(theme, profile=profile, uid=uid)
 
-    def import_url(self, url, page_text, profile="guest", uid=None):
+    def import_url(self, url, page_text, profile="guest", uid=None, lang=None):
         prof_data = db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
         prof_ctx = profile_to_context(prof_data)
         bans = prof_data.get("banned_ingredients", [])
@@ -2815,7 +3017,8 @@ Przekształć poniższy przepis na JSON type:recipe.
 9. Dodaj 'science', 'why', 'tip', 'warnings' do kroków — ale NIE zmieniaj oryginalnych składników/kroków.
 10. NIE dodawaj pola 'sources' do odpowiedzi.
 11. Jeśli oryginał podaje kategorie składników (np. "Sos:", "Do podania:"), użyj ich w polu "note" składnika."""
-        parsed, usage = self._call(prompt, [{"role": "user", "content": f"URL: {url}\n\nTREŚĆ PRZEPISU:\n{page_text[:8000]}"}], mode="smart")
+        prompt_with_lang = prompt + get_lang_instruction(lang)
+        parsed, usage = self._call_text(prompt_with_lang, [{"role": "user", "content": f"URL: {url}\n\nTREŚĆ PRZEPISU:\n{page_text[:8000]}"}])
         parsed.pop("sources", None)
         parsed.pop("book_references", None)
         # Force type=recipe if AI forgot it but data looks like a recipe
@@ -3105,8 +3308,9 @@ def create_app():
         pantry=d.get("pantry") or None
         kcal_target=int(d.get("kcal_target") or 0)
         servings=int(d.get("servings") or 0)
+        lang=d.get("lang") or "pl"
         # Use 4-layer pipeline for streaming
-        system_prompt,msgs,prof_data=a.ask_stream_prompt(q,h,profile=pr,uid=g.user_id,filters=filters,pantry=pantry,kcal_target=kcal_target,servings=servings)
+        system_prompt,msgs,prof_data=a.ask_stream_prompt(q,h,profile=pr,uid=g.user_id,filters=filters,pantry=pantry,kcal_target=kcal_target,servings=servings,lang=lang)
         uid=g.user_id
         def generate():
             full=""
@@ -3145,7 +3349,8 @@ def create_app():
         servings=int(d.get("servings") or 0)
         p=db_get_profile(g.user_id)
         try:
-            result=a.surprise(profile=p.get("bot_profile","guest"),uid=g.user_id,kcal_target=kcal_target,servings=servings)
+            lang=d.get("lang") or "pl"
+            result=a.surprise(profile=p.get("bot_profile","guest"),uid=g.user_id,kcal_target=kcal_target,servings=servings,lang=lang)
             increment_daily(g.user_id,"recipes")
             return jsonify({"success":True,**result})
         except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad."}),500
@@ -3166,7 +3371,8 @@ def create_app():
                 persons=min(int(d.get("persons",2)),10),
                 kcal=int(d.get("kcal",0) or 0),
                 meals=d.get("meals"),
-                diet=(d.get("diet") or "")
+                diet=(d.get("diet") or ""),
+                lang=(d.get("lang") or "pl")
             )})
         except:
             logger.error(traceback.format_exc())
@@ -3344,7 +3550,8 @@ def create_app():
             full_text="\n\n".join(parts) if parts else "Nie udało się wyekstrahować treści przepisu."
             logger.info(f"[import] url={url} ld={len(ld_text)} css={len(css_text)} fallback={len(fallback_text)} total={len(full_text)}")
 
-            result=a.import_url(url,full_text[:10000],p.get("bot_profile","guest"),uid=g.user_id)
+            lang=d.get("lang") or "pl"
+            result=a.import_url(url,full_text[:10000],p.get("bot_profile","guest"),uid=g.user_id,lang=lang)
             increment_daily(g.user_id,"imports")
             return jsonify({"success":True,**result})
         except http_requests.RequestException as e:
@@ -3359,7 +3566,8 @@ def create_app():
         d=request.get_json(silent=True) or {}
         p=db_get_profile(g.user_id)
         h=[{"role":m["role"],"content":m["content"]} for m in (d.get("conversation_history") or []) if isinstance(m,dict) and m.get("role") in ("user","assistant")][-MAX_HISTORY:]
-        try: return jsonify({"success":True,**a.train(d.get("module",""),d.get("phase","theory"),(d.get("question") or "").strip(),h,p.get("bot_profile","guest"),uid=g.user_id)})
+        lang=d.get("lang") or "pl"
+        try: return jsonify({"success":True,**a.train(d.get("module",""),d.get("phase","theory"),(d.get("question") or "").strip(),h,p.get("bot_profile","guest"),uid=g.user_id,lang=lang)})
         except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad."}),500
 
     @app.route("/api/modules")
@@ -3430,7 +3638,7 @@ def create_app():
     def update_profile_ep():
         d=request.get_json(silent=True) or {}
         updates={}
-        for key in ["favorite_ingredients","favorite_techniques","discovered_preferences","mastered_skills","equipment","banned_ingredients","bot_profile","name"]:
+        for key in ["favorite_ingredients","favorite_techniques","discovered_preferences","mastered_skills","equipment","banned_ingredients","bot_profile","name","lang"]:
             if key in d: updates[key]=d[key]
         if "rating" in d:
             p=db_get_profile(g.user_id)

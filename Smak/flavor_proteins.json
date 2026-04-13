@@ -1,0 +1,1528 @@
+[
+  {
+    "ingredient": "chicken",
+    "category": "poultry",
+    "flavor_profile": {
+      "primary_tastes": [
+        "savory",
+        "mild",
+        "neutral"
+      ],
+      "aroma": [
+        "clean",
+        "mild poultry",
+        "slightly sweet when roasted"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "low (breast) to medium (thigh/skin)"
+    },
+    "pairs_with": [
+      "lemon",
+      "thyme",
+      "rosemary",
+      "garlic",
+      "ginger",
+      "soy sauce",
+      "miso",
+      "honey",
+      "mustard",
+      "paprika",
+      "smoked paprika",
+      "cumin",
+      "coriander",
+      "coconut milk",
+      "cream",
+      "butter",
+      "tarragon",
+      "sage",
+      "oregano",
+      "tomato",
+      "olive",
+      "capers",
+      "white wine",
+      "sherry",
+      "mushroom",
+      "parmesan",
+      "mozzarella",
+      "bacon",
+      "chorizo",
+      "harissa"
+    ],
+    "contrast_with": [
+      "pickled vegetables",
+      "citrus acidity",
+      "fermented elements (kimchi, miso)"
+    ],
+    "boosters": [
+      "Maillard browning on skin",
+      "brining",
+      "miso marinade",
+      "fish sauce dash",
+      "brown butter basting",
+      "fond deglazing"
+    ],
+    "balancing_elements": [
+      "acid (lemon, vinegar)",
+      "salt",
+      "umami (soy, parmesan)",
+      "sweetness (honey, caramelized onion)"
+    ],
+    "avoid_combinations": [
+      "very strong fish flavors",
+      "excessive licorice/anise"
+    ],
+    "aroma_compounds": [
+      "2-acetyl-1-pyrroline",
+      "hexanal",
+      "nonanal"
+    ],
+    "related_core": [
+      "chicken_breast",
+      "chicken_wings"
+    ],
+    "related_techniques": [
+      "pan_searing",
+      "roasting_vegetables",
+      "brining",
+      "grilling"
+    ],
+    "confidence": 0.95,
+    "priority": "critical",
+    "aliases": {
+      "pl": [
+        "kurczak",
+        "pierś z kurczaka",
+        "udko",
+        "skrzydełko",
+        "drób",
+        "filet z kurczaka"
+      ],
+      "en": [
+        "chicken",
+        "chicken breast",
+        "thigh",
+        "wing"
+      ],
+      "de": [
+        "Hähnchen",
+        "Hühnerbrust",
+        "Hähnchenschenkel"
+      ],
+      "es": [
+        "pollo",
+        "pechuga de pollo",
+        "muslo"
+      ],
+      "fr": [
+        "poulet",
+        "blanc de poulet",
+        "cuisse de poulet"
+      ]
+    }
+  },
+  {
+    "ingredient": "chicken_thigh",
+    "category": "poultry",
+    "flavor_profile": {
+      "primary_tastes": [
+        "savory",
+        "rich",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "roasted poultry",
+        "deeper than breast",
+        "skin renders richly"
+      ],
+      "intensity": "medium",
+      "fat_content": "medium-high"
+    },
+    "pairs_with": [
+      "soy sauce",
+      "gochujang",
+      "miso",
+      "honey",
+      "garlic",
+      "ginger",
+      "lemongrass",
+      "coconut milk",
+      "curry paste",
+      "paprika",
+      "smoked paprika",
+      "harissa",
+      "preserved lemon",
+      "olive",
+      "fennel",
+      "tomato",
+      "white beans",
+      "chickpeas",
+      "rice",
+      "potatoes"
+    ],
+    "contrast_with": [
+      "bright acidic salsa",
+      "pickled onion",
+      "fresh herbs"
+    ],
+    "boosters": [
+      "crispy skin rendering",
+      "soy-honey glaze",
+      "slow braising",
+      "smoke",
+      "charring"
+    ],
+    "balancing_elements": [
+      "acid (vinegar, citrus)",
+      "fresh herbs (cilantro, parsley)",
+      "spice heat"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "2-acetyl-1-pyrroline",
+      "hexanal",
+      "lipid oxidation products"
+    ],
+    "related_core": [
+      "chicken_breast"
+    ],
+    "related_techniques": [
+      "braising",
+      "grilling",
+      "pan_searing"
+    ],
+    "confidence": 0.93,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "udko z kurczaka",
+        "udo kurczaka",
+        "podudzie",
+        "ćwiartka"
+      ],
+      "en": [
+        "chicken thigh",
+        "chicken leg",
+        "dark meat"
+      ],
+      "de": [
+        "Hähnchenschenkel",
+        "Hähnchenkeule"
+      ],
+      "es": [
+        "muslo de pollo",
+        "contramuslo"
+      ],
+      "fr": [
+        "cuisse de poulet",
+        "haut de cuisse"
+      ]
+    }
+  },
+  {
+    "ingredient": "turkey",
+    "category": "poultry",
+    "flavor_profile": {
+      "primary_tastes": [
+        "savory",
+        "mild",
+        "lean"
+      ],
+      "aroma": [
+        "mild poultry",
+        "slightly gamey when dark meat",
+        "clean"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "very low (breast) to medium (thigh)"
+    },
+    "pairs_with": [
+      "cranberry",
+      "sage",
+      "thyme",
+      "rosemary",
+      "butter",
+      "gravy",
+      "stuffing herbs",
+      "maple syrup",
+      "mustard",
+      "apple",
+      "pear",
+      "sweet potato",
+      "Brussels sprouts",
+      "bacon",
+      "pomegranate"
+    ],
+    "contrast_with": [
+      "tart cranberry sauce",
+      "acidic fruit compotes"
+    ],
+    "boosters": [
+      "brining",
+      "herb butter under skin",
+      "smoke",
+      "fond-based gravy"
+    ],
+    "balancing_elements": [
+      "acid (cranberry)",
+      "fat (butter, gravy)",
+      "sweetness (maple, fruit)"
+    ],
+    "avoid_combinations": [
+      "strong Asian fermented pastes can overwhelm"
+    ],
+    "aroma_compounds": [
+      "hexanal",
+      "nonanal",
+      "2-pentylfuran"
+    ],
+    "related_core": [
+      "chicken_breast"
+    ],
+    "related_techniques": [
+      "brining",
+      "slow_roasting",
+      "pan_searing"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "indyk",
+        "pierś z indyka",
+        "filet z indyka"
+      ],
+      "en": [
+        "turkey",
+        "turkey breast"
+      ],
+      "de": [
+        "Truthahn",
+        "Pute",
+        "Putenbrust"
+      ],
+      "es": [
+        "pavo",
+        "pechuga de pavo"
+      ],
+      "fr": [
+        "dinde",
+        "blanc de dinde"
+      ]
+    }
+  },
+  {
+    "ingredient": "veal",
+    "category": "meat",
+    "flavor_profile": {
+      "primary_tastes": [
+        "savory",
+        "delicate",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "mild",
+        "clean",
+        "milky",
+        "less intense than beef"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "lemon",
+      "capers",
+      "sage",
+      "white wine",
+      "marsala",
+      "cream",
+      "butter",
+      "mushroom",
+      "truffle",
+      "parmesan",
+      "prosciutto",
+      "gremolata",
+      "tomato",
+      "anchovy",
+      "rosemary"
+    ],
+    "contrast_with": [
+      "bright gremolata (lemon zest, parsley, garlic)",
+      "capers acidity"
+    ],
+    "boosters": [
+      "brown butter",
+      "fond deglazing with wine",
+      "slow braising for collagen",
+      "breading and frying (Milanese)"
+    ],
+    "balancing_elements": [
+      "acid (lemon, wine)",
+      "salt (capers, anchovy)",
+      "herbs (sage, parsley)"
+    ],
+    "avoid_combinations": [
+      "very strong spices that mask delicate flavor"
+    ],
+    "aroma_compounds": [
+      "hexanal",
+      "octanal",
+      "nonanal"
+    ],
+    "related_core": [
+      "meat",
+      "beef"
+    ],
+    "related_techniques": [
+      "pan_searing",
+      "braising"
+    ],
+    "confidence": 0.9,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "cielęcina",
+        "escalope cielęcy",
+        "ossobuco"
+      ],
+      "en": [
+        "veal",
+        "veal cutlet",
+        "ossobuco"
+      ],
+      "de": [
+        "Kalbfleisch",
+        "Kalbsschnitzel"
+      ],
+      "es": [
+        "ternera",
+        "escalope de ternera"
+      ],
+      "fr": [
+        "veau",
+        "escalope de veau",
+        "osso buco"
+      ]
+    }
+  },
+  {
+    "ingredient": "venison",
+    "category": "game",
+    "flavor_profile": {
+      "primary_tastes": [
+        "savory",
+        "rich",
+        "slightly gamey"
+      ],
+      "aroma": [
+        "earthy",
+        "forest",
+        "iron-rich",
+        "herbaceous"
+      ],
+      "intensity": "high",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "juniper",
+      "rosemary",
+      "thyme",
+      "red wine",
+      "blackberry",
+      "cherry",
+      "beetroot",
+      "celeriac",
+      "parsnip",
+      "chestnut",
+      "chocolate",
+      "port",
+      "cranberry",
+      "mushroom",
+      "black pepper",
+      "bay leaf"
+    ],
+    "contrast_with": [
+      "sweet fruit sauces",
+      "acidic berry reductions"
+    ],
+    "boosters": [
+      "red wine reduction",
+      "juniper berries",
+      "smoking",
+      "long marination",
+      "game stock"
+    ],
+    "balancing_elements": [
+      "sweetness (berry sauce, root vegetables)",
+      "acid (wine, vinegar)",
+      "fat (butter, cream — lean meat needs external fat)"
+    ],
+    "avoid_combinations": [
+      "delicate fish flavors",
+      "light citrus that can't stand up to gaminess"
+    ],
+    "aroma_compounds": [
+      "branched-chain fatty acids",
+      "skatole",
+      "4-methyloctanoic acid"
+    ],
+    "related_core": [
+      "beef",
+      "lamb"
+    ],
+    "related_techniques": [
+      "pan_searing",
+      "slow_roasting",
+      "braising"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "dziczyzna",
+        "sarna",
+        "jeleń",
+        "daniel"
+      ],
+      "en": [
+        "venison",
+        "deer",
+        "game meat"
+      ],
+      "de": [
+        "Wild",
+        "Reh",
+        "Hirsch"
+      ],
+      "es": [
+        "venado",
+        "ciervo"
+      ],
+      "fr": [
+        "venaison",
+        "chevreuil",
+        "cerf"
+      ]
+    }
+  },
+  {
+    "ingredient": "rabbit",
+    "category": "game",
+    "flavor_profile": {
+      "primary_tastes": [
+        "savory",
+        "mild",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "clean",
+        "mild game",
+        "similar to chicken but earthier"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "mustard",
+      "thyme",
+      "rosemary",
+      "garlic",
+      "white wine",
+      "cream",
+      "bacon",
+      "prunes",
+      "olive",
+      "tomato",
+      "fennel",
+      "sage",
+      "tarragon",
+      "dijon",
+      "cider"
+    ],
+    "contrast_with": [
+      "sharp mustard",
+      "tangy prune compote"
+    ],
+    "boosters": [
+      "wrapping in bacon for fat",
+      "mustard crust",
+      "braising in wine",
+      "confit technique"
+    ],
+    "balancing_elements": [
+      "fat (bacon, butter — very lean meat)",
+      "acid (wine, mustard)",
+      "sweetness (prunes, root veg)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "hexanal",
+      "nonanal"
+    ],
+    "related_core": [
+      "chicken_breast"
+    ],
+    "related_techniques": [
+      "braising",
+      "confit",
+      "slow_roasting"
+    ],
+    "confidence": 0.85,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "królik",
+        "comber królika"
+      ],
+      "en": [
+        "rabbit"
+      ],
+      "de": [
+        "Kaninchen",
+        "Hase"
+      ],
+      "es": [
+        "conejo"
+      ],
+      "fr": [
+        "lapin"
+      ]
+    }
+  },
+  {
+    "ingredient": "tofu",
+    "category": "plant_protein",
+    "flavor_profile": {
+      "primary_tastes": [
+        "neutral",
+        "slightly beany",
+        "mild"
+      ],
+      "aroma": [
+        "very mild",
+        "soy",
+        "clean"
+      ],
+      "intensity": "very low",
+      "fat_content": "low-medium"
+    },
+    "pairs_with": [
+      "soy sauce",
+      "sesame oil",
+      "ginger",
+      "garlic",
+      "scallion",
+      "chili",
+      "miso",
+      "gochujang",
+      "hoisin",
+      "rice vinegar",
+      "lime",
+      "peanut",
+      "coconut milk",
+      "mushroom",
+      "bok choy",
+      "nori",
+      "lemongrass",
+      "turmeric",
+      "curry paste"
+    ],
+    "contrast_with": [
+      "crispy fried exterior vs silky interior",
+      "spicy sauces on bland base"
+    ],
+    "boosters": [
+      "pressing to remove water",
+      "marinating deeply",
+      "deep frying for texture",
+      "freezing then thawing for spongy texture",
+      "miso glaze"
+    ],
+    "balancing_elements": [
+      "umami (soy, miso, mushroom)",
+      "acid (rice vinegar, lime)",
+      "heat (chili)"
+    ],
+    "avoid_combinations": [
+      "strong dairy flavors clash with soy base"
+    ],
+    "aroma_compounds": [
+      "hexanal",
+      "hexanol",
+      "2-pentylfuran"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "deep_frying",
+      "grilling",
+      "braising"
+    ],
+    "confidence": 0.9,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "tofu",
+        "ser sojowy",
+        "tofu jedwabiste",
+        "tofu wędzone"
+      ],
+      "en": [
+        "tofu",
+        "bean curd",
+        "silken tofu",
+        "firm tofu"
+      ],
+      "de": [
+        "Tofu"
+      ],
+      "es": [
+        "tofu",
+        "queso de soja"
+      ],
+      "fr": [
+        "tofu"
+      ]
+    }
+  },
+  {
+    "ingredient": "tempeh",
+    "category": "plant_protein",
+    "flavor_profile": {
+      "primary_tastes": [
+        "nutty",
+        "savory",
+        "earthy",
+        "slightly bitter"
+      ],
+      "aroma": [
+        "mushroomy",
+        "fermented",
+        "nutty"
+      ],
+      "intensity": "medium",
+      "fat_content": "medium"
+    },
+    "pairs_with": [
+      "soy sauce",
+      "kecap manis",
+      "garlic",
+      "ginger",
+      "sambal",
+      "peanut sauce",
+      "lime",
+      "coconut",
+      "lemongrass",
+      "turmeric",
+      "rice",
+      "stir-fry vegetables",
+      "maple syrup",
+      "smoked paprika"
+    ],
+    "contrast_with": [
+      "sweet glazes on earthy base",
+      "crispy exterior on tender interior"
+    ],
+    "boosters": [
+      "steaming before marinating (removes bitterness)",
+      "thin slicing and frying",
+      "sweet-soy glaze",
+      "smoking"
+    ],
+    "balancing_elements": [
+      "sweetness (kecap manis, maple)",
+      "acid (lime, tamarind)",
+      "umami (soy)"
+    ],
+    "avoid_combinations": [
+      "delicate European cream sauces"
+    ],
+    "aroma_compounds": [
+      "pyrazines",
+      "acetaldehyde"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "shallow_frying",
+      "grilling",
+      "marinating"
+    ],
+    "confidence": 0.85,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "tempeh",
+        "tempeh sojowy"
+      ],
+      "en": [
+        "tempeh"
+      ],
+      "de": [
+        "Tempeh"
+      ],
+      "es": [
+        "tempeh"
+      ],
+      "fr": [
+        "tempeh"
+      ]
+    }
+  },
+  {
+    "ingredient": "anchovy",
+    "category": "fish_preserved",
+    "flavor_profile": {
+      "primary_tastes": [
+        "umami",
+        "salty",
+        "savory"
+      ],
+      "aroma": [
+        "pungent",
+        "briny",
+        "fishy when raw — melts into background when cooked"
+      ],
+      "intensity": "very high",
+      "fat_content": "medium"
+    },
+    "pairs_with": [
+      "garlic",
+      "lemon",
+      "olive oil",
+      "tomato",
+      "capers",
+      "parsley",
+      "butter",
+      "pasta",
+      "lamb",
+      "beef",
+      "broccoli",
+      "cauliflower",
+      "red pepper",
+      "mozzarella",
+      "egg",
+      "Caesar dressing",
+      "pizza"
+    ],
+    "contrast_with": [
+      "bright lemon against deep umami",
+      "fresh parsley against preserved fish"
+    ],
+    "boosters": [
+      "dissolving in warm oil (invisible umami)",
+      "pairing with parmesan (double umami)",
+      "combining with tomato (glutamate synergy)"
+    ],
+    "balancing_elements": [
+      "acid (lemon, vinegar)",
+      "fat (olive oil, butter)",
+      "fresh herbs"
+    ],
+    "avoid_combinations": [
+      "sweet desserts",
+      "delicate white fish (overpowers)"
+    ],
+    "aroma_compounds": [
+      "trimethylamine",
+      "histamine",
+      "glutamic acid"
+    ],
+    "related_core": [
+      "fish"
+    ],
+    "related_techniques": [
+      "sautéing"
+    ],
+    "confidence": 0.94,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "anchois",
+        "sardela"
+      ],
+      "en": [
+        "anchovy",
+        "anchovies"
+      ],
+      "de": [
+        "Sardelle",
+        "Anchovis"
+      ],
+      "es": [
+        "anchoa",
+        "boquerón"
+      ],
+      "fr": [
+        "anchois"
+      ]
+    }
+  },
+  {
+    "ingredient": "bacon_pancetta",
+    "category": "cured_meat",
+    "flavor_profile": {
+      "primary_tastes": [
+        "salty",
+        "savory",
+        "smoky",
+        "rich"
+      ],
+      "aroma": [
+        "smoke",
+        "cured pork",
+        "rendered fat sweetness"
+      ],
+      "intensity": "high",
+      "fat_content": "very high"
+    },
+    "pairs_with": [
+      "egg",
+      "maple syrup",
+      "Brussels sprouts",
+      "pasta (carbonara)",
+      "tomato",
+      "cheese",
+      "potato",
+      "corn",
+      "scallop",
+      "chicken",
+      "dates",
+      "apple",
+      "spinach",
+      "blue cheese",
+      "lentils",
+      "beans"
+    ],
+    "contrast_with": [
+      "sweet (maple, dates)",
+      "bitter (radicchio, Brussels sprouts)",
+      "acidic (tomato, vinegar)"
+    ],
+    "boosters": [
+      "slow rendering for maximum crispness",
+      "using fat as cooking medium",
+      "fond from bacon as sauce base"
+    ],
+    "balancing_elements": [
+      "acid (vinegar, tomato)",
+      "sweetness (maple, caramelized onion)",
+      "bitterness (radicchio, endive)"
+    ],
+    "avoid_combinations": [
+      "delicate fish (overwhelms)",
+      "subtle desserts"
+    ],
+    "aroma_compounds": [
+      "guaiacol",
+      "4-methylguaiacol",
+      "syringol",
+      "phenol"
+    ],
+    "related_core": [
+      "bacon",
+      "pork"
+    ],
+    "related_techniques": [
+      "pan_searing",
+      "slow_roasting"
+    ],
+    "confidence": 0.95,
+    "priority": "critical",
+    "aliases": {
+      "pl": [
+        "boczek",
+        "pancetta",
+        "bekon",
+        "boczek wędzony",
+        "guanciale"
+      ],
+      "en": [
+        "bacon",
+        "pancetta",
+        "guanciale"
+      ],
+      "de": [
+        "Speck",
+        "Bacon",
+        "Pancetta"
+      ],
+      "es": [
+        "tocino",
+        "panceta",
+        "beicon"
+      ],
+      "fr": [
+        "lard",
+        "lardons",
+        "pancetta",
+        "guanciale"
+      ]
+    }
+  },
+  {
+    "ingredient": "prosciutto",
+    "category": "cured_meat",
+    "flavor_profile": {
+      "primary_tastes": [
+        "salty",
+        "savory",
+        "sweet",
+        "umami"
+      ],
+      "aroma": [
+        "nutty",
+        "cured",
+        "sweet pork",
+        "aged"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "medium-high"
+    },
+    "pairs_with": [
+      "melon",
+      "fig",
+      "mozzarella",
+      "burrata",
+      "parmesan",
+      "arugula",
+      "asparagus",
+      "pear",
+      "peach",
+      "grissini",
+      "pizza",
+      "pasta",
+      "veal (saltimbocca)",
+      "sage",
+      "goat cheese",
+      "olive oil"
+    ],
+    "contrast_with": [
+      "sweet fruit (melon, fig)",
+      "creamy cheese (burrata)",
+      "peppery greens (arugula)"
+    ],
+    "boosters": [
+      "crisping in oven for texture",
+      "wrapping around other ingredients",
+      "serving at room temperature for maximum aroma"
+    ],
+    "balancing_elements": [
+      "sweetness (fruit)",
+      "fat (cheese)",
+      "pepper (arugula)"
+    ],
+    "avoid_combinations": [
+      "cooking too long (becomes tough and overly salty)"
+    ],
+    "aroma_compounds": [
+      "methyl-branched aldehydes",
+      "esters",
+      "free amino acids"
+    ],
+    "related_core": [
+      "pork"
+    ],
+    "related_techniques": [
+      "plating"
+    ],
+    "confidence": 0.92,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "prosciutto",
+        "szynka parmeńska",
+        "szynka dojrzewająca"
+      ],
+      "en": [
+        "prosciutto",
+        "dry-cured ham",
+        "Parma ham"
+      ],
+      "de": [
+        "Parmaschinken",
+        "Prosciutto",
+        "Rohschinken"
+      ],
+      "es": [
+        "prosciutto",
+        "jamón crudo"
+      ],
+      "fr": [
+        "prosciutto",
+        "jambon cru",
+        "jambon de Parme"
+      ]
+    }
+  },
+  {
+    "ingredient": "chorizo",
+    "category": "cured_meat",
+    "flavor_profile": {
+      "primary_tastes": [
+        "spicy",
+        "smoky",
+        "savory",
+        "rich"
+      ],
+      "aroma": [
+        "smoked paprika",
+        "garlic",
+        "pork fat",
+        "spice"
+      ],
+      "intensity": "high",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "egg",
+      "potato",
+      "chickpeas",
+      "white beans",
+      "clam",
+      "shrimp",
+      "bell pepper",
+      "tomato",
+      "rice",
+      "corn",
+      "avocado",
+      "cheese",
+      "bread",
+      "lentils",
+      "kale",
+      "pasta"
+    ],
+    "contrast_with": [
+      "creamy (eggs, potatoes)",
+      "fresh (herbs, lime)",
+      "briny (shellfish)"
+    ],
+    "boosters": [
+      "rendering fat as cooking base",
+      "charring slices",
+      "using rendered oil to dress salads or pasta"
+    ],
+    "balancing_elements": [
+      "acid (sherry vinegar, lemon)",
+      "starch (potato, bread)",
+      "fresh herbs (parsley)"
+    ],
+    "avoid_combinations": [
+      "delicate white fish",
+      "subtle desserts"
+    ],
+    "aroma_compounds": [
+      "capsaicin",
+      "guaiacol",
+      "allicin",
+      "diallyl disulfide"
+    ],
+    "related_core": [
+      "pork"
+    ],
+    "related_techniques": [
+      "sautéing",
+      "grilling"
+    ],
+    "confidence": 0.9,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "chorizo",
+        "kiełbasa chorizo"
+      ],
+      "en": [
+        "chorizo"
+      ],
+      "de": [
+        "Chorizo"
+      ],
+      "es": [
+        "chorizo"
+      ],
+      "fr": [
+        "chorizo"
+      ]
+    }
+  },
+  {
+    "ingredient": "duck_breast",
+    "category": "poultry",
+    "flavor_profile": {
+      "primary_tastes": [
+        "rich",
+        "savory",
+        "slightly gamey",
+        "sweet fat"
+      ],
+      "aroma": [
+        "roasted",
+        "rich poultry",
+        "rendered fat sweetness"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "high (skin)"
+    },
+    "pairs_with": [
+      "cherry",
+      "orange",
+      "plum",
+      "raspberry",
+      "fig",
+      "port",
+      "red wine",
+      "balsamic",
+      "honey",
+      "star anise",
+      "five-spice",
+      "ginger",
+      "soy sauce",
+      "beetroot",
+      "turnip",
+      "lentils",
+      "endive",
+      "thyme",
+      "rosemary"
+    ],
+    "contrast_with": [
+      "tart fruit sauces",
+      "bitter greens (endive, radicchio)",
+      "acidic reductions"
+    ],
+    "boosters": [
+      "scoring skin for rendering",
+      "starting cold pan skin-down",
+      "orange or cherry gastrique",
+      "five-spice rub"
+    ],
+    "balancing_elements": [
+      "acid (citrus, vinegar, fruit)",
+      "sweetness (fruit sauce, honey)",
+      "bitterness (greens)"
+    ],
+    "avoid_combinations": [
+      "light delicate flavors get lost next to duck richness"
+    ],
+    "aroma_compounds": [
+      "2,4-decadienal",
+      "hexanal",
+      "nonanal"
+    ],
+    "related_core": [
+      "duck_breast"
+    ],
+    "related_techniques": [
+      "pan_searing",
+      "confit",
+      "slow_roasting"
+    ],
+    "confidence": 0.93,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "pierś z kaczki",
+        "kaczka",
+        "magret"
+      ],
+      "en": [
+        "duck breast",
+        "duck",
+        "magret"
+      ],
+      "de": [
+        "Entenbrust",
+        "Ente"
+      ],
+      "es": [
+        "pechuga de pato",
+        "pato",
+        "magret"
+      ],
+      "fr": [
+        "magret de canard",
+        "canard"
+      ]
+    }
+  },
+  {
+    "ingredient": "trout",
+    "category": "fish",
+    "flavor_profile": {
+      "primary_tastes": [
+        "delicate",
+        "sweet",
+        "clean"
+      ],
+      "aroma": [
+        "fresh water",
+        "mild",
+        "slightly nutty when cooked"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "medium"
+    },
+    "pairs_with": [
+      "almond",
+      "brown butter",
+      "lemon",
+      "dill",
+      "horseradish",
+      "capers",
+      "parsley",
+      "cream",
+      "bacon",
+      "leek",
+      "white wine",
+      "fennel",
+      "cucumber",
+      "watercress"
+    ],
+    "contrast_with": [
+      "nutty brown butter against delicate flesh",
+      "sharp horseradish"
+    ],
+    "boosters": [
+      "brown butter basting",
+      "smoking",
+      "crispy skin",
+      "almond crust",
+      "herb stuffing cavity"
+    ],
+    "balancing_elements": [
+      "acid (lemon)",
+      "fat (brown butter, cream)",
+      "freshness (dill, parsley)"
+    ],
+    "avoid_combinations": [
+      "strong Asian fermented sauces (overpowers delicate flavor)"
+    ],
+    "aroma_compounds": [
+      "geosmin",
+      "2-methylisoborneol",
+      "hexanal"
+    ],
+    "related_core": [
+      "fish",
+      "salmon"
+    ],
+    "related_techniques": [
+      "pan_searing",
+      "steaming_fish",
+      "grilling"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "pstrąg",
+        "pstrąg tęczowy"
+      ],
+      "en": [
+        "trout",
+        "rainbow trout"
+      ],
+      "de": [
+        "Forelle",
+        "Regenbogenforelle"
+      ],
+      "es": [
+        "trucha"
+      ],
+      "fr": [
+        "truite"
+      ]
+    }
+  },
+  {
+    "ingredient": "white_fish",
+    "category": "fish",
+    "flavor_profile": {
+      "primary_tastes": [
+        "mild",
+        "sweet",
+        "clean",
+        "delicate"
+      ],
+      "aroma": [
+        "ocean-fresh",
+        "clean",
+        "very mild"
+      ],
+      "intensity": "low",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "lemon",
+      "butter",
+      "capers",
+      "parsley",
+      "dill",
+      "tartar sauce",
+      "tomato",
+      "olive",
+      "fennel",
+      "white wine",
+      "cream",
+      "breadcrumbs",
+      "panko",
+      "garlic",
+      "paprika",
+      "curry"
+    ],
+    "contrast_with": [
+      "crispy coating on tender flesh",
+      "sharp caper-lemon butter"
+    ],
+    "boosters": [
+      "beurre noisette",
+      "panko crust",
+      "herb crust",
+      "court-bouillon poaching",
+      "en papillote"
+    ],
+    "balancing_elements": [
+      "acid (lemon, capers)",
+      "fat (butter, olive oil)",
+      "salt (capers, anchovy butter)"
+    ],
+    "avoid_combinations": [
+      "very heavy, strongly flavored sauces that mask the fish"
+    ],
+    "aroma_compounds": [
+      "trimethylamine oxide",
+      "dimethyl sulfide"
+    ],
+    "related_core": [
+      "fish"
+    ],
+    "related_techniques": [
+      "pan_searing",
+      "steaming_fish",
+      "shallow_frying",
+      "poaching_eggs"
+    ],
+    "confidence": 0.9,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "dorsz",
+        "mintaj",
+        "morszczuk",
+        "sandacz",
+        "szczupak",
+        "biała ryba"
+      ],
+      "en": [
+        "white fish",
+        "cod",
+        "haddock",
+        "pollock",
+        "pike",
+        "perch"
+      ],
+      "de": [
+        "Weißfisch",
+        "Kabeljau",
+        "Seelachs",
+        "Hecht",
+        "Zander"
+      ],
+      "es": [
+        "pescado blanco",
+        "bacalao",
+        "merluza"
+      ],
+      "fr": [
+        "poisson blanc",
+        "cabillaud",
+        "merlu",
+        "brochet",
+        "sandre"
+      ]
+    }
+  },
+  {
+    "ingredient": "octopus",
+    "category": "seafood",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sweet",
+        "briny",
+        "savory"
+      ],
+      "aroma": [
+        "ocean",
+        "mild",
+        "sweet when grilled"
+      ],
+      "intensity": "medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "olive oil",
+      "lemon",
+      "garlic",
+      "paprika",
+      "smoked paprika",
+      "potato",
+      "chorizo",
+      "tomato",
+      "oregano",
+      "red onion",
+      "capers",
+      "parsley",
+      "chili flakes",
+      "fennel",
+      "white wine"
+    ],
+    "contrast_with": [
+      "charred exterior vs tender interior",
+      "smoky vs briny"
+    ],
+    "boosters": [
+      "slow braising then high-heat char",
+      "wine cork in braising liquid (traditional)",
+      "sous-vide for perfect tenderness",
+      "smoked paprika oil finish"
+    ],
+    "balancing_elements": [
+      "acid (lemon, vinegar)",
+      "fat (olive oil)",
+      "smoke (paprika, grill)"
+    ],
+    "avoid_combinations": [
+      "cream-heavy sauces (mask ocean flavor)",
+      "cheese"
+    ],
+    "aroma_compounds": [
+      "trimethylamine",
+      "dimethyl sulfide"
+    ],
+    "related_core": [
+      "shellfish"
+    ],
+    "related_techniques": [
+      "braising",
+      "grilling"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "ośmiornica",
+        "ośmiorniczka"
+      ],
+      "en": [
+        "octopus"
+      ],
+      "de": [
+        "Oktopus",
+        "Krake"
+      ],
+      "es": [
+        "pulpo"
+      ],
+      "fr": [
+        "poulpe",
+        "pieuvre"
+      ]
+    }
+  }
+]

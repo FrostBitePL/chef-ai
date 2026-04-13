@@ -31,10 +31,10 @@ function toggleLiveIngredients(){
   const toggle=document.querySelector('.live-ingredients-toggle');
   if(panel.style.display==='none'){
     panel.style.display='block';
-    toggle.textContent='⚖️ Składniki ▲';
+    toggle.textContent=t('live.ingredients')+' ▲';
   }else{
     panel.style.display='none';
-    toggle.textContent='⚖️ Składniki ▼';
+    toggle.textContent=t('live.ingredients')+' ▼';
   }
 }
 
@@ -60,10 +60,10 @@ function renderLiveStep(){
   const total=liveData.steps.length;
   // Progress
   document.getElementById('liveProgressFill').style.width=((liveIndex+1)/total*100)+'%';
-  document.getElementById('liveStepCount').textContent='Krok '+(liveIndex+1)+'/'+total;
+  document.getElementById('liveStepCount').textContent=t('live.step')+' '+(liveIndex+1)+'/'+total;
   // Nav buttons
   document.getElementById('livePrev').disabled=liveIndex===0;
-  document.getElementById('liveNext').textContent=liveIndex===total-1?'✓ Gotowe!':'Dalej →';
+  document.getElementById('liveNext').textContent=liveIndex===total-1?t('live.done'):t('live.next');
   // Body
   let h='<div class="live-step-num">'+(liveIndex+1)+'</div>';
   h+='<div class="live-step-title">'+esc(s.title||'')+'</div>';
@@ -78,12 +78,12 @@ function renderLiveStep(){
     bar.style.display='flex';
     bar.classList.remove('done');
     document.getElementById('liveTimerTime').textContent=fmtT(s.timer_seconds);
-    document.getElementById('liveTimerLabel').textContent=s.title||'Krok '+(liveIndex+1);
+    document.getElementById('liveTimerLabel').textContent=s.title||t('live.step')+' '+(liveIndex+1);
     // Replace stop button with start button
     const stopBtn=document.querySelector('.live-timer-stop');
     stopBtn.textContent='▶ Start';
     stopBtn.onclick=function(){
-      startLiveTimer(s.timer_seconds, s.title||'Krok '+(liveIndex+1));
+      startLiveTimer(s.timer_seconds, s.title||t('live.step')+' '+(liveIndex+1));
       stopBtn.textContent='Stop';
       stopBtn.onclick=function(){stopLiveTimer()};
     };
@@ -105,7 +105,7 @@ function startLiveTimer(seconds, label){
     if(liveTimerRemaining<=0){
       clearInterval(liveTimerInterval);
       liveTimerInterval=null;
-      document.getElementById('liveTimerTime').textContent='✓ Gotowe!';
+      document.getElementById('liveTimerTime').textContent=t('live.timer_done');
       document.getElementById('liveTimerBar').classList.add('done');
       if('vibrate' in navigator) navigator.vibrate([300,150,300]);
     }
@@ -176,7 +176,7 @@ async function askLiveHelp(){
   const q=document.getElementById('liveHelpField').value.trim();
   if(!q || !liveData) return;
   const step=liveData.steps[liveIndex];
-  const context='Gotuje: '+liveData.title+'. Krok '+(liveIndex+1)+': '+step.title+' — '+step.instruction;
+  const context=t('live.cooking')+liveData.title+'. '+t('live.step')+' '+(liveIndex+1)+': '+step.title+' — '+step.instruction;
   const fullQ=context+'\n\nMój problem: '+q;
   document.getElementById('liveHelpAnswer').innerHTML=loadingDots();
   document.getElementById('liveHelpField').value='';
@@ -190,6 +190,6 @@ async function askLiveHelp(){
       document.getElementById('liveHelpAnswer').innerHTML='<div class="live-help-text">'+esc(JSON.stringify(d.data))+'</div>';
     }
   }catch{
-    document.getElementById('liveHelpAnswer').innerHTML='<div style="color:var(--danger)">Błąd połączenia.</div>';
+    document.getElementById('liveHelpAnswer').innerHTML='<div style="color:var(--danger)">'+t('error.conn')+'</div>';
   }
 }

@@ -53,7 +53,7 @@ function scaleAmount(amountStr, ratio) {
 async function showPairing(btn) {
   const r = getRecipe(btn);
   if (!r) return;
-  const modal = createModal('🍷 Parowanie napojów', '<div class="modal-loading">'+loadingDots()+'</div>');
+  const modal = createModal(t('modal.pairing'), '<div class="modal-loading">'+loadingDots()+'</div>');
   try {
     const summary = (r.ingredients || []).slice(0, 6).map(i => i.item).join(', ');
     const resp = await fetch(API + '/api/pairing', {
@@ -61,7 +61,7 @@ async function showPairing(btn) {
       body: JSON.stringify({ title: r.title, summary })
     });
     const d = await resp.json();
-    if (!d.success) { modal.setContent('<p>Błąd: ' + esc(d.error || '') + '</p>'); return; }
+    if (!d.success) { modal.setContent('<p>'+t('error')+': ' + esc(d.error || '') + '</p>'); return; }
     const pairings = d.data?.pairings || [];
     const html = pairings.map(p => `
       <div class="pairing-item">
@@ -70,24 +70,24 @@ async function showPairing(btn) {
         <div class="pairing-why">${esc(p.why)}</div>
         <div class="pairing-serve">🌡 ${esc(p.serve)}</div>
       </div>`).join('');
-    modal.setContent(html || '<p>Brak wyników</p>');
-  } catch (e) { modal.setContent('<p>Błąd połączenia</p>'); }
+    modal.setContent(html || '<p>'+t('modal.no_results')+'</p>');
+  } catch (e) { modal.setContent('<p>'+t('modal.conn_error')+'</p>'); }
 }
 
 // ─── Cooking Timeline ───
 async function showTimeline(btn) {
   const r = getRecipe(btn);
   if (!r || !r.steps?.length) return;
-  const modal = createModal('📊 Harmonogram gotowania', '<div class="modal-loading">'+loadingDots()+'</div>');
+  const modal = createModal(t('modal.timeline'), '<div class="modal-loading">'+loadingDots()+'</div>');
   try {
     const resp = await fetch(API + '/api/timeline', {
       method: 'POST', headers: authHeaders(),
       body: JSON.stringify({ title: r.title, steps: r.steps })
     });
     const d = await resp.json();
-    if (!d.success) { modal.setContent('<p>Błąd</p>'); return; }
+    if (!d.success) { modal.setContent('<p>'+t('modal.error')+'</p>'); return; }
     const tl = d.data;
-    let html = `<div class="tl-summary">⏱ Aktywna praca: <b>${tl.total_active_min} min</b> | Łącznie: <b>${tl.total_elapsed_min} min</b></div>`;
+    let html = `<div class="tl-summary">${t('timeline.active')} <b>${tl.total_active_min} ${t('timeline.min')}</b> | ${t('timeline.total')} <b>${tl.total_elapsed_min} ${t('timeline.min')}</b></div>`;
     html += '<div class="tl-rows">';
     (tl.timeline || []).forEach(row => {
       html += `<div class="tl-row"><div class="tl-min">${row.minute}'</div><div class="tl-tasks">`;
@@ -101,37 +101,37 @@ async function showTimeline(btn) {
       html += '</div></div>';
     });
     html += '</div>';
-    if (tl.tips?.length) html += '<div class="tl-tips">' + tl.tips.map(t => `<div>💡 ${esc(t)}</div>`).join('') + '</div>';
+    if (tl.tips?.length) html += '<div class="tl-tips">' + tl.tips.map(tp => `<div>💡 ${esc(tp)}</div>`).join('') + '</div>';
     modal.setContent(html);
-  } catch { modal.setContent('<p>Błąd połączenia</p>'); }
+  } catch { modal.setContent('<p>'+t('modal.conn_error')+'</p>'); }
 }
 
 // ─── Fix Step ───
 async function fixStep(stepNum, stepTitle, recipeTitle) {
-  const problem = prompt(`Problem przy kroku "${stepTitle}"?\nOpisz co poszło nie tak:`);
+  const problem = prompt(`${t('fix.prompt_title')} "${stepTitle}"?\n${t('fix.prompt_desc')}`);
   if (!problem) return;
-  const modal = createModal('🆘 Naprawa przepisu', '<div class="modal-loading">'+loadingDots()+'</div>');
+  const modal = createModal(t('modal.fix'), '<div class="modal-loading">'+loadingDots()+'</div>');
   try {
     const resp = await fetch(API + '/api/fix', {
       method: 'POST', headers: authHeaders(),
       body: JSON.stringify({ step: stepTitle, problem, recipe_title: recipeTitle })
     });
     const d = await resp.json();
-    if (!d.success) { modal.setContent('<p>Błąd</p>'); return; }
+    if (!d.success) { modal.setContent('<p>'+t('modal.error')+'</p>'); return; }
     const fix = d.data;
     let html = `<div class="fix-diag">${esc(fix.diagnosis)}</div>`;
-    html += `<div class="fix-save ${fix.can_save ? 'yes' : 'no'}">${fix.can_save ? '✅ Da się uratować' : '❌ Zacznij od nowa'}</div>`;
+    html += `<div class="fix-save ${fix.can_save ? 'yes' : 'no'}">${fix.can_save ? t('fix.can_save') : t('fix.restart')}</div>`;
     html += '<div class="fix-steps">' + (fix.fix_now || []).map((s,i) => `<div class="fix-step"><span>${i+1}</span>${esc(s)}</div>`).join('') + '</div>';
-    if (fix.prevention) html += `<div class="fix-prev">💡 Następnym razem: ${esc(fix.prevention)}</div>`;
+    if (fix.prevention) html += `<div class="fix-prev">${t('fix.prevention')}${esc(fix.prevention)}</div>`;
     modal.setContent(html);
-  } catch { modal.setContent('<p>Błąd połączenia</p>'); }
+  } catch { modal.setContent('<p>'+t('modal.conn_error')+'</p>'); }
 }
 
 // ─── Recipe Variant ───
 async function makeVariant(btn, mode) {
   const r = getRecipe(btn);
   if (!r) return;
-  const label = mode === 'healthier' ? '🥗 Zdrowsza wersja' : '👑 Bogatsza wersja';
+  const label = mode === 'healthier' ? t('variant.healthier') : t('variant.richer');
   const loadDiv = document.createElement('div');
   loadDiv.className = 'msg';
   const prev = document.createElement('div');
@@ -148,13 +148,13 @@ async function makeVariant(btn, mode) {
     const d = await resp.json();
     loadDiv.remove();
     if (d.is_limit) { showLimitMessage(d.message); return; }
-    if (!d.success) { addMsg('t', 'Błąd: ' + (d.error || '')); return; }
+    if (!d.success) { addMsg('t', t('error')+': ' + (d.error || '')); return; }
     const recipe = d.data;
     if (recipe.variant_note) {
       addMsg('t', `${label}\n\n${recipe.variant_note}`);
     }
     handleResponse(recipe);
-  } catch { loadDiv.remove(); addMsg('t', 'Błąd połączenia.'); }
+  } catch { loadDiv.remove(); addMsg('t', t('error.conn')); }
   scrollBottom();
 }
 
@@ -169,9 +169,9 @@ async function openNotes(btn) {
     existing = d.note?.text || '';
   } catch {}
 
-  const modal = createModal('📝 Notatki do przepisu: ' + r.title,
-    `<textarea class="note-textarea" id="noteText" placeholder="Twoje notatki po ugotowaniu — co zmienić, co wyszło świetnie...">${esc(existing)}</textarea>
-     <button class="modal-save-btn" onclick="saveNote('${esc(r.title).replace(/'/g,"\\'")}')">💾 Zapisz</button>`
+  const modal = createModal(t('modal.notes') + r.title,
+    `<textarea class="note-textarea" id="noteText" placeholder="${t('modal.notes_placeholder')}">${esc(existing)}</textarea>
+     <button class="modal-save-btn" onclick="saveNote('${esc(r.title).replace(/'/g,"\\'")}')">${t('modal.save')}</button>`
   );
 }
 
@@ -183,8 +183,8 @@ async function saveNote(title) {
       body: JSON.stringify({ recipe_title: title, note: text })
     });
     closeModal();
-    showStatus('Notatka zapisana ✓');
-  } catch { showStatus('Błąd zapisu'); }
+    showStatus(t('modal.note_saved'));
+  } catch { showStatus(t('modal.note_error')); }
 }
 
 // ─── Share Recipe ───
@@ -197,34 +197,34 @@ async function shareRecipe(btn) {
       body: JSON.stringify({ recipe: r })
     });
     const d = await resp.json();
-    if (!d.success) { showStatus('Błąd udostępniania'); return; }
+    if (!d.success) { showStatus(t('share.error')); return; }
     const url = window.location.origin + '/?share=' + d.token;
     if (navigator.share) {
       await navigator.share({ title: r.title, text: r.subtitle || '', url });
     } else {
       await navigator.clipboard.writeText(url);
-      showStatus('🔗 Link skopiowany do schowka!');
+      showStatus(t('share.link_copied'));
     }
-  } catch (e) { showStatus('Błąd udostępniania'); }
+  } catch (e) { showStatus(t('share.error')); }
 }
 
 // ─── Cost Calculator ───
 async function showCost(btn) {
   const r = getRecipe(btn);
   if (!r) return;
-  const modal = createModal('💰 Kalkulator kosztów', '<div class="modal-loading">' + loadingDots() + '</div>');
+  const modal = createModal(t('modal.cost'), '<div class="modal-loading">' + loadingDots() + '</div>');
   try {
     const resp = await fetch(API + '/api/cost', {
       method: 'POST', headers: authHeaders(),
       body: JSON.stringify({ ingredients: r.ingredients || [], servings: r.servings || 2 })
     });
     const d = await resp.json();
-    if (!d.success) { modal.setContent('<p>Błąd: ' + esc(d.error || '') + '</p>'); return; }
+    if (!d.success) { modal.setContent('<p>'+t('error')+': ' + esc(d.error || '') + '</p>'); return; }
     const c = d.data;
     const ratingColor = { tanie: 'var(--accent)', średnie: 'var(--warning)', drogie: 'var(--danger)' };
     let html = `<div class="cost-summary">
-      <div class="cost-total">${c.cost_total_pln?.toFixed(2)} zł <span>łącznie</span></div>
-      <div class="cost-per">${c.cost_per_serving_pln?.toFixed(2)} zł / porcja</div>
+      <div class="cost-total">${c.cost_total_pln?.toFixed(2)} zł <span>${t('cost.total')}</span></div>
+      <div class="cost-per">${c.cost_per_serving_pln?.toFixed(2)} ${t('cost.per_serving')}</div>
       ${c.budget_rating ? `<div class="cost-rating" style="color:${ratingColor[c.budget_rating]||'var(--gold)'}">● ${c.budget_rating}</div>` : ''}
     </div>`;
     if (c.breakdown?.length) {
@@ -240,10 +240,10 @@ async function showCost(btn) {
       html += '</div>';
     }
     if (c.tips?.length) {
-      html += '<div class="cost-tips">' + c.tips.map(t => `<div>💡 ${esc(t)}</div>`).join('') + '</div>';
+      html += '<div class="cost-tips">' + c.tips.map(tp => `<div>💡 ${esc(tp)}</div>`).join('') + '</div>';
     }
     modal.setContent(html);
-  } catch (e) { modal.setContent('<p>Błąd połączenia</p>'); }
+  } catch (e) { modal.setContent('<p>'+t('modal.conn_error')+'</p>'); }
 }
 
 // ─── Export Shopping List ───
@@ -258,7 +258,7 @@ function exportShoppingList(rid, mode) {
     grouped[sec].push(`${i.amount ? i.amount + ' ' : ''}${i.item}`);
   });
 
-  const lines = [`🛒 Lista zakupów: ${r.title}`, ''];
+  const lines = [`${t('shop.list_title')}: ${r.title}`, ''];
   Object.entries(grouped).forEach(([sec, items]) => {
     lines.push(`── ${sec.toUpperCase()} ──`);
     items.forEach(i => lines.push('• ' + i));
@@ -267,19 +267,19 @@ function exportShoppingList(rid, mode) {
   const text = lines.join('\n');
 
   if (mode === 'copy') {
-    navigator.clipboard.writeText(text).then(() => showStatus('📋 Lista skopiowana!'));
+    navigator.clipboard.writeText(text).then(() => showStatus(t('shop.list_copied')));
   } else if (mode === 'share') {
     if (navigator.share) {
-      navigator.share({ title: 'Lista zakupów: ' + r.title, text });
+      navigator.share({ title: t('shop.list_title') + ': ' + r.title, text });
     } else {
-      navigator.clipboard.writeText(text).then(() => showStatus('📋 Lista skopiowana!'));
+      navigator.clipboard.writeText(text).then(() => showStatus(t('shop.list_copied')));
     }
   } else if (mode === 'print') {
     const w = window.open('', '_blank');
-    w.document.write(`<html><head><title>Lista zakupów: ${r.title}</title>
+    w.document.write(`<html><head><title>${t('shop.list_title')}: ${r.title}</title>
       <style>body{font-family:sans-serif;padding:20px;max-width:400px}h1{font-size:1.2rem}
       pre{white-space:pre-wrap;font-size:0.95rem;line-height:1.8}</style></head>
-      <body><h1>🛒 Lista zakupów</h1><h2>${r.title}</h2><pre>${text}</pre></body></html>`);
+      <body><h1>${t('shop.list_title')}</h1><h2>${r.title}</h2><pre>${text}</pre></body></html>`);
     w.document.close();
     w.print();
   }

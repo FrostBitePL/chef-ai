@@ -1,0 +1,114 @@
+[
+  {
+    "rule": "baking_leavening_systems",
+    "category": "baking_science",
+    "applies_to": ["wszystkie wypieki", "all baked goods"],
+    "description": "Every baked good uses one or more leavening systems. Matching the right system to the recipe is critical for texture.",
+    "systems": [
+      {
+        "type": "mechanical (foam)",
+        "source": "whipped eggs or butter+sugar creaming",
+        "used_in": "biszkopt, genoise, angel food, pound cake",
+        "how": "air bubbles trapped in protein/fat matrix expand during baking",
+        "failure": "deflates if batter sits too long or folded aggressively"
+      },
+      {
+        "type": "chemical (baking powder)",
+        "source": "baking powder (double-acting: reacts with moisture + heat)",
+        "used_in": "muffins, quick breads, American cakes",
+        "how": "CO2 released in two stages: mixing and oven heat",
+        "ratio": "1 tsp (4g) per 125g flour",
+        "failure": "too much = bitter taste, fallen center; too little = dense"
+      },
+      {
+        "type": "chemical (baking soda)",
+        "source": "baking soda requires acid (buttermilk, yogurt, lemon, cocoa)",
+        "used_in": "banana bread, gingerbread, red velvet",
+        "how": "reacts immediately with acid — bake right after mixing",
+        "ratio": "0.5 tsp (2.5g) per 125g flour with acid present",
+        "failure": "no acid = soapy taste; too much = brown surface, hollow"
+      },
+      {
+        "type": "biological (yeast)",
+        "source": "Saccharomyces cerevisiae",
+        "used_in": "bread, drożdżówka, pizza, babka",
+        "how": "fermentation produces CO2 and alcohol over time",
+        "optimal_temp_c": 28,
+        "kill_temp_c": 45,
+        "failure": "too hot kills yeast; too cold = very slow rise; sugar >20% inhibits"
+      },
+      {
+        "type": "steam",
+        "source": "water in dough/batter",
+        "used_in": "croissant, pâte à choux, puff pastry",
+        "how": "water turns to steam at 100°C, expanding layers",
+        "failure": "low oven temp = steam escapes slowly, no puff"
+      }
+    ],
+    "confidence": 0.99
+  },
+  {
+    "rule": "oven_temperature_baking_guide",
+    "category": "baking_science",
+    "applies_to": ["wszystkie wypieki"],
+    "description": "Baking temperature determines crust formation, internal set, and color. Different baked goods require different temperature strategies.",
+    "guide": [
+      {"product": "biszkopt", "temp_c": 170, "fan_temp_c": 160, "time_min": 35, "note": "low temp = even rise, no crack"},
+      {"product": "drożdżówka", "temp_c": 180, "fan_temp_c": 170, "time_min": 35, "note": "egg wash before baking for color"},
+      {"product": "ciasto kruche (shell)", "temp_c": 180, "fan_temp_c": 170, "time_min": 20, "note": "blind bake first"},
+      {"product": "sernik", "temp_c": 160, "fan_temp_c": 150, "time_min": 55, "note": "low and slow prevents cracking"},
+      {"product": "muffins", "temp_c": 200, "fan_temp_c": 185, "time_min": 20, "note": "high temp = tall dome"},
+      {"product": "chleb pszenny", "temp_c": 230, "fan_temp_c": 210, "time_min": 30, "note": "steam in first 10 min for crust"},
+      {"product": "croissant", "temp_c": 200, "fan_temp_c": 185, "time_min": 18, "note": "high heat = steam separation of layers"}
+    ],
+    "doneness_tests": {
+      "biszkopt": "toothpick comes out clean; top springs back when pressed",
+      "drożdżówka": "internal temp 88-92°C; sounds hollow when tapped on bottom",
+      "sernik": "edges set, center jiggles like jelly when shaken",
+      "chleb": "internal temp 95-98°C; sounds hollow when tapped",
+      "kruche": "pale gold color, edges slightly darker"
+    },
+    "confidence": 0.99
+  },
+  {
+    "rule": "flour_protein_content_baking",
+    "category": "baking_science",
+    "applies_to": ["wybór mąki", "flour selection"],
+    "description": "Flour protein content directly determines gluten strength and texture. Wrong flour type is a common cause of baking failures.",
+    "types": [
+      {"polish_type": "mąka tortowa typ 450", "protein_pct": 8, "use": "biszkopt, kruche, delicate cakes — low gluten = tender"},
+      {"polish_type": "mąka poznańska typ 500", "protein_pct": 10, "use": "drożdżówka, noodles — medium gluten"},
+      {"polish_type": "mąka luksusowa typ 550", "protein_pct": 11, "use": "bread, pizza — stronger gluten"},
+      {"polish_type": "mąka chlebowa typ 750+", "protein_pct": 13, "use": "sourdough, rustic bread — strong gluten network"},
+      {"polish_type": "mąka razowa typ 2000", "protein_pct": 12, "use": "whole wheat bread, adds fiber and flavor"}
+    ],
+    "critical_rule": "For biszkopt ALWAYS use mąka tortowa typ 450 — higher protein flour = tough rubbery sponge",
+    "confidence": 0.99
+  },
+  {
+    "rule": "egg_function_in_baking",
+    "category": "baking_science",
+    "applies_to": ["jajka w wypiekach", "eggs in baking"],
+    "description": "Eggs serve multiple functions simultaneously. Understanding each function helps diagnose failures.",
+    "functions": {
+      "yolks": {
+        "emulsification": "lecithin in yolk emulsifies fat+water — creates smooth batter and tender crumb",
+        "color": "carotenoids give yellow color",
+        "richness": "fat content adds moisture and flavor",
+        "coagulation": "sets at 65-70°C"
+      },
+      "whites": {
+        "foam": "proteins trap air when whipped — mechanical leavening",
+        "structure": "proteins coagulate at 62°C — set and stabilize",
+        "drying": "high water content can dry out baked goods if overused"
+      },
+      "whole_eggs": {
+        "binding": "proteins bind ingredients",
+        "leavening": "when whipped, trap air",
+        "moisture": "80% water contributes to steam leavening"
+      }
+    },
+    "temperature_note": "room temperature eggs (20°C) whip to 30% more volume than cold eggs — always bring eggs to room temp before making biszkopt",
+    "confidence": 0.98
+  }
+]

@@ -1,0 +1,124 @@
+[
+  {
+    "rule": "sponge_cake_egg_ratio",
+    "category": "baking_structure",
+    "applies_to": ["biszkopt", "sponge cake", "genoise", "ciasto biszkoptowe"],
+    "description": "Classic Polish biszkopt relies entirely on whipped eggs for leavening. The golden ratio is 1 egg per 30g sugar per 30g flour. Potato starch (20-30% of flour weight) tenderizes crumb and reduces gluten.",
+    "proportions": {
+      "per_egg": {
+        "sugar_g": 30,
+        "flour_g": 20,
+        "potato_starch_g": 10,
+        "fat_g": 0,
+        "note": "Classic Polish biszkopt is fat-free — fat deflates foam"
+      },
+      "example_23cm_tin": {
+        "eggs": 5,
+        "sugar_g": 150,
+        "flour_g": 100,
+        "potato_starch_g": 50,
+        "baking_temp_c": 170,
+        "baking_time_min": 35,
+        "tin_size_cm": 23
+      },
+      "example_25cm_tin": {
+        "eggs": 6,
+        "sugar_g": 180,
+        "flour_g": 120,
+        "potato_starch_g": 60,
+        "baking_temp_c": 170,
+        "baking_time_min": 38,
+        "tin_size_cm": 25
+      }
+    },
+    "technique": {
+      "egg_temperature": "room temperature (20-22°C) — cold eggs whip to less volume",
+      "whipping_stage": "whip whole eggs with sugar 8-12 minutes until ribbon stage — mixture triples in volume, pale yellow, falls in thick ribbons",
+      "ribbon_test": "lift whisk — mixture falls in a thick ribbon that holds shape on surface for 3 seconds",
+      "flour_folding": "sift flour+starch 3 times, fold in 3 additions with rubber spatula using J-motion, max 40 strokes total",
+      "pouring": "pour batter from low height to preserve bubbles",
+      "tin_prep": "line bottom with parchment only — ungreased sides let cake climb"
+    },
+    "failure_modes": [
+      {
+        "case": "eggs not at ribbon stage",
+        "result": "flat, dense biszkopt, no spring",
+        "fix": "whip at least 10 minutes — batter must be very thick and pale"
+      },
+      {
+        "case": "flour folded too vigorously",
+        "result": "deflated foam, rubbery texture",
+        "fix": "use gentle J-fold, stop as soon as no dry flour visible"
+      },
+      {
+        "case": "opened oven before 25 minutes",
+        "result": "cake collapses in center",
+        "fix": "do not open oven for first 25 minutes"
+      },
+      {
+        "case": "greased tin sides",
+        "result": "cake slides down, low rise",
+        "fix": "only line bottom — ungreased sides are grip surface"
+      },
+      {
+        "case": "too much flour",
+        "result": "heavy, dense crumb",
+        "fix": "replace 30% flour with potato starch"
+      },
+      {
+        "case": "baked at too high temperature",
+        "result": "dark crust, raw center",
+        "fix": "170°C conventional oven, 160°C fan — never exceed 180°C"
+      },
+      {
+        "case": "tin too small",
+        "result": "overflow, uneven bake",
+        "fix": "batter should fill tin only 2/3 height"
+      }
+    ],
+    "cooling": "invert pan immediately after baking — cool upside down 30 min to prevent collapse",
+    "storage": "wrap in cling film, room temperature 2 days or freeze up to 1 month",
+    "confidence": 0.99
+  },
+  {
+    "rule": "genoise_vs_biszkopt",
+    "category": "baking_structure",
+    "applies_to": ["genoise", "biszkopt", "sponge variants"],
+    "description": "Polish biszkopt whips whole eggs cold-method (no heat). French genoise whips eggs over bain-marie (warm method) and adds melted butter. Genoise is denser but more moist. Biszkopt is lighter but dries faster.",
+    "comparison": {
+      "biszkopt": {
+        "method": "whole eggs + sugar whipped cold at high speed",
+        "fat": "none",
+        "texture": "light, airy, dries quickly",
+        "use_case": "layer cakes with soaking syrup, torty"
+      },
+      "genoise": {
+        "method": "whole eggs + sugar whipped over 40°C bain-marie, then cooled, then fold in melted butter",
+        "fat": "30-50g butter per 4 eggs",
+        "texture": "denser, moister, stays fresh longer",
+        "use_case": "French pastry, roulades"
+      }
+    },
+    "confidence": 0.97
+  },
+  {
+    "ingredient": "potato starch in sponge cake",
+    "ingredient_state": "dry powder",
+    "intent": "tenderize crumb",
+    "process": "dilutes gluten network",
+    "mechanism": "starch granules interrupt gluten strands, creating softer, more tender crumb than all-flour sponge",
+    "target": {
+      "ratio": "20-30% of total flour weight replaced with potato starch"
+    },
+    "condition": "when making biszkopt or any foam cake requiring tender crumb",
+    "decision": "Replace 25% of plain flour with potato starch for best tender crumb",
+    "failure_state": [
+      {
+        "symptom": "rubbery, chewy sponge",
+        "cause": "100% wheat flour, no starch",
+        "fix": "add potato starch next time"
+      }
+    ],
+    "confidence": 0.98
+  }
+]

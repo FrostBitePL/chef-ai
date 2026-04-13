@@ -1,0 +1,1331 @@
+[
+  {
+    "ingredient": "smoked_paprika",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": [
+        "smoky",
+        "sweet",
+        "mild heat"
+      ],
+      "aroma": [
+        "wood smoke",
+        "sweet pepper",
+        "warm"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "chicken",
+      "pork",
+      "shrimp",
+      "octopus",
+      "egg",
+      "potato",
+      "chickpeas",
+      "white beans",
+      "rice",
+      "chorizo",
+      "tomato",
+      "garlic",
+      "onion",
+      "cumin",
+      "paprika",
+      "olive oil"
+    ],
+    "contrast_with": [
+      "bright lemon against deep smoke",
+      "fresh herbs against earthy warmth"
+    ],
+    "boosters": [
+      "blooming in warm oil (releases aroma)",
+      "combining with cumin and garlic",
+      "using as finishing sprinkle on hummus/eggs",
+      "replacing liquid smoke"
+    ],
+    "balancing_elements": [
+      "acid (lemon, vinegar)",
+      "sweetness (honey)",
+      "freshness (parsley)"
+    ],
+    "avoid_combinations": [
+      "very delicate dishes (overpowers easily)"
+    ],
+    "aroma_compounds": [
+      "guaiacol",
+      "4-methylguaiacol",
+      "capsanthin"
+    ],
+    "related_core": [
+      "spices"
+    ],
+    "related_techniques": [
+      "marinating",
+      "sautéing"
+    ],
+    "confidence": 0.93,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "papryka wędzona",
+        "pimentón"
+      ],
+      "en": [
+        "smoked paprika",
+        "pimentón"
+      ],
+      "de": [
+        "Rauchpaprika",
+        "geräuchertes Paprikapulver"
+      ],
+      "es": [
+        "pimentón ahumado",
+        "pimentón de la Vera"
+      ],
+      "fr": [
+        "paprika fumé"
+      ]
+    }
+  },
+  {
+    "ingredient": "gochugaru",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": [
+        "spicy",
+        "sweet",
+        "slightly smoky",
+        "fruity"
+      ],
+      "aroma": [
+        "sun-dried chili",
+        "fruity heat",
+        "sweet pepper"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "sesame oil",
+      "soy sauce",
+      "garlic",
+      "ginger",
+      "scallion",
+      "pork belly",
+      "chicken",
+      "tofu",
+      "rice",
+      "noodles",
+      "cucumber",
+      "napa cabbage (kimchi)",
+      "fish sauce"
+    ],
+    "contrast_with": [
+      "sweet-fruity heat against savory soy-sesame base"
+    ],
+    "boosters": [
+      "infusing in oil for chili oil",
+      "using in marinades (bulgogi)",
+      "combining with gochujang for layered heat"
+    ],
+    "balancing_elements": [
+      "sweetness (sugar, honey)",
+      "acid (rice vinegar)",
+      "umami (soy, fish sauce)"
+    ],
+    "avoid_combinations": [
+      "substituting with regular chili flakes (different flavor profile)"
+    ],
+    "aroma_compounds": [
+      "capsaicin",
+      "carotenoids",
+      "dihydrocapsaicin"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "marinating"
+    ],
+    "confidence": 0.9,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "gochugaru",
+        "koreańskie płatki chili"
+      ],
+      "en": [
+        "gochugaru",
+        "Korean chili flakes"
+      ],
+      "de": [
+        "Gochugaru",
+        "koreanische Chiliflocken"
+      ],
+      "es": [
+        "gochugaru"
+      ],
+      "fr": [
+        "gochugaru",
+        "flocons de piment coréen"
+      ]
+    }
+  },
+  {
+    "ingredient": "za_atar",
+    "category": "spice_blend",
+    "flavor_profile": {
+      "primary_tastes": [
+        "herbal",
+        "tangy",
+        "nutty",
+        "earthy"
+      ],
+      "aroma": [
+        "thyme",
+        "oregano",
+        "sesame",
+        "sumac tartness"
+      ],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "olive oil",
+      "bread (manakish)",
+      "labneh",
+      "yogurt",
+      "egg",
+      "chicken",
+      "lamb",
+      "feta",
+      "tomato",
+      "cucumber",
+      "hummus",
+      "cauliflower",
+      "sweet potato",
+      "avocado"
+    ],
+    "contrast_with": [
+      "tangy sumac against creamy labneh",
+      "herbal mix against plain olive oil"
+    ],
+    "boosters": [
+      "mixing with olive oil as dip/spread",
+      "sprinkling on before serving (heat dulls it)",
+      "using on flatbread before baking",
+      "combining with labneh"
+    ],
+    "balancing_elements": [
+      "fat (olive oil)",
+      "creaminess (labneh, yogurt)",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "thymol",
+      "carvacrol",
+      "sesamin",
+      "malic acid (sumac)"
+    ],
+    "related_core": [
+      "herbs"
+    ],
+    "related_techniques": [],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "za'atar",
+        "zaatar"
+      ],
+      "en": [
+        "za'atar",
+        "zaatar"
+      ],
+      "de": [
+        "Za'atar"
+      ],
+      "es": [
+        "za'atar"
+      ],
+      "fr": [
+        "za'atar"
+      ]
+    }
+  },
+  {
+    "ingredient": "harissa",
+    "category": "paste",
+    "flavor_profile": {
+      "primary_tastes": [
+        "spicy",
+        "smoky",
+        "sweet",
+        "earthy"
+      ],
+      "aroma": [
+        "roasted pepper",
+        "cumin",
+        "caraway",
+        "garlic",
+        "smoke"
+      ],
+      "intensity": "high",
+      "fat_content": "medium (oil-based)"
+    },
+    "pairs_with": [
+      "lamb",
+      "chicken",
+      "fish",
+      "shrimp",
+      "egg (shakshuka)",
+      "cauliflower",
+      "carrot",
+      "sweet potato",
+      "chickpeas",
+      "couscous",
+      "yogurt",
+      "feta",
+      "olive oil",
+      "honey"
+    ],
+    "contrast_with": [
+      "cooling yogurt against fierce heat",
+      "sweet honey against smoky spice"
+    ],
+    "boosters": [
+      "mixing with olive oil for marinade",
+      "stirring into mayo or yogurt",
+      "using as base for shakshuka",
+      "rubbing on meat before grilling"
+    ],
+    "balancing_elements": [
+      "dairy (yogurt)",
+      "sweetness (honey, roasted veg)",
+      "fat (olive oil)"
+    ],
+    "avoid_combinations": [
+      "very delicate cream sauces"
+    ],
+    "aroma_compounds": [
+      "capsaicin",
+      "cuminaldehyde",
+      "diallyl disulfide"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "marinating",
+      "grilling"
+    ],
+    "confidence": 0.9,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "harissa",
+        "pasta harissa"
+      ],
+      "en": [
+        "harissa"
+      ],
+      "de": [
+        "Harissa"
+      ],
+      "es": [
+        "harissa"
+      ],
+      "fr": [
+        "harissa"
+      ]
+    }
+  },
+  {
+    "ingredient": "lemongrass",
+    "category": "herb",
+    "flavor_profile": {
+      "primary_tastes": [
+        "citrusy",
+        "herbal",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "bright citrus",
+        "floral",
+        "ginger-like",
+        "clean"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "coconut milk",
+      "ginger",
+      "galangal",
+      "lime leaf",
+      "chili",
+      "shrimp",
+      "chicken",
+      "fish",
+      "tofu",
+      "mushroom",
+      "lime",
+      "fish sauce",
+      "cilantro",
+      "basil (Thai)"
+    ],
+    "contrast_with": [
+      "bright citrus against rich coconut cream"
+    ],
+    "boosters": [
+      "bruising stalks to release oil",
+      "mincing inner tender part finely",
+      "infusing in broth (remove before serving)",
+      "using outer stalks for stock"
+    ],
+    "balancing_elements": [
+      "richness (coconut milk)",
+      "heat (chili)",
+      "salt (fish sauce)"
+    ],
+    "avoid_combinations": [
+      "European herb combinations (different aromatic world)"
+    ],
+    "aroma_compounds": [
+      "citral",
+      "geraniol",
+      "myrcene",
+      "limonene"
+    ],
+    "related_core": [],
+    "related_techniques": [],
+    "confidence": 0.9,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "trawa cytrynowa",
+        "lemongrass"
+      ],
+      "en": [
+        "lemongrass"
+      ],
+      "de": [
+        "Zitronengras"
+      ],
+      "es": [
+        "hierba limón",
+        "citronela"
+      ],
+      "fr": [
+        "citronnelle"
+      ]
+    }
+  },
+  {
+    "ingredient": "parsley",
+    "category": "herb",
+    "flavor_profile": {
+      "primary_tastes": [
+        "fresh",
+        "slightly bitter",
+        "green",
+        "clean"
+      ],
+      "aroma": [
+        "green",
+        "herbaceous",
+        "clean",
+        "peppery"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "garlic",
+      "lemon",
+      "olive oil",
+      "butter",
+      "fish",
+      "shellfish",
+      "potato",
+      "pasta",
+      "egg",
+      "tomato",
+      "mushroom",
+      "lamb",
+      "beef",
+      "chicken",
+      "grain salads",
+      "tabbouleh"
+    ],
+    "contrast_with": [
+      "fresh green against rich braised dishes",
+      "clean brightness as finishing"
+    ],
+    "boosters": [
+      "using stems in stock (more flavor than leaves)",
+      "adding at end of cooking",
+      "gremolata (parsley + lemon zest + garlic)",
+      "chimichurri with oil and vinegar"
+    ],
+    "balancing_elements": [
+      "brightens rich dishes",
+      "freshness against heavy sauces"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "myristicin",
+      "apiol",
+      "limonene"
+    ],
+    "related_core": [
+      "parsley",
+      "herbs"
+    ],
+    "related_techniques": [
+      "plating"
+    ],
+    "confidence": 0.92,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "pietruszka",
+        "natka pietruszki"
+      ],
+      "en": [
+        "parsley",
+        "flat-leaf parsley",
+        "Italian parsley"
+      ],
+      "de": [
+        "Petersilie",
+        "glatte Petersilie"
+      ],
+      "es": [
+        "perejil"
+      ],
+      "fr": [
+        "persil",
+        "persil plat"
+      ]
+    }
+  },
+  {
+    "ingredient": "bay_leaf",
+    "category": "herb",
+    "flavor_profile": {
+      "primary_tastes": [
+        "herbal",
+        "slightly bitter",
+        "warm"
+      ],
+      "aroma": [
+        "eucalyptus-like",
+        "tea-like",
+        "warm spice",
+        "woodsy"
+      ],
+      "intensity": "medium (develops over time)",
+      "fat_content": "none"
+    },
+    "pairs_with": [
+      "stock",
+      "soup",
+      "stew",
+      "braise",
+      "tomato sauce",
+      "beans",
+      "lentils",
+      "rice (pilaf)",
+      "potatoes",
+      "beef",
+      "lamb",
+      "pork",
+      "milk (infusing for béchamel)"
+    ],
+    "contrast_with": [
+      "herbal depth against simple starchy dishes"
+    ],
+    "boosters": [
+      "breaking leaf to release more oils",
+      "long simmering (30+ min for full extraction)",
+      "infusing in milk for béchamel/custard",
+      "always remove before serving"
+    ],
+    "balancing_elements": [
+      "works as background flavor enhancer, not primary seasoning"
+    ],
+    "avoid_combinations": [
+      "short-cook dishes (not enough time to extract flavor)"
+    ],
+    "aroma_compounds": [
+      "eucalyptol (1,8-cineole)",
+      "linalool",
+      "methyleugenol"
+    ],
+    "related_core": [
+      "herbs"
+    ],
+    "related_techniques": [
+      "braising",
+      "stewing"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "liść laurowy",
+        "liść bobkowy"
+      ],
+      "en": [
+        "bay leaf",
+        "bay laurel"
+      ],
+      "de": [
+        "Lorbeerblatt"
+      ],
+      "es": [
+        "hoja de laurel",
+        "laurel"
+      ],
+      "fr": [
+        "feuille de laurier",
+        "laurier"
+      ]
+    }
+  },
+  {
+    "ingredient": "black_pepper",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": [
+        "pungent",
+        "warm",
+        "sharp",
+        "slightly floral"
+      ],
+      "aroma": [
+        "woody",
+        "warm",
+        "piney",
+        "citrus hints"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "none"
+    },
+    "pairs_with": [
+      "virtually everything savory",
+      "strawberry",
+      "pineapple",
+      "cheese (cacio e pepe)",
+      "steak",
+      "egg",
+      "cream sauces",
+      "turmeric (bioavailability enhancer)",
+      "lemon",
+      "olive oil"
+    ],
+    "contrast_with": [
+      "sharp heat against creamy/fatty dishes",
+      "warming against cooling ingredients"
+    ],
+    "boosters": [
+      "always grind fresh (pre-ground loses aroma in days)",
+      "toasting whole peppercorns",
+      "cracking coarsely for steak au poivre",
+      "adding at end of cooking for maximum aroma"
+    ],
+    "balancing_elements": [
+      "enhances all other flavors",
+      "works with salt as fundamental seasoning pair"
+    ],
+    "avoid_combinations": [
+      "excessive amounts in delicate desserts"
+    ],
+    "aroma_compounds": [
+      "piperine",
+      "limonene",
+      "beta-caryophyllene",
+      "linalool"
+    ],
+    "related_core": [
+      "spices"
+    ],
+    "related_techniques": [],
+    "confidence": 0.96,
+    "priority": "critical",
+    "aliases": {
+      "pl": [
+        "pieprz czarny",
+        "pieprz",
+        "pieprz świeżo mielony"
+      ],
+      "en": [
+        "black pepper",
+        "peppercorn"
+      ],
+      "de": [
+        "schwarzer Pfeffer",
+        "Pfefferkorn"
+      ],
+      "es": [
+        "pimienta negra"
+      ],
+      "fr": [
+        "poivre noir"
+      ]
+    }
+  },
+  {
+    "ingredient": "chili_flakes",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": [
+        "spicy",
+        "warm",
+        "slightly fruity"
+      ],
+      "aroma": [
+        "dried chili",
+        "warm",
+        "fruity heat"
+      ],
+      "intensity": "high",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "garlic",
+      "olive oil",
+      "pasta (aglio olio)",
+      "pizza",
+      "honey",
+      "chocolate",
+      "lime",
+      "fish",
+      "shrimp",
+      "chicken",
+      "tomato",
+      "basil",
+      "mozzarella",
+      "eggs",
+      "avocado"
+    ],
+    "contrast_with": [
+      "hot chili against sweet honey",
+      "spicy against creamy (cheese, avocado)"
+    ],
+    "boosters": [
+      "blooming in warm oil (infused chili oil)",
+      "using hot honey (chili + honey)",
+      "adding early for infused heat, late for sharp hit"
+    ],
+    "balancing_elements": [
+      "fat (oil, cream)",
+      "sweetness (honey)",
+      "acid (lime, vinegar)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "capsaicin",
+      "dihydrocapsaicin"
+    ],
+    "related_core": [],
+    "related_techniques": [],
+    "confidence": 0.92,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "płatki chili",
+        "chili",
+        "peperoncino"
+      ],
+      "en": [
+        "chili flakes",
+        "red pepper flakes",
+        "peperoncino"
+      ],
+      "de": [
+        "Chiliflocken",
+        "Peperoncino"
+      ],
+      "es": [
+        "hojuelas de chile",
+        "ají molido"
+      ],
+      "fr": [
+        "piment en flocons",
+        "peperoncino"
+      ]
+    }
+  },
+  {
+    "ingredient": "sumac",
+    "category": "spice",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sour",
+        "tangy",
+        "fruity",
+        "slightly astringent"
+      ],
+      "aroma": [
+        "tart",
+        "berry-like",
+        "citrus-like"
+      ],
+      "intensity": "medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "onion",
+      "chicken",
+      "lamb",
+      "fish",
+      "fattoush salad",
+      "hummus",
+      "yogurt",
+      "rice",
+      "grilled meat",
+      "egg",
+      "avocado",
+      "tomato",
+      "cucumber",
+      "olive oil"
+    ],
+    "contrast_with": [
+      "tart sourness against rich grilled meat",
+      "citric brightness on salads"
+    ],
+    "boosters": [
+      "using as lemon substitute",
+      "sprinkling on after cooking (heat dulls acidity)",
+      "mixing with onion (classic Middle Eastern garnish)"
+    ],
+    "balancing_elements": [
+      "fat (olive oil)",
+      "salt",
+      "sweetness (balances tartness)"
+    ],
+    "avoid_combinations": [
+      "cooking at high heat for long (loses acidity)"
+    ],
+    "aroma_compounds": [
+      "malic acid",
+      "citric acid",
+      "anthocyanins"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "plating"
+    ],
+    "confidence": 0.85,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "sumak"
+      ],
+      "en": [
+        "sumac"
+      ],
+      "de": [
+        "Sumach"
+      ],
+      "es": [
+        "zumaque"
+      ],
+      "fr": [
+        "sumac"
+      ]
+    }
+  },
+  {
+    "ingredient": "five_spice",
+    "category": "spice_blend",
+    "flavor_profile": {
+      "primary_tastes": [
+        "warm",
+        "sweet",
+        "anise-forward",
+        "complex"
+      ],
+      "aroma": [
+        "star anise",
+        "cinnamon",
+        "clove",
+        "fennel",
+        "pepper"
+      ],
+      "intensity": "high",
+      "fat_content": "none"
+    },
+    "pairs_with": [
+      "duck",
+      "pork belly",
+      "chicken",
+      "beef",
+      "tofu",
+      "sweet potato",
+      "carrot",
+      "apple",
+      "pear",
+      "soy sauce",
+      "honey",
+      "hoisin",
+      "ginger",
+      "garlic"
+    ],
+    "contrast_with": [
+      "warming spice against sweet caramelized meat",
+      "complex aroma against simple roasted vegetables"
+    ],
+    "boosters": [
+      "dry rub before roasting",
+      "mixing with salt for seasoning",
+      "use sparingly — very potent",
+      "blooming in oil"
+    ],
+    "balancing_elements": [
+      "sweetness (honey, hoisin)",
+      "salt (soy sauce)",
+      "acid (rice vinegar)"
+    ],
+    "avoid_combinations": [
+      "European herb combinations",
+      "Mediterranean cuisine"
+    ],
+    "aroma_compounds": [
+      "anethole",
+      "cinnamaldehyde",
+      "eugenol"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "marinating"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "pięć smaków",
+        "five spice"
+      ],
+      "en": [
+        "five-spice powder",
+        "Chinese five spice"
+      ],
+      "de": [
+        "Fünf-Gewürze-Pulver"
+      ],
+      "es": [
+        "cinco especias chinas"
+      ],
+      "fr": [
+        "cinq-épices"
+      ]
+    }
+  },
+  {
+    "ingredient": "capers",
+    "category": "condiment",
+    "flavor_profile": {
+      "primary_tastes": [
+        "salty",
+        "sour",
+        "pungent",
+        "briny"
+      ],
+      "aroma": [
+        "sharp",
+        "briny",
+        "pungent",
+        "floral"
+      ],
+      "intensity": "high",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "lemon",
+      "butter",
+      "fish (sole meunière)",
+      "salmon",
+      "chicken",
+      "veal (piccata)",
+      "pasta (puttanesca)",
+      "tomato",
+      "olive",
+      "anchovy",
+      "parsley",
+      "egg",
+      "potato salad"
+    ],
+    "contrast_with": [
+      "briny pop against mild fish or veal",
+      "sharp against creamy butter sauce"
+    ],
+    "boosters": [
+      "frying until crispy (caper chips — incredible texture)",
+      "rinsing salt-packed capers (better than brine-packed)",
+      "adding at end of cooking to preserve texture"
+    ],
+    "balancing_elements": [
+      "fat (butter, olive oil)",
+      "starch (pasta, potato)",
+      "freshness (lemon, parsley)"
+    ],
+    "avoid_combinations": [
+      "sweet desserts"
+    ],
+    "aroma_compounds": [
+      "methyl isothiocyanate",
+      "capric acid"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "pan_searing",
+      "sautéing"
+    ],
+    "confidence": 0.93,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "kapary"
+      ],
+      "en": [
+        "capers"
+      ],
+      "de": [
+        "Kapern"
+      ],
+      "es": [
+        "alcaparras"
+      ],
+      "fr": [
+        "câpres"
+      ]
+    }
+  },
+  {
+    "ingredient": "horseradish",
+    "category": "condiment",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sharp",
+        "pungent",
+        "sinus-clearing heat",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "pungent",
+        "sharp",
+        "mustard-like",
+        "volatile"
+      ],
+      "intensity": "very high",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "beef (roast beef)",
+      "smoked fish",
+      "beet (traditional Polish)",
+      "cream",
+      "sour cream",
+      "apple",
+      "potato",
+      "salmon",
+      "oyster",
+      "steak tartare"
+    ],
+    "contrast_with": [
+      "sharp nasal heat against rich fatty beef",
+      "pungent against sweet beet"
+    ],
+    "boosters": [
+      "grating fresh (loses potency fast)",
+      "mixing with cream to stabilize",
+      "adding vinegar to preserve heat",
+      "never cook (destroys heat)"
+    ],
+    "balancing_elements": [
+      "fat (cream, sour cream)",
+      "sweetness (beet, apple)",
+      "acid (vinegar)"
+    ],
+    "avoid_combinations": [
+      "heating destroys active compounds"
+    ],
+    "aroma_compounds": [
+      "allyl isothiocyanate",
+      "sinigrin"
+    ],
+    "related_core": [],
+    "related_techniques": [],
+    "confidence": 0.9,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "chrzan",
+        "chrzan tarty"
+      ],
+      "en": [
+        "horseradish"
+      ],
+      "de": [
+        "Meerrettich",
+        "Kren"
+      ],
+      "es": [
+        "rábano picante"
+      ],
+      "fr": [
+        "raifort"
+      ]
+    }
+  },
+  {
+    "ingredient": "preserved_lemon",
+    "category": "condiment",
+    "flavor_profile": {
+      "primary_tastes": [
+        "salty",
+        "intensely citrusy",
+        "floral",
+        "umami"
+      ],
+      "aroma": [
+        "concentrated lemon",
+        "fermented",
+        "floral",
+        "salty"
+      ],
+      "intensity": "very high",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "chicken",
+      "lamb",
+      "fish",
+      "couscous",
+      "tagine",
+      "olive",
+      "artichoke",
+      "chickpeas",
+      "rice",
+      "pasta",
+      "salad dressing",
+      "yogurt",
+      "harissa"
+    ],
+    "contrast_with": [
+      "intense salt-citrus against mild grains and meats"
+    ],
+    "boosters": [
+      "using only the rind (discard flesh and seeds)",
+      "mincing finely",
+      "adding at end of cooking",
+      "using in dressings and marinades"
+    ],
+    "balancing_elements": [
+      "fat (olive oil, butter)",
+      "starch (couscous, rice)",
+      "herbs (cilantro, parsley)"
+    ],
+    "avoid_combinations": [
+      "adding salt (already extremely salty)"
+    ],
+    "aroma_compounds": [
+      "limonene",
+      "citral",
+      "lactic acid"
+    ],
+    "related_core": [],
+    "related_techniques": [],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "cytryna konserwowana",
+        "cytryna w soli"
+      ],
+      "en": [
+        "preserved lemon",
+        "salt-cured lemon"
+      ],
+      "de": [
+        "eingelegte Zitrone",
+        "Salzzitrone"
+      ],
+      "es": [
+        "limón en conserva",
+        "limón confitado"
+      ],
+      "fr": [
+        "citron confit"
+      ]
+    }
+  },
+  {
+    "ingredient": "dashi",
+    "category": "stock_base",
+    "flavor_profile": {
+      "primary_tastes": [
+        "umami",
+        "oceanic",
+        "clean",
+        "savory"
+      ],
+      "aroma": [
+        "smoky (bonito)",
+        "seaweed",
+        "oceanic",
+        "clean"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "none"
+    },
+    "pairs_with": [
+      "miso",
+      "soy sauce",
+      "tofu",
+      "noodles (ramen, udon, soba)",
+      "egg",
+      "mushroom",
+      "vegetables",
+      "rice",
+      "fish",
+      "mirin",
+      "sake",
+      "scallion",
+      "seaweed"
+    ],
+    "contrast_with": [
+      "clean ocean umami against rich fatty toppings (pork belly in ramen)"
+    ],
+    "boosters": [
+      "combining kombu + bonito (glutamate + inosinate = umami synergy)",
+      "cold-brewing kombu overnight",
+      "never boiling kombu (releases sliminess)",
+      "using as replacement for any stock for cleaner umami"
+    ],
+    "balancing_elements": [
+      "salt (soy sauce)",
+      "sweetness (mirin)",
+      "acid (rice vinegar)"
+    ],
+    "avoid_combinations": [
+      "strong European herbs (basil, oregano — wrong flavor world)"
+    ],
+    "aroma_compounds": [
+      "glutamic acid",
+      "inosinic acid",
+      "guanylic acid (with shiitake)"
+    ],
+    "related_core": [
+      "stock"
+    ],
+    "related_techniques": [],
+    "confidence": 0.94,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "dashi",
+        "bulion japoński"
+      ],
+      "en": [
+        "dashi",
+        "Japanese stock"
+      ],
+      "de": [
+        "Dashi",
+        "japanische Brühe"
+      ],
+      "es": [
+        "dashi",
+        "caldo japonés"
+      ],
+      "fr": [
+        "dashi",
+        "bouillon japonais"
+      ]
+    }
+  },
+  {
+    "ingredient": "maple_syrup",
+    "category": "sweetener",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sweet",
+        "caramel",
+        "woody"
+      ],
+      "aroma": [
+        "caramel",
+        "toffee",
+        "vanilla",
+        "woody"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "none"
+    },
+    "pairs_with": [
+      "bacon",
+      "pork",
+      "salmon",
+      "sweet potato",
+      "pecan",
+      "walnut",
+      "pancake",
+      "oats",
+      "butter",
+      "cream",
+      "bourbon",
+      "apple",
+      "cinnamon",
+      "ginger",
+      "mustard",
+      "soy sauce (maple-soy glaze)"
+    ],
+    "contrast_with": [
+      "sweet syrup against salty bacon/soy",
+      "caramel against sharp mustard"
+    ],
+    "boosters": [
+      "using Grade B/dark for cooking (more flavor)",
+      "maple-soy glaze for proteins",
+      "reducing for thicker consistency",
+      "combining with butter for sauce"
+    ],
+    "balancing_elements": [
+      "salt (bacon, soy sauce)",
+      "acid (vinegar, citrus)",
+      "spice (mustard, pepper)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "maple furanone (strawberry furanone)",
+      "vanillin",
+      "cyclotene"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "glazing_vegetables"
+    ],
+    "confidence": 0.9,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "syrop klonowy"
+      ],
+      "en": [
+        "maple syrup"
+      ],
+      "de": [
+        "Ahornsirup"
+      ],
+      "es": [
+        "jarabe de arce",
+        "sirope de arce"
+      ],
+      "fr": [
+        "sirop d'érable"
+      ]
+    }
+  }
+]

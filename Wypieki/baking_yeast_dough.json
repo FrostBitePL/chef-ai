@@ -1,0 +1,72 @@
+[
+  {
+    "rule": "yeast_dough_hydration_ratio",
+    "category": "baking_structure",
+    "applies_to": ["ciasto drożdżowe", "yeast dough", "drożdżówka", "babka", "bułki"],
+    "description": "Polish sweet yeast dough (ciasto drożdżowe) uses enriched dough formula: flour + liquid + fat + eggs + sugar + yeast. Hydration 55-60% creates soft, tearable crumb.",
+    "proportions": {
+      "base_500g_flour": {
+        "flour_g": 500,
+        "milk_ml": 250,
+        "butter_g": 100,
+        "eggs": 2,
+        "sugar_g": 80,
+        "fresh_yeast_g": 25,
+        "dry_yeast_g": 7,
+        "salt_g": 5
+      },
+      "fat_role": "fat coats gluten strands — add after initial mixing, never with yeast",
+      "sugar_limit": "max 20% of flour weight — higher sugar inhibits yeast"
+    },
+    "technique": {
+      "yeast_activation": "dissolve fresh yeast in warm milk (35-38°C) with 1 tsp sugar — wait 10 min until foamy",
+      "mixing_order": "flour + eggs + yeast mixture → knead 5 min → add softened butter in pieces → knead 10 min until windowpane",
+      "windowpane_test": "stretch small piece of dough — should form thin translucent membrane without tearing",
+      "first_rise": "covered, 28-30°C, 60-90 min until doubled",
+      "shaping": "punch down gently, shape, place in tin",
+      "second_rise": "30-45 min until dough crowns 2cm above tin rim",
+      "baking": "180-190°C, 30-40 min depending on size"
+    },
+    "failure_modes": [
+      {
+        "case": "milk too hot (>45°C)",
+        "result": "yeast killed, dough doesn't rise",
+        "fix": "always test milk temperature on wrist — should feel warm not hot"
+      },
+      {
+        "case": "butter added too early",
+        "result": "fat coats flour, gluten can't develop, dense crumb",
+        "fix": "add butter only after 5 minutes of initial kneading"
+      },
+      {
+        "case": "insufficient kneading",
+        "result": "poor gluten structure, crumbles when cut",
+        "fix": "knead until windowpane test passes — 10-15 min by hand, 8 min mixer"
+      },
+      {
+        "case": "overproofed",
+        "result": "collapsed structure, sour taste, large holes",
+        "fix": "watch volume not time — stop at doubled, not tripled"
+      },
+      {
+        "case": "too much flour added during kneading",
+        "result": "dry, tough, dense crumb",
+        "fix": "dough will be sticky at first — resist adding flour, keep kneading"
+      }
+    ],
+    "confidence": 0.98
+  },
+  {
+    "rule": "yeast_dough_enrichment_scale",
+    "category": "baking_structure",
+    "applies_to": ["ciasto drożdżowe", "enriched dough spectrum"],
+    "description": "The richer the dough (more fat+eggs), the slower the rise and longer the bake. Lean doughs rise fast; enriched doughs rise slowly but stay moist longer.",
+    "spectrum": [
+      {"type": "lean", "fat_percent": 0, "eggs": 0, "rise_time_min": 45, "example": "baguette, pizza"},
+      {"type": "slightly enriched", "fat_percent": 5, "eggs": 1, "rise_time_min": 60, "example": "dinner rolls"},
+      {"type": "enriched", "fat_percent": 15, "eggs": 2, "rise_time_min": 90, "example": "drożdżówka"},
+      {"type": "highly enriched", "fat_percent": 30, "eggs": 4, "rise_time_min": 120, "example": "babka, brioche"}
+    ],
+    "confidence": 0.97
+  }
+]

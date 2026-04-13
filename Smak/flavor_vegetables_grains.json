@@ -1,0 +1,1466 @@
+[
+  {
+    "ingredient": "sweet_potato",
+    "category": "root_vegetable",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sweet",
+        "starchy",
+        "earthy"
+      ],
+      "aroma": [
+        "caramel when roasted",
+        "earthy",
+        "sweet"
+      ],
+      "intensity": "medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "butter",
+      "cinnamon",
+      "nutmeg",
+      "maple syrup",
+      "brown sugar",
+      "chili",
+      "lime",
+      "cumin",
+      "coconut milk",
+      "curry",
+      "black beans",
+      "feta",
+      "pecans",
+      "sage",
+      "bacon",
+      "ginger",
+      "miso",
+      "tahini",
+      "harissa"
+    ],
+    "contrast_with": [
+      "spicy chili against sweet flesh",
+      "sharp feta against creamy roasted sweet potato"
+    ],
+    "boosters": [
+      "high-heat roasting for caramelization",
+      "miso-butter glaze",
+      "charring on grill",
+      "cubing small for maximum crust"
+    ],
+    "balancing_elements": [
+      "acid (lime, vinegar)",
+      "salt",
+      "spice heat (chili, harissa)",
+      "bitterness (arugula)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "maltol",
+      "furaneol",
+      "beta-carotene"
+    ],
+    "related_core": [
+      "potatoes"
+    ],
+    "related_techniques": [
+      "roasting_vegetables",
+      "grilling"
+    ],
+    "confidence": 0.93,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "batat",
+        "słodki ziemniak"
+      ],
+      "en": [
+        "sweet potato",
+        "yam"
+      ],
+      "de": [
+        "Süßkartoffel",
+        "Batate"
+      ],
+      "es": [
+        "batata",
+        "camote",
+        "boniato"
+      ],
+      "fr": [
+        "patate douce"
+      ]
+    }
+  },
+  {
+    "ingredient": "cauliflower",
+    "category": "brassica",
+    "flavor_profile": {
+      "primary_tastes": [
+        "mild",
+        "slightly sweet",
+        "nutty when roasted"
+      ],
+      "aroma": [
+        "sulfurous raw",
+        "nutty and caramelized when roasted"
+      ],
+      "intensity": "low (raw) to medium (roasted)",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "butter",
+      "brown butter",
+      "cheese (cheddar, gruyère, parmesan)",
+      "cream",
+      "curry spices",
+      "turmeric",
+      "cumin",
+      "tahini",
+      "lemon",
+      "capers",
+      "anchovy",
+      "garlic",
+      "pine nuts",
+      "raisins",
+      "harissa",
+      "pomegranate",
+      "za'atar"
+    ],
+    "contrast_with": [
+      "sharp capers against mild cauliflower",
+      "spicy harissa against sweet roasted flesh"
+    ],
+    "boosters": [
+      "high-heat roasting until deeply browned",
+      "whole roasted head",
+      "cauliflower steaks",
+      "blending into silky puree",
+      "pickling raw"
+    ],
+    "balancing_elements": [
+      "acid (lemon, pickled elements)",
+      "fat (butter, tahini)",
+      "umami (anchovy, parmesan)"
+    ],
+    "avoid_combinations": [
+      "overcooking to mush (loses all character)"
+    ],
+    "aroma_compounds": [
+      "isothiocyanates",
+      "dimethyl trisulfide",
+      "methanethiol"
+    ],
+    "related_core": [
+      "vegetables"
+    ],
+    "related_techniques": [
+      "roasting_vegetables",
+      "steaming_vegetables"
+    ],
+    "confidence": 0.93,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "kalafior"
+      ],
+      "en": [
+        "cauliflower"
+      ],
+      "de": [
+        "Blumenkohl"
+      ],
+      "es": [
+        "coliflor"
+      ],
+      "fr": [
+        "chou-fleur"
+      ]
+    }
+  },
+  {
+    "ingredient": "cabbage",
+    "category": "brassica",
+    "flavor_profile": {
+      "primary_tastes": [
+        "mild",
+        "slightly sweet",
+        "peppery (raw)",
+        "sulfurous"
+      ],
+      "aroma": [
+        "mild sulfur",
+        "earthy",
+        "sweetens with cooking"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "apple",
+      "caraway",
+      "juniper",
+      "vinegar",
+      "bacon",
+      "pork",
+      "sausage",
+      "mustard",
+      "cream",
+      "butter",
+      "dill",
+      "ginger",
+      "soy sauce",
+      "sesame",
+      "chili"
+    ],
+    "contrast_with": [
+      "tart apple against sweet braised cabbage",
+      "sharp vinegar against mild veg"
+    ],
+    "boosters": [
+      "slow braising with apple and vinegar (red cabbage)",
+      "charring wedges",
+      "fermenting into sauerkraut/kimchi",
+      "quick stir-fry for crunch"
+    ],
+    "balancing_elements": [
+      "acid (vinegar, apple)",
+      "fat (bacon, butter)",
+      "sweetness (apple, caraway)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "isothiocyanates",
+      "sinigrin",
+      "dimethyl disulfide"
+    ],
+    "related_core": [
+      "vegetables"
+    ],
+    "related_techniques": [
+      "braising",
+      "sautéing",
+      "steaming_vegetables"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "kapusta",
+        "kapusta biała",
+        "kapusta czerwona",
+        "kapusta włoska",
+        "kapusta pekińska"
+      ],
+      "en": [
+        "cabbage",
+        "white cabbage",
+        "red cabbage",
+        "savoy cabbage",
+        "napa cabbage"
+      ],
+      "de": [
+        "Kohl",
+        "Weißkohl",
+        "Rotkohl",
+        "Wirsing",
+        "Chinakohl"
+      ],
+      "es": [
+        "col",
+        "repollo",
+        "col lombarda"
+      ],
+      "fr": [
+        "chou",
+        "chou blanc",
+        "chou rouge",
+        "chou de Milan",
+        "chou chinois"
+      ]
+    }
+  },
+  {
+    "ingredient": "kale",
+    "category": "brassica",
+    "flavor_profile": {
+      "primary_tastes": [
+        "bitter",
+        "earthy",
+        "slightly sweet when cooked"
+      ],
+      "aroma": [
+        "green",
+        "cabbage-like",
+        "earthy"
+      ],
+      "intensity": "medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "garlic",
+      "lemon",
+      "olive oil",
+      "parmesan",
+      "chili flakes",
+      "bacon",
+      "sausage",
+      "white beans",
+      "potato",
+      "egg",
+      "sesame",
+      "tahini",
+      "apple",
+      "cranberry",
+      "pecans"
+    ],
+    "contrast_with": [
+      "rich bacon/sausage against bitter greens",
+      "sharp lemon against earthy kale"
+    ],
+    "boosters": [
+      "massaging raw with oil and salt (breaks cell walls)",
+      "crisping as chips",
+      "braising with garlic until silky",
+      "stripping leaves from tough stems"
+    ],
+    "balancing_elements": [
+      "fat (olive oil, bacon)",
+      "acid (lemon)",
+      "salt (parmesan)",
+      "sweetness (dried fruit)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "isothiocyanates",
+      "hexanal"
+    ],
+    "related_core": [
+      "vegetables"
+    ],
+    "related_techniques": [
+      "sautéing",
+      "braising"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "jarmuż",
+        "kale"
+      ],
+      "en": [
+        "kale",
+        "curly kale",
+        "lacinato kale"
+      ],
+      "de": [
+        "Grünkohl",
+        "Kale"
+      ],
+      "es": [
+        "col rizada",
+        "kale"
+      ],
+      "fr": [
+        "chou frisé",
+        "kale"
+      ]
+    }
+  },
+  {
+    "ingredient": "spinach",
+    "category": "leafy_green",
+    "flavor_profile": {
+      "primary_tastes": [
+        "mild",
+        "slightly iron-like",
+        "earthy",
+        "slightly bitter"
+      ],
+      "aroma": [
+        "green",
+        "mineral",
+        "clean"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "garlic",
+      "nutmeg",
+      "cream",
+      "butter",
+      "egg",
+      "feta",
+      "ricotta",
+      "parmesan",
+      "lemon",
+      "pine nuts",
+      "raisins",
+      "bacon",
+      "mushroom",
+      "pasta",
+      "chicken",
+      "salmon"
+    ],
+    "contrast_with": [
+      "rich cream against iron-mineral greens",
+      "nutmeg warmth against earthy spinach"
+    ],
+    "boosters": [
+      "wilting quickly in hot pan (30 seconds)",
+      "squeezing out excess water",
+      "nutmeg (classic pairing — amplifies flavor)",
+      "garlic butter"
+    ],
+    "balancing_elements": [
+      "fat (butter, cream, olive oil)",
+      "acid (lemon)",
+      "sweetness (nutmeg, raisins)"
+    ],
+    "avoid_combinations": [
+      "overcooking (becomes slimy and dull)"
+    ],
+    "aroma_compounds": [
+      "hexanal",
+      "beta-ionone",
+      "geosmin"
+    ],
+    "related_core": [
+      "vegetables"
+    ],
+    "related_techniques": [
+      "sautéing",
+      "blanching"
+    ],
+    "confidence": 0.92,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "szpinak"
+      ],
+      "en": [
+        "spinach"
+      ],
+      "de": [
+        "Spinat"
+      ],
+      "es": [
+        "espinaca"
+      ],
+      "fr": [
+        "épinard"
+      ]
+    }
+  },
+  {
+    "ingredient": "leek",
+    "category": "allium",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sweet",
+        "mild onion",
+        "delicate"
+      ],
+      "aroma": [
+        "gentle allium",
+        "sweet",
+        "grassy"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "potato (vichyssoise)",
+      "cream",
+      "butter",
+      "thyme",
+      "bacon",
+      "chicken",
+      "fish",
+      "mustard",
+      "gruyère",
+      "white wine",
+      "dill",
+      "parsley",
+      "goat cheese",
+      "mushroom"
+    ],
+    "contrast_with": [
+      "sharp mustard against sweet leek",
+      "salty bacon against mild sweetness"
+    ],
+    "boosters": [
+      "slow caramelizing for sweetness",
+      "charring halved on grill",
+      "using green tops for stock",
+      "vinaigrette on warm leeks"
+    ],
+    "balancing_elements": [
+      "acid (vinegar, mustard)",
+      "fat (butter, cream)",
+      "salt (bacon)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "dipropyldisulfide",
+      "thiosulfinates"
+    ],
+    "related_core": [
+      "onions",
+      "shallots"
+    ],
+    "related_techniques": [
+      "sautéing",
+      "braising"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "por",
+        "pory"
+      ],
+      "en": [
+        "leek"
+      ],
+      "de": [
+        "Lauch",
+        "Porree"
+      ],
+      "es": [
+        "puerro"
+      ],
+      "fr": [
+        "poireau"
+      ]
+    }
+  },
+  {
+    "ingredient": "bell_pepper",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sweet",
+        "mild",
+        "slightly bitter (green)"
+      ],
+      "aroma": [
+        "fresh green (green pepper)",
+        "sweet fruity (red/yellow)",
+        "roasted/smoky when charred"
+      ],
+      "intensity": "medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "tomato",
+      "onion",
+      "garlic",
+      "olive oil",
+      "chorizo",
+      "feta",
+      "egg (shakshuka)",
+      "rice",
+      "chicken",
+      "beef",
+      "goat cheese",
+      "basil",
+      "oregano",
+      "cumin",
+      "paprika",
+      "balsamic"
+    ],
+    "contrast_with": [
+      "sweet roasted pepper against salty feta",
+      "charred exterior against juicy interior"
+    ],
+    "boosters": [
+      "roasting and peeling for concentrated sweetness",
+      "charring over flame",
+      "using roasted pepper in sauces (romesco)",
+      "marinating in olive oil"
+    ],
+    "balancing_elements": [
+      "acid (balsamic, lemon)",
+      "salt (feta, anchovy)",
+      "fat (olive oil)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "2-methoxy-3-isobutylpyrazine (green)",
+      "beta-ionone (red)"
+    ],
+    "related_core": [
+      "vegetables"
+    ],
+    "related_techniques": [
+      "grilling",
+      "roasting_vegetables",
+      "sautéing"
+    ],
+    "confidence": 0.9,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "papryka",
+        "papryka słodka",
+        "papryka czerwona",
+        "papryka żółta"
+      ],
+      "en": [
+        "bell pepper",
+        "sweet pepper",
+        "capsicum"
+      ],
+      "de": [
+        "Paprika",
+        "Gemüsepaprika"
+      ],
+      "es": [
+        "pimiento",
+        "pimiento morrón"
+      ],
+      "fr": [
+        "poivron"
+      ]
+    }
+  },
+  {
+    "ingredient": "celery_celeriac",
+    "category": "vegetable",
+    "flavor_profile": {
+      "primary_tastes": [
+        "savory",
+        "slightly bitter",
+        "mineral",
+        "earthy"
+      ],
+      "aroma": [
+        "herbaceous",
+        "green",
+        "celery seed-like",
+        "anise hint"
+      ],
+      "intensity": "medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "apple",
+      "walnut",
+      "blue cheese",
+      "cream",
+      "potato",
+      "truffle",
+      "mustard",
+      "lemon",
+      "parsley",
+      "stock (mirepoix)",
+      "carrot",
+      "onion",
+      "butter",
+      "remoulade",
+      "horseradish"
+    ],
+    "contrast_with": [
+      "sweet apple against mineral celery",
+      "rich cream against earthy root"
+    ],
+    "boosters": [
+      "roasting celeriac whole for depth",
+      "puree as potato substitute",
+      "remoulade (raw grated with mustard mayo)",
+      "adding to stocks and braises as base"
+    ],
+    "balancing_elements": [
+      "acid (lemon, mustard)",
+      "fat (cream, butter)",
+      "sweetness (apple)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "phthalides",
+      "terpenes",
+      "limonene"
+    ],
+    "related_core": [
+      "vegetables"
+    ],
+    "related_techniques": [
+      "braising",
+      "roasting_vegetables"
+    ],
+    "confidence": 0.85,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "seler",
+        "seler naciowy",
+        "seler korzeniowy"
+      ],
+      "en": [
+        "celery",
+        "celeriac",
+        "celery root"
+      ],
+      "de": [
+        "Sellerie",
+        "Staudensellerie",
+        "Knollensellerie"
+      ],
+      "es": [
+        "apio",
+        "apionabo"
+      ],
+      "fr": [
+        "céleri",
+        "céleri-rave"
+      ]
+    }
+  },
+  {
+    "ingredient": "parsnip",
+    "category": "root_vegetable",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sweet",
+        "earthy",
+        "nutty",
+        "starchy"
+      ],
+      "aroma": [
+        "sweet",
+        "slightly anise",
+        "earthy",
+        "honey-like when roasted"
+      ],
+      "intensity": "medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "butter",
+      "brown butter",
+      "cream",
+      "honey",
+      "maple syrup",
+      "thyme",
+      "rosemary",
+      "nutmeg",
+      "apple",
+      "pear",
+      "beef",
+      "venison",
+      "pork",
+      "hazelnut",
+      "chestnut"
+    ],
+    "contrast_with": [
+      "sharp acids against deep sweetness",
+      "bitter herbs against honey-sweet root"
+    ],
+    "boosters": [
+      "high-heat roasting for caramel edges",
+      "puree with butter for silk",
+      "frying chips for texture",
+      "adding to root veg medley"
+    ],
+    "balancing_elements": [
+      "acid (lemon, apple cider vinegar)",
+      "salt",
+      "bitterness (herbs)"
+    ],
+    "avoid_combinations": [
+      "strong competing sweetness (too cloying)"
+    ],
+    "aroma_compounds": [
+      "falcarinol",
+      "myristicin",
+      "terpinolene"
+    ],
+    "related_core": [
+      "carrots",
+      "potatoes"
+    ],
+    "related_techniques": [
+      "roasting_vegetables"
+    ],
+    "confidence": 0.85,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "pasternak"
+      ],
+      "en": [
+        "parsnip"
+      ],
+      "de": [
+        "Pastinake"
+      ],
+      "es": [
+        "chirivía",
+        "pastinaca"
+      ],
+      "fr": [
+        "panais"
+      ]
+    }
+  },
+  {
+    "ingredient": "radish",
+    "category": "root_vegetable",
+    "flavor_profile": {
+      "primary_tastes": [
+        "peppery",
+        "sharp",
+        "slightly bitter",
+        "crisp"
+      ],
+      "aroma": [
+        "sharp",
+        "peppery",
+        "clean"
+      ],
+      "intensity": "medium-high (raw), low (cooked)",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "butter",
+      "salt",
+      "anchovy",
+      "avocado",
+      "cucumber",
+      "citrus",
+      "mint",
+      "dill",
+      "sesame",
+      "soy sauce",
+      "fish tacos",
+      "spring salads",
+      "goat cheese"
+    ],
+    "contrast_with": [
+      "creamy butter against sharp radish",
+      "cool crunch against rich dishes"
+    ],
+    "boosters": [
+      "serving raw with butter and salt (French style)",
+      "quick pickling",
+      "roasting (becomes sweet and mild)",
+      "shaving thin for garnish"
+    ],
+    "balancing_elements": [
+      "fat (butter, avocado)",
+      "salt",
+      "acid (vinegar for pickling)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "isothiocyanates",
+      "4-methylthio-3-butenyl isothiocyanate"
+    ],
+    "related_core": [
+      "vegetables"
+    ],
+    "related_techniques": [
+      "plating"
+    ],
+    "confidence": 0.85,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "rzodkiewka",
+        "rzodkiew"
+      ],
+      "en": [
+        "radish"
+      ],
+      "de": [
+        "Radieschen",
+        "Rettich"
+      ],
+      "es": [
+        "rábano"
+      ],
+      "fr": [
+        "radis"
+      ]
+    }
+  },
+  {
+    "ingredient": "black_beans",
+    "category": "legume",
+    "flavor_profile": {
+      "primary_tastes": [
+        "earthy",
+        "savory",
+        "starchy",
+        "mild"
+      ],
+      "aroma": [
+        "earthy",
+        "inky",
+        "subtle"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "cumin",
+      "chili",
+      "garlic",
+      "onion",
+      "lime",
+      "cilantro",
+      "avocado",
+      "tomato",
+      "corn",
+      "rice",
+      "chorizo",
+      "sour cream",
+      "cheese",
+      "bell pepper",
+      "epazote"
+    ],
+    "contrast_with": [
+      "bright lime-cilantro against earthy beans",
+      "creamy avocado against firm beans"
+    ],
+    "boosters": [
+      "toasting cumin in oil before adding beans",
+      "mashing some for creamy texture",
+      "cooking with kombu for digestibility",
+      "epazote herb (traditional)"
+    ],
+    "balancing_elements": [
+      "acid (lime)",
+      "fat (avocado, sour cream)",
+      "heat (chili)",
+      "freshness (cilantro)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "pyrazines",
+      "hexanal"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "stewing",
+      "braising"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "czarna fasola",
+        "fasola czarna"
+      ],
+      "en": [
+        "black beans",
+        "black turtle beans"
+      ],
+      "de": [
+        "schwarze Bohnen"
+      ],
+      "es": [
+        "frijoles negros",
+        "porotos negros",
+        "caraotas"
+      ],
+      "fr": [
+        "haricots noirs"
+      ]
+    }
+  },
+  {
+    "ingredient": "white_beans",
+    "category": "legume",
+    "flavor_profile": {
+      "primary_tastes": [
+        "mild",
+        "creamy",
+        "starchy",
+        "neutral"
+      ],
+      "aroma": [
+        "mild",
+        "earthy",
+        "clean"
+      ],
+      "intensity": "low",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "rosemary",
+      "sage",
+      "garlic",
+      "olive oil",
+      "tomato",
+      "sausage",
+      "pancetta",
+      "lamb",
+      "kale",
+      "spinach",
+      "lemon",
+      "parmesan",
+      "anchovy",
+      "tuna",
+      "shrimp"
+    ],
+    "contrast_with": [
+      "bold rosemary against creamy neutral beans",
+      "sharp lemon against starchy mildness"
+    ],
+    "boosters": [
+      "cooking in aromatic broth",
+      "mashing some for creamy body",
+      "finishing with quality olive oil",
+      "slow braising with aromatics"
+    ],
+    "balancing_elements": [
+      "acid (lemon, tomato)",
+      "fat (olive oil, pancetta)",
+      "herbs (rosemary, sage)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "pyrazines"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "stewing",
+      "braising"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "fasola biała",
+        "fasola cannellini",
+        "fasola jaś"
+      ],
+      "en": [
+        "white beans",
+        "cannellini",
+        "navy beans",
+        "Great Northern"
+      ],
+      "de": [
+        "weiße Bohnen",
+        "Cannellini-Bohnen"
+      ],
+      "es": [
+        "alubias blancas",
+        "judías blancas",
+        "porotos blancos"
+      ],
+      "fr": [
+        "haricots blancs",
+        "cannellini"
+      ]
+    }
+  },
+  {
+    "ingredient": "couscous",
+    "category": "grain",
+    "flavor_profile": {
+      "primary_tastes": [
+        "neutral",
+        "slightly nutty",
+        "wheaty"
+      ],
+      "aroma": [
+        "mild wheat",
+        "toasted when prepared well"
+      ],
+      "intensity": "very low",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "lamb",
+      "chicken",
+      "merguez",
+      "harissa",
+      "preserved lemon",
+      "raisins",
+      "apricot",
+      "almond",
+      "pine nut",
+      "mint",
+      "parsley",
+      "cilantro",
+      "cumin",
+      "cinnamon",
+      "chickpeas",
+      "tomato",
+      "zucchini",
+      "bell pepper"
+    ],
+    "contrast_with": [
+      "spicy tagine against neutral grain",
+      "sweet dried fruit against savory meat"
+    ],
+    "boosters": [
+      "steaming with butter",
+      "toasting before hydrating",
+      "using stock instead of water",
+      "fluffing with fork (never stir)"
+    ],
+    "balancing_elements": [
+      "fat (butter, olive oil)",
+      "acid (preserved lemon)",
+      "sweetness (dried fruit)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "Maillard products when toasted"
+    ],
+    "related_core": [
+      "rice"
+    ],
+    "related_techniques": [],
+    "confidence": 0.85,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "kuskus",
+        "couscous"
+      ],
+      "en": [
+        "couscous"
+      ],
+      "de": [
+        "Couscous"
+      ],
+      "es": [
+        "cuscús"
+      ],
+      "fr": [
+        "couscous",
+        "semoule"
+      ]
+    }
+  },
+  {
+    "ingredient": "bulgur",
+    "category": "grain",
+    "flavor_profile": {
+      "primary_tastes": [
+        "nutty",
+        "wheaty",
+        "earthy"
+      ],
+      "aroma": [
+        "toasted wheat",
+        "nutty"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "parsley",
+      "mint",
+      "tomato",
+      "lemon",
+      "olive oil",
+      "cucumber",
+      "pomegranate",
+      "onion",
+      "allspice",
+      "cinnamon",
+      "lamb",
+      "chicken",
+      "chickpeas",
+      "feta",
+      "walnuts"
+    ],
+    "contrast_with": [
+      "fresh herbs against toasty grain",
+      "tart pomegranate against earthy bulgur"
+    ],
+    "boosters": [
+      "soaking in hot water (not cooking)",
+      "dressing while warm (absorbs flavor)",
+      "using in tabbouleh with lots of herbs"
+    ],
+    "balancing_elements": [
+      "acid (lemon)",
+      "fat (olive oil)",
+      "freshness (herbs)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "pyrazines"
+    ],
+    "related_core": [],
+    "related_techniques": [],
+    "confidence": 0.85,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "bulgur",
+        "kasza bulgur"
+      ],
+      "en": [
+        "bulgur",
+        "bulgur wheat",
+        "cracked wheat"
+      ],
+      "de": [
+        "Bulgur"
+      ],
+      "es": [
+        "bulgur",
+        "trigo bulgur"
+      ],
+      "fr": [
+        "boulgour"
+      ]
+    }
+  },
+  {
+    "ingredient": "buckwheat",
+    "category": "grain",
+    "flavor_profile": {
+      "primary_tastes": [
+        "nutty",
+        "earthy",
+        "robust",
+        "slightly bitter"
+      ],
+      "aroma": [
+        "toasty",
+        "earthy",
+        "malty"
+      ],
+      "intensity": "medium",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "mushroom",
+      "butter",
+      "onion",
+      "egg",
+      "sour cream",
+      "dill",
+      "bacon",
+      "sausage",
+      "beet",
+      "cabbage",
+      "honey",
+      "blueberry",
+      "apple",
+      "walnut"
+    ],
+    "contrast_with": [
+      "rich butter/sour cream against earthy grain",
+      "sweet honey against bitter buckwheat"
+    ],
+    "boosters": [
+      "toasting (prażenie) before cooking",
+      "cooking with egg coating (traditional kasha varnishkes)",
+      "using in bliny",
+      "grinding into flour for pancakes/soba"
+    ],
+    "balancing_elements": [
+      "fat (butter, sour cream)",
+      "sweetness (caramelized onion)",
+      "umami (mushroom)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "pyrazines",
+      "salicylaldehyde",
+      "rutin"
+    ],
+    "related_core": [
+      "rice"
+    ],
+    "related_techniques": [],
+    "confidence": 0.88,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "kasza gryczana",
+        "gryka",
+        "gryczana"
+      ],
+      "en": [
+        "buckwheat",
+        "kasha"
+      ],
+      "de": [
+        "Buchweizen"
+      ],
+      "es": [
+        "trigo sarraceno",
+        "alforfón"
+      ],
+      "fr": [
+        "sarrasin",
+        "blé noir"
+      ]
+    }
+  },
+  {
+    "ingredient": "rhubarb",
+    "category": "fruit_vegetable",
+    "flavor_profile": {
+      "primary_tastes": [
+        "very sour",
+        "tart",
+        "slightly fruity"
+      ],
+      "aroma": [
+        "tart",
+        "green",
+        "fruity when cooked with sugar"
+      ],
+      "intensity": "high",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "strawberry",
+      "ginger",
+      "vanilla",
+      "orange",
+      "cardamom",
+      "sugar",
+      "cream",
+      "custard",
+      "meringue",
+      "oats",
+      "pork (savory compote)",
+      "duck",
+      "goat cheese"
+    ],
+    "contrast_with": [
+      "sweet strawberry against sour rhubarb",
+      "rich cream against sharp tang"
+    ],
+    "boosters": [
+      "roasting with sugar for concentrated flavor",
+      "poaching in syrup",
+      "using raw in slaw (very thinly sliced)",
+      "compote with ginger"
+    ],
+    "balancing_elements": [
+      "sweetness (sugar, strawberry — essential)",
+      "fat (cream, butter)",
+      "warmth (ginger, cardamom)"
+    ],
+    "avoid_combinations": [
+      "using without sufficient sugar (inedibly sour)",
+      "leaves are toxic"
+    ],
+    "aroma_compounds": [
+      "malic acid",
+      "citric acid",
+      "anthocyanins"
+    ],
+    "related_core": [],
+    "related_techniques": [],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "rabarbar"
+      ],
+      "en": [
+        "rhubarb"
+      ],
+      "de": [
+        "Rhabarber"
+      ],
+      "es": [
+        "ruibarbo"
+      ],
+      "fr": [
+        "rhubarbe"
+      ]
+    }
+  },
+  {
+    "ingredient": "pomegranate",
+    "category": "fruit",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sweet-sour",
+        "tannic",
+        "fruity"
+      ],
+      "aroma": [
+        "bright",
+        "berry-like",
+        "wine-like"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "lamb",
+      "duck",
+      "chicken",
+      "walnut",
+      "feta",
+      "goat cheese",
+      "arugula",
+      "beet",
+      "eggplant",
+      "couscous",
+      "bulgur",
+      "tahini",
+      "mint",
+      "parsley",
+      "pistachio",
+      "rose water"
+    ],
+    "contrast_with": [
+      "tart seeds against rich meat",
+      "bright crunch against creamy cheese"
+    ],
+    "boosters": [
+      "pomegranate molasses (concentrated syrup) as glaze",
+      "seeds as textural garnish",
+      "juice in vinaigrettes and reductions"
+    ],
+    "balancing_elements": [
+      "fat (cheese, tahini)",
+      "sweetness (molasses reduction)",
+      "salt"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "ellagic acid",
+      "anthocyanins",
+      "punicalagins"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "plating"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "granat",
+        "owoc granatu",
+        "melasa z granatu"
+      ],
+      "en": [
+        "pomegranate",
+        "pomegranate molasses"
+      ],
+      "de": [
+        "Granatapfel",
+        "Granatapfelsirup"
+      ],
+      "es": [
+        "granada"
+      ],
+      "fr": [
+        "grenade",
+        "mélasse de grenade"
+      ]
+    }
+  }
+]

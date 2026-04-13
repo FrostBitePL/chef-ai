@@ -85,6 +85,13 @@ body{
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
   background-clip:text
 }
+.lang-toggle{
+  background:none;border:1px solid var(--border);border-radius:var(--radius);
+  padding:4px 8px;font-size:1rem;cursor:pointer;color:var(--text);
+  transition:border-color 0.2s,background 0.2s;margin-left:auto;margin-right:8px
+}
+.lang-toggle:hover{border-color:var(--gold);background:var(--gold-soft)}
+
 /* Auth overlay */
 .auth-overlay{
   position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;

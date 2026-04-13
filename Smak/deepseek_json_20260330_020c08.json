@@ -3,8 +3,17 @@
     "ingredient": "mango",
     "category": "fruit",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "tropical", "slightly acidic"],
-      "aroma": ["tropical", "fruity", "floral", "peach-like"],
+      "primary_tastes": [
+        "sweet",
+        "tropical",
+        "slightly acidic"
+      ],
+      "aroma": [
+        "tropical",
+        "fruity",
+        "floral",
+        "peach-like"
+      ],
       "intensity": "medium-high",
       "fat_content": "low"
     },
@@ -47,14 +56,42 @@
       "myrcene"
     ],
     "confidence": 0.92,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "mango"
+      ],
+      "en": [
+        "mango"
+      ],
+      "de": [
+        "Mango"
+      ],
+      "es": [
+        "mango"
+      ],
+      "fr": [
+        "mangue"
+      ]
+    }
   },
   {
     "ingredient": "pineapple",
     "category": "fruit",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "acid", "tropical"],
-      "aroma": ["tropical", "fruity", "floral", "sweet"],
+      "primary_tastes": [
+        "sweet",
+        "acid",
+        "tropical"
+      ],
+      "aroma": [
+        "tropical",
+        "fruity",
+        "floral",
+        "sweet"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -99,14 +136,43 @@
       "vanillin"
     ],
     "confidence": 0.93,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "ananas"
+      ],
+      "en": [
+        "pineapple"
+      ],
+      "de": [
+        "Ananas"
+      ],
+      "es": [
+        "piña",
+        "ananá"
+      ],
+      "fr": [
+        "ananas"
+      ]
+    }
   },
   {
     "ingredient": "papaya",
     "category": "fruit",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "tropical", "slightly musky"],
-      "aroma": ["tropical", "musky", "floral", "melon-like"],
+      "primary_tastes": [
+        "sweet",
+        "tropical",
+        "slightly musky"
+      ],
+      "aroma": [
+        "tropical",
+        "musky",
+        "floral",
+        "melon-like"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -147,14 +213,43 @@
       "benzyl isothiocyanate (green)"
     ],
     "confidence": 0.88,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "papaja"
+      ],
+      "en": [
+        "papaya"
+      ],
+      "de": [
+        "Papaya"
+      ],
+      "es": [
+        "papaya",
+        "lechosa"
+      ],
+      "fr": [
+        "papaye"
+      ]
+    }
   },
   {
     "ingredient": "passion_fruit",
     "category": "fruit",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "tart", "intense"],
-      "aroma": ["tropical", "floral", "citrus", "musky"],
+      "primary_tastes": [
+        "sweet",
+        "tart",
+        "intense"
+      ],
+      "aroma": [
+        "tropical",
+        "floral",
+        "citrus",
+        "musky"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -192,14 +287,43 @@
       "sulfur compounds"
     ],
     "confidence": 0.89,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "marakuja"
+      ],
+      "en": [
+        "passion fruit"
+      ],
+      "de": [
+        "Maracuja",
+        "Passionsfrucht"
+      ],
+      "es": [
+        "maracuyá",
+        "fruta de la pasión"
+      ],
+      "fr": [
+        "fruit de la passion"
+      ]
+    }
   },
   {
     "ingredient": "cod",
     "category": "seafood",
     "flavor_profile": {
-      "primary_tastes": ["mild", "umami", "delicate"],
-      "aroma": ["clean", "mild", "ocean"],
+      "primary_tastes": [
+        "mild",
+        "umami",
+        "delicate"
+      ],
+      "aroma": [
+        "clean",
+        "mild",
+        "ocean"
+      ],
       "intensity": "low",
       "fat_content": "low"
     },
@@ -240,14 +364,43 @@
       "aldehydes"
     ],
     "confidence": 0.91,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "dorsz"
+      ],
+      "en": [
+        "cod"
+      ],
+      "de": [
+        "Kabeljau",
+        "Dorsch"
+      ],
+      "es": [
+        "bacalao"
+      ],
+      "fr": [
+        "cabillaud",
+        "morue"
+      ]
+    }
   },
   {
     "ingredient": "halibut",
     "category": "seafood",
     "flavor_profile": {
-      "primary_tastes": ["mild", "umami", "sweet"],
-      "aroma": ["clean", "mild", "ocean"],
+      "primary_tastes": [
+        "mild",
+        "umami",
+        "sweet"
+      ],
+      "aroma": [
+        "clean",
+        "mild",
+        "ocean"
+      ],
       "intensity": "low",
       "fat_content": "low-medium"
     },
@@ -286,14 +439,43 @@
       "aldehydes"
     ],
     "confidence": 0.9,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "halibut"
+      ],
+      "en": [
+        "halibut"
+      ],
+      "de": [
+        "Heilbutt"
+      ],
+      "es": [
+        "halibut",
+        "fletán"
+      ],
+      "fr": [
+        "flétan"
+      ]
+    }
   },
   {
     "ingredient": "lobster",
     "category": "seafood",
     "flavor_profile": {
-      "primary_tastes": ["umami", "sweet", "briny"],
-      "aroma": ["sweet", "ocean", "nutty", "rich"],
+      "primary_tastes": [
+        "umami",
+        "sweet",
+        "briny"
+      ],
+      "aroma": [
+        "sweet",
+        "ocean",
+        "nutty",
+        "rich"
+      ],
       "intensity": "medium-high",
       "fat_content": "low (meat), high (tomalley, roe)"
     },
@@ -336,14 +518,43 @@
       "bromophenols"
     ],
     "confidence": 0.93,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "homar"
+      ],
+      "en": [
+        "lobster"
+      ],
+      "de": [
+        "Hummer"
+      ],
+      "es": [
+        "langosta",
+        "bogavante"
+      ],
+      "fr": [
+        "homard"
+      ]
+    }
   },
   {
     "ingredient": "crab",
     "category": "seafood",
     "flavor_profile": {
-      "primary_tastes": ["umami", "sweet", "briny"],
-      "aroma": ["sweet", "ocean", "nutty", "delicate"],
+      "primary_tastes": [
+        "umami",
+        "sweet",
+        "briny"
+      ],
+      "aroma": [
+        "sweet",
+        "ocean",
+        "nutty",
+        "delicate"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -384,14 +595,41 @@
       "amino acids"
     ],
     "confidence": 0.92,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "krab"
+      ],
+      "en": [
+        "crab"
+      ],
+      "de": [
+        "Krabbe"
+      ],
+      "es": [
+        "cangrejo"
+      ],
+      "fr": [
+        "crabe"
+      ]
+    }
   },
   {
     "ingredient": "mussel",
     "category": "seafood",
     "flavor_profile": {
-      "primary_tastes": ["umami", "briny", "sweet"],
-      "aroma": ["ocean", "sweet", "seaweed"],
+      "primary_tastes": [
+        "umami",
+        "briny",
+        "sweet"
+      ],
+      "aroma": [
+        "ocean",
+        "sweet",
+        "seaweed"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -432,14 +670,43 @@
       "amino acids"
     ],
     "confidence": 0.91,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "małże",
+        "omułki"
+      ],
+      "en": [
+        "mussel"
+      ],
+      "de": [
+        "Miesmuschel"
+      ],
+      "es": [
+        "mejillón"
+      ],
+      "fr": [
+        "moule"
+      ]
+    }
   },
   {
     "ingredient": "clam",
     "category": "seafood",
     "flavor_profile": {
-      "primary_tastes": ["umami", "briny", "sweet"],
-      "aroma": ["ocean", "briny", "clean", "mineral"],
+      "primary_tastes": [
+        "umami",
+        "briny",
+        "sweet"
+      ],
+      "aroma": [
+        "ocean",
+        "briny",
+        "clean",
+        "mineral"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -479,14 +746,44 @@
       "amino acids"
     ],
     "confidence": 0.92,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "małże",
+        "vongole"
+      ],
+      "en": [
+        "clam",
+        "vongole"
+      ],
+      "de": [
+        "Venusmuschel"
+      ],
+      "es": [
+        "almeja"
+      ],
+      "fr": [
+        "palourde"
+      ]
+    }
   },
   {
     "ingredient": "oregano",
     "category": "herb",
     "flavor_profile": {
-      "primary_tastes": ["herbal", "bitter", "pungent"],
-      "aroma": ["herbal", "earthy", "minty", "slightly spicy"],
+      "primary_tastes": [
+        "herbal",
+        "bitter",
+        "pungent"
+      ],
+      "aroma": [
+        "herbal",
+        "earthy",
+        "minty",
+        "slightly spicy"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -529,14 +826,43 @@
       "cymene"
     ],
     "confidence": 0.94,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "oregano"
+      ],
+      "en": [
+        "oregano"
+      ],
+      "de": [
+        "Oregano"
+      ],
+      "es": [
+        "orégano"
+      ],
+      "fr": [
+        "origan"
+      ]
+    }
   },
   {
     "ingredient": "sage",
     "category": "herb",
     "flavor_profile": {
-      "primary_tastes": ["herbal", "slightly bitter", "camphor-like"],
-      "aroma": ["herbal", "earthy", "camphor", "minty", "woody"],
+      "primary_tastes": [
+        "herbal",
+        "slightly bitter",
+        "camphor-like"
+      ],
+      "aroma": [
+        "herbal",
+        "earthy",
+        "camphor",
+        "minty",
+        "woody"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -577,14 +903,42 @@
       "borneol"
     ],
     "confidence": 0.93,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "szałwia"
+      ],
+      "en": [
+        "sage"
+      ],
+      "de": [
+        "Salbei"
+      ],
+      "es": [
+        "salvia"
+      ],
+      "fr": [
+        "sauge"
+      ]
+    }
   },
   {
     "ingredient": "dill",
     "category": "herb",
     "flavor_profile": {
-      "primary_tastes": ["herbal", "fresh", "slightly sweet"],
-      "aroma": ["fresh", "herbal", "anise-like", "green"],
+      "primary_tastes": [
+        "herbal",
+        "fresh",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "fresh",
+        "herbal",
+        "anise-like",
+        "green"
+      ],
       "intensity": "medium-high",
       "fat_content": "low"
     },
@@ -623,14 +977,43 @@
       "terpenes"
     ],
     "confidence": 0.92,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "koperek",
+        "koper"
+      ],
+      "en": [
+        "dill"
+      ],
+      "de": [
+        "Dill"
+      ],
+      "es": [
+        "eneldo"
+      ],
+      "fr": [
+        "aneth"
+      ]
+    }
   },
   {
     "ingredient": "tarragon",
     "category": "herb",
     "flavor_profile": {
-      "primary_tastes": ["herbal", "anise-like", "slightly sweet"],
-      "aroma": ["anise", "licorice", "herbal", "sweet"],
+      "primary_tastes": [
+        "herbal",
+        "anise-like",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "anise",
+        "licorice",
+        "herbal",
+        "sweet"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -667,14 +1050,42 @@
       "anethole"
     ],
     "confidence": 0.91,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "estragon"
+      ],
+      "en": [
+        "tarragon"
+      ],
+      "de": [
+        "Estragon"
+      ],
+      "es": [
+        "estragón"
+      ],
+      "fr": [
+        "estragon"
+      ]
+    }
   },
   {
     "ingredient": "coriander_seed",
     "category": "spice",
     "flavor_profile": {
-      "primary_tastes": ["citrus", "floral", "slightly sweet"],
-      "aroma": ["citrus", "floral", "woody", "warm"],
+      "primary_tastes": [
+        "citrus",
+        "floral",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "citrus",
+        "floral",
+        "woody",
+        "warm"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -713,14 +1124,44 @@
       "terpenes"
     ],
     "confidence": 0.92,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "nasiona kolendry",
+        "kolendra mielona"
+      ],
+      "en": [
+        "coriander seed"
+      ],
+      "de": [
+        "Koriandersamen"
+      ],
+      "es": [
+        "semilla de cilantro"
+      ],
+      "fr": [
+        "graine de coriandre"
+      ]
+    }
   },
   {
     "ingredient": "cardamom",
     "category": "spice",
     "flavor_profile": {
-      "primary_tastes": ["floral", "spicy", "slightly sweet", "camphor-like"],
-      "aroma": ["floral", "citrus", "pine", "spicy"],
+      "primary_tastes": [
+        "floral",
+        "spicy",
+        "slightly sweet",
+        "camphor-like"
+      ],
+      "aroma": [
+        "floral",
+        "citrus",
+        "pine",
+        "spicy"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -760,14 +1201,43 @@
       "terpinyl acetate"
     ],
     "confidence": 0.91,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "kardamon"
+      ],
+      "en": [
+        "cardamom"
+      ],
+      "de": [
+        "Kardamom"
+      ],
+      "es": [
+        "cardamomo"
+      ],
+      "fr": [
+        "cardamome"
+      ]
+    }
   },
   {
     "ingredient": "nutmeg",
     "category": "spice",
     "flavor_profile": {
-      "primary_tastes": ["warm", "sweet", "nutty", "slightly bitter"],
-      "aroma": ["nutty", "warm", "woody", "sweet"],
+      "primary_tastes": [
+        "warm",
+        "sweet",
+        "nutty",
+        "slightly bitter"
+      ],
+      "aroma": [
+        "nutty",
+        "warm",
+        "woody",
+        "sweet"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -807,14 +1277,41 @@
       "terpenes"
     ],
     "confidence": 0.94,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "gałka muszkatołowa"
+      ],
+      "en": [
+        "nutmeg"
+      ],
+      "de": [
+        "Muskatnuss"
+      ],
+      "es": [
+        "nuez moscada"
+      ],
+      "fr": [
+        "noix de muscade"
+      ]
+    }
   },
   {
     "ingredient": "zucchini",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["mild", "slightly sweet", "vegetal"],
-      "aroma": ["green", "mild", "fresh"],
+      "primary_tastes": [
+        "mild",
+        "slightly sweet",
+        "vegetal"
+      ],
+      "aroma": [
+        "green",
+        "mild",
+        "fresh"
+      ],
       "intensity": "low",
       "fat_content": "low"
     },
@@ -853,14 +1350,42 @@
       "pyrazines"
     ],
     "confidence": 0.88,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "cukinia"
+      ],
+      "en": [
+        "zucchini",
+        "courgette"
+      ],
+      "de": [
+        "Zucchini"
+      ],
+      "es": [
+        "calabacín"
+      ],
+      "fr": [
+        "courgette"
+      ]
+    }
   },
   {
     "ingredient": "cucumber",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["refreshing", "mild", "slightly sweet"],
-      "aroma": ["green", "fresh", "melon-like"],
+      "primary_tastes": [
+        "refreshing",
+        "mild",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "green",
+        "fresh",
+        "melon-like"
+      ],
       "intensity": "low",
       "fat_content": "low"
     },
@@ -899,14 +1424,42 @@
       "alcohols"
     ],
     "confidence": 0.9,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "ogórek",
+        "ogórki"
+      ],
+      "en": [
+        "cucumber"
+      ],
+      "de": [
+        "Gurke"
+      ],
+      "es": [
+        "pepino"
+      ],
+      "fr": [
+        "concombre"
+      ]
+    }
   },
   {
     "ingredient": "almond",
     "category": "nut",
     "flavor_profile": {
-      "primary_tastes": ["nutty", "sweet", "slightly bitter (skin)"],
-      "aroma": ["nutty", "sweet", "floral (marzipan)"],
+      "primary_tastes": [
+        "nutty",
+        "sweet",
+        "slightly bitter (skin)"
+      ],
+      "aroma": [
+        "nutty",
+        "sweet",
+        "floral (marzipan)"
+      ],
       "intensity": "medium",
       "fat_content": "high"
     },
@@ -945,14 +1498,45 @@
       "pyrazines"
     ],
     "confidence": 0.92,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "migdał",
+        "migdały"
+      ],
+      "en": [
+        "almond",
+        "almonds"
+      ],
+      "de": [
+        "Mandel",
+        "Mandeln"
+      ],
+      "es": [
+        "almendra"
+      ],
+      "fr": [
+        "amande"
+      ]
+    }
   },
   {
     "ingredient": "hazelnut",
     "category": "nut",
     "flavor_profile": {
-      "primary_tastes": ["nutty", "sweet", "rich"],
-      "aroma": ["nutty", "roasted", "sweet", "woody"],
+      "primary_tastes": [
+        "nutty",
+        "sweet",
+        "rich"
+      ],
+      "aroma": [
+        "nutty",
+        "roasted",
+        "sweet",
+        "woody"
+      ],
       "intensity": "medium-high",
       "fat_content": "high"
     },
@@ -989,14 +1573,44 @@
       "pyrazines"
     ],
     "confidence": 0.91,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "orzechy laskowe",
+        "laskowe"
+      ],
+      "en": [
+        "hazelnut"
+      ],
+      "de": [
+        "Haselnuss"
+      ],
+      "es": [
+        "avellana"
+      ],
+      "fr": [
+        "noisette"
+      ]
+    }
   },
   {
     "ingredient": "coffee",
     "category": "beverage",
     "flavor_profile": {
-      "primary_tastes": ["bitter", "acidic", "slightly sweet"],
-      "aroma": ["roasted", "nutty", "chocolate", "caramel", "fruity"],
+      "primary_tastes": [
+        "bitter",
+        "acidic",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "roasted",
+        "nutty",
+        "chocolate",
+        "caramel",
+        "fruity"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -1039,14 +1653,48 @@
       "thiols"
     ],
     "confidence": 0.95,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "kawa",
+        "espresso"
+      ],
+      "en": [
+        "coffee",
+        "espresso"
+      ],
+      "de": [
+        "Kaffee",
+        "Espresso"
+      ],
+      "es": [
+        "café",
+        "espresso"
+      ],
+      "fr": [
+        "café",
+        "espresso"
+      ]
+    }
   },
   {
     "ingredient": "beer",
     "category": "beverage",
     "flavor_profile": {
-      "primary_tastes": ["bitter", "slightly sweet", "carbonated"],
-      "aroma": ["malty", "hoppy", "fruity", "yeasty", "roasted (dark beer)"],
+      "primary_tastes": [
+        "bitter",
+        "slightly sweet",
+        "carbonated"
+      ],
+      "aroma": [
+        "malty",
+        "hoppy",
+        "fruity",
+        "yeasty",
+        "roasted (dark beer)"
+      ],
       "intensity": "varies by style",
       "fat_content": "low"
     },
@@ -1086,6 +1734,25 @@
       "pyrazines"
     ],
     "confidence": 0.91,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "piwo"
+      ],
+      "en": [
+        "beer"
+      ],
+      "de": [
+        "Bier"
+      ],
+      "es": [
+        "cerveza"
+      ],
+      "fr": [
+        "bière"
+      ]
+    }
   }
 ]

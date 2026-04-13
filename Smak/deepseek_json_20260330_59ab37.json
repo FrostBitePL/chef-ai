@@ -3,8 +3,15 @@
     "ingredient": "alliums",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["pungent", "sweet (when cooked)"],
-      "aroma": ["sulfurous", "pungent", "sweet (roasted)"],
+      "primary_tastes": [
+        "pungent",
+        "sweet (when cooked)"
+      ],
+      "aroma": [
+        "sulfurous",
+        "pungent",
+        "sweet (roasted)"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -40,14 +47,49 @@
       "pyruvic acid"
     ],
     "confidence": 0.92,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "cebulowate",
+        "cebula",
+        "szalotka",
+        "por",
+        "szczypiorek"
+      ],
+      "en": [
+        "alliums",
+        "onion family"
+      ],
+      "de": [
+        "Lauchgewächse",
+        "Zwiebel"
+      ],
+      "es": [
+        "aliáceas",
+        "cebolla"
+      ],
+      "fr": [
+        "alliacées",
+        "oignon"
+      ]
+    }
   },
   {
     "ingredient": "artichoke",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "bitter (trace)"],
-      "aroma": ["earthy", "sulfurous", "herbal", "citrus"],
+      "primary_tastes": [
+        "sweet",
+        "bitter (trace)"
+      ],
+      "aroma": [
+        "earthy",
+        "sulfurous",
+        "herbal",
+        "citrus"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -85,14 +127,40 @@
       "sesquiterpenes"
     ],
     "confidence": 0.88,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "karczoch"
+      ],
+      "en": [
+        "artichoke"
+      ],
+      "de": [
+        "Artischocke"
+      ],
+      "es": [
+        "alcachofa"
+      ],
+      "fr": [
+        "artichaut"
+      ]
+    }
   },
   {
     "ingredient": "asparagus",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "bitter"],
-      "aroma": ["earthy", "sulfurous", "green"],
+      "primary_tastes": [
+        "sweet",
+        "bitter"
+      ],
+      "aroma": [
+        "earthy",
+        "sulfurous",
+        "green"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -131,14 +199,41 @@
       "pyrazines"
     ],
     "confidence": 0.85,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "szparagi"
+      ],
+      "en": [
+        "asparagus"
+      ],
+      "de": [
+        "Spargel"
+      ],
+      "es": [
+        "espárrago"
+      ],
+      "fr": [
+        "asperge"
+      ]
+    }
   },
   {
     "ingredient": "avocado",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["umami", "sweet", "fatty"],
-      "aroma": ["nutty", "creamy", "herbal"],
+      "primary_tastes": [
+        "umami",
+        "sweet",
+        "fatty"
+      ],
+      "aroma": [
+        "nutty",
+        "creamy",
+        "herbal"
+      ],
       "intensity": "medium",
       "fat_content": "high"
     },
@@ -177,14 +272,41 @@
       "terpenes"
     ],
     "confidence": 0.88,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "awokado"
+      ],
+      "en": [
+        "avocado"
+      ],
+      "de": [
+        "Avocado"
+      ],
+      "es": [
+        "aguacate",
+        "palta"
+      ],
+      "fr": [
+        "avocat"
+      ]
+    }
   },
   {
     "ingredient": "beef",
     "category": "protein",
     "flavor_profile": {
-      "primary_tastes": ["umami", "salty"],
-      "aroma": ["meaty", "roasted", "rich"],
+      "primary_tastes": [
+        "umami",
+        "salty"
+      ],
+      "aroma": [
+        "meaty",
+        "roasted",
+        "rich"
+      ],
       "intensity": "high",
       "fat_content": "medium"
     },
@@ -226,14 +348,48 @@
       "sulfur compounds"
     ],
     "confidence": 0.95,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "wołowina",
+        "stek",
+        "antrykot",
+        "rostbef"
+      ],
+      "en": [
+        "beef",
+        "steak"
+      ],
+      "de": [
+        "Rindfleisch",
+        "Steak"
+      ],
+      "es": [
+        "ternera",
+        "res",
+        "bistec"
+      ],
+      "fr": [
+        "bœuf",
+        "steak"
+      ]
+    }
   },
   {
     "ingredient": "beet",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "earthy"],
-      "aroma": ["earthy", "sweet", "green"],
+      "primary_tastes": [
+        "sweet",
+        "earthy"
+      ],
+      "aroma": [
+        "earthy",
+        "sweet",
+        "green"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -267,14 +423,47 @@
       "pyrazines"
     ],
     "confidence": 0.85,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "burak",
+        "buraki",
+        "ćwikła"
+      ],
+      "en": [
+        "beet",
+        "beetroot"
+      ],
+      "de": [
+        "Rote Bete",
+        "Rübe"
+      ],
+      "es": [
+        "remolacha",
+        "betabel"
+      ],
+      "fr": [
+        "betterave"
+      ]
+    }
   },
   {
     "ingredient": "broccoli_cauliflower",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["sulfur", "bitter", "sweet (trace)"],
-      "aroma": ["sulfurous", "vegetal", "herbal", "citrus"],
+      "primary_tastes": [
+        "sulfur",
+        "bitter",
+        "sweet (trace)"
+      ],
+      "aroma": [
+        "sulfurous",
+        "vegetal",
+        "herbal",
+        "citrus"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -310,14 +499,47 @@
       "isothiocyanates"
     ],
     "confidence": 0.88,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "brokuł",
+        "brokuły",
+        "kalafior"
+      ],
+      "en": [
+        "broccoli",
+        "cauliflower"
+      ],
+      "de": [
+        "Brokkoli",
+        "Blumenkohl"
+      ],
+      "es": [
+        "brócoli",
+        "coliflor"
+      ],
+      "fr": [
+        "brocoli",
+        "chou-fleur"
+      ]
+    }
   },
   {
     "ingredient": "caramel",
     "category": "flavor",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "bitter (trace)"],
-      "aroma": ["toasted", "roasted", "nutty", "buttery"],
+      "primary_tastes": [
+        "sweet",
+        "bitter (trace)"
+      ],
+      "aroma": [
+        "toasted",
+        "roasted",
+        "nutty",
+        "buttery"
+      ],
       "intensity": "high",
       "fat_content": "low (unless added)"
     },
@@ -356,14 +578,41 @@
       "pyrazines"
     ],
     "confidence": 0.9,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "karmel"
+      ],
+      "en": [
+        "caramel"
+      ],
+      "de": [
+        "Karamell"
+      ],
+      "es": [
+        "caramelo"
+      ],
+      "fr": [
+        "caramel"
+      ]
+    }
   },
   {
     "ingredient": "carrot",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "earthy"],
-      "aroma": ["earthy", "green", "herbal", "citrus"],
+      "primary_tastes": [
+        "sweet",
+        "earthy"
+      ],
+      "aroma": [
+        "earthy",
+        "green",
+        "herbal",
+        "citrus"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -404,14 +653,44 @@
       "carotenoid breakdown products"
     ],
     "confidence": 0.87,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "marchew",
+        "marchewka"
+      ],
+      "en": [
+        "carrot"
+      ],
+      "de": [
+        "Karotte",
+        "Möhre"
+      ],
+      "es": [
+        "zanahoria"
+      ],
+      "fr": [
+        "carotte"
+      ]
+    }
   },
   {
     "ingredient": "chile",
     "category": "spice",
     "flavor_profile": {
-      "primary_tastes": ["pungent (pain)", "sweet", "fruity"],
-      "aroma": ["fruity", "floral", "smoky", "earthy"],
+      "primary_tastes": [
+        "pungent (pain)",
+        "sweet",
+        "fruity"
+      ],
+      "aroma": [
+        "fruity",
+        "floral",
+        "smoky",
+        "earthy"
+      ],
       "intensity": "varies by variety",
       "fat_content": "low"
     },
@@ -453,14 +732,51 @@
       "carotenoids"
     ],
     "confidence": 0.93,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "chili",
+        "papryczka chili",
+        "cayenne",
+        "jalapeño"
+      ],
+      "en": [
+        "chile",
+        "chili pepper",
+        "cayenne",
+        "jalapeño"
+      ],
+      "de": [
+        "Chili",
+        "Chilischote"
+      ],
+      "es": [
+        "chile",
+        "ají"
+      ],
+      "fr": [
+        "piment",
+        "chili"
+      ]
+    }
   },
   {
     "ingredient": "chocolate",
     "category": "sweet",
     "flavor_profile": {
-      "primary_tastes": ["bitter", "sweet", "umami"],
-      "aroma": ["roasted", "earthy", "fruity", "floral"],
+      "primary_tastes": [
+        "bitter",
+        "sweet",
+        "umami"
+      ],
+      "aroma": [
+        "roasted",
+        "earthy",
+        "fruity",
+        "floral"
+      ],
       "intensity": "high",
       "fat_content": "high"
     },
@@ -501,14 +817,46 @@
       "phenolic compounds"
     ],
     "confidence": 0.96,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "czekolada",
+        "kakao"
+      ],
+      "en": [
+        "chocolate",
+        "cocoa"
+      ],
+      "de": [
+        "Schokolade",
+        "Kakao"
+      ],
+      "es": [
+        "chocolate",
+        "cacao"
+      ],
+      "fr": [
+        "chocolat",
+        "cacao"
+      ]
+    }
   },
   {
     "ingredient": "corn",
     "category": "grain",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "starchy"],
-      "aroma": ["sulfurous", "buttery", "toasted", "green"],
+      "primary_tastes": [
+        "sweet",
+        "starchy"
+      ],
+      "aroma": [
+        "sulfurous",
+        "buttery",
+        "toasted",
+        "green"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -549,14 +897,44 @@
       "furans"
     ],
     "confidence": 0.84,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "kukurydza"
+      ],
+      "en": [
+        "corn",
+        "maize"
+      ],
+      "de": [
+        "Mais"
+      ],
+      "es": [
+        "maíz",
+        "elote",
+        "choclo"
+      ],
+      "fr": [
+        "maïs"
+      ]
+    }
   },
   {
     "ingredient": "cress",
     "category": "herb",
     "flavor_profile": {
-      "primary_tastes": ["pungent", "peppery", "bitter"],
-      "aroma": ["sulfurous", "terpene", "vegetal"],
+      "primary_tastes": [
+        "pungent",
+        "peppery",
+        "bitter"
+      ],
+      "aroma": [
+        "sulfurous",
+        "terpene",
+        "vegetal"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -591,6 +969,26 @@
       "sulfur compounds"
     ],
     "confidence": 0.82,
-    "priority": "low"
+    "priority": "low",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "rzeżucha"
+      ],
+      "en": [
+        "cress",
+        "watercress"
+      ],
+      "de": [
+        "Kresse"
+      ],
+      "es": [
+        "berro"
+      ],
+      "fr": [
+        "cresson"
+      ]
+    }
   }
 ]

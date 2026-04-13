@@ -2,9 +2,9 @@ async function loadHistory(){
   const el=document.getElementById('historyList');
   try{
     const r=await fetch(API+'/api/history',{headers:authHeaders()});const d=await r.json();
-    if(!d.sessions?.length){el.innerHTML='<div class="fav-empty"><div style="font-size:2.2rem;margin-bottom:8px">🕐</div><div style="font-size:0.95rem;color:var(--text-dim)">Nie masz jeszcze żadnych zapisanych rozmów.</div><div style="font-size:0.8rem;color:var(--text-faint);margin-top:4px">Twoje rozmowy z Chef AI pojawią się tutaj.</div></div>';return}
-    el.innerHTML=d.sessions.map(s=>'<div class="history-item" onclick="restoreSession(\''+esc(s.id)+'\')"><button class="h-del" onclick="event.stopPropagation();deleteSession(\''+esc(s.id)+'\')">🗑 Usuń</button><h3>'+esc(s.title||'Sesja')+'</h3><div class="h-meta">'+(s.profile==='lukasz'?'👨‍🍳':'🌍')+' · '+new Date(s.saved_at).toLocaleDateString('pl')+' · '+Math.floor((s.messages?.length||0)/2)+' wiadomości</div></div>').join('');
-  }catch{el.innerHTML='<div style="padding:20px;color:var(--text-faint)">Błąd.</div>'}
+    if(!d.sessions?.length){el.innerHTML='<div class="fav-empty"><div style="font-size:2.2rem;margin-bottom:8px">🕐</div><div style="font-size:0.95rem;color:var(--text-dim)">'+t('history.empty_title')+'</div><div style="font-size:0.8rem;color:var(--text-faint);margin-top:4px">'+t('history.empty_hint')+'</div></div>';return}
+    el.innerHTML=d.sessions.map(s=>'<div class="history-item" onclick="restoreSession(\''+esc(s.id)+'\')"><button class="h-del" onclick="event.stopPropagation();deleteSession(\''+esc(s.id)+'\')">'+t('history.delete')+'</button><h3>'+esc(s.title||t('history.session'))+'</h3><div class="h-meta">'+(s.profile==='lukasz'?'👨‍🍳':'🌍')+' · '+new Date(s.saved_at).toLocaleDateString(currentLang)+' · '+Math.floor((s.messages?.length||0)/2)+' '+t('history.messages')+'</div></div>').join('');
+  }catch{el.innerHTML='<div style="padding:20px;color:var(--text-faint)">'+t('history.error')+'</div>'}
 }
 
 async function restoreSession(id){

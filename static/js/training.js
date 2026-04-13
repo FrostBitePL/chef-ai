@@ -17,16 +17,16 @@ function updateProgressSummary(){
 // ─── Visual Skill Tree ───
 function renderSkillTree(){
   const el=document.getElementById('skillTree');
-  if(!CATEGORIES.length){el.innerHTML='<div style="padding:20px;color:var(--text-faint)">Ładuję...</div>';return}
+  if(!CATEGORIES.length){el.innerHTML='<div style="padding:20px;color:var(--text-faint)">'+t('training.loading')+'</div>';return}
 
   let h='<div class="tree-container">';
 
   // Filter controls
   h+=`<div class="tree-filter">
-    <button class="tree-filter-btn active" onclick="filterTree('all',this)">Wszystkie</button>
-    <button class="tree-filter-btn" onclick="filterTree('todo',this)">Do zrobienia</button>
-    <button class="tree-filter-btn" onclick="filterTree('progress',this)">W trakcie</button>
-    <button class="tree-filter-btn" onclick="filterTree('done',this)">Zaliczone</button>
+    <button class="tree-filter-btn active" onclick="filterTree('all',this)">${t('training.filter_all')}</button>
+    <button class="tree-filter-btn" onclick="filterTree('todo',this)">${t('training.filter_todo')}</button>
+    <button class="tree-filter-btn" onclick="filterTree('progress',this)">${t('training.filter_progress')}</button>
+    <button class="tree-filter-btn" onclick="filterTree('done',this)">${t('training.filter_done')}</button>
   </div>`;
 
   // Render each category as a branch
@@ -122,30 +122,30 @@ function updatePhaseTabs(){['phaseTheory','phaseExercise','phaseFeedback'].forEa
 
 async function loadPhase(phase){
   currentPhase=phase;updatePhaseTabs();const tc=document.getElementById('trainingContent');tc.innerHTML=loadingDots();
-  if(phase==='feedback'){tc.innerHTML='<div style="text-align:center;padding:30px;color:var(--text-dim)"><div style="font-size:1.8rem;margin-bottom:10px">💬</div>Opisz jak ci poszło ćwiczenie.</div>';return}
+  if(phase==='feedback'){tc.innerHTML='<div style="text-align:center;padding:30px;color:var(--text-dim)"><div style="font-size:1.8rem;margin-bottom:10px">💬</div>'+t('training.feedback_prompt')+'</div>';return}
   try{
-    const r=await fetch(API+'/api/train',{method:'POST',headers:authHeaders(),body:JSON.stringify({module:currentModule.id,phase,conversation_history:trainingHistory})});
+    const r=await fetch(API+'/api/train',{method:'POST',headers:authHeaders(),body:JSON.stringify({module:currentModule.id,phase,conversation_history:trainingHistory,lang:currentLang})});
     const d=await r.json();if(d.error){tc.innerHTML=`<div style="color:var(--danger);padding:16px">${esc(d.error)}</div>`;return}
     const data=d.data;trainingHistory.push({role:'assistant',content:JSON.stringify(data)});
     if(data.type==='training_theory'){renderTheory(data,tc);savePhaseProgress(currentModule.id,'theory',true)}
     else if(data.type==='recipe'){renderTrainingRecipe(data,tc);savePhaseProgress(currentModule.id,'exercise',true)}
     else tc.innerHTML=`<div class="msg-text" style="margin:0">${esc(data.content||'')}</div>`;
-  }catch{tc.innerHTML='<div style="color:var(--danger);padding:16px">Błąd.</div>'}
+  }catch{tc.innerHTML='<div style="color:var(--danger);padding:16px">'+t('error.generic')+'</div>'}
 }
 
 function renderTheory(data,el){
   let h=`<div class="theory-card"><div class="t-header"><h3>${esc(data.title||currentModule.title)}</h3></div><div class="t-body">${esc(data.content||'')}`;
-  if(data.key_points?.length){h+='<div style="margin-top:14px;font-weight:600;font-size:0.85rem;margin-bottom:6px">Kluczowe:</div>';data.key_points.forEach(p=>h+=`<div class="key-point">✓ ${esc(p)}</div>`)}
-  if(data.exercise_prompt)h+=`<div class="exercise-prompt"><strong>Ćwiczenie:</strong> ${esc(data.exercise_prompt)}</div>`;
-  h+='</div></div><div style="margin-top:10px;text-align:center"><button class="action-btn" style="margin:0 auto;padding:9px 18px" onclick="loadPhase(\'exercise\')">👨‍🍳 Ćwiczenie →</button></div>';
+  if(data.key_points?.length){h+='<div style="margin-top:14px;font-weight:600;font-size:0.85rem;margin-bottom:6px">'+t('training.key_points')+'</div>';data.key_points.forEach(p=>h+=`<div class="key-point">✓ ${esc(p)}</div>`)}
+  if(data.exercise_prompt)h+=`<div class="exercise-prompt"><strong>${t('training.exercise_label')}</strong> ${esc(data.exercise_prompt)}</div>`;
+  h+='</div></div><div style="margin-top:10px;text-align:center"><button class="action-btn" style="margin:0 auto;padding:9px 18px" onclick="loadPhase(\'exercise\')">'+ t('training.go_exercise')+'</button></div>';
   el.innerHTML=h;
 }
 function renderTrainingRecipe(data,el){
-  el.innerHTML=buildRecipeHTML(data)+'<div style="margin-top:10px;text-align:center"><button class="action-btn" style="margin:0 auto;padding:9px 18px" onclick="loadPhase(\'feedback\')">💬 Feedback →</button></div>';
+  el.innerHTML=buildRecipeHTML(data)+'<div style="margin-top:10px;text-align:center"><button class="action-btn" style="margin:0 auto;padding:9px 18px" onclick="loadPhase(\'feedback\')">'+ t('training.go_feedback')+'</button></div>';
 }
 function renderFeedback(data,el){
-  let h=`<div class="feedback-card"><h3>💬 Analiza</h3><div class="feedback-analysis">${esc(data.analysis||'')}</div>`;
-  if(data.tips?.length){h+='<div style="font-weight:600;margin-bottom:4px">Wskazówki:</div>';data.tips.forEach(t=>h+=`<div class="feedback-tip">💡 ${esc(t)}</div>`)}
+  let h=`<div class="feedback-card"><h3>${t('training.analysis')}</h3><div class="feedback-analysis">${esc(data.analysis||'')}</div>`;
+  if(data.tips?.length){h+='<div style="font-weight:600;margin-bottom:4px">'+t('training.tips')+'</div>';data.tips.forEach(tp=>h+=`<div class="feedback-tip">💡 ${esc(tp)}</div>`)}
   if(data.next_steps)h+=`<div class="feedback-next">🎯 ${esc(data.next_steps)}</div>`;
   el.innerHTML=h+'</div>';
 }
@@ -154,10 +154,10 @@ async function sendFeedback(){
   document.getElementById('feedbackField').value='';trainingHistory.push({role:'user',content:q});
   const tc=document.getElementById('trainingContent');tc.innerHTML=loadingDots();
   try{
-    const r=await fetch(API+'/api/train',{method:'POST',headers:authHeaders(),body:JSON.stringify({module:currentModule.id,phase:'feedback',question:q,conversation_history:trainingHistory})});
+    const r=await fetch(API+'/api/train',{method:'POST',headers:authHeaders(),body:JSON.stringify({module:currentModule.id,phase:'feedback',question:q,conversation_history:trainingHistory,lang:currentLang})});
     const d=await r.json();if(d.error){tc.innerHTML=`<div style="color:var(--danger)">${d.error}</div>`;return}
     trainingHistory.push({role:'assistant',content:JSON.stringify(d.data)});
     if(d.data.type==='training_feedback'){renderFeedback(d.data,tc);savePhaseProgress(currentModule.id,'feedback',true)}
     else tc.innerHTML=`<div class="msg-text" style="margin:0">${esc(d.data.content||'')}</div>`;
-  }catch{tc.innerHTML='<div style="color:var(--danger)">Błąd.</div>'}
+  }catch{tc.innerHTML='<div style="color:var(--danger)">'+t('error.generic')+'</div>'}
 }

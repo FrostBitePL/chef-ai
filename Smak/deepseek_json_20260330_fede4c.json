@@ -3,8 +3,16 @@
     "ingredient": "eggplant",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["bitter", "earthy", "sweet (trace)"],
-      "aroma": ["earthy", "sulfurous", "herbal"],
+      "primary_tastes": [
+        "bitter",
+        "earthy",
+        "sweet (trace)"
+      ],
+      "aroma": [
+        "earthy",
+        "sulfurous",
+        "herbal"
+      ],
       "intensity": "medium",
       "fat_content": "low (absorbs fat when cooked)"
     },
@@ -49,14 +57,41 @@
       "sesquiterpenes"
     ],
     "confidence": 0.85,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "bakłażan"
+      ],
+      "en": [
+        "eggplant",
+        "aubergine"
+      ],
+      "de": [
+        "Aubergine"
+      ],
+      "es": [
+        "berenjena"
+      ],
+      "fr": [
+        "aubergine"
+      ]
+    }
   },
   {
     "ingredient": "garlic",
     "category": "herb",
     "flavor_profile": {
-      "primary_tastes": ["pungent", "sweet (roasted)"],
-      "aroma": ["sulfurous", "pungent", "sweet (cooked)"],
+      "primary_tastes": [
+        "pungent",
+        "sweet (roasted)"
+      ],
+      "aroma": [
+        "sulfurous",
+        "pungent",
+        "sweet (cooked)"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -105,14 +140,43 @@
       "sulfur compounds"
     ],
     "confidence": 0.97,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "czosnek",
+        "ząbki czosnku"
+      ],
+      "en": [
+        "garlic"
+      ],
+      "de": [
+        "Knoblauch"
+      ],
+      "es": [
+        "ajo"
+      ],
+      "fr": [
+        "ail"
+      ]
+    }
   },
   {
     "ingredient": "ginger",
     "category": "spice",
     "flavor_profile": {
-      "primary_tastes": ["pungent", "sweet", "citrus"],
-      "aroma": ["citrus", "spicy", "woody", "floral"],
+      "primary_tastes": [
+        "pungent",
+        "sweet",
+        "citrus"
+      ],
+      "aroma": [
+        "citrus",
+        "spicy",
+        "woody",
+        "floral"
+      ],
       "intensity": "medium-high",
       "fat_content": "low"
     },
@@ -159,14 +223,42 @@
       "terpenes"
     ],
     "confidence": 0.94,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "imbir",
+        "korzeń imbiru"
+      ],
+      "en": [
+        "ginger"
+      ],
+      "de": [
+        "Ingwer"
+      ],
+      "es": [
+        "jengibre"
+      ],
+      "fr": [
+        "gingembre"
+      ]
+    }
   },
   {
     "ingredient": "honey",
     "category": "sweetener",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "slightly acidic"],
-      "aroma": ["floral", "fruity", "caramel", "herbal (varies by source)"],
+      "primary_tastes": [
+        "sweet",
+        "slightly acidic"
+      ],
+      "aroma": [
+        "floral",
+        "fruity",
+        "caramel",
+        "herbal (varies by source)"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -214,14 +306,41 @@
       "floral esters"
     ],
     "confidence": 0.9,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "miód"
+      ],
+      "en": [
+        "honey"
+      ],
+      "de": [
+        "Honig"
+      ],
+      "es": [
+        "miel"
+      ],
+      "fr": [
+        "miel"
+      ]
+    }
   },
   {
     "ingredient": "lamb",
     "category": "protein",
     "flavor_profile": {
-      "primary_tastes": ["umami", "fatty"],
-      "aroma": ["gamy", "earthy", "herbal", "rich"],
+      "primary_tastes": [
+        "umami",
+        "fatty"
+      ],
+      "aroma": [
+        "gamy",
+        "earthy",
+        "herbal",
+        "rich"
+      ],
       "intensity": "high",
       "fat_content": "high"
     },
@@ -266,14 +385,44 @@
       "phenols"
     ],
     "confidence": 0.93,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "jagnięcina",
+        "baranina",
+        "comber jagnięcy"
+      ],
+      "en": [
+        "lamb"
+      ],
+      "de": [
+        "Lamm",
+        "Lammfleisch"
+      ],
+      "es": [
+        "cordero"
+      ],
+      "fr": [
+        "agneau"
+      ]
+    }
   },
   {
     "ingredient": "mushroom",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["umami", "earthy"],
-      "aroma": ["earthy", "mushroomy", "woody", "savory"],
+      "primary_tastes": [
+        "umami",
+        "earthy"
+      ],
+      "aroma": [
+        "earthy",
+        "mushroomy",
+        "woody",
+        "savory"
+      ],
       "intensity": "medium-high",
       "fat_content": "low"
     },
@@ -316,14 +465,54 @@
       "guanosine monophosphate (GMP)"
     ],
     "confidence": 0.92,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "grzyby",
+        "pieczarki",
+        "borowiki",
+        "kurki"
+      ],
+      "en": [
+        "mushroom",
+        "button mushroom",
+        "porcini",
+        "chanterelle"
+      ],
+      "de": [
+        "Pilz",
+        "Champignon",
+        "Steinpilz",
+        "Pfifferling"
+      ],
+      "es": [
+        "champiñón",
+        "seta",
+        "hongo"
+      ],
+      "fr": [
+        "champignon",
+        "cèpe",
+        "girolle"
+      ]
+    }
   },
   {
     "ingredient": "mustard",
     "category": "spice",
     "flavor_profile": {
-      "primary_tastes": ["pungent", "bitter", "sour (prepared)"],
-      "aroma": ["sulfurous", "pungent", "nutty"],
+      "primary_tastes": [
+        "pungent",
+        "bitter",
+        "sour (prepared)"
+      ],
+      "aroma": [
+        "sulfurous",
+        "pungent",
+        "nutty"
+      ],
       "intensity": "high",
       "fat_content": "medium (seeds), low (prepared)"
     },
@@ -366,14 +555,47 @@
       "allyl isothiocyanate"
     ],
     "confidence": 0.91,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "musztarda",
+        "musztarda dijon",
+        "gorczyca"
+      ],
+      "en": [
+        "mustard",
+        "Dijon mustard"
+      ],
+      "de": [
+        "Senf",
+        "Dijon-Senf"
+      ],
+      "es": [
+        "mostaza"
+      ],
+      "fr": [
+        "moutarde",
+        "moutarde de Dijon"
+      ]
+    }
   },
   {
     "ingredient": "olive",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["salty", "bitter", "fatty"],
-      "aroma": ["fruity", "briny", "earthy", "herbal"],
+      "primary_tastes": [
+        "salty",
+        "bitter",
+        "fatty"
+      ],
+      "aroma": [
+        "fruity",
+        "briny",
+        "earthy",
+        "herbal"
+      ],
       "intensity": "medium-high",
       "fat_content": "high (olive oil)"
     },
@@ -414,14 +636,41 @@
       "esters"
     ],
     "confidence": 0.87,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "oliwki"
+      ],
+      "en": [
+        "olive"
+      ],
+      "de": [
+        "Olive"
+      ],
+      "es": [
+        "aceituna",
+        "oliva"
+      ],
+      "fr": [
+        "olive"
+      ]
+    }
   },
   {
     "ingredient": "onion",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["pungent", "sweet (cooked)"],
-      "aroma": ["sulfurous", "pungent", "sweet (caramelized)"],
+      "primary_tastes": [
+        "pungent",
+        "sweet (cooked)"
+      ],
+      "aroma": [
+        "sulfurous",
+        "pungent",
+        "sweet (caramelized)"
+      ],
       "intensity": "medium-high",
       "fat_content": "low"
     },
@@ -463,14 +712,42 @@
       "lacrimatory factor (syn-propanethial-S-oxide)"
     ],
     "confidence": 0.95,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "cebula"
+      ],
+      "en": [
+        "onion"
+      ],
+      "de": [
+        "Zwiebel"
+      ],
+      "es": [
+        "cebolla"
+      ],
+      "fr": [
+        "oignon"
+      ]
+    }
   },
   {
     "ingredient": "pork",
     "category": "protein",
     "flavor_profile": {
-      "primary_tastes": ["umami", "sweet", "fatty"],
-      "aroma": ["meaty", "sweet", "rich", "slightly gamy"],
+      "primary_tastes": [
+        "umami",
+        "sweet",
+        "fatty"
+      ],
+      "aroma": [
+        "meaty",
+        "sweet",
+        "rich",
+        "slightly gamy"
+      ],
       "intensity": "medium-high",
       "fat_content": "medium-high"
     },
@@ -517,14 +794,55 @@
       "lactones"
     ],
     "confidence": 0.94,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "wieprzowina",
+        "schab",
+        "polędwica",
+        "karkówka",
+        "żeberka"
+      ],
+      "en": [
+        "pork",
+        "pork loin",
+        "tenderloin",
+        "ribs"
+      ],
+      "de": [
+        "Schweinefleisch",
+        "Schweinefilet",
+        "Rippchen"
+      ],
+      "es": [
+        "cerdo",
+        "lomo",
+        "costillas"
+      ],
+      "fr": [
+        "porc",
+        "filet mignon",
+        "côtes"
+      ]
+    }
   },
   {
     "ingredient": "potato",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["starchy", "earthy", "sweet"],
-      "aroma": ["earthy", "nutty", "buttery", "green"],
+      "primary_tastes": [
+        "starchy",
+        "earthy",
+        "sweet"
+      ],
+      "aroma": [
+        "earthy",
+        "nutty",
+        "buttery",
+        "green"
+      ],
       "intensity": "low-medium",
       "fat_content": "low"
     },
@@ -568,14 +886,45 @@
       "lipoxygenase products"
     ],
     "confidence": 0.89,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "ziemniak",
+        "ziemniaki",
+        "kartofle"
+      ],
+      "en": [
+        "potato"
+      ],
+      "de": [
+        "Kartoffel"
+      ],
+      "es": [
+        "patata",
+        "papa"
+      ],
+      "fr": [
+        "pomme de terre"
+      ]
+    }
   },
   {
     "ingredient": "rosemary",
     "category": "herb",
     "flavor_profile": {
-      "primary_tastes": ["bitter", "herbal"],
-      "aroma": ["pine", "camphor", "eucalyptus", "woody", "floral"],
+      "primary_tastes": [
+        "bitter",
+        "herbal"
+      ],
+      "aroma": [
+        "pine",
+        "camphor",
+        "eucalyptus",
+        "woody",
+        "floral"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -617,14 +966,41 @@
       "bornyl acetate"
     ],
     "confidence": 0.95,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "rozmaryn"
+      ],
+      "en": [
+        "rosemary"
+      ],
+      "de": [
+        "Rosmarin"
+      ],
+      "es": [
+        "romero"
+      ],
+      "fr": [
+        "romarin"
+      ]
+    }
   },
   {
     "ingredient": "saffron",
     "category": "spice",
     "flavor_profile": {
-      "primary_tastes": ["bitter", "honey-like"],
-      "aroma": ["floral", "hay-like", "honey", "earthy"],
+      "primary_tastes": [
+        "bitter",
+        "honey-like"
+      ],
+      "aroma": [
+        "floral",
+        "hay-like",
+        "honey",
+        "earthy"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -663,14 +1039,43 @@
       "crocin (color)"
     ],
     "confidence": 0.88,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "szafran"
+      ],
+      "en": [
+        "saffron"
+      ],
+      "de": [
+        "Safran"
+      ],
+      "es": [
+        "azafrán"
+      ],
+      "fr": [
+        "safran"
+      ]
+    }
   },
   {
     "ingredient": "soy_sauce",
     "category": "condiment",
     "flavor_profile": {
-      "primary_tastes": ["umami", "salty", "sweet", "slightly bitter"],
-      "aroma": ["savory", "fermented", "roasted", "nutty"],
+      "primary_tastes": [
+        "umami",
+        "salty",
+        "sweet",
+        "slightly bitter"
+      ],
+      "aroma": [
+        "savory",
+        "fermented",
+        "roasted",
+        "nutty"
+      ],
       "intensity": "high",
       "fat_content": "low"
     },
@@ -715,14 +1120,47 @@
       "esters"
     ],
     "confidence": 0.96,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "sos sojowy",
+        "shoyu",
+        "tamari"
+      ],
+      "en": [
+        "soy sauce",
+        "shoyu",
+        "tamari"
+      ],
+      "de": [
+        "Sojasauce"
+      ],
+      "es": [
+        "salsa de soja"
+      ],
+      "fr": [
+        "sauce soja"
+      ]
+    }
   },
   {
     "ingredient": "thyme",
     "category": "herb",
     "flavor_profile": {
-      "primary_tastes": ["herbal", "bitter", "slightly sweet"],
-      "aroma": ["herbal", "woody", "floral", "lemony", "earthy"],
+      "primary_tastes": [
+        "herbal",
+        "bitter",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "herbal",
+        "woody",
+        "floral",
+        "lemony",
+        "earthy"
+      ],
       "intensity": "medium-high",
       "fat_content": "low"
     },
@@ -766,14 +1204,42 @@
       "linalool"
     ],
     "confidence": 0.94,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "tymianek"
+      ],
+      "en": [
+        "thyme"
+      ],
+      "de": [
+        "Thymian"
+      ],
+      "es": [
+        "tomillo"
+      ],
+      "fr": [
+        "thym"
+      ]
+    }
   },
   {
     "ingredient": "tomato",
     "category": "vegetable",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "acid", "umami"],
-      "aroma": ["green", "fruity", "earthy", "savory"],
+      "primary_tastes": [
+        "sweet",
+        "acid",
+        "umami"
+      ],
+      "aroma": [
+        "green",
+        "fruity",
+        "earthy",
+        "savory"
+      ],
       "intensity": "medium-high",
       "fat_content": "low"
     },
@@ -820,14 +1286,47 @@
       "lycopene"
     ],
     "confidence": 0.96,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "pomidor",
+        "pomidory",
+        "passata",
+        "pelati"
+      ],
+      "en": [
+        "tomato",
+        "passata"
+      ],
+      "de": [
+        "Tomate",
+        "Passata"
+      ],
+      "es": [
+        "tomate"
+      ],
+      "fr": [
+        "tomate"
+      ]
+    }
   },
   {
     "ingredient": "vanilla",
     "category": "spice",
     "flavor_profile": {
-      "primary_tastes": ["sweet", "slightly bitter"],
-      "aroma": ["floral", "sweet", "woody", "creamy", "fruity"],
+      "primary_tastes": [
+        "sweet",
+        "slightly bitter"
+      ],
+      "aroma": [
+        "floral",
+        "sweet",
+        "woody",
+        "creamy",
+        "fruity"
+      ],
       "intensity": "medium",
       "fat_content": "low"
     },
@@ -869,14 +1368,43 @@
       "heliotropin"
     ],
     "confidence": 0.95,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "wanilia",
+        "laska wanilii"
+      ],
+      "en": [
+        "vanilla"
+      ],
+      "de": [
+        "Vanille"
+      ],
+      "es": [
+        "vainilla"
+      ],
+      "fr": [
+        "vanille"
+      ]
+    }
   },
   {
     "ingredient": "walnut",
     "category": "nut",
     "flavor_profile": {
-      "primary_tastes": ["bitter", "earthy", "sweet (trace)"],
-      "aroma": ["nutty", "earthy", "woody", "slightly astringent"],
+      "primary_tastes": [
+        "bitter",
+        "earthy",
+        "sweet (trace)"
+      ],
+      "aroma": [
+        "nutty",
+        "earthy",
+        "woody",
+        "slightly astringent"
+      ],
       "intensity": "medium-high",
       "fat_content": "high"
     },
@@ -919,14 +1447,45 @@
       "phenolic compounds"
     ],
     "confidence": 0.88,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "orzech włoski",
+        "orzechy włoskie"
+      ],
+      "en": [
+        "walnut"
+      ],
+      "de": [
+        "Walnuss"
+      ],
+      "es": [
+        "nuez"
+      ],
+      "fr": [
+        "noix"
+      ]
+    }
   },
   {
     "ingredient": "wine_red",
     "category": "beverage",
     "flavor_profile": {
-      "primary_tastes": ["acid", "bitter", "sweet (residual)", "umami"],
-      "aroma": ["fruity", "tannic", "oaky", "floral", "earthy"],
+      "primary_tastes": [
+        "acid",
+        "bitter",
+        "sweet (residual)",
+        "umami"
+      ],
+      "aroma": [
+        "fruity",
+        "tannic",
+        "oaky",
+        "floral",
+        "earthy"
+      ],
       "intensity": "varies",
       "fat_content": "low"
     },
@@ -971,14 +1530,46 @@
       "pyrazines"
     ],
     "confidence": 0.92,
-    "priority": "high"
+    "priority": "high",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "wino czerwone",
+        "wino"
+      ],
+      "en": [
+        "red wine",
+        "wine"
+      ],
+      "de": [
+        "Rotwein",
+        "Wein"
+      ],
+      "es": [
+        "vino tinto",
+        "vino"
+      ],
+      "fr": [
+        "vin rouge",
+        "vin"
+      ]
+    }
   },
   {
     "ingredient": "yogurt",
     "category": "dairy",
     "flavor_profile": {
-      "primary_tastes": ["sour", "creamy", "slightly sweet"],
-      "aroma": ["tangy", "milky", "fresh"],
+      "primary_tastes": [
+        "sour",
+        "creamy",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "tangy",
+        "milky",
+        "fresh"
+      ],
       "intensity": "medium",
       "fat_content": "varies (low to high)"
     },
@@ -1020,6 +1611,30 @@
       "acetaldehyde"
     ],
     "confidence": 0.9,
-    "priority": "medium"
+    "priority": "medium",
+    "related_core": [],
+    "related_techniques": [],
+    "aliases": {
+      "pl": [
+        "jogurt",
+        "jogurt naturalny",
+        "jogurt grecki"
+      ],
+      "en": [
+        "yogurt",
+        "Greek yogurt"
+      ],
+      "de": [
+        "Joghurt",
+        "griechischer Joghurt"
+      ],
+      "es": [
+        "yogur"
+      ],
+      "fr": [
+        "yaourt",
+        "yaourt grec"
+      ]
+    }
   }
 ]

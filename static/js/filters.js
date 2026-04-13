@@ -142,58 +142,58 @@ function renderFiltersPanel() {
 
   panel.innerHTML = `
     <div class="fp-header">
-      <span class="fp-title">🎛 Filtry</span>
-      <button class="fp-clear ${Object.values(activeFilters).some(v=>v) ? '' : 'hidden'}" onclick="clearFilters()">Wyczyść</button>
+      <span class="fp-title">${t('filter.title')}</span>
+      <button class="fp-clear ${Object.values(activeFilters).some(v=>v) ? '' : 'hidden'}" onclick="clearFilters()">${t('filter.clear')}</button>
     </div>
 
     <div class="fp-section">
-      <div class="fp-label">⏱ Czas przygotowania</div>
+      <div class="fp-label">${t('filter.time')}</div>
       <div class="fp-chips">${makeChips(timeOpts, 'time')}</div>
     </div>
 
     <div class="fp-section">
-      <div class="fp-label">🍽 Rodzaj dania</div>
+      <div class="fp-label">${t('filter.course')}</div>
       <div class="fp-chips">${makeChips(courseOpts, 'course')}</div>
     </div>
 
     <div class="fp-section">
-      <div class="fp-label">🥩 Główny składnik</div>
+      <div class="fp-label">${t('filter.protein')}</div>
       <div class="fp-chips">${makeChips(proteinOpts, 'protein')}</div>
     </div>
 
     <div class="fp-section">
-      <div class="fp-label">🔥 Technika gotowania</div>
+      <div class="fp-label">${t('filter.technique')}</div>
       <div class="fp-chips">${makeChips(techniqueOpts, 'technique')}</div>
     </div>
 
     <div class="fp-section">
-      <div class="fp-label">🌍 Kuchnia świata</div>
+      <div class="fp-label">${t('filter.cuisine')}</div>
       <div class="fp-chips">${makeChips(cuisineOpts, 'cuisine')}</div>
     </div>
 
     <div class="fp-section">
-      <div class="fp-label">🥗 Dieta</div>
+      <div class="fp-label">${t('filter.diet')}</div>
       <div class="fp-chips">${makeChips(dietOpts, 'diet')}</div>
     </div>
 
     <div class="fp-section">
-      <div class="fp-label">🎯 Cel</div>
+      <div class="fp-label">${t('filter.goal')}</div>
       <div class="fp-chips">${makeChips(goalOpts, 'goal')}</div>
     </div>
 
     <div class="fp-divider"></div>
 
     <div class="fp-section">
-      <div class="fp-label">🧺 Spiżarnia
+      <div class="fp-label">${t('filter.pantry')}
         <label class="fp-toggle">
           <input type="checkbox" id="shoppingModeToggle" ${pantryData.shopping_mode ? 'checked' : ''}
             onchange="toggleShoppingMode(this.checked)">
-          <span class="fp-toggle-label">${pantryData.shopping_mode ? '🛒 Idę na zakupy' : '🏠 Gotuję z tego co mam'}</span>
+          <span class="fp-toggle-label">${pantryData.shopping_mode ? t('filter.pantry_shop') : t('filter.pantry_home')}</span>
         </label>
       </div>
       <div class="pantry-tags" id="pantryTags"></div>
       <div class="pantry-input-row">
-        <input type="text" class="pantry-input" id="pantryInput" placeholder="Dodaj składnik..."
+        <input type="text" class="pantry-input" id="pantryInput" placeholder="${t('filter.add_ingredient')}"
           onkeydown="if(event.key==='Enter')addPantryItem()">
         <button class="pantry-add-btn" onclick="addPantryItem()">+</button>
       </div>
@@ -257,7 +257,7 @@ function removePantryItem(i) {
 function toggleShoppingMode(checked) {
   pantryData.shopping_mode = checked;
   const lbl = document.querySelector('.fp-toggle-label');
-  if (lbl) lbl.textContent = checked ? '🛒 Idę na zakupy' : '🏠 Gotuję z tego co mam';
+  if (lbl) lbl.textContent = checked ? t('filter.pantry_shop') : t('filter.pantry_home');
   savePantry();
 }
 

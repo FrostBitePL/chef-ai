@@ -13,7 +13,6 @@ let authToken=null;
 let currentUser=null; // supabase user object
 let userProfile=null; // profile from our DB
 
-const WELCOME_MSG="Cześć! 🍳 Co dziś gotujemy?\n\nPowiedz mi co chcesz ugotować, a przygotuję przepis dopasowany do Twojego sprzętu i preferencji.\n\nMożesz też kliknąć jedną z podpowiedzi poniżej, aby szybko zacząć.";
 const QTAGS={
   lukasz:[{e:"🍗",l:"Kurczak",q:"Pyszny kurczak"},{e:"🍝",l:"Pasta",q:"Makaron Atlas 150"},{e:"🥩",l:"Sous-vide",q:"Stek sous-vide"},{e:"🧊",l:"Lodówka",q:"Mam kurczaka, masło, czosnek i cytrynę. Co zrobić?"},{e:"⚡",l:"Szybkie",q:"Szybki obiad 30 min"},{e:"🔀",l:"Porównaj",q:"Porównaj 3 sposoby na pierś z kurczaka: patelnia, piekarnik, sous-vide"},{e:"🍰",l:"Deser",q:"Pyszny deser"}],
   guest:[{e:"🍗",l:"Kurczak",q:"Pyszny kurczak"},{e:"🍝",l:"Makaron",q:"Prosty makaron"},{e:"🥩",l:"Stek",q:"Idealny stek"},{e:"🌍",l:"Azja",q:"Danie azjatyckie"},{e:"🔀",l:"Porównaj",q:"Porównaj 3 sposoby na stek: patelnia, grill, sous-vide"},{e:"🍰",l:"Deser",q:"Prosty deser"}]
@@ -43,7 +42,7 @@ async function initSupabase(){
   try{
     const r=await fetch(API+'/api/config');
     const cfg=await r.json();
-    if(!cfg.supabase_url||!cfg.supabase_anon_key){showAuthScreen('Supabase nie skonfigurowane');return}
+    if(!cfg.supabase_url||!cfg.supabase_anon_key){showAuthScreen(t('auth.supabase_err'));return}
     sbClient=window.supabase.createClient(cfg.supabase_url,cfg.supabase_anon_key);
     // Check existing session
     const{data:{session}}=await sbClient.auth.getSession();
@@ -66,7 +65,7 @@ async function initSupabase(){
         if(!_appReady) await onLogin();
       }
     });
-  }catch(e){console.error('Supabase init error:',e);showAuthScreen('Błąd połączenia')}
+  }catch(e){console.error('Supabase init error:',e);showAuthScreen(t('auth.error_conn'))}
 }
 
 async function onLogin(){
@@ -76,7 +75,15 @@ async function onLogin(){
     const r=await fetch(API+'/api/profile',{headers:authHeaders()});
     userProfile=await r.json();
   }catch{userProfile={}}
-  
+
+  // Language priority: 1) Supabase profile, 2) localStorage, 3) browser auto-detect
+  const profileLang = userProfile?.lang;
+  if (profileLang && SUPPORTED_LANGS.includes(profileLang)) {
+    setLang(profileLang, false); // apply without re-saving to profile
+  } else if (!localStorage.getItem('chef_lang')) {
+    setLang(detectBrowserLang(), false); // first visit — auto-detect, don't save yet
+  }
+
   // Check if new user (no equipment = needs onboarding)
   const eq=userProfile?.equipment||[];
   const hasEquipment=Array.isArray(eq)?eq.length>0:(typeof eq==='string'&&eq!=='[]'&&eq!=='');
@@ -84,7 +91,7 @@ async function onLogin(){
     showOnboarding();
     return;
   }
-  
+
   enterApp();
 }
 
@@ -97,13 +104,15 @@ function enterApp(){
   renderQuickTags();
   addWelcome();
   checkServer();
+  applyI18n();
+  document.getElementById('langToggle').textContent=currentLang.toUpperCase();
   checkSharedRecipe();
   newSession();
   loadProgress();
   // Check for payment return
   const params=new URLSearchParams(window.location.search);
   if(params.get('payment')==='success'){
-    setTimeout(()=>{addMsg('t','🎉 Witaj w Chef AI PRO! Gotujemy bez limitów.');loadSubStatus().then(()=>renderUserInfo())},500);
+    setTimeout(()=>{addMsg('t',t('user.pro_welcome'));loadSubStatus().then(()=>renderUserInfo())},500);
     window.history.replaceState({},'','/');
   }
 }
@@ -118,12 +127,12 @@ async function checkSharedRecipe(){
     const r=await fetch(API+'/api/share/'+token);
     const d=await r.json();
     if(d.success&&d.recipe){
-      addMsg('t','🔗 Udostępniony przepis:');
+      addMsg('t',t('share.shared_recipe'));
       handleResponse(d.recipe);
     } else {
-      addMsg('t','⚠️ Link wygasł lub jest nieprawidłowy.');
+      addMsg('t',t('share.expired'));
     }
-  }catch{addMsg('t','⚠️ Nie udało się załadować przepisu.');}
+  }catch{addMsg('t',t('share.load_err'));}
 }
 
 // ─── Auth Screen ───
@@ -143,9 +152,9 @@ function toggleAuthMode(){
   const f=document.getElementById('authForm');
   const isLogin=f.dataset.mode==='login';
   f.dataset.mode=isLogin?'signup':'login';
-  document.getElementById('authTitle').textContent=isLogin?'Rejestracja':'Logowanie';
-  document.getElementById('authSubmitBtn').textContent=isLogin?'Zarejestruj się':'Zaloguj się';
-  document.getElementById('authToggle').innerHTML=isLogin?'Masz konto? <a href="#" onclick="toggleAuthMode();return false">Zaloguj się</a>':'Nie masz konta? <a href="#" onclick="toggleAuthMode();return false">Zarejestruj się</a>';
+  document.getElementById('authTitle').textContent=isLogin?t('auth.title_signup'):t('auth.title_login');
+  document.getElementById('authSubmitBtn').textContent=isLogin?t('auth.signup_btn'):t('auth.login_btn');
+  document.getElementById('authToggle').innerHTML=isLogin?t('auth.has_account')+' <a href="#" onclick="toggleAuthMode();return false">'+t('auth.login_btn')+'</a>':t('auth.no_account')+' <a href="#" onclick="toggleAuthMode();return false">'+t('auth.signup_btn')+'</a>';
   document.getElementById('authNameRow').style.display=isLogin?'block':'none';
   document.getElementById('authError').textContent='';
 }
@@ -157,8 +166,8 @@ async function submitAuth(e){
   const pass=document.getElementById('authPass').value;
   const errEl=document.getElementById('authError');
   errEl.textContent='';
-  if(!email||!pass){errEl.textContent='Podaj email i hasło';return}
-  if(pass.length<6){errEl.textContent='Hasło min. 6 znaków';return}
+  if(!email||!pass){errEl.textContent=t('auth.error_fill');return}
+  if(pass.length<6){errEl.textContent=t('auth.error_pass');return}
   try{
     if(mode==='signup'){
       const name=document.getElementById('authName')?.value?.trim()||'';
@@ -176,7 +185,7 @@ async function submitAuth(e){
       const{data,error}=await sbClient.auth.signInWithPassword({email,password:pass});
       if(error){errEl.textContent=error.message;return}
     }
-  }catch(e){errEl.textContent='Błąd: '+e.message}
+  }catch(e){errEl.textContent=t('auth.error_prefix')+': '+e.message}
 }
 
 async function logout(){
@@ -195,7 +204,7 @@ async function socialLogin(provider){
       options:{redirectTo:window.location.origin}
     });
     if(error) document.getElementById('authError').textContent=error.message;
-  }catch(e){document.getElementById('authError').textContent='Błąd: '+e.message}
+  }catch(e){document.getElementById('authError').textContent=t('auth.error_prefix')+': '+e.message}
 }
 
 // ─── User Info ───
@@ -211,7 +220,7 @@ function renderUserInfo(){
   } else {
     h+='<button class="upgrade-btn" onclick="openUpgrade()">⭐ PRO</button>';
   }
-  h+='<button class="user-logout-btn" onclick="logout()">Wyloguj</button>';
+  h+='<button class="user-logout-btn" onclick="logout()">'+t('user.logout')+'</button>';
   el.innerHTML=h;
 }
 
@@ -235,19 +244,19 @@ async function openUpgrade(){
   // Show upgrade modal
   const el=document.getElementById('messages');
   let h='<div class="upgrade-card">';
-  h+='<div class="upgrade-header"><h2>⭐ Chef AI PRO</h2><p>Gotowanie bez limitów</p></div>';
+  h+='<div class="upgrade-header"><h2>'+t('upgrade.title')+'</h2><p>'+t('upgrade.subtitle')+'</p></div>';
   h+='<div class="upgrade-body">';
-  h+='<div class="upgrade-price"><span class="upgrade-amount">€6.99</span><span class="upgrade-period">/miesiąc</span></div>';
+  h+='<div class="upgrade-price"><span class="upgrade-amount">'+t('upgrade.price')+'</span><span class="upgrade-period">'+t('upgrade.period')+'</span></div>';
   h+='<div class="upgrade-features">';
-  h+='<div class="upgrade-feat">✓ Nielimitowane przepisy</div>';
-  h+='<div class="upgrade-feat">✓ Nielimitowany import z URL</div>';
-  h+='<div class="upgrade-feat">✓ Live cooking z przyciskiem Problem</div>';
-  h+='<div class="upgrade-feat">✓ Pełne szkolenie (45 modułów)</div>';
-  h+='<div class="upgrade-feat">✓ Personalizacja sprzętu</div>';
-  h+='<div class="upgrade-feat">✓ Porównanie technik</div>';
+  h+='<div class="upgrade-feat">'+t('upgrade.feat1')+'</div>';
+  h+='<div class="upgrade-feat">'+t('upgrade.feat2')+'</div>';
+  h+='<div class="upgrade-feat">'+t('upgrade.feat3')+'</div>';
+  h+='<div class="upgrade-feat">'+t('upgrade.feat4')+'</div>';
+  h+='<div class="upgrade-feat">'+t('upgrade.feat5')+'</div>';
+  h+='<div class="upgrade-feat">'+t('upgrade.feat6')+'</div>';
   h+='</div>';
-  h+='<button class="auth-submit" onclick="startCheckout()" id="checkoutBtn">Przejdź na PRO →</button>';
-  h+='<div class="upgrade-note">Możesz anulować w każdej chwili</div>';
+  h+='<button class="auth-submit" onclick="startCheckout()" id="checkoutBtn">'+t('upgrade.cta')+'</button>';
+  h+='<div class="upgrade-note">'+t('upgrade.cancel_note')+'</div>';
   h+='</div></div>';
   const div=document.createElement('div');div.className='msg';div.innerHTML=h;
   el.appendChild(div);scrollBottom();
@@ -255,13 +264,13 @@ async function openUpgrade(){
 
 async function startCheckout(){
   const btn=document.getElementById('checkoutBtn');
-  if(btn){btn.disabled=true;btn.textContent='⏳ Przekierowuję...'}
+  if(btn){btn.disabled=true;btn.textContent=t('upgrade.redirecting')}
   try{
     const r=await fetch(API+'/api/stripe/checkout',{method:'POST',headers:authHeaders()});
     const d=await r.json();
     if(d.url) window.location.href=d.url;
-    else if(btn){btn.disabled=false;btn.textContent='Przejdź na PRO →'}
-  }catch{if(btn){btn.disabled=false;btn.textContent='Przejdź na PRO →'}}
+    else if(btn){btn.disabled=false;btn.textContent=t('upgrade.cta')}
+  }catch{if(btn){btn.disabled=false;btn.textContent=t('upgrade.cta')}}
 }
 
 function showLimitMessage(msg){
@@ -269,7 +278,7 @@ function showLimitMessage(msg){
   let h='<div class="limit-card">';
   h+='<div class="limit-icon">🔒</div>';
   h+='<div class="limit-text">'+esc(msg)+'</div>';
-  h+='<button class="auth-submit" onclick="openUpgrade()" style="margin-top:12px">⭐ Przejdź na PRO</button>';
+  h+='<button class="auth-submit" onclick="openUpgrade()" style="margin-top:12px">'+t('user.go_pro')+'</button>';
   h+='</div>';
   const div=document.createElement('div');div.className='msg';div.innerHTML=h;
   el.appendChild(div);scrollBottom();
@@ -277,12 +286,14 @@ function showLimitMessage(msg){
 
 function renderQuickTags(){
   const bp=botProfile();
-  document.getElementById('quickTags').innerHTML=(QTAGS[bp]||QTAGS.guest).map(t=>'<button class="quick-tag" onclick="sendQ(\''+t.q.replace(/'/g,"\\'")+'\')">'+t.e+' '+t.l+'</button>').join('');
+  document.getElementById('quickTags').innerHTML=(QTAGS[bp]||QTAGS.guest).map(tg=>'<button class="quick-tag" onclick="sendQ(\''+tg.q.replace(/'/g,"\\'")+'\')">'+tg.e+' '+tg.l+'</button>').join('');
 }
 
 function addWelcome(){
   const name=userProfile?.name||currentUser?.email?.split('@')[0]||'';
-  const msg=WELCOME_MSG.replace('Cześć!','Cześć'+(name?' '+name:'')+'!');
+  const raw=t('welcome');
+  const hi=t('welcome.hi');
+  const msg=raw.replace(hi+'!',hi+(name?' '+name:'')+'!');
   const d=document.createElement('div');d.className='msg';d.innerHTML='<div class="msg-text">'+esc(msg)+'</div>';
   document.getElementById('messages').appendChild(d);
 }
@@ -308,18 +319,18 @@ async function loadModulesFromServer(){
   try{const r=await fetch(API+'/api/modules');const d=await r.json();MODULES=d.modules||[];CATEGORIES=d.categories||[];LEVELS=d.levels||[];LEVEL_NAMES=d.level_names||{}}catch{}
 }
 
-async function checkServer(){const s=document.getElementById('status');s.className='status-bar show waking';s.textContent='Łączę...';try{const r=await fetch(API+'/api/health');s.className='status-bar show online';s.textContent='✓ Połączono';setTimeout(()=>s.classList.remove('show'),1500)}catch{s.className='status-bar show offline';s.textContent='Brak połączenia z serwerem'}}
+async function checkServer(){const s=document.getElementById('status');s.className='status-bar show waking';s.textContent=t('status.connecting');try{const r=await fetch(API+'/api/health');s.className='status-bar show online';s.textContent=t('status.connected');setTimeout(()=>s.classList.remove('show'),1500)}catch{s.className='status-bar show offline';s.textContent=t('status.offline')}}
 
 function toggleKcal(){const r=document.getElementById('kcalRow'),b=document.getElementById('kcalToggle'),v=r.style.display!=='none';r.style.display=v?'none':'flex';b.classList.toggle('active',!v);if(!v)updateKcalSummary()}
 function clearKcal(){document.getElementById('kcalInput').value='';document.getElementById('kcalServings').value='1';document.getElementById('kcalSummary').textContent='';document.getElementById('kcalRow').style.display='none';document.getElementById('kcalToggle').classList.remove('active')}
 function getKcalValue(){const v=document.getElementById('kcalInput')?.value?.trim();return(!v||isNaN(v)||+v<50)?0:parseInt(v,10)}
 function getServingsValue(){return parseInt(document.getElementById('kcalServings')?.value||'1',10)||1}
-function updateKcalSummary(){const k=getKcalValue(),s=getServingsValue(),el=document.getElementById('kcalSummary');if(k>0){el.textContent='= '+(k*s)+' kcal łącznie'}else{el.textContent=''}}
+function updateKcalSummary(){const k=getKcalValue(),s=getServingsValue(),el=document.getElementById('kcalSummary');if(k>0){el.textContent='= '+(k*s)+' '+t('kcal.total')}else{el.textContent=''}}
 
 function esc(s){if(!s)return'';const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 function scrollBottom(){const m=document.getElementById('messages');setTimeout(()=>m.scrollTop=m.scrollHeight,40)}
 function fmtT(s){if(s<0)s=0;return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
-function addMsg(t,text){const d=document.createElement('div');d.className='msg';if(t==='user')d.innerHTML='<div class="msg-user">'+esc(text)+'</div>';else{d.innerHTML='<div class="msg-text">'+esc(text)+'</div>'}document.getElementById('messages').appendChild(d);scrollBottom()}
+function addMsg(role,text){const d=document.createElement('div');d.className='msg';if(role==='user')d.innerHTML='<div class="msg-user">'+esc(text)+'</div>';else{d.innerHTML='<div class="msg-text">'+esc(text)+'</div>'}document.getElementById('messages').appendChild(d);scrollBottom()}
 function loadingDots(){return'<div class="loading-dots"><span></span><span></span><span></span></div>'}
 
 // ─── Onboarding ───
@@ -350,41 +361,41 @@ function renderObStep(){
   const dots='<div class="ob-dots">'+[0,1,2].map(i=>'<span class="ob-dot'+(i===obStep?' active':'')+'"></span>').join('')+'</div>';
   
   if(obStep===0){
-    el.innerHTML=dots+'<h2 class="ob-title">Cześć! 👋</h2>'
-      +'<p class="ob-sub">Jak masz na imię?</p>'
-      +'<input type="text" class="auth-input" id="obName" value="'+esc(obData.name)+'" placeholder="Twoje imię" autofocus>'
-      +'<p class="ob-sub" style="margin-top:20px">Twój poziom w kuchni:</p>'
+    el.innerHTML=dots+'<h2 class="ob-title">'+t('ob.hello')+'</h2>'
+      +'<p class="ob-sub">'+t('ob.name_q')+'</p>'
+      +'<input type="text" class="auth-input" id="obName" value="'+esc(obData.name)+'" placeholder="'+t('ob.name_placeholder')+'" autofocus>'
+      +'<p class="ob-sub" style="margin-top:20px">'+t('ob.level_q')+'</p>'
       +'<div class="ob-levels">'
-      +'<button class="ob-level'+(obData.level==='beginner'?' active':'')+'" onclick="obData.level=\'beginner\';renderObStep()"><span class="ob-level-icon">🥚</span><span class="ob-level-name">Początkujący</span><span class="ob-level-desc">Uczę się podstaw</span></button>'
-      +'<button class="ob-level'+(obData.level==='mid'?' active':'')+'" onclick="obData.level=\'mid\';renderObStep()"><span class="ob-level-icon">🍳</span><span class="ob-level-name">Średni</span><span class="ob-level-desc">Gotuję regularnie</span></button>'
-      +'<button class="ob-level'+(obData.level==='pro'?' active':'')+'" onclick="obData.level=\'pro\';renderObStep()"><span class="ob-level-icon">👨‍🍳</span><span class="ob-level-name">Zaawansowany</span><span class="ob-level-desc">Szukam precyzji</span></button>'
+      +'<button class="ob-level'+(obData.level==='beginner'?' active':'')+'" onclick="obData.level=\'beginner\';renderObStep()"><span class="ob-level-icon">🥚</span><span class="ob-level-name">'+t('ob.beginner')+'</span><span class="ob-level-desc">'+t('ob.beginner_desc')+'</span></button>'
+      +'<button class="ob-level'+(obData.level==='mid'?' active':'')+'" onclick="obData.level=\'mid\';renderObStep()"><span class="ob-level-icon">🍳</span><span class="ob-level-name">'+t('ob.mid')+'</span><span class="ob-level-desc">'+t('ob.mid_desc')+'</span></button>'
+      +'<button class="ob-level'+(obData.level==='pro'?' active':'')+'" onclick="obData.level=\'pro\';renderObStep()"><span class="ob-level-icon">👨‍🍳</span><span class="ob-level-name">'+t('ob.pro')+'</span><span class="ob-level-desc">'+t('ob.pro_desc')+'</span></button>'
       +'</div>'
-      +'<button class="auth-submit" onclick="obNext()" style="margin-top:20px">Dalej →</button>';
+      +'<button class="auth-submit" onclick="obNext()" style="margin-top:20px">'+t('ob.next')+'</button>';
   }
   else if(obStep===1){
-    el.innerHTML=dots+'<h2 class="ob-title">Twój sprzęt 🔧</h2>'
-      +'<p class="ob-sub">Wybierz zestaw lub dodaj własny sprzęt</p>'
+    el.innerHTML=dots+'<h2 class="ob-title">'+t('ob.equip_title')+'</h2>'
+      +'<p class="ob-sub">'+t('ob.equip_sub')+'</p>'
       +'<div class="ob-presets">'
-      +'<button class="ob-preset'+(obData.equipmentPreset==='basic'?' active':'')+'" onclick="selectEquipPreset(\'basic\')">🏠 Podstawowy</button>'
-      +'<button class="ob-preset'+(obData.equipmentPreset==='advanced'?' active':'')+'" onclick="selectEquipPreset(\'advanced\')">👨‍🍳 Zaawansowany</button>'
-      +'<button class="ob-preset'+(obData.equipmentPreset==='pro'?' active':'')+'" onclick="selectEquipPreset(\'pro\')">⭐ Profesjonalny</button>'
+      +'<button class="ob-preset'+(obData.equipmentPreset==='basic'?' active':'')+'" onclick="selectEquipPreset(\'basic\')">'+t('ob.equip_basic')+'</button>'
+      +'<button class="ob-preset'+(obData.equipmentPreset==='advanced'?' active':'')+'" onclick="selectEquipPreset(\'advanced\')">'+t('ob.equip_advanced')+'</button>'
+      +'<button class="ob-preset'+(obData.equipmentPreset==='pro'?' active':'')+'" onclick="selectEquipPreset(\'pro\')">'+t('ob.equip_pro')+'</button>'
       +'</div>'
       +'<div class="ob-tags" id="obEquipTags"></div>'
-      +'<div class="ob-add-row"><input type="text" class="auth-input" id="obNewEquip" placeholder="Dodaj sprzęt..." style="margin:0;flex:1"><button class="ob-add-btn" onclick="obAddEquip()">+</button></div>'
-      +'<div class="ob-nav"><button class="ob-back" onclick="obStep=0;renderObStep()">← Wstecz</button><button class="auth-submit" onclick="obNext()" style="flex:1">Dalej →</button></div>';
+      +'<div class="ob-add-row"><input type="text" class="auth-input" id="obNewEquip" placeholder="'+t('ob.equip_add')+'" style="margin:0;flex:1"><button class="ob-add-btn" onclick="obAddEquip()">+</button></div>'
+      +'<div class="ob-nav"><button class="ob-back" onclick="obStep=0;renderObStep()">'+t('ob.back')+'</button><button class="auth-submit" onclick="obNext()" style="flex:1">'+t('ob.next')+'</button></div>';
     renderObEquipTags();
   }
   else if(obStep===2){
-    el.innerHTML=dots+'<h2 class="ob-title">Czego nie jesz? 🚫</h2>'
-      +'<p class="ob-sub">Nigdy nie zaproponujemy tych składników</p>'
+    el.innerHTML=dots+'<h2 class="ob-title">'+t('ob.bans_title')+'</h2>'
+      +'<p class="ob-sub">'+t('ob.bans_sub')+'</p>'
       +'<div class="ob-presets">'
-      +'<button class="ob-preset" onclick="addBanPresetOb(\'lactose\')">🥛 Bez laktozy</button>'
-      +'<button class="ob-preset" onclick="addBanPresetOb(\'gluten\')">🌾 Bez glutenu</button>'
-      +'<button class="ob-preset" onclick="addBanPresetOb(\'vegan\')">🌿 Vegan</button>'
+      +'<button class="ob-preset" onclick="addBanPresetOb(\'lactose\')">'+t('ob.ban_lactose')+'</button>'
+      +'<button class="ob-preset" onclick="addBanPresetOb(\'gluten\')">'+t('ob.ban_gluten')+'</button>'
+      +'<button class="ob-preset" onclick="addBanPresetOb(\'vegan\')">'+t('ob.ban_vegan')+'</button>'
       +'</div>'
       +'<div class="ob-tags" id="obBanTags"></div>'
-      +'<div class="ob-add-row"><input type="text" class="auth-input" id="obNewBan" placeholder="Dodaj zakaz..." style="margin:0;flex:1"><button class="ob-add-btn" onclick="obAddBan()">+</button></div>'
-      +'<div class="ob-nav"><button class="ob-back" onclick="obStep=1;renderObStep()">← Wstecz</button><button class="auth-submit ob-finish" onclick="finishOnboarding()" style="flex:1">🍳 Gotujemy!</button></div>';
+      +'<div class="ob-add-row"><input type="text" class="auth-input" id="obNewBan" placeholder="'+t('ob.ban_add')+'" style="margin:0;flex:1"><button class="ob-add-btn" onclick="obAddBan()">+</button></div>'
+      +'<div class="ob-nav"><button class="ob-back" onclick="obStep=1;renderObStep()">'+t('ob.back')+'</button><button class="auth-submit ob-finish" onclick="finishOnboarding()" style="flex:1">'+t('ob.finish')+'</button></div>';
     renderObBanTags();
   }
 }
@@ -442,7 +453,7 @@ function obNext(){
 
 async function finishOnboarding(){
   const btn=document.querySelector('.ob-finish');
-  if(btn){btn.disabled=true;btn.textContent='⏳ Zapisuję...'}
+  if(btn){btn.disabled=true;btn.textContent=t('ob.saving')}
   
   const profile={
     name:obData.name,
@@ -461,9 +472,9 @@ async function finishOnboarding(){
   
   // Auto-send first suggestion
   setTimeout(()=>{
-    const q=obData.level==='beginner'?'Zaproponuj 3 proste dania na dobry start':
-            obData.level==='mid'?'Zaproponuj 3 ciekawe dania dopasowane do mojego sprzętu':
-            'Zaproponuj 3 ambitne dania które wykorzystają mój profesjonalny sprzęt';
+    const q=obData.level==='beginner'?t('ob.suggest_beginner'):
+            obData.level==='mid'?t('ob.suggest_mid'):
+            t('ob.suggest_pro');
     sendQ(q);
   },500);
 }
@@ -484,7 +495,7 @@ async function openStripeCheckout() {
         const data = await response.json();
         
         if (data.error) {
-            alert('Błąd: ' + data.error);
+            alert(t('error')+': ' + data.error);
             return;
         }
         
@@ -506,7 +517,7 @@ async function openStripeCheckout() {
         }
     } catch (error) {
         console.error('Checkout error:', error);
-        alert('Błąd podczas otwierania checkout: ' + error.message);
+        alert(t('error.checkout')+': ' + error.message);
     }
 }
 

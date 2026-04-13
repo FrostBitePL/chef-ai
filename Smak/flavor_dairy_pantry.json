@@ -1,0 +1,1740 @@
+[
+  {
+    "ingredient": "butter",
+    "category": "dairy_fat",
+    "flavor_profile": {
+      "primary_tastes": [
+        "rich",
+        "creamy",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "dairy",
+        "sweet cream",
+        "nutty when browned",
+        "toffee when beurre noisette"
+      ],
+      "intensity": "medium",
+      "fat_content": "very high"
+    },
+    "pairs_with": [
+      "garlic",
+      "sage",
+      "lemon",
+      "capers",
+      "parsley",
+      "thyme",
+      "fish",
+      "shellfish",
+      "pasta",
+      "potato",
+      "bread",
+      "mushroom",
+      "sugar",
+      "vanilla",
+      "chocolate",
+      "flour",
+      "egg",
+      "honey"
+    ],
+    "contrast_with": [
+      "acid (lemon) cuts richness",
+      "salt amplifies butter flavor"
+    ],
+    "boosters": [
+      "browning (beurre noisette — Maillard on milk solids)",
+      "infusing with herbs",
+      "clarifying for high-heat cooking",
+      "compound butter (herb/spice)"
+    ],
+    "balancing_elements": [
+      "acid (lemon, vinegar)",
+      "salt",
+      "bitterness (sage, herbs)"
+    ],
+    "avoid_combinations": [
+      "excessive amounts with already fatty dishes"
+    ],
+    "aroma_compounds": [
+      "diacetyl",
+      "butyric acid",
+      "lactones",
+      "pyrazines (when browned)"
+    ],
+    "related_core": [
+      "butter"
+    ],
+    "related_techniques": [
+      "making_beurre_blanc",
+      "sautéing"
+    ],
+    "confidence": 0.96,
+    "priority": "critical",
+    "aliases": {
+      "pl": [
+        "masło",
+        "masło klarowane",
+        "masło brązowe",
+        "beurre noisette"
+      ],
+      "en": [
+        "butter",
+        "clarified butter",
+        "brown butter",
+        "beurre noisette",
+        "ghee"
+      ],
+      "de": [
+        "Butter",
+        "Butterschmalz",
+        "braune Butter",
+        "Nussbutter"
+      ],
+      "es": [
+        "mantequilla",
+        "mantequilla clarificada"
+      ],
+      "fr": [
+        "beurre",
+        "beurre clarifié",
+        "beurre noisette"
+      ]
+    }
+  },
+  {
+    "ingredient": "cream",
+    "category": "dairy",
+    "flavor_profile": {
+      "primary_tastes": [
+        "rich",
+        "creamy",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "dairy",
+        "clean",
+        "smooth"
+      ],
+      "intensity": "medium",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "mushroom",
+      "garlic",
+      "onion",
+      "chicken",
+      "pasta",
+      "potato",
+      "truffle",
+      "herb",
+      "white wine",
+      "mustard",
+      "peppercorn",
+      "chocolate",
+      "vanilla",
+      "coffee",
+      "fruit",
+      "caramel"
+    ],
+    "contrast_with": [
+      "acidic wine reductions",
+      "sharp mustard",
+      "bitter espresso"
+    ],
+    "boosters": [
+      "reduction for intensity",
+      "infusing with aromatics (garlic, vanilla)",
+      "whipping for texture",
+      "combining with stock for pan sauce"
+    ],
+    "balancing_elements": [
+      "acid (wine, lemon)",
+      "salt",
+      "umami (mushroom, stock)"
+    ],
+    "avoid_combinations": [
+      "very acidic citrus without tempering (can curdle)"
+    ],
+    "aroma_compounds": [
+      "diacetyl",
+      "lactones",
+      "butyric acid"
+    ],
+    "related_core": [
+      "cream"
+    ],
+    "related_techniques": [
+      "whipping_cream",
+      "reducing_sauce"
+    ],
+    "confidence": 0.95,
+    "priority": "critical",
+    "aliases": {
+      "pl": [
+        "śmietana",
+        "śmietanka 30%",
+        "śmietanka 36%",
+        "krem"
+      ],
+      "en": [
+        "cream",
+        "heavy cream",
+        "whipping cream",
+        "double cream"
+      ],
+      "de": [
+        "Sahne",
+        "Schlagsahne",
+        "Rahm"
+      ],
+      "es": [
+        "crema",
+        "nata",
+        "crema de leche"
+      ],
+      "fr": [
+        "crème",
+        "crème liquide",
+        "crème fraîche épaisse"
+      ]
+    }
+  },
+  {
+    "ingredient": "mascarpone",
+    "category": "dairy",
+    "flavor_profile": {
+      "primary_tastes": [
+        "rich",
+        "creamy",
+        "mild",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "fresh dairy",
+        "clean",
+        "buttery"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "very high"
+    },
+    "pairs_with": [
+      "coffee (tiramisu)",
+      "chocolate",
+      "espresso",
+      "ladyfinger biscuits",
+      "berries",
+      "lemon",
+      "honey",
+      "fig",
+      "prosciutto",
+      "pasta (replaces cream)",
+      "risotto",
+      "pumpkin",
+      "truffle"
+    ],
+    "contrast_with": [
+      "bitter espresso against sweet cream",
+      "tart berries against richness"
+    ],
+    "boosters": [
+      "folding (not stirring) to keep lightness",
+      "combining with egg sabayon",
+      "using in place of cream for richer finish"
+    ],
+    "balancing_elements": [
+      "bitterness (coffee, cocoa)",
+      "acid (lemon, berries)",
+      "sweetness (sugar, honey)"
+    ],
+    "avoid_combinations": [
+      "strong savory/umami flavors"
+    ],
+    "aroma_compounds": [
+      "diacetyl",
+      "acetoin"
+    ],
+    "related_core": [
+      "cream"
+    ],
+    "related_techniques": [
+      "folding"
+    ],
+    "confidence": 0.9,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "mascarpone"
+      ],
+      "en": [
+        "mascarpone"
+      ],
+      "de": [
+        "Mascarpone"
+      ],
+      "es": [
+        "mascarpone"
+      ],
+      "fr": [
+        "mascarpone"
+      ]
+    }
+  },
+  {
+    "ingredient": "creme_fraiche",
+    "category": "dairy_fermented",
+    "flavor_profile": {
+      "primary_tastes": [
+        "tangy",
+        "creamy",
+        "slightly sour"
+      ],
+      "aroma": [
+        "cultured dairy",
+        "clean tang"
+      ],
+      "intensity": "medium",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "smoked salmon",
+      "caviar",
+      "potato",
+      "beet",
+      "dill",
+      "horseradish",
+      "chives",
+      "cucumber",
+      "blini",
+      "fruit tarts",
+      "berries",
+      "soup garnish"
+    ],
+    "contrast_with": [
+      "rich smoked fish against tangy cream",
+      "sweet fruit against sour cream"
+    ],
+    "boosters": [
+      "dollop finish (never cook — keeps tang)",
+      "mixing with herbs",
+      "replacing heavy cream for lighter tang"
+    ],
+    "balancing_elements": [
+      "richness balances its own acidity",
+      "salt",
+      "sweetness"
+    ],
+    "avoid_combinations": [
+      "already very acidic dishes (double acid)"
+    ],
+    "aroma_compounds": [
+      "diacetyl",
+      "acetaldehyde",
+      "lactic acid"
+    ],
+    "related_core": [
+      "cream"
+    ],
+    "related_techniques": [],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "crème fraîche",
+        "kwaśna śmietana",
+        "śmietana 18%"
+      ],
+      "en": [
+        "crème fraîche",
+        "sour cream"
+      ],
+      "de": [
+        "Crème fraîche",
+        "Sauerrahm",
+        "Schmand"
+      ],
+      "es": [
+        "crema agria",
+        "crème fraîche"
+      ],
+      "fr": [
+        "crème fraîche"
+      ]
+    }
+  },
+  {
+    "ingredient": "gruyere",
+    "category": "cheese",
+    "flavor_profile": {
+      "primary_tastes": [
+        "savory",
+        "nutty",
+        "sweet",
+        "umami"
+      ],
+      "aroma": [
+        "nutty",
+        "earthy",
+        "slightly fruity",
+        "toasted"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "bread (gratin, croque monsieur)",
+      "potato (gratin dauphinois)",
+      "onion (French onion soup)",
+      "ham",
+      "egg",
+      "mushroom",
+      "white wine",
+      "nutmeg",
+      "dijon mustard",
+      "asparagus",
+      "chicken cordon bleu",
+      "pasta"
+    ],
+    "contrast_with": [
+      "sweet caramelized onion against salty cheese"
+    ],
+    "boosters": [
+      "gratinating for browned crust",
+      "fondue melting with wine",
+      "grating fresh (not pre-shredded)"
+    ],
+    "balancing_elements": [
+      "acid (white wine)",
+      "starch (bread, potato)",
+      "sweetness (caramelized onion)"
+    ],
+    "avoid_combinations": [
+      "very strong blue cheese in same dish"
+    ],
+    "aroma_compounds": [
+      "free fatty acids",
+      "esters",
+      "pyrazines"
+    ],
+    "related_core": [
+      "cheese"
+    ],
+    "related_techniques": [],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "gruyère",
+        "ser gruyère"
+      ],
+      "en": [
+        "Gruyère",
+        "Gruyere"
+      ],
+      "de": [
+        "Gruyère",
+        "Greyerzer"
+      ],
+      "es": [
+        "gruyère",
+        "queso gruyère"
+      ],
+      "fr": [
+        "gruyère"
+      ]
+    }
+  },
+  {
+    "ingredient": "pecorino",
+    "category": "cheese",
+    "flavor_profile": {
+      "primary_tastes": [
+        "salty",
+        "sharp",
+        "savory",
+        "umami"
+      ],
+      "aroma": [
+        "sheepy",
+        "tangy",
+        "pungent",
+        "grassy"
+      ],
+      "intensity": "high",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "pasta (cacio e pepe, carbonara, amatriciana)",
+      "black pepper",
+      "fava beans",
+      "pear",
+      "honey",
+      "walnuts",
+      "guanciale",
+      "tomato",
+      "artichoke",
+      "arugula",
+      "prosciutto"
+    ],
+    "contrast_with": [
+      "sweet (pear, honey) against sharp salt",
+      "starchy pasta against pungent cheese"
+    ],
+    "boosters": [
+      "fine grating for creamiest melt",
+      "emulsifying with pasta water (starch bridge)",
+      "combining with parmesan for depth"
+    ],
+    "balancing_elements": [
+      "starch (pasta water)",
+      "fat (guanciale)",
+      "sweetness (fruit)"
+    ],
+    "avoid_combinations": [
+      "cream-based sauces (not traditional and overpowers)"
+    ],
+    "aroma_compounds": [
+      "butyric acid",
+      "caproic acid",
+      "branched-chain fatty acids"
+    ],
+    "related_core": [
+      "cheese",
+      "parmesan"
+    ],
+    "related_techniques": [],
+    "confidence": 0.92,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "pecorino",
+        "pecorino romano"
+      ],
+      "en": [
+        "pecorino",
+        "Pecorino Romano"
+      ],
+      "de": [
+        "Pecorino"
+      ],
+      "es": [
+        "pecorino"
+      ],
+      "fr": [
+        "pecorino"
+      ]
+    }
+  },
+  {
+    "ingredient": "miso",
+    "category": "fermented",
+    "flavor_profile": {
+      "primary_tastes": [
+        "umami",
+        "salty",
+        "sweet (white miso)",
+        "complex"
+      ],
+      "aroma": [
+        "fermented",
+        "earthy",
+        "soy",
+        "caramel-like (red miso)"
+      ],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "butter",
+      "salmon",
+      "eggplant",
+      "tofu",
+      "chicken",
+      "pork",
+      "ginger",
+      "garlic",
+      "sesame",
+      "mirin",
+      "sake",
+      "dashi",
+      "mushroom",
+      "scallion",
+      "corn",
+      "sweet potato",
+      "caramel",
+      "chocolate",
+      "maple syrup"
+    ],
+    "contrast_with": [
+      "sweet caramel against salty ferment",
+      "fresh ginger against deep umami"
+    ],
+    "boosters": [
+      "never boil (kills enzymes and flavor)",
+      "mixing with butter for glaze",
+      "combining with maple/honey for sweet-savory",
+      "dissolving in warm liquid first"
+    ],
+    "balancing_elements": [
+      "sweetness (mirin, maple, honey)",
+      "acid (rice vinegar)",
+      "fat (butter, sesame oil)"
+    ],
+    "avoid_combinations": [
+      "strong blue cheese (competing fermented flavors)"
+    ],
+    "aroma_compounds": [
+      "glutamic acid",
+      "ethanol",
+      "esters",
+      "furanones"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "marinating",
+      "glazing_vegetables"
+    ],
+    "confidence": 0.95,
+    "priority": "critical",
+    "aliases": {
+      "pl": [
+        "miso",
+        "pasta miso",
+        "miso białe",
+        "miso czerwone",
+        "shiro miso"
+      ],
+      "en": [
+        "miso",
+        "white miso",
+        "red miso",
+        "shiro miso",
+        "aka miso"
+      ],
+      "de": [
+        "Miso",
+        "Misopaste"
+      ],
+      "es": [
+        "miso",
+        "pasta de miso"
+      ],
+      "fr": [
+        "miso",
+        "pâte de miso"
+      ]
+    }
+  },
+  {
+    "ingredient": "fish_sauce",
+    "category": "fermented",
+    "flavor_profile": {
+      "primary_tastes": [
+        "umami",
+        "salty",
+        "funky"
+      ],
+      "aroma": [
+        "pungent raw",
+        "disappears into background when cooked",
+        "deep savory"
+      ],
+      "intensity": "very high",
+      "fat_content": "none"
+    },
+    "pairs_with": [
+      "lime",
+      "chili",
+      "garlic",
+      "sugar",
+      "rice",
+      "noodles",
+      "chicken",
+      "pork",
+      "shrimp",
+      "tofu",
+      "green papaya",
+      "lemongrass",
+      "galangal",
+      "basil (Thai)",
+      "mint",
+      "stir-fry vegetables",
+      "curry",
+      "vinaigrette"
+    ],
+    "contrast_with": [
+      "lime brightness against deep funk",
+      "sugar against salt"
+    ],
+    "boosters": [
+      "use sparingly as invisible umami (like anchovy)",
+      "combine with sugar and lime for nuoc cham",
+      "add to non-Asian dishes for depth (Caesar dressing, bolognese, stew)"
+    ],
+    "balancing_elements": [
+      "acid (lime)",
+      "sweetness (sugar, palm sugar)",
+      "heat (chili)"
+    ],
+    "avoid_combinations": [
+      "delicate cream-based desserts"
+    ],
+    "aroma_compounds": [
+      "glutamic acid",
+      "trimethylamine",
+      "indole",
+      "skatole"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "marinating",
+      "sautéing"
+    ],
+    "confidence": 0.94,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "sos rybny",
+        "nam pla",
+        "nuoc mam"
+      ],
+      "en": [
+        "fish sauce",
+        "nam pla",
+        "nuoc mam"
+      ],
+      "de": [
+        "Fischsauce"
+      ],
+      "es": [
+        "salsa de pescado"
+      ],
+      "fr": [
+        "sauce de poisson",
+        "nuoc-mâm"
+      ]
+    }
+  },
+  {
+    "ingredient": "gochujang",
+    "category": "fermented",
+    "flavor_profile": {
+      "primary_tastes": [
+        "spicy",
+        "sweet",
+        "savory",
+        "umami"
+      ],
+      "aroma": [
+        "fermented chili",
+        "sweet rice",
+        "deep complexity"
+      ],
+      "intensity": "high",
+      "fat_content": "low"
+    },
+    "pairs_with": [
+      "chicken",
+      "pork belly",
+      "beef (bulgogi)",
+      "tofu",
+      "rice",
+      "egg",
+      "sesame",
+      "garlic",
+      "ginger",
+      "scallion",
+      "soy sauce",
+      "honey",
+      "maple syrup",
+      "mayonnaise",
+      "cucumber",
+      "napa cabbage"
+    ],
+    "contrast_with": [
+      "cool rice against spicy paste",
+      "fresh cucumber against fermented heat"
+    ],
+    "boosters": [
+      "mixing with honey for glaze",
+      "thinning with rice vinegar for dressing",
+      "combining with sesame oil and soy for marinade"
+    ],
+    "balancing_elements": [
+      "sweetness (honey, sugar)",
+      "acid (rice vinegar)",
+      "cooling (cucumber, rice)"
+    ],
+    "avoid_combinations": [
+      "delicate European sauces",
+      "subtle white fish"
+    ],
+    "aroma_compounds": [
+      "capsaicin",
+      "glutamic acid",
+      "maltol"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "marinating",
+      "grilling"
+    ],
+    "confidence": 0.92,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "gochujang",
+        "pasta chili koreańska"
+      ],
+      "en": [
+        "gochujang",
+        "Korean chili paste"
+      ],
+      "de": [
+        "Gochujang",
+        "koreanische Chilipaste"
+      ],
+      "es": [
+        "gochujang",
+        "pasta de chile coreana"
+      ],
+      "fr": [
+        "gochujang",
+        "pâte de piment coréenne"
+      ]
+    }
+  },
+  {
+    "ingredient": "kimchi",
+    "category": "fermented",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sour",
+        "spicy",
+        "umami",
+        "salty",
+        "funky"
+      ],
+      "aroma": [
+        "fermented",
+        "garlic",
+        "ginger",
+        "chili"
+      ],
+      "intensity": "high",
+      "fat_content": "very low"
+    },
+    "pairs_with": [
+      "rice",
+      "pork belly",
+      "egg",
+      "noodles",
+      "tofu",
+      "cheese (grilled cheese)",
+      "pancake batter (kimchi-jeon)",
+      "fried chicken",
+      "burger",
+      "stew",
+      "dumpling filling",
+      "ramen"
+    ],
+    "contrast_with": [
+      "rich fatty pork against sharp fermented acid",
+      "plain rice against complex kimchi"
+    ],
+    "boosters": [
+      "cooking aged kimchi (develops deeper flavor)",
+      "stir-frying with pork fat",
+      "using kimchi juice as seasoning/dressing"
+    ],
+    "balancing_elements": [
+      "richness (pork fat, cheese, egg)",
+      "starch (rice, noodles)",
+      "sweetness (a touch of sugar in cooking)"
+    ],
+    "avoid_combinations": [
+      "very delicate flavors it would overwhelm"
+    ],
+    "aroma_compounds": [
+      "lactic acid",
+      "allicin",
+      "capsaicin",
+      "indole"
+    ],
+    "related_core": [],
+    "related_techniques": [],
+    "confidence": 0.92,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "kimchi",
+        "kimczi"
+      ],
+      "en": [
+        "kimchi"
+      ],
+      "de": [
+        "Kimchi"
+      ],
+      "es": [
+        "kimchi"
+      ],
+      "fr": [
+        "kimchi"
+      ]
+    }
+  },
+  {
+    "ingredient": "tahini",
+    "category": "paste",
+    "flavor_profile": {
+      "primary_tastes": [
+        "nutty",
+        "bitter",
+        "rich",
+        "earthy"
+      ],
+      "aroma": [
+        "roasted sesame",
+        "nutty",
+        "slightly smoky"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "very high"
+    },
+    "pairs_with": [
+      "lemon",
+      "garlic",
+      "chickpeas (hummus)",
+      "eggplant (baba ganoush)",
+      "honey",
+      "date",
+      "banana",
+      "chocolate",
+      "lamb",
+      "chicken",
+      "cauliflower",
+      "sweet potato",
+      "pomegranate",
+      "parsley",
+      "cumin",
+      "za'atar"
+    ],
+    "contrast_with": [
+      "bright lemon against nutty richness",
+      "sweet honey against bitter sesame"
+    ],
+    "boosters": [
+      "thinning with lemon juice and water for sauce",
+      "drizzling on roasted veg",
+      "using in dressings and desserts"
+    ],
+    "balancing_elements": [
+      "acid (lemon)",
+      "sweetness (honey, date)",
+      "salt",
+      "garlic pungency"
+    ],
+    "avoid_combinations": [
+      "very strong fish flavors"
+    ],
+    "aroma_compounds": [
+      "pyrazines",
+      "sesamol",
+      "sesaminol"
+    ],
+    "related_core": [],
+    "related_techniques": [],
+    "confidence": 0.92,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "tahini",
+        "pasta sezamowa",
+        "tahina"
+      ],
+      "en": [
+        "tahini",
+        "sesame paste"
+      ],
+      "de": [
+        "Tahini",
+        "Sesammus",
+        "Tahin"
+      ],
+      "es": [
+        "tahini",
+        "pasta de sésamo"
+      ],
+      "fr": [
+        "tahini",
+        "tahin"
+      ]
+    }
+  },
+  {
+    "ingredient": "peanut",
+    "category": "nut",
+    "flavor_profile": {
+      "primary_tastes": [
+        "nutty",
+        "savory",
+        "sweet",
+        "earthy"
+      ],
+      "aroma": [
+        "roasted",
+        "toasty",
+        "earthy"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "very high"
+    },
+    "pairs_with": [
+      "soy sauce",
+      "lime",
+      "chili",
+      "ginger",
+      "garlic",
+      "coconut milk",
+      "chicken (satay)",
+      "shrimp",
+      "noodles (pad thai)",
+      "banana",
+      "chocolate",
+      "honey",
+      "celery",
+      "cucumber",
+      "cilantro",
+      "sesame",
+      "maple syrup"
+    ],
+    "contrast_with": [
+      "acid (lime) against rich nut fat",
+      "spicy chili against creamy peanut"
+    ],
+    "boosters": [
+      "dry roasting for deeper flavor",
+      "crushing for texture contrast",
+      "blending into sauce (satay)",
+      "combining with sesame for double nut"
+    ],
+    "balancing_elements": [
+      "acid (lime, vinegar)",
+      "heat (chili)",
+      "salt (soy sauce)",
+      "sweetness (sugar)"
+    ],
+    "avoid_combinations": [
+      "strong cheese (competing richness)"
+    ],
+    "aroma_compounds": [
+      "pyrazines",
+      "furanones",
+      "Maillard products"
+    ],
+    "related_core": [
+      "nuts"
+    ],
+    "related_techniques": [],
+    "confidence": 0.93,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "orzech ziemny",
+        "orzeszki ziemne",
+        "masło orzechowe"
+      ],
+      "en": [
+        "peanut",
+        "peanut butter",
+        "groundnut"
+      ],
+      "de": [
+        "Erdnuss",
+        "Erdnussbutter"
+      ],
+      "es": [
+        "cacahuete",
+        "maní",
+        "mantequilla de maní"
+      ],
+      "fr": [
+        "cacahuète",
+        "arachide",
+        "beurre de cacahuète"
+      ]
+    }
+  },
+  {
+    "ingredient": "pistachio",
+    "category": "nut",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sweet",
+        "nutty",
+        "slightly earthy"
+      ],
+      "aroma": [
+        "green",
+        "nutty",
+        "floral",
+        "buttery"
+      ],
+      "intensity": "medium",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "rose water",
+      "cardamom",
+      "saffron",
+      "honey",
+      "chocolate (white)",
+      "raspberry",
+      "strawberry",
+      "cherry",
+      "apricot",
+      "lamb",
+      "mortadella",
+      "ricotta",
+      "cream",
+      "vanilla",
+      "orange blossom"
+    ],
+    "contrast_with": [
+      "tart raspberry against sweet nut",
+      "floral rose against earthy pistachio"
+    ],
+    "boosters": [
+      "light toasting",
+      "grinding into praline",
+      "using oil as finishing",
+      "vibrant green color as visual accent"
+    ],
+    "balancing_elements": [
+      "acid (citrus, berries)",
+      "floral (rose, orange blossom)",
+      "salt"
+    ],
+    "avoid_combinations": [
+      "strong smoky flavors"
+    ],
+    "aroma_compounds": [
+      "terpenes",
+      "aldehydes",
+      "limonene"
+    ],
+    "related_core": [
+      "nuts"
+    ],
+    "related_techniques": [],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "pistacja",
+        "orzechy pistacjowe"
+      ],
+      "en": [
+        "pistachio"
+      ],
+      "de": [
+        "Pistazie"
+      ],
+      "es": [
+        "pistacho"
+      ],
+      "fr": [
+        "pistache"
+      ]
+    }
+  },
+  {
+    "ingredient": "coconut_milk",
+    "category": "dairy_alternative",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sweet",
+        "rich",
+        "creamy",
+        "tropical"
+      ],
+      "aroma": [
+        "coconut",
+        "tropical",
+        "sweet cream"
+      ],
+      "intensity": "medium-high",
+      "fat_content": "high"
+    },
+    "pairs_with": [
+      "curry paste",
+      "lemongrass",
+      "galangal",
+      "lime leaf",
+      "chili",
+      "ginger",
+      "turmeric",
+      "shrimp",
+      "chicken",
+      "fish",
+      "rice",
+      "mango",
+      "pineapple",
+      "banana",
+      "sweet potato",
+      "pumpkin",
+      "peanut",
+      "basil (Thai)"
+    ],
+    "contrast_with": [
+      "spicy curry against cooling cream",
+      "sour lime against sweet coconut"
+    ],
+    "boosters": [
+      "reducing for intensity",
+      "separating fat for frying curry paste",
+      "using full-fat version (never light for cooking)"
+    ],
+    "balancing_elements": [
+      "acid (lime, tamarind)",
+      "heat (chili)",
+      "salt (fish sauce)",
+      "sweetness (palm sugar)"
+    ],
+    "avoid_combinations": [
+      "European dairy cream (flavors clash)",
+      "strong aged cheese"
+    ],
+    "aroma_compounds": [
+      "delta-lactones",
+      "nonanal",
+      "decanal"
+    ],
+    "related_core": [],
+    "related_techniques": [],
+    "confidence": 0.93,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "mleko kokosowe",
+        "śmietanka kokosowa",
+        "kokos"
+      ],
+      "en": [
+        "coconut milk",
+        "coconut cream",
+        "coconut"
+      ],
+      "de": [
+        "Kokosmilch",
+        "Kokoscreme",
+        "Kokosnuss"
+      ],
+      "es": [
+        "leche de coco",
+        "crema de coco",
+        "coco"
+      ],
+      "fr": [
+        "lait de coco",
+        "crème de coco",
+        "noix de coco"
+      ]
+    }
+  },
+  {
+    "ingredient": "sesame_oil",
+    "category": "oil",
+    "flavor_profile": {
+      "primary_tastes": [
+        "nutty",
+        "rich",
+        "toasty"
+      ],
+      "aroma": [
+        "intensely roasted",
+        "nutty",
+        "smoky"
+      ],
+      "intensity": "very high",
+      "fat_content": "very high"
+    },
+    "pairs_with": [
+      "soy sauce",
+      "ginger",
+      "garlic",
+      "scallion",
+      "chili",
+      "rice vinegar",
+      "noodles",
+      "dumplings",
+      "tofu",
+      "chicken",
+      "beef",
+      "bok choy",
+      "spinach",
+      "mushroom",
+      "egg"
+    ],
+    "contrast_with": [
+      "bright rice vinegar against deep toasted nut"
+    ],
+    "boosters": [
+      "use as finishing oil only (burns easily)",
+      "few drops go far",
+      "combine with neutral oil for stir-fry aroma"
+    ],
+    "balancing_elements": [
+      "acid (rice vinegar, lime)",
+      "salt (soy sauce)",
+      "freshness (scallion, cilantro)"
+    ],
+    "avoid_combinations": [
+      "olive oil in same dish (competing nut/fruit oils)",
+      "delicate European cuisine"
+    ],
+    "aroma_compounds": [
+      "sesamol",
+      "sesamolin",
+      "pyrazines"
+    ],
+    "related_core": [
+      "oil"
+    ],
+    "related_techniques": [],
+    "confidence": 0.93,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "olej sezamowy"
+      ],
+      "en": [
+        "sesame oil",
+        "toasted sesame oil"
+      ],
+      "de": [
+        "Sesamöl",
+        "geröstetes Sesamöl"
+      ],
+      "es": [
+        "aceite de sésamo"
+      ],
+      "fr": [
+        "huile de sésame"
+      ]
+    }
+  },
+  {
+    "ingredient": "olive_oil",
+    "category": "oil",
+    "flavor_profile": {
+      "primary_tastes": [
+        "fruity",
+        "peppery",
+        "bitter",
+        "grassy"
+      ],
+      "aroma": [
+        "herbaceous",
+        "fruity",
+        "green",
+        "artichoke-like"
+      ],
+      "intensity": "medium-high (extra virgin) to low (light)",
+      "fat_content": "very high"
+    },
+    "pairs_with": [
+      "garlic",
+      "lemon",
+      "basil",
+      "tomato",
+      "bread",
+      "pasta",
+      "fish",
+      "salad",
+      "mozzarella",
+      "balsamic vinegar",
+      "chili flakes",
+      "parmesan",
+      "white beans",
+      "grilled vegetables"
+    ],
+    "contrast_with": [
+      "peppery oil against sweet tomato",
+      "bitter oil against creamy mozzarella"
+    ],
+    "boosters": [
+      "finishing drizzle of quality EVOO (never heat best oil)",
+      "infusing with garlic/chili",
+      "using as sauce base (aglio olio)"
+    ],
+    "balancing_elements": [
+      "acid (lemon, balsamic)",
+      "salt",
+      "sweetness (tomato, roasted pepper)"
+    ],
+    "avoid_combinations": [
+      "Asian sesame-soy preparations (flavor mismatch)"
+    ],
+    "aroma_compounds": [
+      "hexanal",
+      "oleocanthal",
+      "oleuropein"
+    ],
+    "related_core": [
+      "oil"
+    ],
+    "related_techniques": [
+      "making_vinaigrette",
+      "sautéing"
+    ],
+    "confidence": 0.96,
+    "priority": "critical",
+    "aliases": {
+      "pl": [
+        "oliwa",
+        "oliwa z oliwek",
+        "oliwa extra virgin"
+      ],
+      "en": [
+        "olive oil",
+        "EVOO",
+        "extra virgin olive oil"
+      ],
+      "de": [
+        "Olivenöl",
+        "natives Olivenöl extra"
+      ],
+      "es": [
+        "aceite de oliva",
+        "aceite de oliva virgen extra"
+      ],
+      "fr": [
+        "huile d'olive",
+        "huile d'olive vierge extra"
+      ]
+    }
+  },
+  {
+    "ingredient": "mirin",
+    "category": "condiment",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sweet",
+        "slightly acidic",
+        "umami"
+      ],
+      "aroma": [
+        "sweet rice wine",
+        "caramel",
+        "mild alcohol"
+      ],
+      "intensity": "medium",
+      "fat_content": "none"
+    },
+    "pairs_with": [
+      "soy sauce",
+      "dashi",
+      "sake",
+      "miso",
+      "ginger",
+      "garlic",
+      "fish",
+      "chicken",
+      "pork",
+      "tofu",
+      "vegetables",
+      "rice"
+    ],
+    "contrast_with": [
+      "salty soy sauce against sweet mirin (teriyaki principle)"
+    ],
+    "boosters": [
+      "reducing with soy for teriyaki glaze",
+      "adding at end of cooking for gloss",
+      "using hon-mirin (real) not aji-mirin (imitation)"
+    ],
+    "balancing_elements": [
+      "salt (soy sauce)",
+      "umami (dashi)",
+      "acid (rice vinegar)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "maltol",
+      "ethanol",
+      "esters"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "glazing_vegetables",
+      "marinating"
+    ],
+    "confidence": 0.9,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "mirin",
+        "słodkie wino ryżowe"
+      ],
+      "en": [
+        "mirin",
+        "sweet rice wine"
+      ],
+      "de": [
+        "Mirin",
+        "süßer Reiswein"
+      ],
+      "es": [
+        "mirin",
+        "vino de arroz dulce"
+      ],
+      "fr": [
+        "mirin"
+      ]
+    }
+  },
+  {
+    "ingredient": "balsamic_vinegar",
+    "category": "vinegar",
+    "flavor_profile": {
+      "primary_tastes": [
+        "sweet",
+        "sour",
+        "complex",
+        "fruity"
+      ],
+      "aroma": [
+        "grape must",
+        "caramel",
+        "wood",
+        "dried fruit"
+      ],
+      "intensity": "high",
+      "fat_content": "none"
+    },
+    "pairs_with": [
+      "strawberry",
+      "parmesan",
+      "prosciutto",
+      "mozzarella",
+      "tomato",
+      "arugula",
+      "grilled meat",
+      "roasted vegetables",
+      "fig",
+      "olive oil",
+      "honey",
+      "vanilla ice cream",
+      "peach"
+    ],
+    "contrast_with": [
+      "sweet reduction against salty cheese",
+      "acid against rich fat"
+    ],
+    "boosters": [
+      "reducing to glaze (syrupy consistency)",
+      "aged balsamic as finishing",
+      "pairing with olive oil in 1:3 ratio"
+    ],
+    "balancing_elements": [
+      "fat (olive oil, cheese)",
+      "sweetness (reduction, fruit)",
+      "salt (parmesan)"
+    ],
+    "avoid_combinations": [
+      "delicate fish (too strong)",
+      "Asian preparations (wrong acidity profile)"
+    ],
+    "aroma_compounds": [
+      "acetic acid",
+      "furfural",
+      "melanoidins"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "making_vinaigrette",
+      "reducing_sauce"
+    ],
+    "confidence": 0.92,
+    "priority": "high",
+    "aliases": {
+      "pl": [
+        "ocet balsamiczny",
+        "balsamico"
+      ],
+      "en": [
+        "balsamic vinegar",
+        "balsamico"
+      ],
+      "de": [
+        "Balsamessig",
+        "Balsamico"
+      ],
+      "es": [
+        "vinagre balsámico"
+      ],
+      "fr": [
+        "vinaigre balsamique"
+      ]
+    }
+  },
+  {
+    "ingredient": "rice_vinegar",
+    "category": "vinegar",
+    "flavor_profile": {
+      "primary_tastes": [
+        "mildly sour",
+        "clean",
+        "slightly sweet"
+      ],
+      "aroma": [
+        "clean",
+        "mild",
+        "delicate"
+      ],
+      "intensity": "low-medium",
+      "fat_content": "none"
+    },
+    "pairs_with": [
+      "soy sauce",
+      "sesame oil",
+      "ginger",
+      "garlic",
+      "sugar",
+      "rice (sushi)",
+      "noodles",
+      "cucumber",
+      "daikon",
+      "seaweed",
+      "fish",
+      "chicken",
+      "tofu",
+      "salad dressings"
+    ],
+    "contrast_with": [
+      "mild acid against rich soy-sesame combinations"
+    ],
+    "boosters": [
+      "seasoning sushi rice (vinegar + sugar + salt)",
+      "quick pickling",
+      "dressing base with sesame oil"
+    ],
+    "balancing_elements": [
+      "sweetness (sugar)",
+      "salt (soy sauce)",
+      "fat (sesame oil)"
+    ],
+    "avoid_combinations": [],
+    "aroma_compounds": [
+      "acetic acid",
+      "esters"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "marinating"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "ocet ryżowy",
+        "ocet do sushi"
+      ],
+      "en": [
+        "rice vinegar",
+        "rice wine vinegar"
+      ],
+      "de": [
+        "Reisessig"
+      ],
+      "es": [
+        "vinagre de arroz"
+      ],
+      "fr": [
+        "vinaigre de riz"
+      ]
+    }
+  },
+  {
+    "ingredient": "worcestershire_sauce",
+    "category": "condiment",
+    "flavor_profile": {
+      "primary_tastes": [
+        "umami",
+        "sour",
+        "sweet",
+        "salty",
+        "complex"
+      ],
+      "aroma": [
+        "fermented",
+        "anchovy",
+        "tamarind",
+        "molasses"
+      ],
+      "intensity": "high",
+      "fat_content": "none"
+    },
+    "pairs_with": [
+      "beef (steak, burger)",
+      "Bloody Mary",
+      "Caesar salad",
+      "stew",
+      "chili con carne",
+      "Welsh rarebit",
+      "gravy",
+      "meatloaf",
+      "deviled eggs",
+      "marinades"
+    ],
+    "contrast_with": [
+      "complex savory against simple grilled meat"
+    ],
+    "boosters": [
+      "few dashes as invisible depth builder",
+      "combining with soy for Asian-Western fusion",
+      "adding to pan sauces"
+    ],
+    "balancing_elements": [
+      "sweetness (molasses)",
+      "acid (tamarind, vinegar)",
+      "umami (anchovy)"
+    ],
+    "avoid_combinations": [
+      "delicate desserts",
+      "subtle white fish"
+    ],
+    "aroma_compounds": [
+      "glutamic acid",
+      "acetic acid",
+      "inosinic acid"
+    ],
+    "related_core": [],
+    "related_techniques": [
+      "deglazing"
+    ],
+    "confidence": 0.88,
+    "priority": "medium",
+    "aliases": {
+      "pl": [
+        "sos Worcestershire",
+        "sos Worcester"
+      ],
+      "en": [
+        "Worcestershire sauce"
+      ],
+      "de": [
+        "Worcestershire-Sauce",
+        "Worcestersauce"
+      ],
+      "es": [
+        "salsa Worcestershire",
+        "salsa inglesa"
+      ],
+      "fr": [
+        "sauce Worcestershire"
+      ]
+    }
+  }
+]
