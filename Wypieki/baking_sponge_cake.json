@@ -3,7 +3,7 @@
     "rule": "sponge_cake_egg_ratio",
     "category": "baking_structure",
     "applies_to": ["biszkopt", "sponge cake", "genoise", "ciasto biszkoptowe"],
-    "description": "Classic Polish biszkopt relies entirely on whipped eggs for leavening. The golden ratio is 1 egg per 30g sugar per 30g flour. Potato starch (20-30% of flour weight) tenderizes crumb and reduces gluten.",
+    "description": "Classic Polish biszkopt relies entirely on whipped eggs for leavening. The golden ratio is 1 egg per 30g sugar + 20g flour + 10g potato starch. Fat-free. Use top-bottom heat only — fan dries the surface before the interior sets, causing the cake to sink after baking.",
     "proportions": {
       "per_egg": {
         "sugar_g": 30,
@@ -12,72 +12,105 @@
         "fat_g": 0,
         "note": "Classic Polish biszkopt is fat-free — fat deflates foam"
       },
-      "example_23cm_tin": {
+      "example_23cm_tin_standard": {
         "eggs": 5,
         "sugar_g": 150,
         "flour_g": 100,
         "potato_starch_g": 50,
+        "vanilla_extract_tsp": 1,
+        "baking_mode": "top-bottom heat only — NO fan/convection",
         "baking_temp_c": 170,
         "baking_time_min": 35,
-        "tin_size_cm": 23
+        "tin_size_cm": 23,
+        "note": "5 eggs yields a slightly lower cake — suitable for 2 layers. For 3 layers use 6 eggs."
+      },
+      "example_23cm_tin_tall": {
+        "eggs": 6,
+        "sugar_g": 180,
+        "flour_g": 120,
+        "potato_starch_g": 60,
+        "vanilla_extract_tsp": 1,
+        "baking_mode": "top-bottom heat only — NO fan/convection",
+        "baking_temp_c": 170,
+        "baking_time_min": 38,
+        "tin_size_cm": 23,
+        "note": "6 eggs gives better height for 3-layer torte — preferred for professional results"
       },
       "example_25cm_tin": {
         "eggs": 6,
         "sugar_g": 180,
         "flour_g": 120,
         "potato_starch_g": 60,
+        "vanilla_extract_tsp": 1,
+        "baking_mode": "top-bottom heat only — NO fan/convection",
         "baking_temp_c": 170,
-        "baking_time_min": 38,
+        "baking_time_min": 40,
         "tin_size_cm": 25
       }
     },
+    "oven_mode": {
+      "correct": "GÓRNA I DOLNA GRZAŁKA (grzanie góra-dół) bez termoobiegu — równomierne ciepło, biszkopt rośnie spokojnie",
+      "fan_warning": "Termoobieg suszy powierzchnię szybciej niż wnętrze — tworzy skorupkę zanim środek się ustabilizuje → biszkopt siada po wyjęciu z piekarnika. Jeśli piekarnik wymusza termoobieg, obniż temperaturę do 150-155°C.",
+      "temperature_c": 170,
+      "fan_temperature_c": 152
+    },
     "technique": {
-      "egg_temperature": "room temperature (20-22°C) — cold eggs whip to less volume",
-      "whipping_stage": "whip whole eggs with sugar 8-12 minutes until ribbon stage — mixture triples in volume, pale yellow, falls in thick ribbons",
-      "ribbon_test": "lift whisk — mixture falls in a thick ribbon that holds shape on surface for 3 seconds",
-      "flour_folding": "sift flour+starch 3 times, fold in 3 additions with rubber spatula using J-motion, max 40 strokes total",
-      "pouring": "pour batter from low height to preserve bubbles",
-      "tin_prep": "line bottom with parchment only — ungreased sides let cake climb"
+      "egg_temperature": "room temperature (20-22°C) — cold eggs whip to 30% less volume",
+      "vanilla": "add 1 tsp vanilla extract or seeds from half a vanilla pod — masks eggy smell, adds aroma",
+      "whipping_stage": "whip whole eggs with sugar 10-12 minutes until ribbon stage — mixture triples in volume, pale yellow, falls in thick ribbons",
+      "ribbon_test": "lift whisk — mixture falls in a thick ribbon that holds its shape on the surface for 3 seconds before dissolving",
+      "flour_folding": "sift flour+starch together 3 times, fold in 3 additions with rubber spatula using J-motion, max 40 strokes total — stop the moment no dry flour is visible",
+      "pouring": "pour batter from low height in one spot — do not spread with spatula, this deflates bubbles",
+      "tin_prep": "line bottom with parchment only — do NOT grease sides, ungreased sides act as grip surface for climbing batter"
+    },
+    "cooling": {
+      "critical": "IMMEDIATELY after baking, invert the tin upside down — place on bottle neck or tin legs so air circulates underneath. Leave inverted until COMPLETELY COLD (minimum 1 hour). Do NOT remove from tin while warm. Gravity pulls the warm, fragile foam structure downward — inverting counteracts this and preserves full height.",
+      "wrong_method": "Cooling right-side up for even 5 minutes causes permanent height loss — the warm structure collapses under its own weight",
+      "removal": "Run a thin knife around the edges only after fully cold, then remove"
     },
     "failure_modes": [
       {
         "case": "eggs not at ribbon stage",
         "result": "flat, dense biszkopt, no spring",
-        "fix": "whip at least 10 minutes — batter must be very thick and pale"
+        "fix": "whip at least 10-12 minutes — batter must be very thick, pale, and tripled in volume"
       },
       {
-        "case": "flour folded too vigorously",
-        "result": "deflated foam, rubbery texture",
-        "fix": "use gentle J-fold, stop as soon as no dry flour visible"
+        "case": "flour folded too vigorously or too many strokes",
+        "result": "deflated foam, rubbery dense texture",
+        "fix": "use gentle J-fold, maximum 40 strokes total, stop as soon as flour disappears"
       },
       {
         "case": "opened oven before 25 minutes",
-        "result": "cake collapses in center",
-        "fix": "do not open oven for first 25 minutes"
+        "result": "cake collapses in center — cold air shock deflates unstabilized foam",
+        "fix": "do not open oven for first 25-30 minutes under any circumstances"
       },
       {
         "case": "greased tin sides",
-        "result": "cake slides down, low rise",
-        "fix": "only line bottom — ungreased sides are grip surface"
+        "result": "batter slides down during baking, poor rise, low final height",
+        "fix": "only line bottom with parchment — bare sides are essential for grip"
       },
       {
-        "case": "too much flour",
-        "result": "heavy, dense crumb",
-        "fix": "replace 30% flour with potato starch"
+        "case": "fan/convection mode used at 170°C",
+        "result": "surface crust forms before interior sets, cake sinks after removing from oven",
+        "fix": "use top-bottom heat only at 170°C, or reduce fan temperature to 150-155°C"
       },
       {
-        "case": "baked at too high temperature",
-        "result": "dark crust, raw center",
-        "fix": "170°C conventional oven, 160°C fan — never exceed 180°C"
+        "case": "cooled right-side up or removed from tin while warm",
+        "result": "permanent height loss, dense bottom layer — gravity collapses warm foam",
+        "fix": "invert immediately after baking, cool completely upside down minimum 1 hour before removing"
       },
       {
-        "case": "tin too small",
-        "result": "overflow, uneven bake",
-        "fix": "batter should fill tin only 2/3 height"
+        "case": "tin too small or batter overfilled",
+        "result": "overflow, uneven bake, mushroom cap top",
+        "fix": "batter should fill tin only 2/3 of height; use 6-egg recipe for 23cm if you need 3 layers"
+      },
+      {
+        "case": "only 5 eggs for a 3-layer torte",
+        "result": "biszkopt too low to cut into 3 even layers",
+        "fix": "use 6-egg recipe for 23cm tin when 3 layers are needed"
       }
     ],
-    "cooling": "invert pan immediately after baking — cool upside down 30 min to prevent collapse",
-    "storage": "wrap in cling film, room temperature 2 days or freeze up to 1 month",
+    "storage": "wrap in cling film while still slightly warm to trap moisture, room temperature 2 days or freeze up to 1 month",
     "confidence": 0.99
   },
   {
