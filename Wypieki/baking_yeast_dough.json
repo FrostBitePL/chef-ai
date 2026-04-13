@@ -33,7 +33,16 @@
       "egg_wash": "1 egg yolk + 1 tbsp milk + pinch salt, brushed gently with soft brush just before baking — gives deep golden color",
       "baking": "180°C top-bottom heat, 30-40 min depending on size. For large loaf, cover with foil after 20 min if browning too fast.",
       "doneness": "Internal temperature 88-92°C measured with thermometer. Sounds hollow when tapped on bottom. Do not rely on color alone — interior may be raw despite golden crust.",
-      "cold_retard_option": "After shaping, refrigerate covered overnight (4-8°C) for second rise. Bake cold from fridge next morning — develops complex flavor through slow fermentation, more convenient for morning baking."
+      "cold_retard_option": "After shaping, refrigerate covered overnight (4-8°C) for second rise. Bake cold from fridge next morning — develops complex flavor through slow fermentation, more convenient for morning baking.",
+      "tangzhong_technique": {
+        "what": "Tangzhong (湯種) is a Japanese/Chinese pre-gelatinization technique: cook 5-10% of the recipe's flour with 5x its weight in water/milk to 65°C until it becomes a thick gel. This gel is added to the main dough.",
+        "why": "At 65°C starch granules absorb water and gelatinize — this pre-absorbed water is locked inside the gel and cannot evaporate during baking. Result: bread/buns stay soft and moist for 3-4 days instead of going stale overnight.",
+        "how": "For 500g flour recipe: take 25g flour (5%) + 125ml milk/water. Whisk together cold, then heat in saucepan over medium heat, stirring constantly until mixture thickens to pudding consistency (65°C). Cool to room temperature before adding to dough.",
+        "ratio": "5% of total flour weight for standard softness. Up to 10% for milk bread / Hokkaido style — extremely soft, pillowy crumb.",
+        "compatible_with": ["drożdżówka", "chałka", "bułki mleczne", "babka", "brioche", "chleb tostowy"],
+        "effect_on_dough": "Dough will be slightly stickier than usual — resist adding flour. The extra hydration locked in tangzhong is intentional.",
+        "pro_note": "Tangzhong is the single biggest upgrade for any enriched yeast dough. It costs 5 extra minutes and transforms the shelf life from 1 day to 3-4 days."
+      }
     },
     "failure_modes": [
       {

@@ -436,7 +436,7 @@ LAYER_K_CONFIG = {
     "techniques": 2, 
     "composition": 2,
     "flavor": 2,
-    "baking": 3,
+    "baking": 4,
 }
 LAYER_K = 5  # fallback for backward compatibility
 
