@@ -3331,6 +3331,7 @@ def create_app():
                 parsed=enforce_bans(parsed,bans)
                 auto_update_profile(uid,parsed)
                 increment_daily(uid,"recipes")
+                logger.info(f"[ask-stream] parsed type={parsed.get('type')} title={parsed.get('title','?')[:50]} keys={list(parsed.keys())[:8]}")
                 yield f"data: {json.dumps({'done':True,'data':parsed})}\n\n"
             except Exception as e:
                 logger.error(f"Stream error: {e}")

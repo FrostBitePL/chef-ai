@@ -103,7 +103,14 @@ async function streamRecipe(q,loadDiv,previewEl){
 
     loadDiv.remove();
     if(finalData){handleResponse(finalData);autoSaveSession()}
-    else if(fullText){try{handleResponse(JSON.parse(fullText))}catch{addMsg('t',fullText)};autoSaveSession()}
+    else if(fullText){
+      try{
+        let t2=fullText.trim();
+        if(t2.startsWith('```')){t2=t2.split('\n').slice(1).join('\n').split('```')[0].trim()}
+        handleResponse(JSON.parse(t2));
+      }catch{addMsg('t',fullText)}
+      autoSaveSession();
+    }
   }catch{loadDiv.remove();addMsg('t',t('error.conn'))}
   scrollBottom();
 }
@@ -205,6 +212,7 @@ async function importFromUrl(){
 }
 
 function handleResponse(data){
+  if(!data.type && data.title && data.steps) data.type='recipe';
   if(data.type==='recipe'){renderRecipeCard(data);chatHistory.push({role:'assistant',content:'[Przepis: '+data.title+']'})}
   else if(data.type==='comparison'){renderComparison(data);chatHistory.push({role:'assistant',content:'[Porównanie: '+data.topic+']'})}
   else{addMsg('t',data.content||JSON.stringify(data));chatHistory.push({role:'assistant',content:data.content||''})}
