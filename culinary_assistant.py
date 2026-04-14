@@ -293,6 +293,52 @@ def _matches_ban(text,ban_keywords):
         if kw in text_lower: return True
     return False
 
+# Maps specialist device keywords → what to replace with when not available
+_EQUIPMENT_REPLACEMENTS = [
+    (["sous-vide", "sous_vide", "cyrkulator", "woreczek próżniowy", "kąpiel"],
+     "patelnia + piekarnik"),
+    (["thermomix"], "garnek + mikser ręczny"),
+    (["wędzarnia", "wędzon"], "piekarnik"),
+    (["atlas 150", "maszynka do makaronu"], "wałek do ciasta"),
+    (["dehydrator"], "piekarnik 60°C"),
+]
+
+def _has_equipment(eq_list_lower, keywords):
+    return any(kw in eq_list_lower for kw in keywords)
+
+def enforce_equipment(data, prof_data):
+    """Post-process recipe JSON: replace specialist equipment in steps when user doesn't have it."""
+    if not isinstance(data, dict) or data.get("type") != "recipe":
+        return data
+    eq = prof_data.get("equipment", []) if prof_data else []
+    if isinstance(eq, str):
+        try: eq = json.loads(eq)
+        except: eq = []
+    eq_lower = " ".join(eq).lower()
+
+    steps = data.get("steps", [])
+    for step in steps:
+        eq_field = step.get("equipment", "") or ""
+        eq_field_lower = eq_field.lower()
+        for keywords, replacement in _EQUIPMENT_REPLACEMENTS:
+            if any(kw in eq_field_lower for kw in keywords):
+                if not _has_equipment(eq_lower, keywords):
+                    # Replace with available equipment
+                    step["equipment"] = replacement
+                    # Also patch instruction text
+                    instr = step.get("instruction", "")
+                    for kw in keywords:
+                        if kw in instr.lower():
+                            # Remove sous-vide specific instruction details
+                            import re as _re
+                            instr = _re.sub(
+                                r'(ustaw cyrkulator|kąpiel (sous-vide|wodn[aą])|woreczek próżniow\w*|vacuum seal\w*|cyrkulatorem|sous-vide\s+\w+°C)[^.]*\.',
+                                '', instr, flags=_re.IGNORECASE
+                            )
+                    step["instruction"] = instr.strip()
+                break
+    return data
+
 def enforce_bans(data,banned_ingredients):
     if not banned_ingredients or not isinstance(data,dict): return data
     if isinstance(banned_ingredients,str): banned_ingredients=json.loads(banned_ingredients) if banned_ingredients else []
@@ -2855,6 +2901,7 @@ class CulinaryAssistant:
         
         # STEP 6: Post-processing
         recipe = enforce_bans(recipe, bans)
+        recipe = enforce_equipment(recipe, prof_data)
         auto_update_profile(uid, recipe)
         
         # Combine usage
@@ -2968,6 +3015,7 @@ class CulinaryAssistant:
         parsed.pop("sources", None)
         parsed.pop("book_references", None)
         parsed = enforce_bans(parsed, bans)
+        parsed = enforce_equipment(parsed, prof_data)
         auto_update_profile(uid, parsed)
 
         return {
@@ -3098,6 +3146,7 @@ class CulinaryAssistant:
         if isinstance(bans, str):
             bans = json.loads(bans) if bans else []
         parsed = enforce_bans(parsed, bans)
+        parsed = enforce_equipment(parsed, prof_data)
         auto_update_profile(uid, parsed)
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
 
@@ -3239,6 +3288,7 @@ Przekształć poniższy przepis na JSON type:recipe.
         if not parsed.get("type") and (parsed.get("title") or parsed.get("ingredients") or parsed.get("steps")):
             parsed["type"] = "recipe"
         parsed = enforce_bans(parsed, bans)
+        parsed = enforce_equipment(parsed, prof_data)
         auto_update_profile(uid, parsed)
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
 
@@ -3543,6 +3593,7 @@ def create_app():
                 bans=prof_data.get("banned_ingredients",[])
                 if isinstance(bans,str): bans=json.loads(bans) if bans else []
                 parsed=enforce_bans(parsed,bans)
+                parsed=enforce_equipment(parsed,prof_data)
                 auto_update_profile(uid,parsed)
                 increment_daily(uid,"recipes")
                 logger.info(f"[ask-stream] parsed type={parsed.get('type')} title={parsed.get('title','?')[:50]} keys={list(parsed.keys())[:8]}")
@@ -4056,6 +4107,7 @@ Zwróć pełny JSON przepisu (ten sam format co oryginał) z dodanym polem "vari
             parsed,_=a._call("",h+[{"role":"user","content":prompt}])
             parsed["type"]="recipe"
             parsed=enforce_bans(parsed,bans)
+            parsed=enforce_equipment(parsed,p)
             increment_daily(g.user_id,"recipes")
             return jsonify({"success":True,"data":parsed})
         except Exception as e:
