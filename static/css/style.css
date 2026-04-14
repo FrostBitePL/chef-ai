@@ -1115,13 +1115,6 @@ body{
 .variant-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(232,175,67,0.06)}
 
 /* ═══ Step tools ═══ */
-.step-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-.step-fix-btn{
-  background:rgba(224,85,85,0.06);border:1px solid rgba(224,85,85,0.2);color:var(--danger);
-  border-radius:20px;padding:4px 10px;font-size:0.72rem;cursor:pointer;
-  font-family:var(--sans);transition:all var(--transition-fast)
-}
-.step-fix-btn:hover{background:rgba(224,85,85,0.12)}
 
 /* ═══ Modal ═══ */
 .recipe-modal{position:fixed;inset:0;z-index:300;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s}

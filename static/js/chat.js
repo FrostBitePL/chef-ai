@@ -399,7 +399,7 @@ function bSteps2(st,recipeTitle){
         </div>`:''}
         <div class="step-actions">
           ${s.timer_seconds?`<button class="step-timer-btn" onclick="event.stopPropagation();startTimer(${s.timer_seconds},'${esc(s.title||'').replace(/'/g,'')}',this)">⏱ ${fmtT(s.timer_seconds)}</button>`:''}
-          <button class="step-fix-btn" onclick="event.stopPropagation();fixStep(${s.number},'${esc(s.title||'').replace(/'/g,'')}','${esc(recipeTitle||'').replace(/'/g,'')}')">🆘 SOS</button>
+          <button class="step-fix-btn" onclick="event.stopPropagation();fixStep(${s.number},'${esc(s.title||'').replace(/'/g,'')}','${esc(recipeTitle||'').replace(/'/g,'')}')" title="Pomoc z krokiem">SOS</button>
         </div>
       </div>
     </div>`;
@@ -422,13 +422,12 @@ function activateStep(el,idx){
 }
 
 // Legacy bSteps (used in step mode / buildRecipeHTML)
-function bSteps(st,recipeTitle){return st.map(s=>{let h='<div class="step"><div class="step-header"><span class="step-num">'+s.number+'</span><span class="step-title">'+esc(s.title||'')+'</span></div><div class="step-body" style="display:block"><div class="step-text">'+esc(s.instruction)+'</div>';if(s.equipment)h+='<div class="step-equip">🔥 '+esc(s.equipment)+'</div>';if(s.why)h+='<div class="step-why">'+esc(s.why)+'</div>';if(s.tip)h+='<div class="step-tip">💡 '+esc(s.tip)+'</div>';const actions=[];if(s.timer_seconds)actions.push('<button class="step-timer-btn" onclick="startTimer('+s.timer_seconds+',\''+esc(s.title||'').replace(/'/g,'')+'\',this)">⏱'+fmtT(s.timer_seconds)+'</button>');actions.push('<button class="step-fix-btn" onclick="fixStep('+s.number+',\''+esc(s.title||'').replace(/'/g,'')+'\',\''+esc(recipeTitle||'').replace(/'/g,'')+'\')">🆘</button>');if(actions.length)h+='<div class="step-actions">'+actions.join('')+'</div>';return h+'</div></div>'}).join('')}
+function bSteps(st,recipeTitle){return st.map(s=>{let h='<div class="step"><div class="step-header"><span class="step-num">'+s.number+'</span><span class="step-title">'+esc(s.title||'')+'</span></div><div class="step-body" style="display:block"><div class="step-text">'+esc(s.instruction)+'</div>';if(s.equipment)h+='<div class="step-equip">🔥 '+esc(s.equipment)+'</div>';if(s.why)h+='<div class="step-why">'+esc(s.why)+'</div>';if(s.tip)h+='<div class="step-tip">💡 '+esc(s.tip)+'</div>';const actions=[];if(s.timer_seconds)actions.push('<button class="step-timer-btn" onclick="startTimer('+s.timer_seconds+',\''+esc(s.title||'').replace(/'/g,'')+'\',this)">⏱'+fmtT(s.timer_seconds)+'</button>');actions.push('<button class="step-fix-btn" onclick="fixStep('+s.number+',\''+esc(s.title||'').replace(/'/g,'')+'\',\''+esc(recipeTitle||'').replace(/'/g,'')+'\')">SOS</button>');if(actions.length)h+='<div class="step-actions">'+actions.join('')+'</div>';return h+'</div></div>'}).join('')}
 
 // ─── Rate recipe ───
 function rateRecipe(btn){
   const r=getRecipe(btn);if(!r)return;
   const score=prompt(t('rate.prompt'));
-  if(!score||isNaN(score)) return;
   const comment=prompt(t('rate.comment')) || '';
   fetch(API+'/api/profile',{method:'POST',headers:authHeaders(),
     body:JSON.stringify({rating:{title:r.title,score:+score,comment}})});

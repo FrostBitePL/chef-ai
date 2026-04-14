@@ -2316,7 +2316,7 @@ g/ml, °C (+°F), czysty JSON — zero tekstu poza JSON.
   "nutrition": {{"kcal": 0, "protein_g": 0, "fat_g": 0, "carbs_g": 0}},
   "nutrition_total": {{"kcal": 0, "protein_g": 0, "fat_g": 0, "carbs_g": 0}},
   "shopping_list": [{{"item": "...", "amount": "...", "section": "mięso/warzywa/nabiał/przyprawy/pantry"}}],
-  "ingredients": [{{"item": "...", "amount": "...g/ml", "note": "dlaczego ten konkretny składnik/gatunek/forma"}}],
+  "ingredients": [{"item": "...", "amount": "...g/ml", "note": "max 5 słów: kluczowa cecha składnika"}],
   "substitutes": [{{"original": "...", "substitute": "...", "flavor_impact": "...", "texture_impact": "...", "overall_effect": "...", "recommendation": "..."}}],
   "mise_en_place": ["krok przygotowawczy + dlaczego w tej kolejności"],
   "steps": [{{"number": 1, "title": "...", "instruction": "instrukcja z ilościami w nawiasach przy każdym składniku", "equipment": "konkretne urządzenie z profilu + dokładne ustawienia", "timer_seconds": 0, "tip": "wskaźniki sensoryczne — co widzisz/słyszysz/czujesz", "why": "mechanizm chemiczny/fizyczny tego kroku"}}],
