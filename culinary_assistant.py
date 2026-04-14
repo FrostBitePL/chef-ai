@@ -232,7 +232,11 @@ def profile_to_context(p):
     fb=p.get("feedback_history",[])
     if isinstance(fb,str): fb=json.loads(fb) if fb else []
 
-    if eq: parts.append("⚠️ SPRZĘT UŻYTKOWNIKA (MUSISZ UŻYWAĆ W PRZEPISIE): "+", ".join(eq[:20]))
+    if eq:
+        parts.append("⚠️ SPRZĘT UŻYTKOWNIKA (tylko to jest dostępne): "+", ".join(eq[:20]))
+        parts.append("⛔ ZAKAZ: NIE proponuj dań wymagających sprzętu spoza tej listy (np. sous-vide bez cyrkulatora, Thermomix bez Thermomixa, wędzarnia bez wędzarni).")
+    else:
+        parts.append("⛔ SPRZĘT: Użytkownik nie podał sprzętu — używaj tylko podstawowego (garnek, patelnia, piekarnik, deski, noże). NIE używaj sous-vide, Thermomix, wędzarni ani innego sprzętu specjalistycznego.")
     if bans: parts.append("ABSOLUTNE ZAKAZY (NIGDY nie uzywaj!): "+", ".join(bans[:20]))
     if fav: parts.append("ULUBIONE SKLADNIKI: "+", ".join(fav[:12]))
     if cooked:
@@ -2124,6 +2128,7 @@ Jeśli użytkownik daje otwarte zapytanie:
 - W polu "equipment" każdego kroku ZAWSZE wpisz konkretne urządzenie z profilu użytkownika + ustawienia.
 - Jeśli użytkownik ma specjalistyczny sprzęt (sous-vide, Thermomix, wędzarnia, grill) — preferuj techniki które go wykorzystują.
 - NIE ignoruj sprzętu użytkownika. Jeśli ma patelnię żeliwną — używaj jej zamiast "patelni". Jeśli ma termometr — podaj dokładne temperatury wewnętrzne.
+- ⛔ ZAKAZ SPRZĘTU KTÓREGO NIE MA: Jeśli danie WYMAGA specjalistycznego sprzętu (sous-vide/cyrkulator, Thermomix, wędzarnia, wok, robot planetarny, maszyna do makaronu, pacojet, syfon ISI, dehydrator itp.) a użytkownik NIE MA go w profilu — NIE proponuj tego dania ani techniki. Zamień na wersję możliwą do wykonania dostępnym sprzętem. Sous-vide bez cyrkulatora = nie ma sous-vide. Brak maszynki do makaronu = makaron na wałku lub kupny.
 
 ## PRZYPRAWY I PRZYPRAWIENIE (OBOWIĄZKOWO)
 - KAŻDY przepis MUSI zawierać WSZYSTKIE użyte przyprawy i przyprawy z DOKŁADNYMI ilościami w gramach.
