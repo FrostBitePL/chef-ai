@@ -12,7 +12,6 @@
     ],
     "parameters": {
       "meat_temp_target": "medium-rare 54°C (termosonda), medium 60°C",
-      "sous_vide": "antrykot 55-57°C/90-120 min, polędwica 54-56°C/60-90 min",
       "searing": "moc 8-9, olej o wysokim punkcie dymienia, 1-1.5 min na stronę",
       "rest": "5-8 min pod luźną folią",
       "sauce_deglaze": "40-50ml brandy/koniak, odparować alkohol, dodać 60-80ml śmietany 36%, redukować 3-4 min",
@@ -111,5 +110,67 @@
     ],
     "science": "Cold-start pozwala na powolne wytapianie tłuszczu podskórnego (rendering) w niskiej temperaturze. Tłuszcz wytopiony z samej skóry staje się medium smażącym — skóra smaży się we własnym tłuszczu, dając równomierną, głęboką chrupkość bez dodatkowego oleju.",
     "upgrade": "Beurre noisette finish: po zdjęciu kurczaka, na tej samej patelni 20g masła na moc 4 do orzechowego koloru + sok z cytryny + kapary = szybki sos."
+  },
+  {
+    "id": "proc_reverse_sear_steak",
+    "dish": "Stek / polędwica — reverse sear na patelni",
+    "category": "steak",
+    "tags": ["wołowina", "polędwica", "stek", "reverse sear", "patelnia", "sonda", "indukcja", "Maillard"],
+    "canonical": true,
+    "canonical_elements": [
+      "suche solenie min 30 min przed",
+      "reverse sear: piekarnik 120°C do cel-5°C poniżej targetu",
+      "searing na bardzo gorącej patelni stalowej/żeliwnej — moc 9, 1-1.5 min/stronę",
+      "basting masłem z tymiankiem i czosnkiem",
+      "odpoczynek 5-8 min"
+    ],
+    "parameters": {
+      "brine": "suche solenie 1-1.5% wagi, min 30 min (optymalnie 2-4h) na kratce w lodówce",
+      "oven_temp": "piekarnik 120°C termoobieg — do osiągnięcia temp wewnętrznej cel-5°C (np. cel 54°C → wyjąć przy 49°C)",
+      "sear_power": "indukcja moc 9, olej rzepakowy lub klarowane masło, patelnia rozgrzana 3 min",
+      "sear_time": "1-1.5 min na każdą stronę + 30 sek na krawędzie",
+      "basting": "30g masła + 2 gałązki tymianku + 2 ząbki czosnku, przechyl patelnię, polewaj 30-45 sek",
+      "rest": "5-8 min na kratce pod luźną folią",
+      "internal_temp_targets": "medium-rare: 54°C, medium: 60°C, medium-well: 65°C"
+    },
+    "critical_rules": [
+      "Mięso SUCHE przed searingiem — osuszyć ręcznikiem papierowym",
+      "Temperatura wewnętrzna TYLKO termosondą — nie pirometrem",
+      "Wyjąć z piekarnika 5°C PRZED celem — dosmaży się przy searingu",
+      "Searing na BARDZO gorącej patelni — moc 9, minimum 3 min rozgrzewania",
+      "NIE używać patelni nieprzywieralnej do searingu — za słaby Maillard",
+      "Odpoczynek OBOWIĄZKOWY — bez niego soki wyciekają przy krojeniu"
+    ],
+    "forbidden": [
+      "sous-vide i woreczki próżniowe — niepotrzebne przy reverse sear",
+      "pirometr do pomiaru temperatury wewnętrznej",
+      "patelnia nieprzywieralna do searingu",
+      "searing na zimnej lub letniej patelni",
+      "krojenie bez odpoczynku"
+    ],
+    "equipment_notes": {
+      "patelnia stalowa lub żeliwna": "moc 9 indukcja, rozgrzać min 3 min — sprawdzić pirometrem (200-230°C)",
+      "termosonda": "wbić w najgrubsze miejsce, cel: 49°C przy wyjmowaniu z piekarnika",
+      "piekarnik": "120°C termoobieg wyłączony, kratka na środkowym poziomie"
+    },
+    "failure_modes": [
+      {
+        "problem": "Szara skorupka, brak Maillarda",
+        "cause": "Mięso mokre lub patelnia za zimna",
+        "fix": "Osusz dokładnie ręcznikiem, rozgrzej patelnię 3 min na mocy 9 zanim wrzucisz mięso"
+      },
+      {
+        "problem": "Mięso przegotowane po searingu",
+        "cause": "Wyjęte z piekarnika za blisko celu",
+        "fix": "Wyjmuj przy cel-5°C (np. 49°C dla medium-rare 54°C) — searing dodaje ~5°C"
+      },
+      {
+        "problem": "Mięso twarde po odpoczynku",
+        "cause": "Za krótki odpoczynek lub zbyt wysoka temperatura wewnętrzna",
+        "fix": "Minimum 5 min odpoczynku, sprawdzaj sondą a nie zegarkiem"
+      }
+    ],
+    "science": "Reverse sear odwraca kolejność: najpierw powolne ogrzewanie w niskim piekarniku wyrównuje temperaturę w całym mięsie (brak różowej obwódki = równomierna wysmażenie), potem ekspresowy searing na bardzo gorącej patelni tworzy skorupkę Maillarda. Efekt: lepsza kontrola niż klasyczny searing, bez cyrkulatora. Stalowa patelnia retencją ciepła bije nienadam — De Buyer Mineral B Pro utrzymuje temperaturę przy kontakcie z zimnym mięsem.",
+    "upgrade": "Compound butter: 50g masła + 5g miso + skórka z cytryny + tymianek — połóż plaster na stek tuż po searing, roztopi się podczas odpoczynku i da glazurę."
   }
 ]
