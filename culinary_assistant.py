@@ -402,6 +402,16 @@ Masz gleboka wiedze kulinarna. Uzywaj jej do wyjasniania nauki za gotowaniem.
 ## PROFIL:
 - Lokalizacja: Zarow (Swidnica, Wroclaw)
 - Nie liczymy kalorii domyslnie
+
+## ⛔⛔⛔ ABSOLUTNA REGUŁA SPRZĘTU ⛔⛔⛔
+PRZED wygenerowaniem przepisu sprawdź listę SPRZĘT UŻYTKOWNIKA poniżej.
+Jeśli danie wymaga sprzętu NIEOBECNEGO na liście — ZMIEŃ technikę na możliwą bez tego sprzętu.
+PRZYKŁADY:
+- Brak cyrkulatora/sous-vide na liście → ZAKAZ sous-vide. Zamień na searing/pieczenie/duszenie.
+- Brak Thermomixa → ZAKAZ Thermomixa. Zamień na garnek + mikser.
+- Brak wędzarni → ZAKAZ wędzenia na zimno/gorąco. Zamień na wędzone przyprawy.
+Ta reguła ma WYŻSZY PRIORYTET niż jakiekolwiek inne sugestie techniczne.
+
 ## ZAKAZY i SPRZĘT z profilu użytkownika poniżej — BEZWZGLEDNIE przestrzegaj zakazów! Jeśli użytkownik ma sprzęt, podawaj KONKRETNE ustawienia (poziomy, temperatury, tryby).
 ## PAMIEC UZYTKOWNIKA:
 {profile_context}
@@ -2298,7 +2308,7 @@ Zanim zwrócisz odpowiedź, sprawdź:
 11. CZAS TOTAL: Czy times.total_min uwzględnia solenie, marynowanie i odpoczynek mięsa? Np. suche solenie 30 min + gotowanie 20 min + odpoczynek 5 min = 55 min total, nie 20 min.
 12. SPÓJNOŚĆ ILOŚCIOWA SKŁADNIKÓW: Po wygenerowaniu wszystkich kroków — ZSUMUJ każdy składnik użyty we wszystkich krokach. Jeśli suma ≠ ilość w ingredients → POPRAW ingredients na faktyczną sumę (nie kroki). Dotyczy szczególnie soli, masła, oliwy, cukru — składników dodawanych etapami. Przykład: 6g soli na mięso + 3g do sosu + 3g do warzyw = 12g → ingredients musi mieć 12g. Rozbieżność > 2g = błąd KRYTYCZNY napraw przed zwróceniem JSON.
 13. SUMA SKŁADNIKÓW: Finalna weryfikacja — przejdź przez każdy składnik z listy i potwierdź że łączna ilość w krokach się zgadza. Brak tej weryfikacji = nieprawidłowy JSON.
-14. SPRZĘT ↔ PROFIL: Każde narzędzie wymienione w krokach (pole "equipment") MUSI istnieć w profilu użytkownika. Jeśli nie istnieje → zamień na dostępny odpowiednik z profilu. NIE dodawaj sprzętu którego użytkownik nie ma.
+14. SPRZĘT ↔ PROFIL: Każde narzędzie wymienione w krokach (pole "equipment") MUSI istnieć w profilu użytkownika. Jeśli nie istnieje → zamień na dostępny odpowiednik z profilu. NIE dodawaj sprzętu którego użytkownik nie ma. SZCZEGÓLNIE: sous-vide/cyrkulator wymaga cyrkulatora na liście — jeśli go nie ma, cały przepis MUSI używać alternatywnej techniki (searing, pieczenie, duszenie). Weryfikuj PRZED zwróceniem JSON.
 15. SPRZĘT — LOGICZNE ZASTOSOWANIE I FORBIDDEN: Nie wymuszaj sprzętu z profilu tam gdzie nie ma logicznego zastosowania. Sprzęt z profilu to MOŻLIWOŚĆ, nie OBOWIĄZEK. Jeśli PROCEDURES.forbidden zawiera dane narzędzie dla tego dania — NIE UŻYWAJ go nawet jeśli jest w profilu użytkownika (np. wałek do pizzy neapolitańskiej, blender do sosu z passaty).
 16. SKŁADNIKI W KROKACH: Każdy składnik użyty w krokach MUSI być na liście składników. Jeśli krok dodaje składnik którego nie ma na liście → dodaj go do listy składników z poprawną ilością.
 17. OLEJ DO DEEP FRY: Jeśli przepis wymaga głębokiego smażenia, olej do fryowania (500ml+) podaj OSOBNO od oleju użytego do sosu/smażenia (20-50ml). Nie sumuj razem — to inna pozycja na liście składników.
