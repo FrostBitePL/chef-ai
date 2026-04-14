@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   await initSupabase();
   await loadModulesFromServer();
   const inp=document.getElementById('input'),sb=document.getElementById('sendBtn');
-  inp.addEventListener('input',()=>{sb.disabled=!inp.value.trim();inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,90)+'px'});
+  inp.addEventListener('input',()=>{sb.disabled=!inp.value.trim();inp.style.height='auto';inp.style.height=Math.min(Math.max(inp.scrollHeight,36),90)+'px'});
   inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
   document.getElementById('feedbackField')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendFeedback()}});
 });
@@ -104,8 +104,9 @@ function enterApp(){
   renderQuickTags();
   addWelcome();
   checkServer();
+  initScrollHide();
   applyI18n();
-  document.getElementById('langToggle').textContent=currentLang.toUpperCase();
+  const _lt=document.getElementById('langToggle');if(_lt)_lt.textContent=currentLang.toUpperCase();
   checkSharedRecipe();
   newSession();
   loadProgress();
@@ -211,17 +212,50 @@ async function socialLogin(provider){
 let subStatus={is_pro:false,status:'free',recipes_today:0,recipes_limit:5};
 
 function renderUserInfo(){
-  const el=document.getElementById('userInfo');
-  if(!el) return;
   const name=userProfile?.name||currentUser?.email?.split('@')[0]||'User';
-  let h='<span class="user-name">'+esc(name)+'</span>';
-  if(subStatus.is_pro){
-    h+='<span class="pro-badge">PRO</span>';
-  } else {
-    h+='<button class="upgrade-btn" onclick="openUpgrade()">⭐ PRO</button>';
+  const initials=name.slice(0,2).toUpperCase();
+  // New avatar header
+  const av=document.getElementById('userAvatar');
+  if(av) av.textContent=initials;
+  const ddName=document.getElementById('ddName');
+  if(ddName) ddName.textContent=name;
+  const ddEmail=document.getElementById('ddEmail');
+  if(ddEmail) ddEmail.textContent=currentUser?.email||'';
+  const proBadge=document.getElementById('proBadge');
+  if(proBadge) proBadge.style.display=subStatus.is_pro?'':'none';
+  // Update lang label
+  const ddLang=document.getElementById('ddLang');
+  if(ddLang) ddLang.textContent='🌐 Język ('+((window.currentLang||'pl').toUpperCase())+')';
+  // Legacy userInfo hidden via CSS
+}
+
+function toggleAvatarDropdown(){
+  const dd=document.getElementById('avatarDropdown');
+  if(!dd)return;
+  dd.classList.toggle('open');
+  if(dd.classList.contains('open')){
+    const close=e=>{if(!dd.contains(e.target)&&e.target.id!=='userAvatar'){dd.classList.remove('open');document.removeEventListener('click',close)}};
+    setTimeout(()=>document.addEventListener('click',close),10);
   }
-  h+='<button class="user-logout-btn" onclick="logout()">'+t('user.logout')+'</button>';
-  el.innerHTML=h;
+}
+
+// ─── Scroll-hide input bar ───
+function initScrollHide(){
+  const messages=document.getElementById('messages');
+  const inputArea=document.querySelector('#view-chat .input-area');
+  if(!messages||!inputArea)return;
+  let lastY=0,ticking=false;
+  messages.addEventListener('scroll',()=>{
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(()=>{
+      const y=messages.scrollTop;
+      const atBottom=messages.scrollHeight-y-messages.clientHeight<80;
+      if(atBottom||y<lastY){inputArea.classList.remove('hidden')}
+      else if(y>lastY+10){inputArea.classList.add('hidden')}
+      lastY=y;ticking=false;
+    });
+  });
 }
 
 async function loadSubStatus(){

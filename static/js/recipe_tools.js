@@ -21,20 +21,26 @@ function scaleRecipe(btn, delta) {
   r.servings = newServings;
 
   // Update only the parts that changed — no full re-render
-  const scaleVal = card.querySelector('.scale-val');
+  const scaleVal = card.querySelector('.scale-val,.stepper-val');
   if (scaleVal) scaleVal.textContent = newServings;
 
   // Update ingredients section body
   const ingSection = [...card.querySelectorAll('.section-body')].find(el =>
     el.previousElementSibling?.textContent?.includes('Składniki')
   );
-  if (ingSection) ingSection.innerHTML = bIng(r.ingredients);
+  if (ingSection){
+    const inner=ingSection.querySelector('.section-body-inner')||ingSection;
+    inner.innerHTML=(typeof bIng2==='function'?bIng2:bIng)(r.ingredients);
+  }
 
   // Update shopping list section body
   const shopSection = [...card.querySelectorAll('.section-body')].find(el =>
     el.previousElementSibling?.textContent?.includes('Zakupy')
   );
-  if (shopSection) shopSection.innerHTML = bShopExport(rid) + bShop(r.shopping_list);
+  if (shopSection){
+    const inner=shopSection.querySelector('.section-body-inner')||shopSection;
+    inner.innerHTML=bShopExport(rid)+bShop(r.shopping_list);
+  }
 
   // Update servings meta pill
   const pills = card.querySelectorAll('.meta-pill');

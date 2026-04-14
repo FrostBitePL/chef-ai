@@ -1623,6 +1623,8 @@ function setLang(lang, saveToProfile = true) {
   applyI18n();
   const btn = document.getElementById('langToggle');
   if (btn) btn.textContent = lang.toUpperCase();
+  const ddLang=document.getElementById('ddLang');
+  if(ddLang) ddLang.textContent='🌐 Język ('+lang.toUpperCase()+')';
 
   // Save to Supabase profile if logged in and user explicitly changed language
   if(saveToProfile && typeof authToken!=='undefined' && authToken && typeof API!=='undefined'){

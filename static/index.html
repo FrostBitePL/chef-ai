@@ -56,10 +56,26 @@ if('serviceWorker' in navigator){
 
 <!-- Main App -->
 <div class="app" id="appMain" style="display:none">
-  <div class="header">
-    <div class="header-title">🍳 <span>Chef</span> AI</div>
-    <button class="lang-toggle" id="langToggle" onclick="cycleLang()">PL</button>
-    <div class="user-info" id="userInfo"></div>
+  <div class="header" style="position:relative">
+    <div class="header-title">
+      <div class="header-logo">🍳</div>
+      <span class="chef">Chef</span><span class="ai">AI</span>
+    </div>
+    <div class="header-right">
+      <span class="pro-badge" id="proBadge" style="display:none">PRO</span>
+      <div class="user-avatar" id="userAvatar" onclick="toggleAvatarDropdown()"></div>
+    </div>
+    <div class="avatar-dropdown" id="avatarDropdown">
+      <div class="avatar-dropdown-header">
+        <div class="avatar-dropdown-name" id="ddName"></div>
+        <div class="avatar-dropdown-email" id="ddEmail"></div>
+      </div>
+      <button class="avatar-dropdown-item" onclick="showView('profile');toggleAvatarDropdown()">👤 Profil</button>
+      <button class="avatar-dropdown-item" onclick="cycleLang();toggleAvatarDropdown()" id="ddLang">🌐 Język (PL)</button>
+      <button class="avatar-dropdown-item danger" onclick="logout();toggleAvatarDropdown()">→ Wyloguj</button>
+    </div>
+    <div class="user-info" id="userInfo" style="display:none"></div>
+    <button id="langToggle" style="display:none" onclick="cycleLang()">PL</button>
   </div>
 
   <div class="tab-bar">
@@ -67,7 +83,7 @@ if('serviceWorker' in navigator){
     <button class="tab-btn" onclick="showView('training')" id="tab-training" data-i18n="tab.training">📚 Szkolenie</button>
     <button class="tab-btn" onclick="showView('planner')" id="tab-planner" data-i18n="tab.planner">📅 Plan</button>
     <button class="tab-btn" onclick="showView('history')" id="tab-history" data-i18n="tab.history">🕐 Historia</button>
-    <button class="tab-btn" onclick="showView('favorites')" id="tab-fav">❤️ <span data-i18n="tab.favorites">Ulubione</span><span class="tab-badge" id="fav-badge" style="display:none">0</span></button>
+    <button class="tab-btn" onclick="showView('favorites')" id="tab-fav">♥ <span data-i18n="tab.favorites">Ulubione</span><span class="tab-badge" id="fav-badge" style="display:none">0</span></button>
     <button class="tab-btn" onclick="showView('profile')" id="tab-profile" data-i18n="tab.profile">👤 Profil</button>
   </div>
 
@@ -82,9 +98,11 @@ if('serviceWorker' in navigator){
     <div class="messages" id="messages"></div>
     <div class="input-area">
       <div class="quick-tags" id="quickTags"></div>
-      <div class="input-row">
-        <textarea class="input-field" id="input" placeholder="Napisz czego szukasz, np. szybki obiad z kurczaka..." data-i18n-placeholder="input.placeholder" rows="1"></textarea>
-        <button class="send-btn" id="sendBtn" onclick="send()" disabled>➤</button>
+      <div class="input-inner">
+        <textarea class="input-field" id="input" placeholder="Co dziś gotujemy?" data-i18n-placeholder="input.placeholder" rows="1"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="send()" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
       </div>
       <div class="input-tools">
         <button class="tool-btn filters-toggle-btn" onclick="toggleFiltersPanel()">

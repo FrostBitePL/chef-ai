@@ -11,12 +11,16 @@ async function loadFavorites(){
 async function toggleFav(b){
   const r=getRecipe(b);if(!r)return;
   const existing=favorites.find(f=>f.recipe?.title===r.title);
+  // Detect new heart button vs legacy text button
+  const isNewStyle=b.classList.contains('action-save');
   if(existing){
     await fetch(API+'/api/favorites/'+existing.id,{method:'DELETE',headers:authHeaders()});
-    b.className='action-btn';b.textContent=t('recipe.save');
+    if(isNewStyle){b.classList.remove('saved')}
+    else{b.className='action-btn';b.textContent=t('recipe.save')}
   } else {
     await fetch(API+'/api/favorites',{method:'POST',headers:authHeaders(),body:JSON.stringify({recipe:r})});
-    b.className='action-btn saved';b.textContent=t('recipe.saved');
+    if(isNewStyle){b.classList.add('saved')}
+    else{b.className='action-btn saved';b.textContent=t('recipe.saved')}
   }
   await loadFavorites();
 }

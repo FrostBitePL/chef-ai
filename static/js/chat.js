@@ -228,55 +228,81 @@ async function autoSaveSession(){
 function renderRecipeCard(r){
   const rid=storeRecipe(r);
   const msgs=document.getElementById('messages'),div=document.createElement('div');div.className='msg';
-  const fav=favorites.some(f=>f.title===r.title),stars='★'.repeat(r.difficulty||3)+'☆'.repeat(5-(r.difficulty||3));
-  let h='<div class="recipe-card" data-rid="'+rid+'">';
-  h+='<div class="recipe-header"><h2>'+esc(r.title)+'</h2>';
-  if(r.subtitle) h+='<div class="subtitle">'+esc(r.subtitle)+'</div>';
-  h+='<div class="recipe-meta">';
-  if(r.times) h+='<div class="meta-pill">⏱'+( r.times.total_min||'?')+'m</div>';
-  h+='<div class="meta-pill">'+stars+'</div><div class="meta-pill">🍽'+(r.servings||2)+'</div>';
-  if(r.nutrition?.kcal) h+='<div class="meta-pill meta-kcal">🔥'+r.nutrition.kcal+' kcal</div>';
-  h+='</div>';
+  const fav=favorites.some(f=>f.title===r.title);
+  const stars='★'.repeat(r.difficulty||3)+'☆'.repeat(5-(r.difficulty||3));
+  const svgHeart=`<svg viewBox="0 0 24 24" width="18" height="18"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+  const svgPlay=`<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+  const svgChev=`<svg class="section-chv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+
+  // Title split
+  const titleParts=esc(r.title).split(' — ');
+  let titleH='<h2>'+titleParts[0]+'</h2>';
+  if(titleParts[1]) titleH+='<span class="recipe-title-sub">'+titleParts[1]+'</span>';
+
+  // Macro bar
+  let macroH='';
   if(r.nutrition?.kcal){
-    h+='<div class="nutrition-bar">';
-    h+='<span class="nutr-item"><b>'+r.nutrition.kcal+'</b> kcal</span>';
-    if(r.nutrition.protein_g) h+='<span class="nutr-item nutr-protein"><b>'+r.nutrition.protein_g+'g</b> '+t('nutr.protein')+'</span>';
-    if(r.nutrition.fat_g) h+='<span class="nutr-item nutr-fat"><b>'+r.nutrition.fat_g+'g</b> '+t('nutr.fat')+'</span>';
-    if(r.nutrition.carbs_g) h+='<span class="nutr-item nutr-carbs"><b>'+r.nutrition.carbs_g+'g</b> '+t('nutr.carbs')+'</span>';
-    h+='<span class="nutr-note">'+t('nutr.per_serving')+'</span></div>';
+    macroH=`<div class="nutrition-bar">
+      <div class="nutr-col"><div class="nutr-val gold">${r.nutrition.kcal}</div><div class="nutr-label">kcal</div></div>
+      ${r.nutrition.protein_g?`<div class="nutr-col"><div class="nutr-val">${r.nutrition.protein_g}g</div><div class="nutr-label">${t('nutr.protein')}</div></div>`:''}
+      ${r.nutrition.fat_g?`<div class="nutr-col"><div class="nutr-val">${r.nutrition.fat_g}g</div><div class="nutr-label">${t('nutr.fat')}</div></div>`:''}
+      ${r.nutrition.carbs_g?`<div class="nutr-col"><div class="nutr-val">${r.nutrition.carbs_g}g</div><div class="nutr-label">${t('nutr.carbs')}</div></div>`:''}
+    </div>`;
   }
+
+  let h=`<div class="recipe-card" data-rid="${rid}">`;
+  // Hero
+  h+=`<div class="recipe-header">
+    ${titleH}
+    ${r.subtitle?`<div class="subtitle">${esc(r.subtitle)}</div>`:''}
+    <div class="recipe-meta">
+      ${r.times?`<div class="meta-pill">⏱ ${r.times.total_min||'?'}m</div>`:''}
+      <div class="meta-pill">${stars}</div>
+      <div class="meta-pill">🍽 ${r.servings||2}</div>
+    </div>
+    ${macroH}
+  </div>`;
+
+  // Primary actions
+  h+=`<div class="recipe-actions">
+    <button class="action-save${fav?' saved':''}" onclick="toggleFav(this)" title="${fav?t('recipe.saved'):t('recipe.save')}">${svgHeart}</button>
+    <button class="action-cook" onclick="openLive(this)">${svgPlay} ${t('recipe.cook')}</button>
+    <button class="action-more" onclick="this.nextElementSibling.classList.toggle('open')" title="Więcej">···</button>
+  </div>
+  <div class="action-extras">
+    <button class="action-btn" onclick="openStepMode(this)">👨‍🍳 ${t('recipe.steps')}</button>
+    <button class="action-btn" onclick="copyRecipe(this)">📋 ${t('recipe.copy')}</button>
+    <button class="action-btn" onclick="shareRecipe(this)">🔗 ${t('recipe.share')}</button>
+    <button class="action-btn" onclick="showCost(this)">💰 ${t('recipe.cost')}</button>
+    <button class="action-btn" onclick="rateRecipe(this)">⭐ ${t('recipe.rate')}</button>
+    <button class="action-btn" onclick="showPairing(this)">🍷 ${t('recipe.pairing')}</button>
+    <button class="action-btn" onclick="openNotes(this)">📝 ${t('recipe.notes')}</button>
+  </div>`;
+
+  // Stepper
+  h+=`<div class="scaling-row">
+    <span class="scaling-label">${t('recipe.servings')}</span>
+    <div class="stepper">
+      <button class="stepper-btn" onclick="scaleRecipe(this,-1)">−</button>
+      <div class="stepper-val">${r.servings||2}</div>
+      <button class="stepper-btn" onclick="scaleRecipe(this,+1)">+</button>
+    </div>
+  </div>`;
+
+  // Accordion sections
+  h+='<div class="recipe-sections-card">';
+  if(r.ingredients?.length) h+=bSec2(t('section.ingredients'),bIng2(r.ingredients),r.ingredients.length,true);
+  if(r.shopping_list?.length) h+=bSec2(t('section.shopping'),bShopExport(rid)+bShop(r.shopping_list),r.shopping_list.length,false);
+  if(r.steps?.length) h+=bSec2(t('section.method'),bSteps2(r.steps,r.title),r.steps.length,true);
+  if(r.substitutes?.length) h+=bSec2(t('section.substitutes'),bSubs(r.substitutes),r.substitutes.length,false);
+  if(r.mise_en_place?.length) h+=bSec2(t('section.mise'),'<ul style="padding-left:14px;font-size:13px;line-height:1.7;color:var(--text-soft)">'+r.mise_en_place.map(m=>'<li style="padding:4px 0">'+esc(m)+'</li>').join('')+'</ul>',r.mise_en_place.length,false);
+  if(r.warnings?.length) h+=bSec2('⚠️ '+t('section.warnings')||'⚠️ Problemy',bWarnings(r.warnings),r.warnings.length,false);
+  if(r.upgrade) h+=bSec2('💡 Pro tip',`<div class="pro-tip-card">💡 ${esc(r.upgrade)}</div>`,null,false);
+  if(r.science) h+=bSec2('🔬 '+t('section.science')||'� Nauka',`<div style="font-size:13px;line-height:1.6;color:var(--text-soft)">${esc(r.science)}</div>`,null,false);
   h+='</div>';
-  h+='<div class="recipe-actions">';
-  h+='<button class="action-btn '+(fav?'saved':'')+' " onclick="toggleFav(this)">'+(fav?t('recipe.saved'):t('recipe.save'))+'</button>';
-  h+='<button class="action-btn" onclick="openStepMode(this)">'+t('recipe.steps')+'</button>';
-  h+='<button class="action-btn live-cook-btn" onclick="openLive(this)">'+t('recipe.cook')+'</button>';
-  h+='<button class="action-btn" onclick="copyRecipe(this)">'+t('recipe.copy')+'</button>';
-  h+='<button class="action-btn" onclick="shareRecipe(this)">'+t('recipe.share')+'</button>';
-  h+='<button class="action-btn" onclick="showCost(this)">'+t('recipe.cost')+'</button>';
-  h+='<button class="action-btn" onclick="rateRecipe(this)">'+t('recipe.rate')+'</button>';
-  h+='<button class="action-btn" onclick="showPairing(this)">'+t('recipe.pairing')+'</button>';
-  h+='<button class="action-btn" onclick="showTimeline(this)">'+t('recipe.timeline')+'</button>';
-  h+='<button class="action-btn" onclick="openNotes(this)">'+t('recipe.notes')+'</button>';
+
+  h+='<div class="content-spacer"></div>';
   h+='</div>';
-  // Scaling row
-  h+='<div class="scaling-row">';
-  h+='<span class="scaling-label">'+t('recipe.servings')+'</span>';
-  h+='<button class="scale-btn" onclick="scaleRecipe(this,-1)">−</button>';
-  h+='<span class="scale-val">'+(r.servings||2)+'</span>';
-  h+='<button class="scale-btn" onclick="scaleRecipe(this,+1)">+</button>';
-  h+='<button class="variant-btn" onclick="makeVariant(this,\'healthier\')">'+t('recipe.variant_healthier')+'</button>';
-  h+='<button class="variant-btn" onclick="makeVariant(this,\'richer\')">'+t('recipe.variant_richer')+'</button>';
-  h+='</div>';
-  h+='<div>';
-  if(r.science) h+=bSec(t('section.science'),'<div style="font-size:0.82rem;line-height:1.6;color:var(--text-dim)">'+esc(r.science)+'</div>');
-  if(r.shopping_list?.length) h+=bSec(t('section.shopping'),bShopExport(rid)+bShop(r.shopping_list),1);
-  if(r.ingredients?.length) h+=bSec(t('section.ingredients'),bIng(r.ingredients));
-  if(r.substitutes?.length) h+=bSec(t('section.substitutes'),bSubs(r.substitutes));
-  if(r.mise_en_place?.length) h+=bSec(t('section.mise'),'<ul style="padding-left:14px;font-size:0.82rem;line-height:1.7;color:var(--text-dim)">'+r.mise_en_place.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul>');
-  if(r.steps?.length) h+=bSec(t('section.method'),bSteps(r.steps,r.title),1);
-  if(r.warnings?.length) h+=bSec('⚠️',r.warnings.map(w=>'<div style="padding:4px 0;font-size:0.82rem"><span style="color:var(--danger);font-weight:600">'+esc(w.problem)+'</span> → '+esc(w.solution)+'</div>').join(''));
-  if(r.upgrade) h+=bSec('💡','<div style="font-size:0.82rem;color:var(--text-dim)">'+esc(r.upgrade)+'</div>');
-  h+='</div></div>';
   div.innerHTML=h;msgs.appendChild(div);scrollBottom();
 }
 
@@ -307,12 +333,96 @@ function bShopExport(rid){
   </div>`;
 }
 
-// Section builders
-function bSec(title,c,o){return'<div class="recipe-section"><button class="section-toggle '+(o?'open':'')+'" onclick="this.classList.toggle(\'open\');this.nextElementSibling.classList.toggle(\'open\')">'+title+'<span class="chv">▼</span></button><div class="section-body '+(o?'open':'')+'">'+c+'</div></div>'}
+// ─── Section builders ───
+const svgChevFn=()=>`<svg class="section-chv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+
+// Legacy bSec (kept for training/planner/favorites reuse)
+function bSec(title,c,o){return'<div class="recipe-section"><button class="section-toggle '+(o?'open':'')+'" onclick="this.classList.toggle(\'open\');this.nextElementSibling.classList.toggle(\'open\')">'+title+svgChevFn()+'</button><div class="section-body '+(o?'open':'')+'"><div class="section-body-inner">'+c+'</div></div></div>'}
+
+// New accordion for recipe cards
+function bSec2(title,c,count,defaultOpen){
+  const o=defaultOpen?'open':'';
+  const badge=count?`<span class="section-count">${count}</span>`:'';
+  return `<div class="recipe-section">
+    <button class="section-toggle ${o}" onclick="toggleSection(this)">
+      <div class="section-toggle-left">${title}${badge}</div>
+      ${svgChevFn()}
+    </button>
+    <div class="section-body ${o}"><div class="section-body-inner">${c}</div></div>
+  </div>`;
+}
+
+function toggleSection(btn){
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+}
+
+// Shopping list
 function bShop(it){return it.map(i=>'<div class="shop-item" onclick="this.classList.toggle(\'checked\')"><div class="shop-check">✓</div><div class="shop-amount">'+esc(i.amount)+'</div><div class="shop-name">'+esc(i.item)+'</div>'+(i.section?'<div class="shop-section-tag">'+esc(i.section)+'</div>':'')+'</div>').join('')}
-function bIng(it){return it.map(i=>'<div style="display:flex;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.82rem"><span style="font-weight:600;min-width:50px;color:var(--gold)">'+esc(i.amount)+'</span><span>'+esc(i.item)+(i.note?' <span style="color:var(--text-faint)">· '+esc(i.note)+'</span>':'')+'</span></div>').join('')}
-function bSubs(it){return it.map(s=>{let h='<div style="padding:6px 0 6px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.82rem">';h+='<div style="font-weight:600;color:var(--gold)">'+esc(s.original)+' → '+esc(s.substitute)+'</div>';if(s.flavor_impact)h+='<div><span style="font-weight:600;color:var(--accent">'+t('sub.flavor')+'</span> '+esc(s.flavor_impact)+'</div>';if(s.texture_impact)h+='<div><span style="font-weight:600;color:var(--accent">'+t('sub.texture')+'</span> '+esc(s.texture_impact)+'</div>';if(s.overall_effect)h+='<div><span style="font-weight:600;color:var(--accent">'+t('sub.overall')+'</span> '+esc(s.overall_effect)+'</div>';if(s.recommendation)h+='<div><span style="font-weight:600;color:var(--accent">'+t('sub.when')+'</span> '+esc(s.recommendation)+'</div>';return h+'</div>'}).join('')}
-function bSteps(st,recipeTitle){return st.map(s=>{let h='<div class="step"><span class="step-num">'+s.number+'</span><span class="step-title">'+esc(s.title||'')+'</span><div class="step-text">'+esc(s.instruction)+'</div>';if(s.equipment)h+='<div class="step-equip">🔥 '+esc(s.equipment)+'</div>';if(s.why)h+='<div class="step-why">'+esc(s.why)+'</div>';if(s.tip)h+='<div class="step-tip">💡 '+esc(s.tip)+'</div>';const actions=[];if(s.timer_seconds)actions.push('<button class="step-timer-btn" onclick="startTimer('+s.timer_seconds+',\''+esc(s.title||'').replace(/'/g,'')+'\',this)">⏱'+fmtT(s.timer_seconds)+'</button>');actions.push('<button class="step-fix-btn" onclick="fixStep('+s.number+',\''+esc(s.title||'').replace(/'/g,'')+'\',\''+esc(recipeTitle||'').replace(/'/g,'')+'\')">🆘</button>');if(actions.length)h+='<div class="step-actions">'+actions.join('')+'</div>';return h+'</div>'}).join('')}
+
+// Legacy ingredient rows (used in buildRecipeHTML)
+function bIng(it){return it.map(i=>'<div class="ing-row"><span class="ing-amount">'+esc(i.amount)+'</span><span class="ing-name">'+esc(i.item)+(i.note?'<span class="ing-note"> · '+esc(i.note)+'</span>':'')+'</span></div>').join('')}
+
+// New ingredient rows with emoji guess
+function bIng2(it){
+  const emojiMap={kurczak:'🍗',wołowina:'🥩',wieprzowina:'🥩',ryba:'🐟',łosoś:'🐟',jajko:'🥚',jaja:'🥚',cebula:'🧅',czosnek:'🧄',pomidor:'🍅',papryka:'🫑',marchew:'🥕',ziemniak:'🥔',makaron:'🍝',ryż:'🍚',masło:'🧈',oliwa:'🫒',olej:'🫒',śmietana:'🥛',mleko:'🥛',mąka:'🌾',cukier:'🍬',sól:'🧂',pieprz:'🌶️',cytryna:'🍋',por:'🥬',szpinak:'🥬',brokuł:'🥦'};
+  return it.map(i=>{
+    const key=Object.keys(emojiMap).find(k=>i.item?.toLowerCase().includes(k));
+    const emoji=key?emojiMap[key]:'🔸';
+    return `<div class="ing-row"><span class="ing-emoji">${emoji}</span><span class="ing-amount">${esc(i.amount)}</span><span class="ing-name">${esc(i.item)}${i.note?`<span class="ing-note"> · ${esc(i.note)}</span>`:''}</span></div>`;
+  }).join('');
+}
+
+// Substitutes
+function bSubs(it){return it.map(s=>{let h='<div style="padding:6px 0 6px;border-bottom:1px solid var(--border);font-size:13px">';h+='<div style="font-weight:600;color:var(--gold)">'+esc(s.original)+' → '+esc(s.substitute)+'</div>';if(s.flavor_impact)h+='<div style="font-size:12px;color:var(--text-soft);margin-top:2px"><span style="font-weight:600">'+t('sub.flavor')+'</span> '+esc(s.flavor_impact)+'</div>';if(s.overall_effect)h+='<div style="font-size:12px;color:var(--text-soft)"><span style="font-weight:600">'+t('sub.overall')+'</span> '+esc(s.overall_effect)+'</div>';return h+'</div>'}).join('')}
+
+// Warnings
+function bWarnings(it){return it.map(w=>`<div class="warning-card"><div class="warning-problem">${esc(w.problem)}</div><div class="warning-solution">→ ${esc(w.solution)}</div></div>`).join('')}
+
+// New steps with progress dots, expand/collapse, science toggle
+function bSteps2(st,recipeTitle){
+  const dots=st.map((_,i)=>`<div class="prog-dot" data-idx="${i}"></div>`).join('');
+  const stepsH=st.map((s,i)=>{
+    const hasScience=s.why||s.tip;
+    return `<div class="step${i===0?' active':''}" onclick="activateStep(this,${i})">
+      <div class="step-header">
+        <div class="step-num">${s.number}</div>
+        <div class="step-title">${esc(s.title||'')}</div>
+      </div>
+      <div class="step-body">
+        <div class="step-text">${esc(s.instruction)}</div>
+        ${s.equipment?`<div class="step-equip">🔥 ${esc(s.equipment)}</div>`:''}
+        ${hasScience?`<button class="step-science-toggle" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('open');this.querySelector('.stgl').textContent=this.nextElementSibling.classList.contains('open')?'▲':'▼'">Nauka + wskazówka <span class="stgl">▼</span></button>
+        <div class="step-science-body">
+          ${s.why?`<div class="step-why">${esc(s.why)}</div>`:''}
+          ${s.tip?`<div class="step-tip">💡 ${esc(s.tip)}</div>`:''}
+        </div>`:''}
+        <div class="step-actions">
+          ${s.timer_seconds?`<button class="step-timer-btn" onclick="event.stopPropagation();startTimer(${s.timer_seconds},'${esc(s.title||'').replace(/'/g,'')}',this)">⏱ ${fmtT(s.timer_seconds)}</button>`:''}
+          <button class="step-fix-btn" onclick="event.stopPropagation();fixStep(${s.number},'${esc(s.title||'').replace(/'/g,'')}','${esc(recipeTitle||'').replace(/'/g,'')}')">🆘 SOS</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="steps-progress">${dots}</div>${stepsH}`;
+}
+
+function activateStep(el,idx){
+  const container=el.closest('.section-body-inner');
+  container.querySelectorAll('.step').forEach((s,i)=>{
+    s.classList.toggle('active',i===idx);
+  });
+  // Update progress dots
+  const dots=el.closest('.section-body-inner').querySelectorAll('.prog-dot');
+  dots.forEach((d,i)=>{
+    d.classList.remove('active','done');
+    if(i<idx) d.classList.add('done');
+    else if(i===idx) d.classList.add('active');
+  });
+}
+
+// Legacy bSteps (used in step mode / buildRecipeHTML)
+function bSteps(st,recipeTitle){return st.map(s=>{let h='<div class="step"><div class="step-header"><span class="step-num">'+s.number+'</span><span class="step-title">'+esc(s.title||'')+'</span></div><div class="step-body" style="display:block"><div class="step-text">'+esc(s.instruction)+'</div>';if(s.equipment)h+='<div class="step-equip">🔥 '+esc(s.equipment)+'</div>';if(s.why)h+='<div class="step-why">'+esc(s.why)+'</div>';if(s.tip)h+='<div class="step-tip">💡 '+esc(s.tip)+'</div>';const actions=[];if(s.timer_seconds)actions.push('<button class="step-timer-btn" onclick="startTimer('+s.timer_seconds+',\''+esc(s.title||'').replace(/'/g,'')+'\',this)">⏱'+fmtT(s.timer_seconds)+'</button>');actions.push('<button class="step-fix-btn" onclick="fixStep('+s.number+',\''+esc(s.title||'').replace(/'/g,'')+'\',\''+esc(recipeTitle||'').replace(/'/g,'')+'\')">🆘</button>');if(actions.length)h+='<div class="step-actions">'+actions.join('')+'</div>';return h+'</div></div>'}).join('')}
 
 // ─── Rate recipe ───
 function rateRecipe(btn){
