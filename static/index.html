@@ -249,34 +249,58 @@ if('serviceWorker' in navigator){
 
 <!-- Live Cooking Mode -->
 <div class="live-mode" id="liveMode">
-  <div class="live-header">
-    <div class="live-title" id="liveTitle"></div>
-    <div class="live-step-count" id="liveStepCount"></div>
-    <button class="live-close" onclick="closeLive()">✕</button>
+
+  <!-- Top bar -->
+  <div class="lv-top">
+    <div class="lv-top-meta">
+      <div class="lv-step-label" id="liveStepCount">Krok 1 z 1</div>
+      <div class="lv-recipe-name" id="liveTitle"></div>
+    </div>
+    <button class="lv-close-btn" onclick="closeLive()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
   </div>
-  <div class="live-progress"><div class="live-progress-fill" id="liveProgressFill"></div></div>
-  <div class="live-ingredients-toggle" onclick="toggleLiveIngredients()" data-i18n="live.ingredients">⚖️ Składniki ▼</div>
-  <div id="liveIngredientsPanel" style="display:none"></div>
-  <div class="live-body" id="liveBody"></div>
-  <div class="live-timer-bar" id="liveTimerBar" style="display:none">
-    <div class="live-timer-icon">⏱</div>
-    <div class="live-timer-time" id="liveTimerTime">0:00</div>
-    <div class="live-timer-label" id="liveTimerLabel"></div>
-    <button class="live-timer-stop" onclick="stopLiveTimer()">Stop</button>
+
+  <!-- Progress segments -->
+  <div class="lv-segments" id="liveSegments"></div>
+
+  <!-- Scrollable content -->
+  <div class="lv-body" id="liveBody">
+    <!-- Injected by renderLiveStep() -->
   </div>
+
+  <!-- Help panel -->
   <div class="live-help-panel" id="liveHelpPanel" style="display:none">
-    <div class="live-help-header"><span data-i18n="live.help_title">🆘 Pomoc</span><button class="live-help-close" onclick="closeLiveHelp()">✕</button></div>
+    <div class="live-help-header">
+      <span>SOS — Pomoc z krokiem</span>
+      <button class="live-help-close" onclick="closeLiveHelp()">✕</button>
+    </div>
     <div class="live-help-answer" id="liveHelpAnswer"></div>
     <div class="live-help-input">
-      <textarea id="liveHelpField" placeholder="Co poszło nie tak?" data-i18n-placeholder="live.help_placeholder" rows="1"></textarea>
-      <button class="send-btn" onclick="askLiveHelp()">➤</button>
+      <textarea id="liveHelpField" placeholder="Co poszło nie tak?" rows="1"></textarea>
+      <button class="send-btn" onclick="askLiveHelp()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
     </div>
   </div>
-  <div class="live-nav">
-    <button class="live-nav-btn" id="livePrev" onclick="liveNav(-1)" data-i18n="live.back">← Wstecz</button>
-    <button class="live-nav-btn live-help-btn" onclick="openLiveHelp()">🆘</button>
-    <button class="live-nav-btn live-primary" id="liveNext" onclick="liveNav(1)" data-i18n="live.next">Dalej →</button>
+
+  <!-- Bottom nav -->
+  <div class="lv-nav">
+    <div class="lv-sos-row">
+      <button class="lv-sos-btn" onclick="openLiveHelp()">SOS — pomoc z krokiem</button>
+    </div>
+    <div class="lv-nav-row">
+      <button class="lv-prev-btn" id="livePrev" onclick="liveNav(-1)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Wstecz
+      </button>
+      <button class="lv-next-btn" id="liveNext" onclick="liveNav(1)">
+        Dalej
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
   </div>
+
 </div>
 
 <div class="timer-overlay" id="timerOverlay"></div>
