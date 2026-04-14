@@ -475,17 +475,34 @@ body{
 }
 .section-body.open{max-height:2000px}
 .section-body-inner{padding:0 20px 16px}
-.shop-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer}
+.shop-item{
+  display:flex;align-items:center;gap:12px;padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;
+  transition:opacity 0.2s
+}
 .shop-item:last-child{border:none}
 .shop-check{
-  width:20px;height:20px;border-radius:6px;border:2px solid rgba(255,255,255,0.12);
+  width:20px;height:20px;border-radius:5px;border:1.5px solid rgba(226,180,79,0.35);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  font-size:0.6rem;color:transparent;transition:all var(--transition-fast)
+  font-size:11px;color:transparent;
+  transition:all var(--transition-fast);background:transparent
 }
-.shop-item.checked .shop-check{background:var(--success);border-color:var(--success);color:#fff}
-.shop-item.checked .shop-name{text-decoration:line-through;color:var(--text-faint)}
-.shop-amount{font-weight:600;min-width:55px;font-size:0.82rem;color:var(--gold)}.shop-name{font-size:0.82rem}
-.shop-section-tag{font-size:0.6rem;padding:3px 8px;background:rgba(232,175,67,0.06);border:1px solid rgba(232,175,67,0.1);border-radius:20px;color:var(--gold-dim);margin-left:auto;text-transform:uppercase;letter-spacing:0.04em;font-weight:600}
+.shop-item.checked .shop-check{
+  background:var(--gold);border-color:var(--gold);color:var(--bg);
+  font-size:12px;font-weight:700
+}
+.shop-item.checked .shop-name{
+  text-decoration:line-through;color:var(--text-muted);opacity:0.6
+}
+.shop-item.checked .shop-amount{opacity:0.4}
+.shop-amount{font-weight:600;min-width:52px;font-size:13px;color:var(--gold);flex-shrink:0}
+.shop-name{font-size:13px;color:var(--text-soft);flex:1}
+.shop-section-tag{
+  font-size:10px;padding:2px 7px;background:rgba(226,180,79,0.06);
+  border:1px solid rgba(226,180,79,0.12);border-radius:20px;
+  color:var(--text-muted);margin-left:auto;text-transform:uppercase;
+  letter-spacing:0.05em;font-weight:600;flex-shrink:0
+}
 /* Progress dots */
 .steps-progress{
   display:flex;gap:4px;padding:14px 20px 6px;align-items:center

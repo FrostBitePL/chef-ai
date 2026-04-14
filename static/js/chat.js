@@ -296,9 +296,9 @@ function renderRecipeCard(r){
   if(r.steps?.length) h+=bSec2(t('section.method'),bSteps2(r.steps,r.title),r.steps.length,true);
   if(r.substitutes?.length) h+=bSec2(t('section.substitutes'),bSubs(r.substitutes),r.substitutes.length,false);
   if(r.mise_en_place?.length) h+=bSec2(t('section.mise'),'<ul style="padding-left:14px;font-size:13px;line-height:1.7;color:var(--text-soft)">'+r.mise_en_place.map(m=>'<li style="padding:4px 0">'+esc(m)+'</li>').join('')+'</ul>',r.mise_en_place.length,false);
-  if(r.warnings?.length) h+=bSec2('⚠️ '+t('section.warnings')||'⚠️ Problemy',bWarnings(r.warnings),r.warnings.length,false);
-  if(r.upgrade) h+=bSec2('💡 Pro tip',`<div class="pro-tip-card">💡 ${esc(r.upgrade)}</div>`,null,false);
-  if(r.science) h+=bSec2('🔬 '+t('section.science')||'� Nauka',`<div style="font-size:13px;line-height:1.6;color:var(--text-soft)">${esc(r.science)}</div>`,null,false);
+  if(r.warnings?.length) h+=bSec2(t('section.warnings'),bWarnings(r.warnings),r.warnings.length,false);
+  if(r.upgrade) h+=bSec2(t('section.tips'),`<div class="pro-tip-card">💡 ${esc(r.upgrade)}</div>`,null,false);
+  if(r.science) h+=bSec2(t('section.science'),`<div style="font-size:13px;line-height:1.6;color:var(--text-soft)">${esc(r.science)}</div>`,null,false);
   h+='</div>';
 
   h+='<div class="content-spacer"></div>';
