@@ -2165,8 +2165,10 @@ Jeśli użytkownik daje otwarte zapytanie:
 
 TASK_PROMPT_TEMPLATE = """ZAPYTANIE: {user_input}
 
-PROFIL / OGRANICZENIA:
+PROFIL / OGRANICZENIA (PRIORYTET ABSOLUTNY — nadpisują bazę wiedzy):
 {constraints}
+
+⚠️ FILTR SPRZĘTU: Jeśli w PROFIL/OGRANICZENIA jest lista sprzętu, korzystaj TYLKO z procedur z BAZY WIEDZY które pasują do dostępnego sprzętu. Ignoruj procedury sous-vide/cyrkulatora/Thermomixa/wędzarni jeśli tych urządzeń NIE MA na liście sprzętu użytkownika.
 
 BAZA WIEDZY:
 ## CORE (fizyka, temperatury, procesy):
@@ -2247,7 +2249,7 @@ Gdy w sekcji BAKING bazy wiedzy znajdziesz techniki takie jak tangzhong, autoliz
 - Odpoczynek: drób 5 min, steki 5-8 min, duże kawałki 10-15 min
 - Sos tłuszczowy MUSI mieć kwas (cytryna/ocet/wino). Proporcja: 1 łyżka kwasu na 50-80g tłuszczu
 - Alkohol kulinarny DOZWOLONY — wyparowuje, zostaje aromat i kwas
-- Szczegółowe procedury (cold-start, sous-vide, buliony, ramen): sekcja PROCEDURES w bazie wiedzy
+- Szczegółowe procedury (cold-start, buliony, ramen): sekcja PROCEDURES w bazie wiedzy — ale tylko te które pasują do sprzętu z profilu
 
 ## GARNITURE I WARZYWA:
 - Każdy element ma określoną obróbkę — nic surowego bez uzasadnienia
@@ -2373,6 +2375,41 @@ def get_lang_instruction(lang):
     if not lang or lang == "pl":
         return ""
     return LANG_INSTRUCTIONS.get(lang, f"\n\n## LANGUAGE OVERRIDE\nThe user's interface language is '{lang}'. You MUST respond entirely in that language — all text fields in the JSON.")
+
+SPECIALIST_EQUIPMENT = {
+    "sous-vide": ["sous-vide", "cyrkulator", "sous vide", "vacuum sealer", "woreczek próżniowy", "cyrkulatorem"],
+    "thermomix": ["thermomix", "thermomixem"],
+    "smokehouse": ["wędzarnia", "wędzeniu", "wędzenia", "cold smoke", "hot smoke"],
+    "pasta_machine": ["maszynka do makaronu", "atlas 150", "atlas150"],
+    "dehydrator": ["dehydrator", "suszarka do żywności"],
+}
+
+def filter_procedures_for_equipment(procedures_ctx, prof_data):
+    """Remove sous-vide and specialist equipment blocks from procedures context
+    when the user doesn't have that equipment in their profile."""
+    if not procedures_ctx:
+        return procedures_ctx
+    eq = prof_data.get("equipment", [])
+    if isinstance(eq, str):
+        try: eq = json.loads(eq)
+        except: eq = []
+    eq_lower = " ".join(eq).lower()
+
+    lines = procedures_ctx.split("\n")
+    filtered = []
+    for line in lines:
+        line_lower = line.lower()
+        skip = False
+        for device, keywords in SPECIALIST_EQUIPMENT.items():
+            if any(kw in line_lower for kw in keywords):
+                # Check if user has this device
+                has_device = any(kw in eq_lower for kw in keywords)
+                if not has_device:
+                    skip = True
+                    break
+        if not skip:
+            filtered.append(line)
+    return "\n".join(filtered)
 
 def build_pipeline_prompt(user_input, constraints, composition_ctx, flavor_ctx, core_ctx, techniques_ctx, baking_ctx=None, procedures_ctx=None):
     """Build the full task prompt with all knowledge layers injected."""
@@ -2956,7 +2993,8 @@ class CulinaryAssistant:
         core_ctx = trim_context("\n---\n".join(layers.get("core", [])), 2000)
         techniques_ctx = trim_context("\n---\n".join(layers.get("techniques", [])), 1500)
         baking_ctx = trim_context("\n---\n".join(layers.get("baking", [])), 1500)
-        procedures_ctx = trim_context("\n---\n".join(layers.get("procedures", [])), 2000)
+        procedures_ctx = filter_procedures_for_equipment(
+            trim_context("\n---\n".join(layers.get("procedures", [])), 2000), prof_data)
 
         constraints_parts = []
         if prof_ctx:
