@@ -3237,10 +3237,25 @@ class CulinaryAssistant:
             f'}}'
         )
         system_with_lang = prompt + get_lang_instruction(lang)
-        parsed, usage = self._call_text(system_with_lang, [{"role": "user", "content": user_msg}])
+        # Meal plans need much more tokens than single recipes (7 days × meals × ingredients + steps)
+        plan_max_tokens = min(16384, 4096 * max(days, 3))
+        resp = self.client.chat.completions.create(
+            model=AI_MODEL, max_tokens=plan_max_tokens, temperature=0.7,
+            messages=[{"role": "system", "content": system_with_lang}, {"role": "user", "content": user_msg}],
+            response_format={"type": "json_object"}
+        )
+        raw = resp.choices[0].message.content or ""
+        logger.info(f"[meal_plan] raw len={len(raw)}, first 300: {repr(raw[:300])}")
+        try:
+            parsed = json.loads(raw)
+        except Exception:
+            import re as _re2
+            m = _re2.search(r'\{.*\}', raw, _re2.DOTALL)
+            parsed = json.loads(m.group()) if m else {"type": "text", "content": raw}
         parsed.pop("sources", None)
         parsed = enforce_bans(parsed, bans)
-        return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
+        logger.info(f"[meal_plan] parsed type={parsed.get('type')}, has_days={bool(parsed.get('days'))}, n_days={len(parsed.get('days', []))}")
+        return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": resp.usage.prompt_tokens if resp.usage else 0, "completion_tokens": resp.usage.completion_tokens if resp.usage else 0}}
 
     def proposals(self, question, uid=None, filters=None, pantry=None, kcal_target=0):
         """Fast proposal step: detect specific vs vague query, return 5 dish ideas or skip."""

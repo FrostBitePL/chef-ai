@@ -40,8 +40,10 @@ async function generatePlan(){
     params.lang=currentLang;
     const r=await fetch(API+'/api/meal-plan',{method:'POST',headers:authHeaders(),body:JSON.stringify(params)});
     const d=await r.json();
+    console.log('[planner] response:', JSON.stringify(d).slice(0,500));
     if(d.error){res.innerHTML=`<div style="color:var(--danger);padding:20px">${esc(d.error)}</div><button class="action-btn" style="margin:10px" onclick="resetPlanner()">${t('planner.back_form')}</button>`;return}
-    _planData=d.data;
+    _planData=d.data||d;
+    console.log('[planner] _planData keys:', Object.keys(_planData), 'days?', !!_planData.days);
     renderMealPlan(_planData,res);
   }catch(e){
     console.error('Plan error:',e);
