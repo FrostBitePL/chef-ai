@@ -293,10 +293,28 @@ def _matches_ban(text,ban_keywords):
         if kw in text_lower: return True
     return False
 
-# Maps specialist device keywords → what to replace with when not available
+import re as _re
+
+# Sous-vide technique detection — matches instruction text regardless of equipment field label
+_SOUSVIDE_INSTRUCTION_PATTERNS = [
+    r'worek\s+próżniow\w*',
+    r'woreczek\s+próżniow\w*',
+    r'vacuum\s+seal\w*',
+    r'zamknij\s+próżniow\w*',
+    r'próżniowo\s+zapakow\w*',
+    r'zapakow\w+\s+próżniow\w*',
+    r'kąpiel\s+(sous.vide|wodn\w+)',
+    r'sous.vide',
+    r'cyrkulator',
+    r'cyrkulatorem',
+    r'kąpieli\s+wodn\w+',
+]
+_SOUSVIDE_COMPILED = [_re.compile(p, _re.IGNORECASE) for p in _SOUSVIDE_INSTRUCTION_PATTERNS]
+
+# Maps specialist device keywords → equipment replacement when user lacks it
 _EQUIPMENT_REPLACEMENTS = [
-    (["sous-vide", "sous_vide", "cyrkulator", "woreczek próżniowy", "kąpiel"],
-     "patelnia + piekarnik"),
+    (["sous-vide", "sous_vide", "cyrkulator", "woreczek próżniowy", "kąpiel wodn"],
+     "patelnia żeliwna / stalowa"),
     (["thermomix"], "garnek + mikser ręczny"),
     (["wędzarnia", "wędzon"], "piekarnik"),
     (["atlas 150", "maszynka do makaronu"], "wałek do ciasta"),
@@ -306,8 +324,14 @@ _EQUIPMENT_REPLACEMENTS = [
 def _has_equipment(eq_list_lower, keywords):
     return any(kw in eq_list_lower for kw in keywords)
 
+def _step_uses_sousvide_technique(step):
+    """Return True if step instruction describes sous-vide technique regardless of equipment label."""
+    text = (step.get("instruction", "") or "") + " " + (step.get("equipment", "") or "")
+    return any(pat.search(text) for pat in _SOUSVIDE_COMPILED)
+
 def enforce_equipment(data, prof_data):
-    """Post-process recipe JSON: replace specialist equipment in steps when user doesn't have it."""
+    """Post-process recipe JSON: detect and replace sous-vide and specialist equipment.
+    Scans BOTH equipment field AND instruction text for technique patterns."""
     if not isinstance(data, dict) or data.get("type") != "recipe":
         return data
     eq = prof_data.get("equipment", []) if prof_data else []
@@ -316,27 +340,44 @@ def enforce_equipment(data, prof_data):
         except: eq = []
     eq_lower = " ".join(eq).lower()
 
+    # Check if user has sous-vide capability
+    has_sv = _has_equipment(eq_lower, ["sous-vide", "sous_vide", "cyrkulator"])
+
     steps = data.get("steps", [])
     for step in steps:
-        eq_field = step.get("equipment", "") or ""
-        eq_field_lower = eq_field.lower()
-        for keywords, replacement in _EQUIPMENT_REPLACEMENTS:
-            if any(kw in eq_field_lower for kw in keywords):
+        eq_field = (step.get("equipment", "") or "").lower()
+
+        # --- Sous-vide technique detection (equipment field OR instruction text) ---
+        if not has_sv and _step_uses_sousvide_technique(step):
+            # Replace equipment field
+            step["equipment"] = eq[0] if eq else "patelnia"
+            # Rewrite instruction — strip sous-vide language
+            instr = step.get("instruction", "")
+            instr = _re.sub(
+                r'[^.!?]*('
+                r'worek\s+próżniow\w*|woreczek\s+próżniow\w*|vacuum\s+seal\w*|'
+                r'zamknij\s+próżniow\w*|próżniowo\s+zapakow\w*|zapakow\w+\s+próżniow\w*|'
+                r'kąpiel\s+sous.vide|kąpiel\s+wodn\w+|kąpieli\s+wodn\w+|'
+                r'sous.vide|cyrkulator\w*|cyrkulatorem'
+                r')[^.!?]*[.!?]?',
+                '', instr, flags=_re.IGNORECASE
+            )
+            # Also strip "piekarnik na 55°C" low-temp patterns (oven-SV workaround)
+            instr = _re.sub(
+                r'[^.!?]*(piekarnik[^.!?]{0,30}(5[0-9]|6[0-5])°C[^.!?]{0,60}(60|90|120|150|180)\s*minut)[^.!?]*[.!?]?',
+                '', instr, flags=_re.IGNORECASE
+            )
+            step["instruction"] = instr.strip() or "Obsmaż mięso na dobrze rozgrzanej patelni z obu stron."
+            step["why"] = (step.get("why", "") or "").replace("sous-vide", "searing").replace("cyrkulatorem", "patelnią")
+            continue
+
+        # --- Other specialist equipment (equipment field only) ---
+        for keywords, replacement in _EQUIPMENT_REPLACEMENTS[1:]:  # skip sous-vide, handled above
+            if any(kw in eq_field for kw in keywords):
                 if not _has_equipment(eq_lower, keywords):
-                    # Replace with available equipment
                     step["equipment"] = replacement
-                    # Also patch instruction text
-                    instr = step.get("instruction", "")
-                    for kw in keywords:
-                        if kw in instr.lower():
-                            # Remove sous-vide specific instruction details
-                            import re as _re
-                            instr = _re.sub(
-                                r'(ustaw cyrkulator|kąpiel (sous-vide|wodn[aą])|woreczek próżniow\w*|vacuum seal\w*|cyrkulatorem|sous-vide\s+\w+°C)[^.]*\.',
-                                '', instr, flags=_re.IGNORECASE
-                            )
-                    step["instruction"] = instr.strip()
                 break
+
     return data
 
 def enforce_bans(data,banned_ingredients):
@@ -453,7 +494,12 @@ Masz gleboka wiedze kulinarna. Uzywaj jej do wyjasniania nauki za gotowaniem.
 PRZED wygenerowaniem przepisu sprawdź listę SPRZĘT UŻYTKOWNIKA poniżej.
 Jeśli danie wymaga sprzętu NIEOBECNEGO na liście — ZMIEŃ technikę na możliwą bez tego sprzętu.
 PRZYKŁADY:
-- Brak cyrkulatora/sous-vide na liście → ZAKAZ sous-vide. Zamień na searing/pieczenie/duszenie.
+- Brak cyrkulatora/sous-vide na liście → ZAKAZ całej techniki sous-vide. Dotyczy to KAŻDEJ formy:
+  * zakaz cyrkulatora w wodzie
+  * zakaz woreczków próżniowych do gotowania
+  * zakaz próżniowego pakowania mięsa przed obróbką termiczną
+  * zakaz piekarnika 50-65°C przez długi czas jako zamiennika cyrkulatora (to nadal sous-vide!)
+  Jedyna alternatywa: searing na patelni + ewentualnie krótkie dopieczenie w piekarniku 180°C+.
 - Brak Thermomixa → ZAKAZ Thermomixa. Zamień na garnek + mikser.
 - Brak wędzarni → ZAKAZ wędzenia na zimno/gorąco. Zamień na wędzone przyprawy.
 Ta reguła ma WYŻSZY PRIORYTET niż jakiekolwiek inne sugestie techniczne.
