@@ -2468,9 +2468,11 @@ LANG_INSTRUCTIONS = {
 
 def get_lang_instruction(lang):
     """Return language override instruction for non-Polish languages."""
-    if not lang or lang == "pl":
-        return ""
-    return LANG_INSTRUCTIONS.get(lang, f"\n\n## LANGUAGE OVERRIDE\nThe user's interface language is '{lang}'. You MUST respond entirely in that language — all text fields in the JSON.")
+    # TODO: wersja robocza — wymuszamy polski dla wszystkich użytkowników
+    return ""
+    # if not lang or lang == "pl":
+    #     return ""
+    # return LANG_INSTRUCTIONS.get(lang, f"\n\n## LANGUAGE OVERRIDE\nThe user's interface language is '{lang}'. You MUST respond entirely in that language — all text fields in the JSON.")
 
 SPECIALIST_EQUIPMENT = {
     "sous-vide": ["sous-vide", "sous_vide", "cyrkulator", "sous vide", "vacuum sealer", "woreczek próżniowy", "cyrkulatorem", "kąpieli wodnej", "kąpiel wodną"],
