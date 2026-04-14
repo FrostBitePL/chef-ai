@@ -1,0 +1,115 @@
+[
+  {
+    "id": "proc_steak_au_poivre",
+    "dish": "Steak au poivre",
+    "category": "steak",
+    "tags": ["wołowina", "stek", "sos", "kuchnia francuska", "searing", "deglazing"],
+    "canonical": true,
+    "canonical_elements": [
+      "stek wołowy (antrykot lub polędwica)",
+      "skorupka z tłuczonego czarnego pieprzu",
+      "sos pieprzowy (deglazing alkoholem + śmietana 36% + pieprz)"
+    ],
+    "parameters": {
+      "meat_temp_target": "medium-rare 54°C (termosonda), medium 60°C",
+      "sous_vide": "antrykot 55-57°C/90-120 min, polędwica 54-56°C/60-90 min",
+      "searing": "moc 8-9, olej o wysokim punkcie dymienia, 1-1.5 min na stronę",
+      "rest": "5-8 min pod luźną folią",
+      "sauce_deglaze": "40-50ml brandy/koniak, odparować alkohol, dodać 60-80ml śmietany 36%, redukować 3-4 min",
+      "salt": "1-1.5% wagi mięsa, suche solenie 30 min przed"
+    },
+    "critical_rules": [
+      "Sos pieprzowy jest OBOWIĄZKOWY — bez niego to stek w pieprzu, nie steak au poivre",
+      "Deglazing: brandy/koniak NA gorącą patelnię po zdjęciu steka, zeskrobać fond",
+      "Śmietana do sosu MUSI być 36% (30% się rozwarstwi przy redukcji)",
+      "Stek MUSI odpocząć 5-8 min przed krojeniem",
+      "Pieprz tłuczony grubo (moździerz), nie mielony — za drobny = gorzki",
+      "Temperatura wewnętrzna mierzona TERMOSONDĄ, nie pirometrem"
+    ],
+    "forbidden": [
+      "pomijanie sosu pieprzowego",
+      "mielony pieprz zamiast tłuczonego",
+      "pirometr do pomiaru wnętrza mięsa",
+      "brak odpoczynku po searing",
+      "śmietana 30% do sosu"
+    ],
+    "equipment_notes": {
+      "termosonda": "cel 54°C (medium-rare) w najgrubszym miejscu",
+      "pirometr": "kontrola temperatury patelni przed searingiem (200-220°C na powierzchni)",
+      "patelnia żeliwna": "preferowana dla searingu — lepsze utrzymanie ciepła"
+    },
+    "failure_modes": [
+      {
+        "problem": "Brak chrupiącej skorupki pieprzowej",
+        "cause": "Mięso mokre, patelnia za zimna, pieprz za drobny",
+        "fix": "Osusz dokładnie, patelnia na moc 9 przez 3 min przed startem, pieprz tłuczony w moździerzu"
+      },
+      {
+        "problem": "Sos gorzki",
+        "cause": "Przypalony fond lub przypalony pieprz podczas searingu",
+        "fix": "Zmniejsz moc przy deglazingu do 6, nie smaż steka za długo (max 1.5 min/stronę)"
+      },
+      {
+        "problem": "Sos rozwarstwiony",
+        "cause": "Śmietana o zbyt niskiej zawartości tłuszczu lub dodana do zbyt gorącej patelni",
+        "fix": "Użyj śmietany 36%, zmniejsz moc do 5 przed dodaniem śmietany"
+      }
+    ],
+    "science": "Tłuczony pieprz eksponuje olejki (piperyna) na powierzchni steka, które podczas Maillarda tworzą kompleksowe aromaty. Deglazing alkoholem rozpuszcza fond (skumulowane produkty Maillarda) i alkohol odparowuje, zostawiając skoncentrowany smak. Śmietana emulguje tłuszcz z fondem w stabilny sos.",
+    "upgrade": "Basting: pod koniec searingu dodaj 20g masła + tymianek + zmiażdżony czosnek, przechyl patelnię i polewaj stek roztopionym masłem przez 30 sek."
+  },
+  {
+    "id": "proc_cold_start_chicken",
+    "dish": "Kurczak cold-start",
+    "category": "drob",
+    "tags": ["kurczak", "cold-start", "skóra", "patelnia", "Maillard", "rendering"],
+    "canonical": false,
+    "canonical_elements": [],
+    "parameters": {
+      "cuts": "TYLKO uda lub piersi ze skórą (płaska, przylegająca skóra)",
+      "start_power": "moc 3-4 na indukcji, podnieść do 5 po 10-15 min",
+      "flip_time": "po 15-20 min (skóra złocista), dopiekać 5-8 min na drugiej stronie moc 3-4",
+      "salt": "suche solenie 30 min-24h przed (1-1.5% wagi), skóra w lodówce bez przykrycia",
+      "internal_temp": "74-75°C termosondą w najgrubszym miejscu",
+      "rest": "5 min pod luźną folią"
+    },
+    "critical_rules": [
+      "TYLKO kawałki z płaską skórą: uda, piersi ze skórą",
+      "NIE: pałki, skrzydła, podudzia (nierówna skóra = zły kontakt z patelnią)",
+      "Start na ZIMNEJ patelni — tłuszcz musi się wytopić ZANIM skóra zacznie się rumienić",
+      "NIE ruszać mięsa przez pierwsze 15-20 min",
+      "Skóra MUSI być sucha przed kontaktem z patelnią (ręcznik papierowy)",
+      "Temperatura wewnętrzna: termosonda 74-75°C, NIE pirometr"
+    ],
+    "forbidden": [
+      "pałki/podudzia do cold-start",
+      "start na gorącej patelni (to searing, nie cold-start)",
+      "ruszanie mięsa przed 15 min",
+      "pirometr do pomiaru temperatury wewnętrznej"
+    ],
+    "equipment_notes": {
+      "patelnia": "stalowa lub żeliwna — NIE nieprzywieralna (za mało Maillarda)",
+      "pirometr": "do kontroli temperatury patelni jeśli potrzeba, NIE do mięsa",
+      "termosonda": "do pomiaru 74-75°C w najgrubszym miejscu uda/piersi"
+    },
+    "failure_modes": [
+      {
+        "problem": "Skóra gumowata, nie chrupie",
+        "cause": "Skóra mokra, za wysoka moc na starcie, lub zbyt krótki czas",
+        "fix": "Osusz dokładnie, start moc 3, cierpliwość — min 15 min bez ruszania"
+      },
+      {
+        "problem": "Skóra przypalona ale mięso surowe w środku",
+        "cause": "Za szybkie podniesienie mocy",
+        "fix": "Start moc 3, podnoś do 5 dopiero po 10 min, dopiekaj na niskiej mocy po odwróceniu"
+      },
+      {
+        "problem": "Mięso suche",
+        "cause": "Za długie gotowanie lub brak odpoczynku",
+        "fix": "Sprawdź termosondą — zdejmij przy 74°C, odpoczynek 5 min"
+      }
+    ],
+    "science": "Cold-start pozwala na powolne wytapianie tłuszczu podskórnego (rendering) w niskiej temperaturze. Tłuszcz wytopiony z samej skóry staje się medium smażącym — skóra smaży się we własnym tłuszczu, dając równomierną, głęboką chrupkość bez dodatkowego oleju.",
+    "upgrade": "Beurre noisette finish: po zdjęciu kurczaka, na tej samej patelni 20g masła na moc 4 do orzechowego koloru + sok z cytryny + kapary = szybki sos."
+  }
+]

@@ -1,0 +1,115 @@
+[
+  {
+    "id": "proc_ramen_tonkotsu",
+    "dish": "Ramen tonkotsu",
+    "category": "ramen",
+    "tags": ["bulion", "duszenie", "jajko marynowane", "noodles", "kuchnia japońska"],
+    "canonical": true,
+    "canonical_elements": [
+      "bulion tonkotsu (paitan — mleczny, z kości wieprzowych)",
+      "tare (baza smakowa) na dnie miski",
+      "makaron ramen (alkaliczny)",
+      "olej aromatyzowany (chili/czosnek/szczypiorkowy)",
+      "toppings: chashu, jajko ajitsuke, nori, sezonowe warzywa"
+    ],
+    "parameters": {
+      "broth_type": "paitan = AGRESYWNE wrzenie (rolling boil), moc 8-10, 8-12h",
+      "broth_volume": "min 4L wody na 1.5kg kości, uzupełniać w trakcie",
+      "tare_ratio": "30-40ml tare na porcję, NA DNO miski przed bulionem",
+      "chashu_temp": "sous-vide 68°C/12h (łopatka) lub 74°C/8h (boczek)",
+      "egg_ajitsuke": "6:30 na miękko → szok lodowy → marynata (soja+mirin+cukier) 12-24h",
+      "oil_ratio": "olej:suchy składnik minimum 3:1 (poniżej = pasta, nie olej)"
+    },
+    "critical_rules": [
+      "Tonkotsu = AGRESYWNE wrzenie (rolling boil), nie delikatne — to emulguje tłuszcz i kolagen, dając mleczny kolor",
+      "Chintan (klarowny) to PRZECIWNA technika — delikatne wrzenie 90-95°C, nie mylić",
+      "Tare MUSI być na dnie miski PRZED wlaniem bulionu",
+      "Kości MUSZĄ być blanszowane przed właściwym gotowaniem (10 min wrzenia → odlać → umyć)",
+      "Makaron ramen NIE opłukiwać przed podaniem w gorącym bulionie (opłukiwanie tylko do tsukemen/zimnych)",
+      "Olej aromatyzowany: blooming na niskiej mocy (3-4), aromaty dodawać PO zdjęciu z ognia"
+    ],
+    "forbidden": [
+      "delikatne wrzenie bulionu tonkotsu (to daje chintan, nie paitan)",
+      "opłukiwanie makaronu przed gorącym podaniem",
+      "pomijanie tare",
+      "olej chili w proporcji poniżej 3:1 (olej:chili)"
+    ],
+    "equipment_notes": {
+      "sous-vide": "chashu: 68°C/12h łopatka, 74°C/8h boczek",
+      "pirometr": "do kontroli temperatury oleju przy bloomingu",
+      "duży garnek": "min 8L, nie przykrywać podczas tonkotsu"
+    },
+    "failure_modes": [
+      {
+        "problem": "Bulion przejrzysty zamiast mleczny",
+        "cause": "Za słabe wrzenie — tłuszcz i kolagen nie zemulgowały",
+        "fix": "Zwiększ moc do 8-10, bulion MUSI aktywnie bulgotać przez cały czas"
+      },
+      {
+        "problem": "Ramen mdły, bez głębi smaku",
+        "cause": "Brak tare lub zbyt mało tare",
+        "fix": "Dodaj 30-40ml tare (soja+mirin+sake zredukowane) na dno miski PRZED bulionem"
+      },
+      {
+        "problem": "Jajko ajitsuke twarde w środku",
+        "cause": "Za długie gotowanie lub za wolne chłodzenie",
+        "fix": "Dokładnie 6:30 od wrzenia, NATYCHMIASTOWY szok lodowy"
+      }
+    ],
+    "science": "Agresywne wrzenie mechanicznie emulguje tłuszcz wieprzowy w wodzie (jak vinaigrette), a żelatyna z rozpuszczonego kolagenu stabilizuje tę emulsję → mleczny, kremowy bulion. Tare to skoncentrowany umami — bez niego bulion jest tłem, nie daniem.",
+    "upgrade": "Mayu (olej czosnkowy): czosnek smażony w oleju sezamowym do prawie czarnego koloru, zblendowany → intensywny, dymny aromat na wierzch miski.",
+    "schedule": "Dzień 1: bulion (8-12h) + chashu do sous-vide + jajka ugotować i do marynaty. Dzień 2: olej chili + tare + złożenie."
+  },
+  {
+    "id": "proc_buliony_ogolne",
+    "dish": "Buliony — rodzaje i techniki",
+    "category": "buliony",
+    "tags": ["bulion", "wywar", "fond", "kości", "kolagen", "tonkotsu", "chintan", "fumet"],
+    "canonical": false,
+    "canonical_elements": [],
+    "parameters": {
+      "paitan_mleczny": "rolling boil, moc 8-10, 8-12h, kości wieprzowe/drobiowe",
+      "chintan_klarowny": "delikatne wrzenie 90-95°C, moc 4-5, 4-8h",
+      "fond_brazowy": "kości pieczone 200°C/45 min → woda → delikatne wrzenie 6-8h",
+      "fond_bialy": "kości surowe → blanszowanie → woda → delikatne wrzenie 4-6h",
+      "fumet_rybny": "kości rybie + warzywa, max 30-40 min, delikatne wrzenie"
+    },
+    "critical_rules": [
+      "Tonkotsu/paitan = AGRESYWNE wrzenie — to emulguje tłuszcz, daje mleczny kolor",
+      "Chintan/klarowny = DELIKATNE wrzenie — tłuszcz NIE emulguje, bulion przejrzysty",
+      "To PRZECIWNE techniki — intensywność wrzenia determinuje wynik",
+      "Kości ZAWSZE blanszować przed właściwym gotowaniem (usunięcie zanieczyszczeń)",
+      "Uzupełniać wodę w trakcie gotowania — nie dopuścić do odsłonięcia kości",
+      "Fumet rybny: NIGDY dłużej niż 40 min — dłuższe gotowanie = gorycz"
+    ],
+    "forbidden": [
+      "delikatne wrzenie dla tonkotsu (da chintan)",
+      "agresywne wrzenie dla klarownego fondu (zmętnieje)",
+      "gotowanie fumetu rybnego powyżej 40 min",
+      "pomijanie blanszowania kości"
+    ],
+    "equipment_notes": {
+      "pirometr": "weryfikacja temperatury powierzchni bulionu (95°C = delikatne, 100°C+ = rolling boil)",
+      "duży garnek": "min 8L dla bulionów długich (8-12h)"
+    },
+    "failure_modes": [
+      {
+        "problem": "Bulion mętny (miał być klarowny)",
+        "cause": "Za agresywne wrzenie lub niezblankowane kości",
+        "fix": "Zmniejsz moc, zbieraj szumowiny, zawsze blanszuj kości na początku"
+      },
+      {
+        "problem": "Bulion przejrzysty (miał być mleczny)",
+        "cause": "Za słabe wrzenie — tłuszcz nie zemulgował",
+        "fix": "Zwiększ moc do rolling boil, utrzymuj przez cały czas gotowania"
+      },
+      {
+        "problem": "Bulion gorzki",
+        "cause": "Przypalone kości, zbyt długie gotowanie warzyw, lub fumet rybny >40 min",
+        "fix": "Kości piecz do złotego nie ciemnobrązowego, warzywa dodawaj w ostatnich 1-2h"
+      }
+    ],
+    "science": "Kolagen w kościach hydrolizuje do żelatyny w temperaturze >70°C. Żelatyna daje bulionowi ciało i lepkość. W paitan: agresywne wrzenie mechanicznie emulguje tłuszcz w wodzie, a żelatyna stabilizuje emulsję. W chintan: brak emulgacji = czysty, przejrzysty wywar.",
+    "upgrade": "Kombu (10g/L) dodane na 30 min przed końcem gotowania wzmacnia umami bez dodawania rybnego smaku."
+  }
+]

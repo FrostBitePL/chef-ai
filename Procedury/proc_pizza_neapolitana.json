@@ -1,0 +1,65 @@
+[
+  {
+    "id": "proc_pizza_neapolitana",
+    "dish": "Pizza neapolitańska",
+    "category": "pizza",
+    "tags": ["ciasto drożdżowe", "fermentacja", "płyta stalowa", "piekarnik domowy"],
+    "canonical": true,
+    "canonical_elements": [
+      "ciasto z mąki 00, woda, drożdże, sól",
+      "sos surowy (passata + sól)",
+      "mozzarella (fior di latte lub di bufala)",
+      "bazylia świeża",
+      "pieczenie na ekstremalnie gorącej powierzchni"
+    ],
+    "parameters": {
+      "hydration": "65-68% dla piekarnika domowego 250°C, 55-62% dla pieca 450°C+",
+      "fermentation": "cold ferment 24-48h w 4°C, potem panetti 1-2h w temp. pokojowej",
+      "temperature": "piekarnik max (250°C), płyta stalowa nagrzewana min 45 min",
+      "time": "7-9 min pieczenie + 1-2 min broil finish (górny grill)"
+    },
+    "critical_rules": [
+      "Ciasto rozciągane WYŁĄCZNIE ręcznie — NIGDY wałek, maszynka, robot",
+      "Kolejność: woda + drożdże → mąka → wyrabiać 5 min → sól → wyrabiać 3 min",
+      "Oliwa w cieście opcjonalna (klasyczna Neapol bez)",
+      "Sos: passata + sól, BEZ gotowania, BEZ blendera, BEZ cukru",
+      "Po cold ferment podzielić na panetti (~250g) i dać odpocząć 1-2h",
+      "Broil finish: ostatnie 1-2 min górny grill — obserwować, 30 sek od gotowe do spalone"
+    ],
+    "forbidden": [
+      "wałek do ciasta",
+      "maszynka do makaronu na ciasto",
+      "gotowanie sosu",
+      "blender do sosu z passaty"
+    ],
+    "equipment_notes": {
+      "płyta stalowa 8mm": "nagrzewać min 45 min, pirometr do weryfikacji powierzchni 230-250°C",
+      "piekarnik": "max temperatura, tryb góra-dół, broil finish na końcu",
+      "pirometr": "kontrola temperatury płyty PRZED włożeniem pizzy"
+    },
+    "failure_modes": [
+      {
+        "problem": "Spód zbyt twardy/suchy",
+        "cause": "Zbyt niska hydratacja lub zbyt długie pieczenie",
+        "fix": "Podnieś hydratację do 68%, skróć pieczenie, sprawdź temp. płyty pirometrem"
+      },
+      {
+        "problem": "Ciasto nie daje się rozciągnąć, cofa się",
+        "cause": "Gluten za mocno napięty — ciasto za zimne lub za mało odpoczynku",
+        "fix": "Daj panetti odpocząć dłużej (2h) w temp. pokojowej"
+      },
+      {
+        "problem": "Brzegi blade, bez leopard spots",
+        "cause": "Za niska temperatura lub brak broil finish",
+        "fix": "Włącz górny grill na ostatnie 1-2 min"
+      },
+      {
+        "problem": "Środek pizzy mokry/surowy",
+        "cause": "Za dużo sosu lub mozzarella zbyt mokra",
+        "fix": "Max 80g sosu na pizzę 30cm, mozzarellę odsączyć i pokroić 30 min przed użyciem"
+      }
+    ],
+    "science": "Cold fermentation spowalnia drożdże, dając enzymom czas na rozkład skrobi i białek → więcej smaku, lepsze brązowienie. Płyta stalowa ma wyższą przewodność cieplną niż kamień → szybszy transfer ciepła na spód → chrupkość w krótszym czasie.",
+    "upgrade": "Infuzja oliwy z bazylią w syfonie iSi (65°C, 30 min, N2O) jako finishing oil po pieczeniu."
+  }
+]

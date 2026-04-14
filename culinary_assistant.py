@@ -428,15 +428,17 @@ KNOWLEDGE_LAYERS = {
     "flavor":      {"folder": "Smak",       "collection": "kb_flavor"},
     "techniques":  {"folder": "Techniki",   "collection": "kb_techniques"},
     "baking":      {"folder": "Wypieki",    "collection": "kb_baking"},
+    "procedures":  {"folder": "Procedury",  "collection": "kb_procedures"},
 }
 CULINARY_KNOWLEDGE = {}
 # Layer-specific K values - optimized for context reduction
 LAYER_K_CONFIG = {
     "core": 3,
-    "techniques": 2, 
+    "techniques": 2,
     "composition": 2,
     "flavor": 2,
     "baking": 4,
+    "procedures": 3,
 }
 LAYER_K = 5  # fallback for backward compatibility
 
@@ -1986,12 +1988,50 @@ def _fmt_baking(item):
         parts.append(f"FAILURE: {fm.get('case','')} -> {fm.get('result','')} FIX: {fm.get('fix','')}")
     return "\n".join(p for p in parts if p.split(": ",1)[-1].strip())
 
+def _fmt_procedure(item):
+    """Format a PROCEDURES item into rich searchable text for ChromaDB."""
+    parts = []
+    parts.append(f"PROCEDURA: {item.get('dish', '')}")
+    parts.append(f"Kategoria: {item.get('category', '')}")
+    tags = item.get('tags', [])
+    if tags:
+        parts.append(f"Tagi: {', '.join(tags)}")
+    if item.get('canonical') and item.get('canonical_elements'):
+        parts.append(f"Elementy kanoniczne: {'; '.join(item['canonical_elements'])}")
+    params = item.get('parameters', {})
+    if params:
+        parts.append(f"Parametry: {'; '.join(f'{k}: {v}' for k, v in params.items())}")
+    critical = item.get('critical_rules', [])
+    if critical:
+        parts.append(f"Reguły krytyczne: {'; '.join(critical)}")
+    forbidden = item.get('forbidden', [])
+    if forbidden:
+        parts.append(f"Zabronione: {'; '.join(forbidden)}")
+    eq = item.get('equipment_notes', {})
+    if eq:
+        parts.append(f"Sprzęt: {'; '.join(f'{k} — {v}' for k, v in eq.items())}")
+    fms = item.get('failure_modes', [])
+    if fms:
+        fm_text = '; '.join(
+            f"{f.get('problem','')}: przyczyna: {f.get('cause','')}, fix: {f.get('fix','')}"
+            for f in fms
+        )
+        parts.append(f"Failure modes: {fm_text}")
+    if item.get('science'):
+        parts.append(f"Nauka: {item['science']}")
+    if item.get('upgrade'):
+        parts.append(f"Upgrade: {item['upgrade']}")
+    if item.get('schedule'):
+        parts.append(f"Harmonogram: {item['schedule']}")
+    return ' | '.join(p for p in parts if p.split(': ', 1)[-1].strip())
+
 _LAYER_FORMATTERS = {
     "core": _fmt_core,
     "composition": _fmt_composition,
     "flavor": _fmt_flavor,
     "techniques": _fmt_technique,
     "baking": _fmt_baking,
+    "procedures": _fmt_procedure,
 }
 
 def format_layer_for_chroma(layer_name, items):
@@ -2006,11 +2046,13 @@ def format_layer_for_chroma(layer_name, items):
             if not text.strip():
                 continue
             meta = {"layer": layer_name}
-            for key in ("ingredient", "technique", "rule", "category", "intent", "process"):
+            for key in ("ingredient", "technique", "rule", "category", "intent", "process", "dish"):
                 if key in item:
                     val = item[key]
                     if isinstance(val, str):
                         meta[key] = val
+            if "canonical" in item:
+                meta["canonical"] = bool(item["canonical"])
             docs.append(text)
             metas.append(meta)
             ids.append(f"{layer_name}_{i}")
@@ -2122,6 +2164,8 @@ BAZA WIEDZY:
 {flavor_data}
 ## BAKING (wypieki: proporcje, techniki, błędy):
 {baking_data}
+## PROCEDURES (konkretne procedury dań, elementy kanoniczne, failure modes):
+{procedures_data}
 
 ---
 
@@ -2168,120 +2212,27 @@ Gdy w sekcji BAKING bazy wiedzy znajdziesz techniki takie jak tangzhong, autoliz
 
 ---
 
-# BEZWZGLĘDNE ZASADY DLA WYPIEKÓW
+# ZASADY UNIWERSALNE
 
-## BISZKOPT:
-- Min 5 jajek klasy M/L na formę 23cm — NIE 3, NIE 4. Przelicznik: 1 jajko = 30g cukru + 20g mąki + 10g skrobi
-- ZERO proszku do pieczenia — jedynym spulchniaczem jest piana jajeczna
-- Góra-dół 170°C bez termoobiegu. Termoobieg → 152°C
-- Wstawiać do NAGRZANEGO piekarnika
-- Ubijanie dwuetapowe: jajka + sól + wanilia na niskich → cukier stopniowo na wysokich do ribbon stage
-- Mąka tortowa typ 450 + skrobia (2:1), dodawana w DOKŁADNIE 3 partiach, ruchy J, max 40 pociągnięć
-- Forma 23cm, boki niesmarowane, papier tylko na dnie
-- Stuknięcie formą o blat 1-2x po nalaniu ciasta
-- Studzenie odwrócone dnem do góry (butelka/nóżki) MINIMUM 60 minut — NIE 15, NIE 30
-- Masło klarowane opcjonalne max 15-20g jako slurry (wymieszane z 2 łyżkami ciasta w 40°C)
-- Kalorie: ~1500 kcal całość (5 jajek 390 + 150g cukru 600 + 100g mąki 340 + 50g skrobi 170), ~188 kcal/porcja (8 porcji)
+## WYPIEKI:
+- Spulchniacz biszkoptu = wyłącznie piana jajeczna (zero proszku). Studzenie odwrócone min 60 min.
+- Ciasto drożdżowe: gotowość = windowpane test, nie zegar. Obserwuj objętość.
+- Sernik: twaróg tłusty, białka firm peaks (nie stiff), studzenie stopniowe.
+- Szczegółowe parametry per produkt: sekcja BAKING i PROCEDURES w bazie wiedzy.
 
-## CIASTO DROŻDŻOWE:
-- Mleko 35-38°C mierzone termometrem — wrist test zawodny
-- Masło dodawane po 5 min wyrabiania, miękkie 18-20°C, nigdy roztopione
-- Windowpane test jako jedyny wyznacznik gotowości wyrabiania
-- Obserwuj objętość nie zegar — poke test
+## MIĘSO — ZASADY OGÓLNE:
+- Mięso ZAWSZE osuszone przed kontaktem z patelnią
+- Suche solenie 1-1.5% wagi, wyprzedzenie min 30 min
+- Odpoczynek: drób 5 min, steki 5-8 min, duże kawałki 10-15 min
+- Sos tłuszczowy MUSI mieć kwas (cytryna/ocet/wino). Proporcja: 1 łyżka kwasu na 50-80g tłuszczu
+- Alkohol kulinarny DOZWOLONY — wyparowuje, zostaje aromat i kwas
+- Szczegółowe procedury (cold-start, sous-vide, buliony, ramen): sekcja PROCEDURES w bazie wiedzy
 
-## SERNIK:
-- Twaróg TŁUSTY — NIE chudy, NIE półtłusty, NIE ziarnisty
-- Białka firm peaks — NIE stiff peaks
-- Studzenie: uchylony piekarnik 1h → temperatura pokojowa → lodówka min 4h → kroić zimny
-
-## CIASTO KRUCHE:
-- Masło 4-6°C, mąka tortowa typ 450
-- Mieszać max 30 sek po dodaniu płynu
-- Odpoczynek min 1h w lodówce
-
----
-
-# BEZWZGLĘDNE ZASADY DLA MIĘSA I SOSÓW
-
-## COLD-START (patelnia):
-- Tylko kawałki z płaską przylegającą skórą: uda, piersi ze skórą
-- NIE: pałki, skrzydła, podudzia (nierówna skóra)
-- Skóra sucha (osuszona ręcznikiem). Suche solenie min 30 min przed
-- Start na NISKIEJ mocy (poziom 3-4 na indukcji), podnieść do 5 po 10 min
-- NIE ruszać przez pierwsze 15-20 min — tłuszcz musi się wytopić
-- Po odwróceniu: moc 3-4, dopiekać 5-8 min
-
-## SMAŻENIE OGÓLNE:
-- Mięso zawsze osuszone przed kontaktem z patelnią
-- Nie tłoczyć patelni — max 60% powierzchni
-- Temperatura oleju: 180-200°C (pirometr)
-
-## ODPOCZYNEK MIĘSA:
-- Drób: 5 min pod luźną folią
-- Wołowina/wieprzowina (steki): 5-8 min
-- Duże kawałki: 10-15 min
-
-## BRĄZOWE MASŁO (beurre noisette):
-- Moc indukcji 4-5, NIGDY wyżej
-- Kolor docelowy: jasny orzech, zapach orzechowy
-- Zdejmować z ognia ZANIM osiągnie kolor docelowy (carry-over)
-- Aromaty (chili, zioła, czosnek) dodawać PO zdjęciu z ognia
-- Łyżka soku z cytryny lub octu ryżowego na końcu stabilizuje i dodaje kwas
-
-## SOSY TŁUSZCZOWE:
-- Każdy sos oparty na tłuszczu MUSI zawierać element kwasowy (cytryna, ocet, wino)
-- Proporcja: 1 łyżka kwasu na 50-80g tłuszczu
-- Emulsja: 10-15ml zimnej wody/bulionu po zdjęciu z ognia = jedwabista konsystencja
-
-## ALKOHOL KULINARNY:
-- Alkohol w gotowaniu (wino, koniak, brandy, rum, sake, piwo) jest DOZWOLONY — nie traktuj go jako składnika zakazanego
-- Alkohol dodany do gorącej patelni lub sosu wyparowuje — zostaje tylko aromat i kwas
-- Deglazing = obowiązkowy element dla dania au poivre, bourguignon, risotto
-
-## SOLENIE:
-- Suche solenie z wyprzedzeniem (30 min - 24h) > solenie w trakcie
-- Przelicznik: 1-1.5% wagi mięsa (4-6g na 400g)
-
-## BULIONY:
-- Tonkotsu/paitan (mleczny): AGRESYWNE wrzenie (rolling boil), moc 8-10, 8-12h — intensywne wrzenie emulguje tłuszcz i kolagen = mleczny nieprzejrzysty kolor. NIE przykrywać.
-- Chintan/klarowny (przejrzysty): delikatne wrzenie 90-95°C, moc 4-5, nigdy nie gotować agresywnie — tłuszcz nie emulguje, bulion pozostaje klarowny.
-- To PRZECIWNE techniki — mylenie = nienaprawialna wada gotowego bulionu
-
-## RAMEN — ELEMENTY OBOWIĄZKOWE:
-- Tare (baza smakowa) wlać NA DNO miski PRZED bulionem — shio/shoyu/miso, 30-40ml na porcję, skoncentrowane
-- Gorący bulion wlać na tare (nie odwrotnie)
-- Makaron: NIE opłukiwać przed podaniem w gorącym bulionie — skrobia na powierzchni wiąże bulion. Opłukiwanie tylko do tsukemen (makaron do maczania) i dań zimnych.
-- Aromatyzowany olej/tłuszcz: obowiązkowy czwarty element (mayu, rayu, masło czosnkowe, smalec)
-
-## OLEJE AROMATYZOWANE:
-- Proporcja olej:suchy składnik minimum 3:1 wagowo
-- Poniżej tego stosunku = pasta aromatyczna, nie olej — inne zastosowanie
-- Temperatura infuzji: 60-80°C (nie wyżej — aromat się niszczy powyżej 90°C)
-
-## SOUS-VIDE CZASY (orientacyjne):
-- Polędwica/tenderloin: 54-56°C, 60-90 min (delikatna, bez tkanki łącznej — dłużej = mushy)
-- Antrykot/ribeye: 55-57°C, 90-120 min
-- Rumsztyk/chuck: 55°C, 4-8h (twarda tkanka łączna wymaga długiej obróbki)
-- Pierś kurczaka: 63-65°C, 60-90 min
-- Udo kurczaka: 74°C, 2-4h
-
-### SOUS-VIDE DESERY:
-- Crème brûlée: słoiczki z zakrętką lub kokilki szczelnie owinięte folią aluminiową — NIGDY worki próżniowe (masa jajeczna wymaga naczynia sztywnego)
-- Temperatura: 80-85°C, czas: 60 min
-- Po wyjęciu: schłodzić w lodówce minimum 2h przed karmelizacją cukru
-
----
-
-# GARNITURE I WARZYWA
-
-- Każdy element na talerzu musi mieć określoną obróbkę — nic surowego "jako dekoracja" bez uzasadnienia
-- Warzywa blanszowane: szok lodowy po blanszowaniu (kolor i tekstura)
-- Każdy talerz potrzebuje kontrastu: tekstura (chrupkie vs kremowe), smak (kwas vs tłuszcz), temperatura — min 2 z 3
-
-## BAKŁAŻAN:
-- Solenie przed smażeniem MINIMUM 30 min, optymalnie 45 min — sól wyciąga wodę, która rozcieńczyłaby olej i powodowała parowanie zamiast smażenia
-- Osuszyć ręcznikiem papierowym po soleniu — dokładnie
-- Temperatura oleju 180-190°C sprawdzona pirometrem przed smażeniem — zimny olej = bakłażan wchłania tłuszcz jak gąbka
+## GARNITURE I WARZYWA:
+- Każdy element ma określoną obróbkę — nic surowego bez uzasadnienia
+- Blanszowane: szok lodowy (kolor i tekstura)
+- Każdy talerz: kontrast min 2 z 3 — tekstura (chrupkie vs kremowe), smak (kwas vs tłuszcz), temperatura
+- Bakłażan: solenie min 30-45 min + osuszenie + olej 180-190°C (pirometr)
 
 ---
 
@@ -2402,7 +2353,7 @@ def get_lang_instruction(lang):
         return ""
     return LANG_INSTRUCTIONS.get(lang, f"\n\n## LANGUAGE OVERRIDE\nThe user's interface language is '{lang}'. You MUST respond entirely in that language — all text fields in the JSON.")
 
-def build_pipeline_prompt(user_input, constraints, composition_ctx, flavor_ctx, core_ctx, techniques_ctx, baking_ctx=None):
+def build_pipeline_prompt(user_input, constraints, composition_ctx, flavor_ctx, core_ctx, techniques_ctx, baking_ctx=None, procedures_ctx=None):
     """Build the full task prompt with all knowledge layers injected."""
     return TASK_PROMPT_TEMPLATE.format(
         user_input=user_input,
@@ -2412,6 +2363,7 @@ def build_pipeline_prompt(user_input, constraints, composition_ctx, flavor_ctx, 
         core_data=core_ctx or "(no core data found)",
         techniques_data=techniques_ctx or "(no techniques data found)",
         baking_data=baking_ctx or "(no baking data found)",
+        procedures_data=procedures_ctx or "(no procedures data found)",
     )
 
 # ─── Assistant ───â”€â”€â”€
@@ -2983,6 +2935,7 @@ class CulinaryAssistant:
         core_ctx = trim_context("\n---\n".join(layers.get("core", [])), 2000)
         techniques_ctx = trim_context("\n---\n".join(layers.get("techniques", [])), 1500)
         baking_ctx = trim_context("\n---\n".join(layers.get("baking", [])), 1500)
+        procedures_ctx = trim_context("\n---\n".join(layers.get("procedures", [])), 2000)
 
         constraints_parts = []
         if prof_ctx:
@@ -3049,6 +3002,7 @@ class CulinaryAssistant:
             core_ctx=core_ctx,
             techniques_ctx=techniques_ctx,
             baking_ctx=baking_ctx,
+            procedures_ctx=procedures_ctx,
         )
 
         msgs = list(history or []) + [{"role": "user", "content": task_prompt}]
