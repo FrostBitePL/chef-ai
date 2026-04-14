@@ -163,62 +163,89 @@ if('serviceWorker' in navigator){
   <!-- Meal Planner -->
   <div class="view" id="view-planner">
     <div class="planner-form" id="plannerForm">
-      <div style="text-align:center;font-size:2rem;margin-bottom:4px">📅</div>
-      <div style="text-align:center;font-family:var(--serif);font-size:1.1rem;margin-bottom:12px">Planer posiłków</div>
-
-      <div class="pf-row">
-        <div class="pf-col">
-          <label class="pf-label">Ile dni?</label>
-          <select id="planDays"><option value="1">1 dzień</option><option value="3">3 dni</option><option value="5">5 dni</option><option value="7" selected>7 dni</option><option value="14">14 dni</option></select>
-        </div>
-        <div class="pf-col">
-          <label class="pf-label">Ile osób?</label>
-          <select id="planPersons"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6+</option></select>
-        </div>
-      </div>
-
-      <label class="pf-label">Posiłki do zaplanowania</label>
-      <div class="pf-chips" id="mealTypeChips">
-        <label class="pf-chip"><input type="checkbox" value="śniadanie"> 🌅 Śniadanie</label>
-        <label class="pf-chip active"><input type="checkbox" value="obiad" checked> 🍲 Obiad</label>
-        <label class="pf-chip active"><input type="checkbox" value="kolacja" checked> 🌙 Kolacja</label>
-        <label class="pf-chip"><input type="checkbox" value="przekąska"> 🥜 Przekąski</label>
-        <label class="pf-chip"><input type="checkbox" value="deser"> 🍰 Deser</label>
-      </div>
-
-      <label class="pf-label">Dieta / styl</label>
-      <div class="pf-chips" id="dietChips">
-        <label class="pf-chip active"><input type="radio" name="diet" value="" checked> 🍽 Bez ograniczeń</label>
-        <label class="pf-chip"><input type="radio" name="diet" value="wegetariańska"> 🥦 Wegetariańska</label>
-        <label class="pf-chip"><input type="radio" name="diet" value="wegańska"> 🌱 Wegańska</label>
-        <label class="pf-chip"><input type="radio" name="diet" value="keto"> 🥑 Keto</label>
-        <label class="pf-chip"><input type="radio" name="diet" value="śródziemnomorska"> 🫒 Śródziemnomorska</label>
-        <label class="pf-chip"><input type="radio" name="diet" value="bezglutenowa"> 🚫🌾 Bezglutenowa</label>
-        <label class="pf-chip"><input type="radio" name="diet" value="nisko-kaloryczna"> 🔥 Nisko-kal.</label>
-        <label class="pf-chip"><input type="radio" name="diet" value="wysokobiałkowa"> 💪 Wysokobiałkowa</label>
+      <div class="pf-hero">
+        <div class="pf-hero-icon">📅</div>
+        <div class="pf-hero-title">Planer posiłków</div>
+        <div class="pf-hero-sub">Zaplanuj tydzień dopasowany do Twoich preferencji</div>
       </div>
 
       <div class="pf-row">
-        <div class="pf-col" style="flex:1">
-          <label class="pf-label">Kalorie / dzień (opcjonalnie)</label>
-          <div class="pf-kcal-row">
-            <input type="number" id="planKcal" placeholder="np. 2000" min="800" max="5000" step="100">
-            <span class="pf-kcal-unit">kcal</span>
+        <div class="pf-col">
+          <label class="pf-section-label">Ile dni?</label>
+          <div class="pf-stepper">
+            <button class="pf-stepper-btn" onclick="planStep('planDays',-1)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <span class="pf-stepper-val" id="planDays" data-value="7">7</span>
+            <button class="pf-stepper-btn" onclick="planStep('planDays',1)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="pf-col">
+          <label class="pf-section-label">Ile osób?</label>
+          <div class="pf-stepper">
+            <button class="pf-stepper-btn" onclick="planStep('planPersons',-1)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <span class="pf-stepper-val" id="planPersons" data-value="2">2</span>
+            <button class="pf-stepper-btn" onclick="planStep('planPersons',1)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
           </div>
         </div>
       </div>
 
-      <label class="pf-label">Kuchnia / preferencje (opcjonalnie)</label>
-      <input type="text" id="planPrefs" placeholder="np. dużo warzyw, polska kuchnia, szybkie dania...">
+      <label class="pf-section-label">Posiłki</label>
+      <div class="pf-chips" id="mealTypeChips">
+        <label class="pf-chip"><input type="checkbox" value="śniadanie"><span class="pf-chip-dot"></span> Śniadanie</label>
+        <label class="pf-chip active"><input type="checkbox" value="obiad" checked><span class="pf-chip-dot"></span> Obiad</label>
+        <label class="pf-chip active"><input type="checkbox" value="kolacja" checked><span class="pf-chip-dot"></span> Kolacja</label>
+        <label class="pf-chip"><input type="checkbox" value="przekąska"><span class="pf-chip-dot"></span> Przekąski</label>
+        <label class="pf-chip"><input type="checkbox" value="deser"><span class="pf-chip-dot"></span> Deser</label>
+      </div>
 
-      <button class="planner-btn" onclick="generatePlan()">🍽 Generuj plan</button>
+      <label class="pf-section-label">Styl</label>
+      <div class="pf-chips" id="dietChips">
+        <label class="pf-chip active"><input type="radio" name="diet" value="" checked><span class="pf-chip-dot"></span> Bez ograniczeń</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="wegetariańska"><span class="pf-chip-dot"></span> Wegetariańska</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="wegańska"><span class="pf-chip-dot"></span> Wegańska</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="keto"><span class="pf-chip-dot"></span> Keto</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="śródziemnomorska"><span class="pf-chip-dot"></span> Śródziemnomorska</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="bezglutenowa"><span class="pf-chip-dot"></span> Bezglutenowa</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="nisko-kaloryczna"><span class="pf-chip-dot"></span> Nisko-kal.</label>
+        <label class="pf-chip"><input type="radio" name="diet" value="wysokobiałkowa"><span class="pf-chip-dot"></span> Wysokobiałkowa</label>
+      </div>
+
+      <label class="pf-section-label">Kalorie / dzień <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcjonalnie)</span></label>
+      <div class="pf-input-wrap">
+        <input type="number" id="planKcal" placeholder="np. 2000" min="800" max="5000" step="100">
+        <span class="pf-input-suffix">kcal</span>
+      </div>
+
+      <label class="pf-section-label">Preferencje <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcjonalnie)</span></label>
+      <input type="text" id="planPrefs" class="pf-input" placeholder="np. dużo warzyw, polska kuchnia, szybkie dania...">
+
+      <button class="pf-gen-btn" onclick="generatePlan()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        Generuj plan
+      </button>
 
       <div class="pf-saved-header" onclick="document.getElementById('savedPlansList').classList.toggle('open')">
-        <span>📋 Zapisane plany</span><span class="chv" style="font-size:0.65rem;color:var(--text-faint)">▼</span>
+        <span>� Zapisane plany</span>
+        <svg class="pf-saved-chv" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
       </div>
       <div id="savedPlansList" class="pf-saved-list"></div>
     </div>
     <div class="planner-result" id="plannerResult"></div>
+  </div>
+
+  <!-- Recipe overlay for planner -->
+  <div class="plan-overlay-backdrop" id="planOverlayBackdrop" onclick="closePlanOverlay()"></div>
+  <div class="plan-overlay" id="planOverlay">
+    <div class="plan-overlay-handle"></div>
+    <button class="plan-overlay-close" onclick="closePlanOverlay()">✕</button>
+    <div class="plan-overlay-body" id="planOverlayBody"></div>
   </div>
 
   <!-- History -->
