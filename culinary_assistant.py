@@ -2507,17 +2507,21 @@ def filter_procedures_for_equipment(procedures_ctx, prof_data):
             filtered.append(line)
     return "\n".join(filtered)
 
+def _safe_fmt(s):
+    """Escape stray curly braces in dynamic content so .format() doesn't choke."""
+    return s.replace("{", "{{").replace("}", "}}") if s else s
+
 def build_pipeline_prompt(user_input, constraints, composition_ctx, flavor_ctx, core_ctx, techniques_ctx, baking_ctx=None, procedures_ctx=None):
     """Build the full task prompt with all knowledge layers injected."""
     return TASK_PROMPT_TEMPLATE.format(
-        user_input=user_input,
-        constraints=constraints,
-        composition_data=composition_ctx or "(no composition data found)",
-        flavor_data=flavor_ctx or "(no flavor data found)",
-        core_data=core_ctx or "(no core data found)",
-        techniques_data=techniques_ctx or "(no techniques data found)",
-        baking_data=baking_ctx or "(no baking data found)",
-        procedures_data=procedures_ctx or "(no procedures data found)",
+        user_input=_safe_fmt(user_input),
+        constraints=_safe_fmt(constraints),
+        composition_data=_safe_fmt(composition_ctx) or "(no composition data found)",
+        flavor_data=_safe_fmt(flavor_ctx) or "(no flavor data found)",
+        core_data=_safe_fmt(core_ctx) or "(no core data found)",
+        techniques_data=_safe_fmt(techniques_ctx) or "(no techniques data found)",
+        baking_data=_safe_fmt(baking_ctx) or "(no baking data found)",
+        procedures_data=_safe_fmt(procedures_ctx) or "(no procedures data found)",
     )
 
 # ─── Assistant ───â”€â”€â”€
