@@ -2014,7 +2014,11 @@ def _fmt_procedure(item):
         parts.append(f"Elementy kanoniczne: {'; '.join(item['canonical_elements'])}")
     params = item.get('parameters', {})
     if params:
-        parts.append(f"Parametry: {'; '.join(f'{k}: {v}' for k, v in params.items())}")
+        # Skip specialist-equipment-only params (sous_vide, thermomix etc.) — they pollute retrieval
+        SKIP_PARAM_KEYS = {"sous_vide", "sous-vide", "thermomix", "smoking", "dehydrator"}
+        filtered_params = {k: v for k, v in params.items() if k.lower() not in SKIP_PARAM_KEYS}
+        if filtered_params:
+            parts.append(f"Parametry: {'; '.join(f'{k}: {v}' for k, v in filtered_params.items())}")
     critical = item.get('critical_rules', [])
     if critical:
         parts.append(f"Reguły krytyczne: {'; '.join(critical)}")
@@ -2377,7 +2381,7 @@ def get_lang_instruction(lang):
     return LANG_INSTRUCTIONS.get(lang, f"\n\n## LANGUAGE OVERRIDE\nThe user's interface language is '{lang}'. You MUST respond entirely in that language — all text fields in the JSON.")
 
 SPECIALIST_EQUIPMENT = {
-    "sous-vide": ["sous-vide", "cyrkulator", "sous vide", "vacuum sealer", "woreczek próżniowy", "cyrkulatorem"],
+    "sous-vide": ["sous-vide", "sous_vide", "cyrkulator", "sous vide", "vacuum sealer", "woreczek próżniowy", "cyrkulatorem", "kąpieli wodnej", "kąpiel wodną"],
     "thermomix": ["thermomix", "thermomixem"],
     "smokehouse": ["wędzarnia", "wędzeniu", "wędzenia", "cold smoke", "hot smoke"],
     "pasta_machine": ["maszynka do makaronu", "atlas 150", "atlas150"],
