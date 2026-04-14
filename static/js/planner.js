@@ -51,6 +51,10 @@ async function generatePlan(){
 
 // ─── Render plan ───
 function renderMealPlan(data,el){
+  if(!data || !data.days || !data.days.length){
+    el.innerHTML='<div style="color:var(--danger);padding:20px">Plan nie zawiera danych. Spróbuj ponownie.</div><button class="action-btn" style="margin:10px" onclick="resetPlanner()">← Formularz</button>';
+    return;
+  }
   _planData=data;_mealIdx=0;
   let h=`<div class="meal-plan-card"><div class="meal-plan-header"><h2>${t('planner.title')}</h2><div class="recipe-actions"><button class="action-btn" onclick="saveCurrentPlan()">${t('planner.save')}</button><button class="action-btn" onclick="resetPlanner()">${t('planner.new')}</button><button class="action-btn" onclick="copyPlan()">${t('planner.copy')}</button></div></div>`;
   if(data.days?.length) data.days.forEach((day,di)=>{
@@ -155,7 +159,17 @@ function openLiveFromPlan(di,mi){
 function resetPlanner(){
   document.getElementById('plannerForm').style.display='flex';
   document.getElementById('plannerResult').style.display='none';
+  document.getElementById('plannerResult').innerHTML='';
   _planData=null;
+}
+
+// ─── Ensure form visible on tab switch ───
+function ensurePlannerForm(){
+  if(!_planData){
+    document.getElementById('plannerForm').style.display='flex';
+    document.getElementById('plannerResult').style.display='none';
+    document.getElementById('plannerResult').innerHTML='';
+  }
 }
 
 // ─── Copy ───

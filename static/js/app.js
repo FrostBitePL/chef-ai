@@ -346,7 +346,7 @@ function showView(n){
   if(n==='favorites') renderFavorites();
   if(n==='history') loadHistory();
   if(n==='profile') loadProfileView();
-  if(n==='planner') renderSavedPlans();
+  if(n==='planner'){if(typeof ensurePlannerForm==='function') ensurePlannerForm(); renderSavedPlans();}
 }
 
 async function loadModulesFromServer(){
