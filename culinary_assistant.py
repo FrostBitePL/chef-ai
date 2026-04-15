@@ -3915,7 +3915,8 @@ def create_app():
 
                 db_update_profile(uid, {
                     "stripe_customer_id": customer_id,
-                    "subscription_status": "active"
+                    "subscription_status": "active",
+                    "role": "pro"
                 })
 
                 logger.info(f"PRO activated for {uid}")
@@ -3943,6 +3944,12 @@ def create_app():
                     updates = {
                         "subscription_status": status if status != "canceled" else "canceled"
                     }
+                    
+                    # Update role based on subscription status
+                    if status == "active":
+                        updates["role"] = "pro"
+                    elif status in ("canceled", "incomplete", "incomplete_expired", "past_due", "unpaid"):
+                        updates["role"] = "free"
 
                     if period_end:
                         updates["subscription_end"] = datetime.utcfromtimestamp(period_end).isoformat()
