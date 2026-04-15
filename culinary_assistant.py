@@ -4769,6 +4769,9 @@ Zwróć JSON:
     @app.route("/")
     def index(): return send_from_directory("static","index.html")
     
+    @app.route("/favicon.ico")
+    def favicon(): return send_from_directory("static/icons", "icon-192.png")
+    
     @app.route("/test")
     def test_route(): return "Test route works! Admin should work too."
     
