@@ -3,6 +3,7 @@
 
 ALTER TABLE profiles
   ADD COLUMN IF NOT EXISTS name text DEFAULT '',
+  ADD COLUMN IF NOT EXISTS role text DEFAULT 'free',
   ADD COLUMN IF NOT EXISTS subscription_status text DEFAULT 'free',
   ADD COLUMN IF NOT EXISTS stripe_customer_id text,
   ADD COLUMN IF NOT EXISTS subscription_end timestamptz;
@@ -16,4 +17,7 @@ CREATE INDEX IF NOT EXISTS idx_profiles_stripe_customer
 SELECT column_name, data_type, column_default
 FROM information_schema.columns
 WHERE table_name = 'profiles'
-  AND column_name IN ('name', 'subscription_status', 'stripe_customer_id', 'subscription_end');
+  AND column_name IN ('name', 'role', 'subscription_status', 'stripe_customer_id', 'subscription_end');
+
+-- Set admin role for main user (update with your user ID)
+-- UPDATE profiles SET role = 'admin' WHERE email = 'your-email@example.com';

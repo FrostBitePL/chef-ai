@@ -8,10 +8,11 @@ try:
 except ImportError:
     pass
 
-import os,json,logging,traceback,random,re,functools,uuid
+import os,json,logging,traceback,random,re,functools,uuid,time,threading
 from datetime import datetime
+from collections import deque, defaultdict
 from openai import OpenAI
-from flask import Flask,request,jsonify,send_from_directory,g
+from flask import Flask,request,jsonify,send_from_directory,g,render_template_string
 from flask_cors import CORS
 import chromadb
 from chromadb.utils import embedding_functions
@@ -41,6 +42,109 @@ STRIPE_SECRET_KEY=os.environ.get("STRIPE_SECRET_KEY","")
 STRIPE_WEBHOOK_SECRET=os.environ.get("STRIPE_WEBHOOK_SECRET","")
 STRIPE_PRICE_ID=os.environ.get("STRIPE_PRICE_ID","price_1TFBHf91D0CH9ZxXCpC7iZRV")
 stripe.api_key=STRIPE_SECRET_KEY
+
+# ─── Admin Metrics ───
+app_start_time = time.time()
+
+class AppMetrics:
+    def __init__(self, max_entries=10000):
+        self.requests = deque(maxlen=max_entries)
+        self.errors = deque(maxlen=1000)
+        self.api_calls = deque(maxlen=5000)
+        self.lock = threading.Lock()
+    
+    def log_request(self, endpoint, method, status, duration_ms, user_id=None):
+        with self.lock:
+            self.requests.append({
+                "ts": time.time(),
+                "endpoint": endpoint,
+                "method": method,
+                "status": status,
+                "duration_ms": round(duration_ms, 1),
+                "user_id": user_id,
+            })
+    
+    def log_error(self, endpoint, error_type, message, user_id=None):
+        with self.lock:
+            self.errors.append({
+                "ts": time.time(),
+                "endpoint": endpoint,
+                "type": error_type,
+                "message": str(message)[:500],
+                "user_id": user_id,
+            })
+    
+    def log_api_call(self, provider, model, input_tokens, output_tokens, 
+                      duration_ms, cost_usd, endpoint=None):
+        with self.lock:
+            self.api_calls.append({
+                "ts": time.time(),
+                "provider": provider,
+                "model": model,
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "total_tokens": input_tokens + output_tokens,
+                "duration_ms": round(duration_ms, 1),
+                "cost_usd": round(cost_usd, 6),
+                "endpoint": endpoint,
+            })
+    
+    def get_stats(self, hours=24):
+        cutoff = time.time() - (hours * 3600)
+        with self.lock:
+            reqs = [r for r in self.requests if r["ts"] > cutoff]
+            errs = [e for e in self.errors if e["ts"] > cutoff]
+            apis = [a for a in self.api_calls if a["ts"] > cutoff]
+        
+        total_tokens = sum(a["total_tokens"] for a in apis)
+        total_cost = sum(a["cost_usd"] for a in apis)
+        avg_duration = (sum(r["duration_ms"] for r in reqs) / len(reqs)) if reqs else 0
+        error_rate = (len(errs) / len(reqs) * 100) if reqs else 0
+        
+        # Requests per hour
+        hourly = defaultdict(int)
+        for r in reqs:
+            hour = int((r["ts"] - cutoff) / 3600)
+            hourly[hour] += 1
+        
+        # Top endpoints
+        endpoint_counts = defaultdict(int)
+        for r in reqs:
+            endpoint_counts[r["endpoint"]] += 1
+        top_endpoints = sorted(endpoint_counts.items(), key=lambda x: -x[1])[:10]
+        
+        # Cost per provider
+        cost_by_provider = defaultdict(float)
+        tokens_by_provider = defaultdict(int)
+        for a in apis:
+            cost_by_provider[a["provider"]] += a["cost_usd"]
+            tokens_by_provider[a["provider"]] += a["total_tokens"]
+        
+        return {
+            "period_hours": hours,
+            "requests": {
+                "total": len(reqs),
+                "avg_duration_ms": round(avg_duration, 1),
+                "error_rate_pct": round(error_rate, 2),
+                "hourly": dict(hourly),
+                "top_endpoints": top_endpoints,
+            },
+            "errors": {
+                "total": len(errs),
+                "recent": errs[-20:][::-1],  # last 20, newest first
+            },
+            "api": {
+                "total_calls": len(apis),
+                "total_tokens": total_tokens,
+                "total_cost_usd": round(total_cost, 4),
+                "cost_by_provider": dict(cost_by_provider),
+                "tokens_by_provider": dict(tokens_by_provider),
+                "recent": apis[-20:][::-1],
+            },
+        }
+
+# Globalny obiekt
+metrics = AppMetrics()
 
 # ─── Free tier limits ───
 FREE_RECIPES_PER_DAY=5
@@ -94,7 +198,7 @@ def optional_auth(f):
     return wrapper
 
 # â”€â”€â”€ Database Operations â”€â”€â”€
-DEFAULT_PROFILE={"name":"","equipment":[],"banned_ingredients":[],"favorite_ingredients":[],"favorite_techniques":[],"mastered_skills":[],"discovered_preferences":[],"cooked_recipes":[],"ratings":[],"feedback_history":[],"stats":{"total_recipes":0},"lang":"pl"}
+DEFAULT_PROFILE={"name":"","role":"free","equipment":[],"banned_ingredients":[],"favorite_ingredients":[],"favorite_techniques":[],"mastered_skills":[],"discovered_preferences":[],"cooked_recipes":[],"ratings":[],"feedback_history":[],"stats":{"total_recipes":0},"lang":"pl"}
 
 def db_get_profile(uid):
     try:
@@ -2747,11 +2851,64 @@ class CulinaryAssistant:
         return all_c
 
     # ─── LLM calls ───
+    
+    def _call_with_logging(self, prompt, msgs, max_tokens=None, stream=False, response_format=None):
+        """Wrapper for API calls with metrics logging."""
+        start_time = time.time()
+        
+        # DeepSeek pricing (update these values as needed)
+        INPUT_PRICE = 0.00014   # $/1K tokens (cache miss)
+        OUTPUT_PRICE = 0.00028  # $/1K tokens
+        
+        try:
+            kwargs = {
+                "model": AI_MODEL,
+                "max_tokens": max_tokens or AI_MAX_TOKENS,
+                "temperature": 0.7,
+                "messages": [{"role": "system", "content": prompt}] + msgs,
+                "stream": stream
+            }
+            if response_format:
+                kwargs["response_format"] = response_format
+                
+            resp = self.client.chat.completions.create(**kwargs)
+            
+            duration_ms = (time.time() - start_time) * 1000
+            
+            # Log metrics for non-streaming responses
+            if not stream and hasattr(resp, 'usage') and resp.usage:
+                input_tokens = resp.usage.prompt_tokens
+                output_tokens = resp.usage.completion_tokens
+                cost = (input_tokens * INPUT_PRICE + output_tokens * OUTPUT_PRICE) / 1000
+                
+                metrics.log_api_call(
+                    provider="deepseek",
+                    model=AI_MODEL,
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens,
+                    duration_ms=duration_ms,
+                    cost_usd=cost,
+                    endpoint=getattr(request, 'path', None) if 'request' in globals() else None,
+                )
+            
+            return resp
+            
+        except Exception as e:
+            duration_ms = (time.time() - start_time) * 1000
+            # Log error
+            if 'metrics' in globals():
+                metrics.log_error(
+                    endpoint=getattr(request, 'path', None) if 'request' in globals() else 'ai_call',
+                    error_type=type(e).__name__,
+                    message=str(e),
+                    user_id=getattr(g, 'user_id', None) if 'g' in globals() else None,
+                )
+            raise
 
     def _call(self, prompt, msgs, mode=None):
-        resp = self.client.chat.completions.create(
-            model=AI_MODEL, max_tokens=AI_MAX_TOKENS, temperature=0.7,
-            messages=[{"role": "system", "content": prompt}] + msgs,
+        resp = self._call_with_logging(
+            prompt, msgs, 
+            max_tokens=AI_MAX_TOKENS,
             response_format={"type": "json_object"}
         )
         raw = resp.choices[0].message.content
@@ -2770,9 +2927,9 @@ class CulinaryAssistant:
 
     def _call_text(self, prompt, msgs):
         """Like _call but without response_format constraint — for models that handle JSON natively."""
-        resp = self.client.chat.completions.create(
-            model=AI_MODEL, max_tokens=AI_MAX_TOKENS, temperature=0.7,
-            messages=[{"role": "system", "content": prompt}] + msgs,
+        resp = self._call_with_logging(
+            prompt, msgs, 
+            max_tokens=AI_MAX_TOKENS
         )
         raw = resp.choices[0].message.content or ""
         logger.info(f"[_call_text] raw (first 300): {repr(raw[:300])}")
@@ -2793,9 +2950,9 @@ class CulinaryAssistant:
 
     def _call_stream(self, prompt, msgs, mode=None):
         """Streaming version — yields chunks of text as they arrive."""
-        resp = self.client.chat.completions.create(
-            model=AI_MODEL, max_tokens=AI_MAX_TOKENS, temperature=0.7,
-            messages=[{"role": "system", "content": prompt}] + msgs,
+        resp = self._call_with_logging(
+            prompt, msgs, 
+            max_tokens=AI_MAX_TOKENS,
             stream=True
         )
         full = ""
@@ -3239,9 +3396,9 @@ class CulinaryAssistant:
         system_with_lang = prompt + get_lang_instruction(lang)
         # Meal plans need much more tokens than single recipes (7 days × meals × ingredients + steps)
         plan_max_tokens = min(16384, 4096 * max(days, 3))
-        resp = self.client.chat.completions.create(
-            model=AI_MODEL, max_tokens=plan_max_tokens, temperature=0.7,
-            messages=[{"role": "system", "content": system_with_lang}, {"role": "user", "content": user_msg}],
+        resp = self._call_with_logging(
+            system_with_lang, [{"role": "user", "content": user_msg}],
+            max_tokens=plan_max_tokens,
             response_format={"type": "json_object"}
         )
         raw = resp.choices[0].message.content or ""
@@ -3283,9 +3440,9 @@ class CulinaryAssistant:
             f']}}'
         )
         system_with_lang = base + get_lang_instruction(lang)
-        resp = self.client.chat.completions.create(
-            model=AI_MODEL, max_tokens=2048, temperature=0.7,
-            messages=[{"role": "system", "content": system_with_lang}, {"role": "user", "content": user_msg}],
+        resp = self._call_with_logging(
+            system_with_lang, [{"role": "user", "content": user_msg}],
+            max_tokens=2048,
             response_format={"type": "json_object"}
         )
         raw = resp.choices[0].message.content or ""
@@ -3323,9 +3480,9 @@ class CulinaryAssistant:
             f']}}'
         )
         system_with_lang = base + get_lang_instruction(lang)
-        resp = self.client.chat.completions.create(
-            model=AI_MODEL, max_tokens=512, temperature=0.8,
-            messages=[{"role": "system", "content": system_with_lang}, {"role": "user", "content": user_msg}],
+        resp = self._call_with_logging(
+            system_with_lang, [{"role": "user", "content": user_msg}],
+            max_tokens=512,
             response_format={"type": "json_object"}
         )
         raw = resp.choices[0].message.content or ""
@@ -3356,9 +3513,9 @@ class CulinaryAssistant:
             f"Format: {{{{'title':'Nazwa dania','prep_time':30,'kcal':550}}}}"
         )
         system_with_lang = base + get_lang_instruction(lang)
-        resp = self.client.chat.completions.create(
-            model=AI_MODEL, max_tokens=256, temperature=0.7,
-            messages=[{"role": "system", "content": system_with_lang}, {"role": "user", "content": user_msg}],
+        resp = self._call_with_logging(
+            system_with_lang, [{"role": "user", "content": user_msg}],
+            max_tokens=256,
             response_format={"type": "json_object"}
         )
         raw = resp.choices[0].message.content or ""
@@ -3411,9 +3568,9 @@ class CulinaryAssistant:
         system_with_lang = prompt + get_lang_instruction(lang)
         n_meals = sum(len(d.get("meals", [])) for d in plan_days)
         plan_max_tokens = min(16384, 2048 * max(n_meals, 2))
-        resp = self.client.chat.completions.create(
-            model=AI_MODEL, max_tokens=plan_max_tokens, temperature=0.7,
-            messages=[{"role": "system", "content": system_with_lang}, {"role": "user", "content": user_msg}],
+        resp = self._call_with_logging(
+            system_with_lang, [{"role": "user", "content": user_msg}],
+            max_tokens=plan_max_tokens,
             response_format={"type": "json_object"}
         )
         raw = resp.choices[0].message.content or ""
@@ -3546,6 +3703,56 @@ def create_app():
         layer_info = " | ".join(f"{l}:{a.collections[l].count()}" for l in KNOWLEDGE_LAYERS)
         logger.info(f"Ready: {a.total_chunks()} chunks [{layer_info}], model: {AI_MODEL}")
     init_supabase()
+
+    # ─── Admin Middleware ───
+    def admin_required(f):
+        @functools.wraps(f)
+        def decorated(*args, **kwargs):
+            user_id = get_user_from_token()
+            if not user_id:
+                return jsonify({"error": "Unauthorized"}), 401
+            
+            # Check if user has admin role
+            try:
+                profile = db_get_profile(user_id)
+                if profile.get('role') != 'admin':
+                    return jsonify({"error": "Forbidden - Admin access required"}), 403
+            except:
+                return jsonify({"error": "Forbidden"}), 403
+            
+            g.user_id = user_id
+            return f(*args, **kwargs)
+        return decorated
+
+    @app.before_request
+    def start_timer():
+        g.start_time = time.time()
+
+    @app.after_request
+    def log_request(response):
+        if hasattr(g, 'start_time'):
+            duration = (time.time() - g.start_time) * 1000
+            # Don't log static files and admin panel
+            if not request.path.startswith(('/static', '/admin')):
+                try:
+                    metrics.log_request(
+                        endpoint=request.path,
+                        method=request.method,
+                        status=response.status_code,
+                        duration_ms=duration,
+                        user_id=getattr(g, 'user_id', None),
+                    )
+                    # Log errors
+                    if response.status_code >= 400:
+                        metrics.log_error(
+                            endpoint=request.path,
+                            error_type=f"HTTP_{response.status_code}",
+                            message=f"{request.method} {request.path}",
+                            user_id=getattr(g, 'user_id', None),
+                        )
+                except:
+                    pass  # Don't let logging break the app
+        return response
 
     @app.route("/api/health")
     def health():
@@ -4534,6 +4741,264 @@ Zwróć JSON:
 
     @app.route("/")
     def index(): return send_from_directory("static","index.html")
+
+    # ─── Admin Panel ───
+    @app.route('/admin')
+    @admin_required
+    def admin_panel():
+        # Simple HTML template for admin panel
+        html = '''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Chef AI Admin</title>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+                       background: #09090B; color: #FAFAFA; line-height: 1.5; }
+                .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+                .header { display: flex; justify-content: space-between; align-items: center; 
+                         margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #27272A; }
+                .title { font-size: 24px; font-weight: 700; color: #E2B44F; }
+                .back-link { color: #A1A1AA; text-decoration: none; font-size: 14px; }
+                .back-link:hover { color: #E2B44F; }
+                .card { background: #18181B; border: 1px solid #27272A; border-radius: 12px; 
+                       padding: 20px; margin-bottom: 20px; }
+                .card-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; }
+                .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+                .metric { text-align: center; }
+                .metric-value { font-size: 28px; font-weight: 800; font-family: 'SF Mono', monospace; }
+                .metric-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; 
+                               color: #71717A; margin-top: 5px; }
+                .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+                .status-ok { background: #34D399; }
+                .status-error { background: #F87171; }
+                .health-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+                .health-item { display: flex; align-items: center; font-size: 12px; }
+                .loading { text-align: center; padding: 40px; color: #71717A; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1 class="title">🔧 Chef AI Admin</h1>
+                    <a href="/" class="back-link">← Wróć do aplikacji</a>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title">Health Status</h2>
+                    <div id="health" class="loading">Loading...</div>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title">Overview (24h)</h2>
+                    <div id="overview" class="loading">Loading...</div>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title">Recent Errors</h2>
+                    <div id="errors" class="loading">Loading...</div>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title">Users</h2>
+                    <div id="users" class="loading">Loading...</div>
+                </div>
+            </div>
+            
+            <script>
+                async function loadData() {
+                    try {
+                        const [health, stats, users] = await Promise.all([
+                            fetch('/admin/api/health').then(r => r.json()),
+                            fetch('/admin/api/stats').then(r => r.json()),
+                            fetch('/admin/api/users').then(r => r.json())
+                        ]);
+                        
+                        renderHealth(health);
+                        renderOverview(stats);
+                        renderErrors(stats.errors);
+                        renderUsers(users);
+                    } catch (e) {
+                        console.error('Failed to load admin data:', e);
+                    }
+                }
+                
+                function renderHealth(data) {
+                    const html = `
+                        <div class="health-grid">
+                            ${Object.entries(data.checks).map(([name, check]) => `
+                                <div class="health-item">
+                                    <span class="status-dot ${check.status === 'ok' ? 'status-ok' : 'status-error'}"></span>
+                                    ${name}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div style="margin-top: 15px; font-size: 12px; color: #71717A;">
+                            Uptime: ${Math.floor(data.checks.server?.uptime / 3600) || 0}h
+                        </div>
+                    `;
+                    document.getElementById('health').innerHTML = html;
+                }
+                
+                function renderOverview(data) {
+                    const html = `
+                        <div class="metrics">
+                            <div class="metric">
+                                <div class="metric-value" style="color: #FAFAFA;">${data.requests.total}</div>
+                                <div class="metric-label">Requesty</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" style="color: #F87171;">${data.errors.total}</div>
+                                <div class="metric-label">Błędy</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" style="color: #FAFAFA;">${data.requests.avg_duration_ms}ms</div>
+                                <div class="metric-label">Śr. czas</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" style="color: #A1A1AA;">${data.api.total_tokens.toLocaleString()}</div>
+                                <div class="metric-label">Tokeny</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" style="color: #E2B44F;">$${data.api.total_cost_usd}</div>
+                                <div class="metric-label">Koszt 24h</div>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('overview').innerHTML = html;
+                }
+                
+                function renderErrors(data) {
+                    if (data.recent.length === 0) {
+                        document.getElementById('errors').innerHTML = '<div style="color: #71717A; font-style: italic;">Brak błędów</div>';
+                        return;
+                    }
+                    
+                    const html = data.recent.slice(0, 10).map(err => {
+                        const time = new Date(err.ts * 1000).toLocaleTimeString('pl');
+                        return `
+                            <div style="padding: 8px 0; border-bottom: 1px solid #27272A; font-size: 12px; font-family: monospace;">
+                                <span style="color: #71717A; width: 60px; display: inline-block;">${time}</span>
+                                <span style="color: #A1A1AA; margin-right: 15px;">${err.endpoint}</span>
+                                <span style="color: #F87171; font-weight: 600;">${err.type}</span>
+                            </div>
+                        `;
+                    }).join('');
+                    document.getElementById('errors').innerHTML = html;
+                }
+                
+                function renderUsers(users) {
+                    const html = users.map(user => `
+                        <div style="padding: 12px 0; border-bottom: 1px solid #27272A; display: flex; align-items: center; font-size: 13px;">
+                            <span style="flex: 1;">${user.email}</span>
+                            <span style="padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; 
+                                         background: ${user.role === 'admin' ? '#E2B44F20' : user.role === 'pro' ? '#E2B44F20' : '#27272A'}; 
+                                         color: ${user.role === 'admin' ? '#E2B44F' : user.role === 'pro' ? '#E2B44F' : '#71717A'};">
+                                ${user.role.toUpperCase()}
+                            </span>
+                            <span style="color: #71717A; font-size: 12px; margin-left: 15px;">
+                                ${user.last_sign_in ? new Date(user.last_sign_in).toLocaleDateString('pl') : 'Never'}
+                            </span>
+                        </div>
+                    `).join('');
+                    document.getElementById('users').innerHTML = html;
+                }
+                
+                // Load data on page load
+                loadData();
+                
+                // Auto-refresh every 30 seconds
+                setInterval(loadData, 30000);
+            </script>
+        </body>
+        </html>
+        '''
+        return html
+
+    @app.route('/admin/api/stats')
+    @admin_required
+    def admin_stats():
+        hours = request.args.get('hours', 24, type=int)
+        return jsonify(metrics.get_stats(hours))
+
+    @app.route('/admin/api/users')
+    @admin_required
+    def admin_users():
+        try:
+            # Get users from Supabase auth (requires service key)
+            profiles = sb.table('profiles').select('*').execute()
+            
+            result = []
+            for profile in profiles.data:
+                result.append({
+                    "id": profile.get('id'),
+                    "email": profile.get('email', 'Unknown'),
+                    "role": profile.get('role', 'free'),
+                    "created_at": profile.get('created_at'),
+                    "last_sign_in": profile.get('updated_at'),
+                    "recipes_count": len(profile.get('cooked_recipes', [])),
+                })
+            return jsonify(result)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    @app.route('/admin/api/users/<user_id>/role', methods=['POST'])
+    @admin_required
+    def admin_set_role(user_id):
+        try:
+            role = request.json.get('role', 'free')
+            if role not in ['free', 'pro', 'admin']:
+                return jsonify({"error": "Invalid role"}), 400
+            
+            sb.table('profiles').update({'role': role}).eq('id', user_id).execute()
+            return jsonify({"success": True})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    @app.route('/admin/api/health')
+    @admin_required
+    def admin_health():
+        checks = {}
+        
+        # Flask server
+        uptime = time.time() - app_start_time
+        checks["server"] = {"status": "ok", "uptime": uptime}
+        
+        # Supabase
+        try:
+            sb.table('profiles').select('id').limit(1).execute()
+            checks["supabase"] = {"status": "ok"}
+        except Exception as e:
+            checks["supabase"] = {"status": "error", "message": str(e)}
+        
+        # DeepSeek API
+        try:
+            # Simple check - if we have the key
+            if OPENAI_API_KEY:
+                checks["deepseek"] = {"status": "ok"}
+            else:
+                checks["deepseek"] = {"status": "error", "message": "No API key"}
+        except Exception as e:
+            checks["deepseek"] = {"status": "error", "message": str(e)}
+        
+        # ChromaDB
+        try:
+            a = app.config.get("assistant")
+            if a and hasattr(a, 'collections'):
+                checks["chromadb"] = {
+                    "status": "ok",
+                    "collections": len(a.collections),
+                }
+            else:
+                checks["chromadb"] = {"status": "error", "message": "Assistant not initialized"}
+        except Exception as e:
+            checks["chromadb"] = {"status": "error", "message": str(e)}
+        
+        all_ok = all(c["status"] == "ok" for c in checks.values())
+        return jsonify({"healthy": all_ok, "checks": checks})
 
     return app
 
