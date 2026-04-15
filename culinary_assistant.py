@@ -2870,9 +2870,9 @@ class CulinaryAssistant:
         """Wrapper for API calls with metrics logging."""
         start_time = time.time()
         
-        # GPT-4o-mini pricing (update these values as needed)
-        INPUT_PRICE = 0.00015   # $/1K tokens 
-        OUTPUT_PRICE = 0.0006   # $/1K tokens
+        # GPT-4o-mini pricing (aktualne ceny)
+        INPUT_PRICE_PER_M = 0.40    # $/1M tokens
+        OUTPUT_PRICE_PER_M = 1.60   # $/1M tokens
         
         try:
             kwargs = {
@@ -2893,7 +2893,7 @@ class CulinaryAssistant:
             if not stream and hasattr(resp, 'usage') and resp.usage:
                 input_tokens = resp.usage.prompt_tokens
                 output_tokens = resp.usage.completion_tokens
-                cost = (input_tokens * INPUT_PRICE + output_tokens * OUTPUT_PRICE) / 1000
+                cost = (input_tokens * INPUT_PRICE_PER_M + output_tokens * OUTPUT_PRICE_PER_M) / 1_000_000
                 
                 metrics.log_api_call(
                     provider="openai",
@@ -4964,17 +4964,42 @@ Zwróć JSON:
                     const html = users.map(user => `
                         <div style="padding: 12px 0; border-bottom: 1px solid #27272A; display: flex; align-items: center; font-size: 13px;">
                             <span style="flex: 1;">${user.email}</span>
-                            <span style="padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; 
-                                         background: ${user.role === 'admin' ? '#E2B44F20' : user.role === 'pro' ? '#E2B44F20' : '#27272A'}; 
-                                         color: ${user.role === 'admin' ? '#E2B44F' : user.role === 'pro' ? '#E2B44F' : '#71717A'};">
-                                ${user.role.toUpperCase()}
-                            </span>
-                            <span style="color: #71717A; font-size: 12px; margin-left: 15px;">
+                            <select onchange="changeUserRole('${user.id}', this.value)" 
+                                    style="padding: 4px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; 
+                                           background: #18181B; border: 1px solid #27272A; color: #FAFAFA; margin-right: 15px;">
+                                <option value="free" ${user.role === 'free' ? 'selected' : ''}>FREE</option>
+                                <option value="pro" ${user.role === 'pro' ? 'selected' : ''}>PRO</option>
+                                <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>ADMIN</option>
+                            </select>
+                            <span style="color: #71717A; font-size: 12px;">
                                 ${user.last_sign_in ? new Date(user.last_sign_in).toLocaleDateString('pl') : 'Never'}
                             </span>
                         </div>
                     `).join('');
                     document.getElementById('users').innerHTML = html;
+                }
+                
+                async function changeUserRole(userId, newRole) {
+                    try {
+                        const headers = getAuthHeaders();
+                        headers['Content-Type'] = 'application/json';
+                        
+                        const response = await fetch(`/admin/api/users/${userId}/role`, {
+                            method: 'POST',
+                            headers: headers,
+                            body: JSON.stringify({ role: newRole })
+                        });
+                        
+                        if (response.ok) {
+                            // Refresh user list
+                            loadData();
+                        } else {
+                            alert('Failed to update user role');
+                        }
+                    } catch (e) {
+                        console.error('Error changing user role:', e);
+                        alert('Error changing user role');
+                    }
                 }
                 
                 // Load data on page load
@@ -4998,17 +5023,34 @@ Zwróć JSON:
     @admin_required
     def admin_users():
         try:
-            # Get users from Supabase auth (requires service key)
+            # Get profiles first
             profiles = sb.table('profiles').select('*').execute()
+            
+            # Get auth users using service key (requires admin access)
+            auth_users = {}
+            try:
+                # Use Supabase admin API to get users
+                auth_response = sb.auth.admin.list_users()
+                for user in auth_response:
+                    auth_users[user.id] = {
+                        "email": user.email,
+                        "created_at": user.created_at,
+                        "last_sign_in_at": user.last_sign_in_at,
+                    }
+            except Exception as auth_error:
+                logger.warning(f"Could not fetch auth users: {auth_error}")
             
             result = []
             for profile in profiles.data:
+                user_id = profile.get('id')
+                auth_data = auth_users.get(user_id, {})
+                
                 result.append({
-                    "id": profile.get('id'),
-                    "email": profile.get('email', 'Unknown'),
+                    "id": user_id,
+                    "email": auth_data.get('email', 'Unknown'),
                     "role": profile.get('role', 'free'),
-                    "created_at": profile.get('created_at'),
-                    "last_sign_in": profile.get('updated_at'),
+                    "created_at": auth_data.get('created_at', profile.get('created_at')),
+                    "last_sign_in": auth_data.get('last_sign_in_at'),
                     "recipes_count": len(profile.get('cooked_recipes', [])),
                 })
             return jsonify(result)
@@ -5044,15 +5086,15 @@ Zwróć JSON:
         except Exception as e:
             checks["supabase"] = {"status": "error", "message": str(e)}
         
-        # OpenAI API
+        # GPT-4o-mini API
         try:
             # Simple check - if we have the key
             if OPENAI_API_KEY:
-                checks["openai"] = {"status": "ok"}
+                checks["gpt-4o-mini"] = {"status": "ok"}
             else:
-                checks["openai"] = {"status": "error", "message": "No API key"}
+                checks["gpt-4o-mini"] = {"status": "error", "message": "No API key"}
         except Exception as e:
-            checks["openai"] = {"status": "error", "message": str(e)}
+            checks["gpt-4o-mini"] = {"status": "error", "message": str(e)}
         
         # ChromaDB
         try:
