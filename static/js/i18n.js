@@ -2,15 +2,15 @@
 const SUPPORTED_LANGS = ['pl','en','de','es','fr'];
 
 function detectBrowserLang() {
-  const langs = navigator.languages || [navigator.language || 'en'];
+  const langs = navigator.languages || [navigator.language || 'pl'];
   for (const l of langs) {
     const code = l.split('-')[0].toLowerCase();
     if (SUPPORTED_LANGS.includes(code)) return code;
   }
-  return 'en';
+  return 'pl';
 }
 
-let currentLang = localStorage.getItem('chef_lang') || detectBrowserLang();
+let currentLang = localStorage.getItem('chef_lang') || 'pl';
 
 const I18N = {
   pl: {
@@ -1610,7 +1610,7 @@ const I18N = {
 };
 
 function t(key, params) {
-  let s = I18N[currentLang]?.[key] || I18N.en?.[key] || key;
+  let s = I18N[currentLang]?.[key] || I18N.pl?.[key] || key;
   if (params) {
     Object.entries(params).forEach(([k, v]) => { s = s.replace('{' + k + '}', v); });
   }
@@ -1626,7 +1626,7 @@ function cycleLang(){
 }
 
 function setLang(lang, saveToProfile = true) {
-  if (!SUPPORTED_LANGS.includes(lang)) lang = 'en';
+  if (!SUPPORTED_LANGS.includes(lang)) lang = 'pl';
   currentLang = lang;
   localStorage.setItem('chef_lang', lang);
   document.documentElement.lang = lang;

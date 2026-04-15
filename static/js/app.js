@@ -76,12 +76,12 @@ async function onLogin(){
     userProfile=await r.json();
   }catch{userProfile={}}
 
-  // Language priority: 1) Supabase profile, 2) localStorage, 3) browser auto-detect
+  // Language priority: 1) Supabase profile, 2) localStorage, 3) default Polish
   const profileLang = userProfile?.lang;
   if (profileLang && SUPPORTED_LANGS.includes(profileLang)) {
     setLang(profileLang, false); // apply without re-saving to profile
   } else if (!localStorage.getItem('chef_lang')) {
-    setLang(detectBrowserLang(), false); // first visit — auto-detect, don't save yet
+    setLang('pl', false); // new user — default to Polish
   }
 
   // Check if new user (no equipment = needs onboarding)
