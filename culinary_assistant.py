@@ -3257,6 +3257,178 @@ class CulinaryAssistant:
         logger.info(f"[meal_plan] parsed type={parsed.get('type')}, has_days={bool(parsed.get('days'))}, n_days={len(parsed.get('days', []))}")
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": resp.usage.prompt_tokens if resp.usage else 0, "completion_tokens": resp.usage.completion_tokens if resp.usage else 0}}
 
+    # ─── Plan Draft (lightweight: titles + kcal only) ───
+    def plan_draft(self, days=7, prefs="", uid=None, persons=2, kcal=0, meals=None, diet="", lang=None):
+        prof_data = db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
+        prof_ctx = profile_to_context(prof_data)
+        base = PROFILES.get(prof_data.get("bot_profile", "lukasz"), PROMPT_LUKASZ).replace("{profile_context}", prof_ctx)
+        bans = prof_data.get("banned_ingredients", [])
+        if isinstance(bans, str):
+            bans = json.loads(bans) if bans else []
+        ban_text = f"\nZAKAZANE SKŁADNIKI (nigdy nie używaj): {', '.join(bans)}." if bans else ""
+        meal_types = meals or ["obiad", "kolacja"]
+        meal_str = ", ".join(meal_types)
+        kcal_str = f" Cel kaloryczny: ~{kcal} kcal/dzień." if kcal else ""
+        diet_str = f" Dieta: {diet}." if diet else ""
+        user_msg = (
+            f"Stwórz SKRÓCONY plan posiłków na {days} dni dla {persons} osób.{diet_str}{kcal_str}{ban_text}\n"
+            f"Posiłki: {meal_str}.\nPreferencje: {prefs or 'brak'}.\n\n"
+            f"WAŻNE: Odpowiedz WYŁĄCZNIE poprawnym JSON. Podaj TYLKO tytuły dań z szacowanym czasem i kaloriami.\n"
+            f"NIE generuj składników, kroków ani listy zakupów.\n"
+            f"Format:\n"
+            f'{{"type":"plan_draft","days":[\n'
+            f'  {{"day":"Dzień 1","meals":[\n'
+            f'    {{"meal":"obiad","title":"Pieczony kurczak z batatami","prep_time":45,"kcal":650}}\n'
+            f'  ]}}\n'
+            f']}}'
+        )
+        system_with_lang = base + get_lang_instruction(lang)
+        resp = self.client.chat.completions.create(
+            model=AI_MODEL, max_tokens=2048, temperature=0.7,
+            messages=[{"role": "system", "content": system_with_lang}, {"role": "user", "content": user_msg}],
+            response_format={"type": "json_object"}
+        )
+        raw = resp.choices[0].message.content or ""
+        logger.info(f"[plan_draft] raw len={len(raw)}, first 200: {repr(raw[:200])}")
+        try:
+            parsed = json.loads(raw)
+        except Exception:
+            import re as _re2
+            m = _re2.search(r'\{.*\}', raw, _re2.DOTALL)
+            parsed = json.loads(m.group()) if m else {"type": "text", "content": raw}
+        parsed.pop("sources", None)
+        return {"data": parsed, "usage": {"prompt_tokens": resp.usage.prompt_tokens if resp.usage else 0, "completion_tokens": resp.usage.completion_tokens if resp.usage else 0}}
+
+    # ─── Swap: generate 3 alternative dish suggestions ───
+    def plan_swap(self, day_name, meal_type, current_name, diet="", kcal=0, uid=None, lang=None):
+        prof_data = db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
+        prof_ctx = profile_to_context(prof_data)
+        base = PROFILES.get(prof_data.get("bot_profile", "lukasz"), PROMPT_LUKASZ).replace("{profile_context}", prof_ctx)
+        bans = prof_data.get("banned_ingredients", [])
+        if isinstance(bans, str):
+            bans = json.loads(bans) if bans else []
+        ban_text = f"\nZAKAZANE SKŁADNIKI: {', '.join(bans)}." if bans else ""
+        diet_str = f" Dieta: {diet}." if diet else ""
+        kcal_str = f" Cel: ~{kcal} kcal." if kcal else ""
+        user_msg = (
+            f"Zaproponuj 3 ALTERNATYWNE dania na {meal_type} ({day_name}).{diet_str}{kcal_str}{ban_text}\n"
+            f"Obecne danie (do zamiany): {current_name}.\n"
+            f"Zaproponuj INNE dania, różnorodne, pasujące do planu tygodniowego.\n\n"
+            f"WAŻNE: Odpowiedz WYŁĄCZNIE poprawnym JSON.\n"
+            f"Format:\n"
+            f'{{"suggestions":[\n'
+            f'  {{"title":"Nazwa dania","prep_time":30,"kcal":550}},\n'
+            f'  {{"title":"Inne danie","prep_time":40,"kcal":600}},\n'
+            f'  {{"title":"Jeszcze inne","prep_time":35,"kcal":480}}\n'
+            f']}}'
+        )
+        system_with_lang = base + get_lang_instruction(lang)
+        resp = self.client.chat.completions.create(
+            model=AI_MODEL, max_tokens=512, temperature=0.8,
+            messages=[{"role": "system", "content": system_with_lang}, {"role": "user", "content": user_msg}],
+            response_format={"type": "json_object"}
+        )
+        raw = resp.choices[0].message.content or ""
+        logger.info(f"[plan_swap] raw len={len(raw)}")
+        try:
+            parsed = json.loads(raw)
+        except Exception:
+            import re as _re2
+            m = _re2.search(r'\{.*\}', raw, _re2.DOTALL)
+            parsed = json.loads(m.group()) if m else {"suggestions": []}
+        return {"data": parsed}
+
+    # ─── Swap custom: generate dish from user description ───
+    def plan_swap_custom(self, day_name, meal_type, user_input, diet="", kcal=0, uid=None, lang=None):
+        prof_data = db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
+        prof_ctx = profile_to_context(prof_data)
+        base = PROFILES.get(prof_data.get("bot_profile", "lukasz"), PROMPT_LUKASZ).replace("{profile_context}", prof_ctx)
+        bans = prof_data.get("banned_ingredients", [])
+        if isinstance(bans, str):
+            bans = json.loads(bans) if bans else []
+        ban_text = f"\nZAKAZANE SKŁADNIKI: {', '.join(bans)}." if bans else ""
+        diet_str = f" Dieta: {diet}." if diet else ""
+        kcal_str = f" Cel: ~{kcal} kcal." if kcal else ""
+        user_msg = (
+            f"Użytkownik chce na {meal_type} ({day_name}): \"{user_input}\".{diet_str}{kcal_str}{ban_text}\n"
+            f"Stwórz JEDNO konkretne danie pasujące do tego opisu.\n\n"
+            f"WAŻNE: Odpowiedz WYŁĄCZNIE poprawnym JSON.\n"
+            f"Format: {{{{'title':'Nazwa dania','prep_time':30,'kcal':550}}}}"
+        )
+        system_with_lang = base + get_lang_instruction(lang)
+        resp = self.client.chat.completions.create(
+            model=AI_MODEL, max_tokens=256, temperature=0.7,
+            messages=[{"role": "system", "content": system_with_lang}, {"role": "user", "content": user_msg}],
+            response_format={"type": "json_object"}
+        )
+        raw = resp.choices[0].message.content or ""
+        try:
+            parsed = json.loads(raw)
+        except Exception:
+            import re as _re2
+            m = _re2.search(r'\{.*\}', raw, _re2.DOTALL)
+            parsed = json.loads(m.group()) if m else {"title": user_input, "prep_time": 30, "kcal": 0}
+        return {"data": parsed}
+
+    # ─── Finalize: generate full recipes for accepted plan ───
+    def plan_finalize(self, plan_days, persons=2, uid=None, lang=None):
+        prof_data = db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
+        prof_ctx = profile_to_context(prof_data)
+        layers = self.search_all_layers("meal plan recipe ingredients steps cooking", k=3)
+        ctx = "\n---\n".join(layers.get("composition", []) + layers.get("flavor", []))
+        base = PROFILES.get(prof_data.get("bot_profile", "lukasz"), PROMPT_LUKASZ).replace("{profile_context}", prof_ctx)
+        prompt = base + (f"\n\n## KONTEKST WIEDZY:\n{ctx}" if ctx else "")
+        bans = prof_data.get("banned_ingredients", [])
+        if isinstance(bans, str):
+            bans = json.loads(bans) if bans else []
+        ban_text = f"\nZAKAZANE SKŁADNIKI (nigdy nie używaj): {', '.join(bans)}." if bans else ""
+
+        # Build dish list from plan_days
+        dishes = []
+        for day in plan_days:
+            for meal in day.get("meals", []):
+                dishes.append(f"{day.get('day','')}: {meal.get('meal','')} — {meal.get('title','')}")
+        dishes_text = "\n".join(dishes)
+
+        user_msg = (
+            f"Mam zaakceptowany plan posiłków na {len(plan_days)} dni dla {persons} osób.{ban_text}\n"
+            f"Dania:\n{dishes_text}\n\n"
+            f"Dla KAŻDEGO dania podaj PEŁNY przepis ze składnikami i krokami.\n"
+            f"Na końcu dodaj ZBIORCZĄ listę zakupów (zsumowane składniki, pogrupowane po sekcjach).\n\n"
+            f"WAŻNE: Odpowiedz WYŁĄCZNIE poprawnym JSON.\n"
+            f"Format:\n"
+            f'{{"type":"meal_plan","days":[\n'
+            f'  {{"day":"Dzień 1","meals":[\n'
+            f'    {{"meal":"obiad","title":"Nazwa","prep_time":45,"kcal":650,\n'
+            f'      "ingredients":[{{"amount":"200g","item":"kurczak"}}],\n'
+            f'      "steps":["Krok 1","Krok 2"]\n'
+            f'    }}\n'
+            f'  ]}}\n'
+            f'],\n'
+            f'"shopping_list":[{{"amount":"400g","item":"kurczak","section":"mięso"}}]\n'
+            f'}}'
+        )
+        system_with_lang = prompt + get_lang_instruction(lang)
+        n_meals = sum(len(d.get("meals", [])) for d in plan_days)
+        plan_max_tokens = min(16384, 2048 * max(n_meals, 2))
+        resp = self.client.chat.completions.create(
+            model=AI_MODEL, max_tokens=plan_max_tokens, temperature=0.7,
+            messages=[{"role": "system", "content": system_with_lang}, {"role": "user", "content": user_msg}],
+            response_format={"type": "json_object"}
+        )
+        raw = resp.choices[0].message.content or ""
+        logger.info(f"[plan_finalize] raw len={len(raw)}, first 300: {repr(raw[:300])}")
+        try:
+            parsed = json.loads(raw)
+        except Exception:
+            import re as _re2
+            m = _re2.search(r'\{.*\}', raw, _re2.DOTALL)
+            parsed = json.loads(m.group()) if m else {"type": "text", "content": raw}
+        parsed.pop("sources", None)
+        parsed = enforce_bans(parsed, bans)
+        logger.info(f"[plan_finalize] parsed type={parsed.get('type')}, n_days={len(parsed.get('days', []))}")
+        return {"data": parsed, "usage": {"prompt_tokens": resp.usage.prompt_tokens if resp.usage else 0, "completion_tokens": resp.usage.completion_tokens if resp.usage else 0}}
+
     def proposals(self, question, uid=None, filters=None, pantry=None, kcal_target=0):
         """Fast proposal step: detect specific vs vague query, return 5 dish ideas or skip."""
         prof_data = db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
@@ -3710,6 +3882,88 @@ def create_app():
         except:
             logger.error(traceback.format_exc())
             return jsonify({"error":"Blad generowania planu."}),500
+
+    @app.route("/api/plan/draft",methods=["POST"])
+    @require_auth
+    def api_plan_draft():
+        a=app.config.get("assistant")
+        if not a: return jsonify({"error":"Not init"}),503
+        d=request.get_json(silent=True) or {}
+        try:
+            return jsonify({"success":True,**a.plan_draft(
+                days=min(int(d.get("days",7)),14),
+                prefs=(d.get("preferences") or ""),
+                uid=g.user_id,
+                persons=min(int(d.get("persons",2)),10),
+                kcal=int(d.get("kcal",0) or 0),
+                meals=d.get("meals"),
+                diet=(d.get("diet") or ""),
+                lang=(d.get("lang") or "pl")
+            )})
+        except:
+            logger.error(traceback.format_exc())
+            return jsonify({"error":"Błąd generowania planu."}),500
+
+    @app.route("/api/plan/swap",methods=["POST"])
+    @require_auth
+    def api_plan_swap():
+        a=app.config.get("assistant")
+        if not a: return jsonify({"error":"Not init"}),503
+        d=request.get_json(silent=True) or {}
+        try:
+            return jsonify({"success":True,**a.plan_swap(
+                day_name=(d.get("day") or ""),
+                meal_type=(d.get("meal_type") or ""),
+                current_name=(d.get("current_name") or ""),
+                diet=(d.get("diet") or ""),
+                kcal=int(d.get("kcal",0) or 0),
+                uid=g.user_id,
+                lang=(d.get("lang") or "pl")
+            )})
+        except:
+            logger.error(traceback.format_exc())
+            return jsonify({"error":"Błąd generowania propozycji."}),500
+
+    @app.route("/api/plan/swap-custom",methods=["POST"])
+    @require_auth
+    def api_plan_swap_custom():
+        a=app.config.get("assistant")
+        if not a: return jsonify({"error":"Not init"}),503
+        d=request.get_json(silent=True) or {}
+        user_input=(d.get("user_input") or "").strip()
+        if not user_input: return jsonify({"error":"Brak opisu dania"}),400
+        try:
+            return jsonify({"success":True,**a.plan_swap_custom(
+                day_name=(d.get("day") or ""),
+                meal_type=(d.get("meal_type") or ""),
+                user_input=user_input,
+                diet=(d.get("diet") or ""),
+                kcal=int(d.get("kcal",0) or 0),
+                uid=g.user_id,
+                lang=(d.get("lang") or "pl")
+            )})
+        except:
+            logger.error(traceback.format_exc())
+            return jsonify({"error":"Błąd generowania dania."}),500
+
+    @app.route("/api/plan/finalize",methods=["POST"])
+    @require_auth
+    def api_plan_finalize():
+        a=app.config.get("assistant")
+        if not a: return jsonify({"error":"Not init"}),503
+        d=request.get_json(silent=True) or {}
+        plan_days=d.get("days")
+        if not plan_days or not isinstance(plan_days,list): return jsonify({"error":"Brak danych planu"}),400
+        try:
+            return jsonify({"success":True,**a.plan_finalize(
+                plan_days=plan_days,
+                persons=min(int(d.get("persons",2)),10),
+                uid=g.user_id,
+                lang=(d.get("lang") or "pl")
+            )})
+        except:
+            logger.error(traceback.format_exc())
+            return jsonify({"error":"Błąd generowania przepisów."}),500
 
     @app.route("/api/planner",methods=["POST"])
     @require_auth
