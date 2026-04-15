@@ -94,7 +94,7 @@ def optional_auth(f):
     return wrapper
 
 # â”€â”€â”€ Database Operations â”€â”€â”€
-DEFAULT_PROFILE={"equipment":[],"banned_ingredients":[],"favorite_ingredients":[],"favorite_techniques":[],"mastered_skills":[],"discovered_preferences":[],"cooked_recipes":[],"ratings":[],"feedback_history":[],"stats":{"total_recipes":0},"lang":"en"}
+DEFAULT_PROFILE={"name":"","equipment":[],"banned_ingredients":[],"favorite_ingredients":[],"favorite_techniques":[],"mastered_skills":[],"discovered_preferences":[],"cooked_recipes":[],"ratings":[],"feedback_history":[],"stats":{"total_recipes":0},"lang":"pl"}
 
 def db_get_profile(uid):
     try:

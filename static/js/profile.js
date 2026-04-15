@@ -15,7 +15,7 @@ async function loadProfileView(){
 
 function renderProfileView(p,el){
   let h='';
-  const userName = currentUser?.name || currentUser?.email?.split('@')[0] || 'Użytkownik';
+  const userName = currentUser?.user_metadata?.full_name || p?.name || currentUser?.name || currentUser?.email?.split('@')[0] || 'Użytkownik';
   const userEmail = currentUser?.email || '';
   const initials = userName.slice(0,2).toUpperCase();
   
@@ -89,7 +89,8 @@ function renderProfileView(p,el){
 
   // ─── GRUPA: MOJE POSTĘPY ───
   h+='<div class="profile-group">';
-  h+='<div class="profile-group-header" onclick="toggleProfileGroup(\'progress\')">🏆 Moje postępy</div>';
+  const progressCount = cookedCount + masteredCount + ratedCount;
+  h+='<div class="profile-group-header" onclick="toggleProfileGroup(\'progress\')">🏆 Moje postępy <span class="profile-group-count">'+progressCount+'</span></div>';
   h+='<div class="profile-group-body" id="profileGroupProgress">';
   
   if(cookedCount > 0){
@@ -123,8 +124,8 @@ function renderProfileView(p,el){
   h+='<div class="profile-settings-header">⚙️ Ustawienia</div>';
   h+='<div class="profile-settings-item" onclick="openLanguageSettings()"><div class="profile-settings-left"><span>🌐</span><span>Język</span></div><div class="profile-settings-right"><span>PL</span><span>→</span></div></div>';
   h+='<div class="profile-settings-item" onclick="openSubscriptionSettings()"><div class="profile-settings-left"><span>📊</span><span>Subskrypcja</span></div><div class="profile-settings-right"><span>'+(subStatus.is_pro?'PRO':'FREE')+'</span><span>→</span></div></div>';
-  h+='<div class="profile-settings-item" onclick="openPasswordSettings()"><div class="profile-settings-left"><span>🔒</span><span>Zmień hasło</span></div><div class="profile-settings-right"><span>→</span></div></div>';
-  h+='<div class="profile-settings-item" onclick="exportProfileData()"><div class="profile-settings-left"><span>📤</span><span>Eksport danych</span></div><div class="profile-settings-right"><span>→</span></div></div>';
+  h+='<div class="profile-settings-item" onclick="openPasswordSettings()"><div class="profile-settings-left"><span>�</span><span>Zmień hasło</span></div><div class="profile-settings-right"><span>→</span></div></div>';
+  h+='<div class="profile-settings-item" onclick="exportProfileData()"><div class="profile-settings-left"><span>�</span><span>Eksport danych</span></div><div class="profile-settings-right"><span>→</span></div></div>';
   h+='<div class="profile-settings-item" onclick="showResetConfirmation()"><div class="profile-settings-left"><span>🗑️</span><span>Resetuj profil</span></div><div class="profile-settings-right"><span>→</span></div></div>';
   h+='</div>';
 
