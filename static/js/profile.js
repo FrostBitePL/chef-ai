@@ -3,116 +3,268 @@ async function loadProfileView(){
   const el=document.getElementById('profileContent');
   el.innerHTML=loadingDots();
   try{
-    const r=await fetch(API+'/api/profile',{headers:authHeaders()});const p=await r.json();
+    // Load both profile and subscription status
+    const [profileRes, subRes] = await Promise.all([
+      fetch(API+'/api/profile',{headers:authHeaders()}),
+      loadSubStatus()
+    ]);
+    const p = await profileRes.json();
     renderProfileView(p,el);
   }catch{el.innerHTML='<div style="padding:20px;color:var(--text-faint)">'+t('profile.load_error')+'</div>'}
 }
 
 function renderProfileView(p,el){
   let h='';
-  const userName=currentUser?currentUser.name:'Użytkownik';
-
-  // ─── Equipment ───
-  h+='<div class="profile-section"><h3>'+t('profile.equip_title')+'</h3>';
-  h+='<div class="profile-hint">'+t('profile.equip_hint')+'</div>';
-  h+='<div class="tag-list">';
-  (p.equipment||[]).forEach(e=>{
-    h+='<span class="tag removable" onclick="removeProfileTag(\'equipment\',\''+esc(e).replace(/'/g,"\\'")+'\')">'+esc(e)+' ✕</span>';
-  });
-  h+='<span class="tag-add" onclick="addEquipment()">'+t('profile.add_equip')+'</span>';
-  h+='</div>';
-  if(!(p.equipment||[]).length){
-    h+='<div class="profile-presets"><div class="profile-hint" style="margin-top:8px">'+t('profile.quick_start')+'</div>';
-    h+='<button class="action-btn" onclick="loadEquipmentPreset(\'basic\')" style="margin:3px">'+t('profile.preset_basic')+'</button>';
-    h+='<button class="action-btn" onclick="loadEquipmentPreset(\'advanced\')" style="margin:3px">'+t('profile.preset_advanced')+'</button>';
-    h+='<button class="action-btn" onclick="loadFullPreset(\'lukasz\')" style="margin:3px">'+t('profile.preset_lukasz')+'</button>';
-    h+='</div>';
+  const userName = currentUser?.name || currentUser?.email?.split('@')[0] || 'Użytkownik';
+  const userEmail = currentUser?.email || '';
+  const initials = userName.slice(0,2).toUpperCase();
+  
+  // ─── HERO CARD ───
+  h+='<div class="profile-hero">';
+  h+='<div class="profile-avatar">'+initials+'</div>';
+  h+='<div class="profile-name">'+esc(userName)+'</div>';
+  h+='<div class="profile-email">'+esc(userEmail)+'</div>';
+  h+='<div class="profile-pro-row">';
+  if(subStatus.is_pro){
+    h+='<span class="profile-pro-badge">PRO</span> · od marca 2025';
+  } else {
+    h+='<span class="profile-free-badge">FREE</span>';
   }
   h+='</div>';
-
-  // ─── Banned ingredients ───
-  h+='<div class="profile-section"><h3>'+t('profile.bans_title')+'</h3>';
-  h+='<div class="profile-hint">'+t('profile.bans_hint')+'</div>';
-  h+='<div class="tag-list">';
-  (p.banned_ingredients||[]).forEach(b=>{
-    h+='<span class="tag removable tag-ban" onclick="removeProfileTag(\'banned_ingredients\',\''+esc(b).replace(/'/g,"\\'")+'\')">'+esc(b)+' ✕</span>';
-  });
-  h+='<span class="tag-add" onclick="addProfileTag(\'banned_ingredients\',\''+t('profile.ban_prompt')+'\')">'+ t('profile.add_ban')+'</span>';
-  h+='</div>';
-  if(!(p.banned_ingredients||[]).length){
-    h+='<div class="profile-presets"><div class="profile-hint" style="margin-top:8px">'+t('profile.ban_presets')+'</div>';
-    h+='<button class="action-btn" onclick="loadBanPreset(\'lukasz\')" style="margin:3px">'+t('profile.ban_lukasz')+'</button>';
-    h+='<button class="action-btn" onclick="loadBanPreset(\'vegetarian\')" style="margin:3px">'+t('profile.ban_vegetarian')+'</button>';
-    h+='<button class="action-btn" onclick="loadBanPreset(\'lactose\')" style="margin:3px">'+t('profile.ban_lactose')+'</button>';
-    h+='</div>';
-  }
+  h+='<button class="profile-edit-btn">✏️ Edytuj profil</button>';
   h+='</div>';
 
-  // ─── Favorite ingredients ───
-  h+='<div class="profile-section"><h3>'+t('profile.fav_title')+'</h3>';
-  h+='<div class="profile-hint">'+t('profile.fav_hint')+'</div>';
-  h+='<div class="tag-list">';
-  (p.favorite_ingredients||[]).forEach(i=>{
-    h+='<span class="tag removable" onclick="removeProfileTag(\'favorite_ingredients\',\''+esc(i).replace(/'/g,"\\'")+'\')">'+esc(i)+' ✕</span>';
-  });
-  h+='<span class="tag-add" onclick="addProfileTag(\'favorite_ingredients\',\''+t('profile.fav_prompt')+'\')">'+ t('profile.add')+'</span>';
-  h+='</div></div>';
-
-  // ─── Stats ───
-  h+='<div class="profile-section"><h3>'+t('profile.stats_title')+'</h3>';
-  h+='<div class="profile-stat"><span class="ps-label">'+t('profile.stat_cooked')+'</span><span class="ps-value">'+(p.cooked_recipes?.length||0)+'</span></div>';
-  h+='<div class="profile-stat"><span class="ps-label">'+t('profile.stat_skills')+'</span><span class="ps-value">'+(p.mastered_skills?.length||0)+'</span></div>';
-  h+='<div class="profile-stat"><span class="ps-label">'+t('profile.stat_rated')+'</span><span class="ps-value">'+(p.ratings?.length||0)+'</span></div>';
+  // ─── STATYSTYKI BAR ───
+  const cookedCount = p.cooked_recipes?.length || 0;
+  const masteredCount = p.mastered_skills?.length || 0;
+  const ratedCount = p.ratings?.length || 0;
+  
+  h+='<div class="profile-stats-bar">';
+  h+='<div class="profile-stat-col"><div class="profile-stat-value">'+cookedCount+'</div><div class="profile-stat-label">Ugotowane</div></div>';
+  h+='<div class="profile-stat-sep"></div>';
+  h+='<div class="profile-stat-col"><div class="profile-stat-value">'+masteredCount+'</div><div class="profile-stat-label">Opanowane</div></div>';
+  h+='<div class="profile-stat-sep"></div>';
+  h+='<div class="profile-stat-col"><div class="profile-stat-value">'+ratedCount+'</div><div class="profile-stat-label">Ocenione</div></div>';
   h+='</div>';
 
-  // ─── Cooked recipes ───
-  if(p.cooked_recipes?.length){
-    h+='<div class="profile-section"><h3>'+t('profile.recent_title')+'</h3>';
-    p.cooked_recipes.slice(-10).reverse().forEach(r=>{
-      h+='<div class="profile-stat"><span class="ps-label">'+esc(r.title)+'</span><span class="ps-value" style="font-size:0.72rem;color:var(--text-faint)">'+(r.date?new Date(r.date).toLocaleDateString(currentLang):'')+'</span></div>';
-    });
-    h+='</div>';
-  }
-
-  // ─── Favorite techniques ───
-  h+='<div class="profile-section"><h3>'+t('profile.tech_title')+'</h3>';
-  h+='<div class="tag-list">';
-  (p.favorite_techniques||[]).forEach(tc=>{
-    h+='<span class="tag removable" onclick="removeProfileTag(\'favorite_techniques\',\''+esc(tc).replace(/'/g,"\\'")+'\')">'+esc(tc)+' ✕</span>';
-  });
-  h+='<span class="tag-add" onclick="addProfileTag(\'favorite_techniques\',\''+t('profile.tech_prompt')+'\')">'+ t('profile.add')+'</span>';
+  // ─── GRUPA: MOJA KUCHNIA ───
+  const equipCount = (p.equipment||[]).length;
+  const banCount = (p.banned_ingredients||[]).length;
+  const favCount = (p.favorite_ingredients||[]).length;
+  const prefCount = (p.discovered_preferences||[]).length;
+  
+  h+='<div class="profile-group">';
+  h+='<div class="profile-group-header" onclick="toggleProfileGroup(\'kitchen\')">🔧 Moja kuchnia</div>';
+  h+='<div class="profile-group-body" id="profileGroupKitchen">';
+  
+  h+='<div class="profile-accordion-item" onclick="toggleAccordionItem(\'equipment\')">';
+  h+='<div class="profile-accordion-header">🔧 Sprzęt <span class="profile-count">'+equipCount+'</span> <span class="profile-chevron">▼</span></div>';
+  h+='<div class="profile-accordion-body" id="accordionEquipment">';
+  h+=renderEquipmentSection(p);
   h+='</div></div>';
-
-  // ─── Discovered preferences ───
-  h+='<div class="profile-section"><h3>'+t('profile.pref_title')+'</h3>';
-  h+='<div class="tag-list">';
-  (p.discovered_preferences||[]).forEach(pr=>{
-    h+='<span class="tag removable" onclick="removeProfileTag(\'discovered_preferences\',\''+esc(pr).replace(/'/g,"\\'")+'\')">'+esc(pr)+' ✕</span>';
-  });
-  h+='<span class="tag-add" onclick="addProfileTag(\'discovered_preferences\',\''+t('profile.pref_prompt')+'\')">'+ t('profile.add')+'</span>';
+  
+  h+='<div class="profile-accordion-item" onclick="toggleAccordionItem(\'bans\')">';
+  h+='<div class="profile-accordion-header">🚫 Zakazy <span class="profile-count">'+banCount+'</span> <span class="profile-chevron">▼</span></div>';
+  h+='<div class="profile-accordion-body" id="accordionBans">';
+  h+=renderBansSection(p);
   h+='</div></div>';
-
-  // ─── Mastered skills ───
-  if(p.mastered_skills?.length){
-    h+='<div class="profile-section"><h3>'+t('profile.mastered_title')+'</h3><div class="tag-list">';
-    p.mastered_skills.forEach(s=>{h+='<span class="tag" style="border-color:var(--success);color:var(--success)">✓ '+esc(s)+'</span>'});
+  
+  if(favCount > 0){
+    h+='<div class="profile-accordion-item" onclick="toggleAccordionItem(\'favorites\')">';
+    h+='<div class="profile-accordion-header">💚 Ulubione składniki <span class="profile-count">'+favCount+'</span> <span class="profile-chevron">▼</span></div>';
+    h+='<div class="profile-accordion-body" id="accordionFavorites">';
+    h+=renderFavoritesSection(p);
     h+='</div></div>';
   }
-
-  // ─── Ratings ───
-  if(p.ratings?.length){
-    h+='<div class="profile-section"><h3>'+t('profile.ratings_title')+'</h3>';
-    p.ratings.slice(-10).reverse().forEach(r=>{
-      const stars='★'.repeat(r.score||0)+'☆'.repeat(5-(r.score||0));
-      h+='<div class="profile-rating"><span class="stars">'+stars+'</span><span>'+esc(r.title)+'</span>'+(r.comment?'<span style="color:var(--text-faint);font-size:0.75rem;margin-left:auto">'+esc(r.comment)+'</span>':'')+'</div>';
-    });
-    h+='</div>';
+  
+  if(prefCount > 0){
+    h+='<div class="profile-accordion-item" onclick="toggleAccordionItem(\'preferences\')">';
+    h+='<div class="profile-accordion-header">💡 Preferencje smakowe <span class="profile-count">'+prefCount+'</span> <span class="profile-chevron">▼</span></div>';
+    h+='<div class="profile-accordion-body" id="accordionPreferences">';
+    h+=renderPreferencesSection(p);
+    h+='</div></div>';
   }
+  
+  h+='</div></div>';
 
-  // ─── Reset ───
-  h+='<div style="text-align:center;margin-top:16px"><button class="action-btn" style="color:var(--danger);border-color:var(--danger)" onclick="resetProfile()">'+t('profile.reset')+'</button></div>';
+  // ─── GRUPA: MOJE POSTĘPY ───
+  h+='<div class="profile-group">';
+  h+='<div class="profile-group-header" onclick="toggleProfileGroup(\'progress\')">🏆 Moje postępy</div>';
+  h+='<div class="profile-group-body" id="profileGroupProgress">';
+  
+  if(cookedCount > 0){
+    h+='<div class="profile-accordion-item" onclick="toggleAccordionItem(\'recent\')">';
+    h+='<div class="profile-accordion-header">🕐 Ostatnio gotowane <span class="profile-count">'+cookedCount+'</span> <span class="profile-chevron">▼</span></div>';
+    h+='<div class="profile-accordion-body" id="accordionRecent">';
+    h+=renderRecentSection(p);
+    h+='</div></div>';
+  }
+  
+  if(masteredCount > 0){
+    h+='<div class="profile-accordion-item" onclick="toggleAccordionItem(\'mastered\')">';
+    h+='<div class="profile-accordion-header">🏆 Opanowane techniki <span class="profile-count">'+masteredCount+'</span> <span class="profile-chevron">▼</span></div>';
+    h+='<div class="profile-accordion-body" id="accordionMastered">';
+    h+=renderMasteredSection(p);
+    h+='</div></div>';
+  }
+  
+  if(ratedCount > 0){
+    h+='<div class="profile-accordion-item" onclick="toggleAccordionItem(\'ratings\')">';
+    h+='<div class="profile-accordion-header">⭐ Oceny dań <span class="profile-count">'+ratedCount+'</span> <span class="profile-chevron">▼</span></div>';
+    h+='<div class="profile-accordion-body" id="accordionRatings">';
+    h+=renderRatingsSection(p);
+    h+='</div></div>';
+  }
+  
+  h+='</div></div>';
+
+  // ─── USTAWIENIA ───
+  h+='<div class="profile-settings">';
+  h+='<div class="profile-settings-header">⚙️ Ustawienia</div>';
+  h+='<div class="profile-settings-item" onclick="openLanguageSettings()"><div class="profile-settings-left"><span>🌐</span><span>Język</span></div><div class="profile-settings-right"><span>PL</span><span>→</span></div></div>';
+  h+='<div class="profile-settings-item" onclick="openSubscriptionSettings()"><div class="profile-settings-left"><span>📊</span><span>Subskrypcja</span></div><div class="profile-settings-right"><span>'+(subStatus.is_pro?'PRO':'FREE')+'</span><span>→</span></div></div>';
+  h+='<div class="profile-settings-item" onclick="openPasswordSettings()"><div class="profile-settings-left"><span>🔒</span><span>Zmień hasło</span></div><div class="profile-settings-right"><span>→</span></div></div>';
+  h+='<div class="profile-settings-item" onclick="exportProfileData()"><div class="profile-settings-left"><span>📤</span><span>Eksport danych</span></div><div class="profile-settings-right"><span>→</span></div></div>';
+  h+='<div class="profile-settings-item" onclick="showResetConfirmation()"><div class="profile-settings-left"><span>🗑️</span><span>Resetuj profil</span></div><div class="profile-settings-right"><span>→</span></div></div>';
+  h+='</div>';
+
+  // ─── WYLOGUJ ───
+  h+='<button class="profile-logout" onclick="logout()">Wyloguj</button>';
 
   el.innerHTML=h;
+}
+
+// ─── Section renderers ───
+function renderEquipmentSection(p) {
+  let h = '';
+  const equipment = p.equipment || [];
+  
+  if(equipment.length === 0) {
+    h += '<div class="profile-empty">Brak sprzętu — dodaj podstawowe narzędzia kuchenne.</div>';
+    h += '<div class="profile-presets">';
+    h += '<button class="profile-preset-btn" onclick="loadEquipmentPreset(\'basic\')">Podstawowy</button>';
+    h += '<button class="profile-preset-btn" onclick="loadEquipmentPreset(\'advanced\')">Zaawansowany</button>';
+    h += '<button class="profile-preset-btn" onclick="loadFullPreset(\'lukasz\')">Łukasz</button>';
+    h += '</div>';
+  } else {
+    // Group equipment by categories
+    const categories = categorizeEquipment(equipment);
+    Object.entries(categories).forEach(([cat, items]) => {
+      if(items.length > 0) {
+        h += '<div class="profile-category-label">'+cat+'</div>';
+        h += '<div class="profile-chip-list">';
+        items.forEach(item => {
+          h += '<span class="profile-chip profile-chip-equipment" onclick="removeProfileTag(\'equipment\',\''+esc(item).replace(/'/g,"\\'")+'\')">';
+          h += esc(item) + ' <span class="profile-chip-x">×</span></span>';
+        });
+        h += '</div>';
+      }
+    });
+  }
+  
+  h += '<button class="profile-add-btn" onclick="addEquipment()">+ Dodaj sprzęt</button>';
+  return h;
+}
+
+function renderBansSection(p) {
+  let h = '';
+  const bans = p.banned_ingredients || [];
+  
+  if(bans.length === 0) {
+    h += '<div class="profile-empty">Brak zakazów — dodaj składniki których nie lubisz.</div>';
+    h += '<div class="profile-presets">';
+    h += '<button class="profile-preset-btn" onclick="loadBanPreset(\'lukasz\')">Łukasz</button>';
+    h += '<button class="profile-preset-btn" onclick="loadBanPreset(\'vegetarian\')">Wegetariańskie</button>';
+    h += '<button class="profile-preset-btn" onclick="loadBanPreset(\'lactose\')">Bez laktozy</button>';
+    h += '</div>';
+  } else {
+    // Group bans by categories
+    const categories = categorizeBans(bans);
+    Object.entries(categories).forEach(([cat, items]) => {
+      if(items.length > 0) {
+        h += '<div class="profile-category-label">'+cat+'</div>';
+        h += '<div class="profile-chip-list">';
+        items.forEach(item => {
+          h += '<span class="profile-chip profile-chip-ban" onclick="removeProfileTag(\'banned_ingredients\',\''+esc(item).replace(/'/g,"\\'")+'\')">';
+          h += esc(item) + ' <span class="profile-chip-x">×</span></span>';
+        });
+        h += '</div>';
+      }
+    });
+  }
+  
+  h += '<button class="profile-add-btn profile-add-btn-ban" onclick="addProfileTag(\'banned_ingredients\',\''+t('profile.ban_prompt')+'\')">+ Dodaj zakaz</button>';
+  return h;
+}
+
+function renderFavoritesSection(p) {
+  let h = '';
+  const favorites = p.favorite_ingredients || [];
+  
+  h += '<div class="profile-chip-list">';
+  favorites.forEach(item => {
+    h += '<span class="profile-chip profile-chip-favorite" onclick="removeProfileTag(\'favorite_ingredients\',\''+esc(item).replace(/'/g,"\\'")+'\')">';
+    h += esc(item) + ' <span class="profile-chip-x">×</span></span>';
+  });
+  h += '</div>';
+  h += '<button class="profile-add-btn profile-add-btn-favorite" onclick="addProfileTag(\'favorite_ingredients\',\''+t('profile.fav_prompt')+'\')">+ Dodaj składnik</button>';
+  return h;
+}
+
+function renderPreferencesSection(p) {
+  let h = '';
+  const prefs = p.discovered_preferences || [];
+  
+  h += '<div class="profile-empty">Bot uczy się Twoich preferencji z ocen dań i historii gotowania.</div>';
+  if(prefs.length > 0) {
+    h += '<div class="profile-chip-list">';
+    prefs.forEach(pref => {
+      h += '<span class="profile-chip profile-chip-preference">'+esc(pref)+'</span>';
+    });
+    h += '</div>';
+  } else {
+    h += '<div class="profile-empty">Brak odkrytych preferencji — gotuj i oceniaj dania, a bot dostosuje się do Twojego gustu.</div>';
+  }
+  return h;
+}
+
+function renderRecentSection(p) {
+  let h = '';
+  const recent = p.cooked_recipes || [];
+  
+  recent.slice(-10).reverse().forEach(recipe => {
+    h += '<div class="profile-recent-item">';
+    h += '<div class="profile-recent-name">'+esc(recipe.title)+'</div>';
+    h += '<div class="profile-recent-date">'+(recipe.date ? new Date(recipe.date).toLocaleDateString('pl') : '')+'</div>';
+    h += '</div>';
+  });
+  return h;
+}
+
+function renderMasteredSection(p) {
+  let h = '';
+  const mastered = p.mastered_skills || [];
+  
+  h += '<div class="profile-chip-list">';
+  mastered.forEach(skill => {
+    h += '<span class="profile-chip profile-chip-mastered">✓ '+esc(skill)+'</span>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function renderRatingsSection(p) {
+  let h = '';
+  const ratings = p.ratings || [];
+  
+  ratings.slice(-10).reverse().forEach(rating => {
+    const stars = '★'.repeat(rating.score || 0) + '☆'.repeat(5 - (rating.score || 0));
+    h += '<div class="profile-rating-item">';
+    h += '<span class="profile-rating-stars">'+stars+'</span>';
+    h += '<span class="profile-rating-name">'+esc(rating.title)+'</span>';
+    h += '</div>';
+  });
+  return h;
 }
 
 // ─── Equipment presets ───
@@ -178,6 +330,108 @@ async function removeProfileTag(field,val){
     await fetch(API+'/api/profile',{method:'POST',headers:authHeaders(),body:JSON.stringify({[field]:list})});
     loadProfileView();
   }catch{}
+}
+
+// ─── Categorization functions ───
+function categorizeEquipment(equipment) {
+  const categories = {
+    'GOTOWANIE': [],
+    'PRZETWARZANIE': [],
+    'POMIARY': [],
+    'SPECJALNE': [],
+    'NACZYNIA': [],
+    'INNE': []
+  };
+  
+  equipment.forEach(item => {
+    const lower = item.toLowerCase();
+    if(lower.includes('piekarnik') || lower.includes('płyta') || lower.includes('indukcja') || lower.includes('gazowa')) {
+      categories['GOTOWANIE'].push(item);
+    } else if(lower.includes('blender') || lower.includes('robot') || lower.includes('maszynka') || lower.includes('mikser')) {
+      categories['PRZETWARZANIE'].push(item);
+    } else if(lower.includes('waga') || lower.includes('termometr') || lower.includes('pirometr') || lower.includes('analityczna')) {
+      categories['POMIARY'].push(item);
+    } else if(lower.includes('sous-vide') || lower.includes('syfon') || lower.includes('hydrokoloidy') || lower.includes('vacuum')) {
+      categories['SPECJALNE'].push(item);
+    } else if(lower.includes('patelnia') || lower.includes('garnek') || lower.includes('płyta stalowa')) {
+      categories['NACZYNIA'].push(item);
+    } else {
+      categories['INNE'].push(item);
+    }
+  });
+  
+  return categories;
+}
+
+function categorizeBans(bans) {
+  const categories = {
+    'WARZYWA': [],
+    'DRÓB I MIĘSO': [],
+    'OWOCE MORZA': [],
+    'PRZYPRAWY I AROMATY': [],
+    'SUROWE DANIA': [],
+    'INNE': []
+  };
+  
+  bans.forEach(item => {
+    const lower = item.toLowerCase();
+    if(lower.includes('cebula') || lower.includes('kolendra') || lower.includes('por') || lower.includes('szczypiorek')) {
+      categories['WARZYWA'].push(item);
+    } else if(lower.includes('kaczka') || lower.includes('gęś') || lower.includes('mięso') || lower.includes('drób')) {
+      categories['DRÓB I MIĘSO'].push(item);
+    } else if(lower.includes('małże') || lower.includes('ośmiornica') || lower.includes('kalmary') || lower.includes('ostrygi') || lower.includes('kraby') || lower.includes('homary') || lower.includes('owoce morza')) {
+      categories['OWOCE MORZA'].push(item);
+    } else if(lower.includes('anyż') || lower.includes('badian') || lower.includes('koper') || lower.includes('lukrecja') || lower.includes('estragon') || lower.includes('absynt')) {
+      categories['PRZYPRAWY I AROMATY'].push(item);
+    } else if(lower.includes('surowizna') || lower.includes('tatar') || lower.includes('sushi') || lower.includes('carpaccio')) {
+      categories['SUROWE DANIA'].push(item);
+    } else {
+      categories['INNE'].push(item);
+    }
+  });
+  
+  return categories;
+}
+
+// ─── Accordion functions ───
+function toggleAccordionItem(itemId) {
+  const body = document.getElementById('accordion' + itemId.charAt(0).toUpperCase() + itemId.slice(1));
+  const chevron = body?.parentElement.querySelector('.profile-chevron');
+  
+  if(body) {
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    if(chevron) chevron.textContent = isOpen ? '▼' : '▲';
+  }
+}
+
+function toggleProfileGroup(groupId) {
+  const body = document.getElementById('profileGroup' + groupId.charAt(0).toUpperCase() + groupId.slice(1));
+  if(body) {
+    body.classList.toggle('open');
+  }
+}
+
+// ─── Settings functions ───
+function openLanguageSettings() {
+  cycleLang(); // Use existing language cycling
+}
+
+function openSubscriptionSettings() {
+  openUpgrade(); // Use existing subscription management
+}
+
+function openPasswordSettings() {
+  alert('Zmiana hasła - funkcja w przygotowaniu');
+}
+
+function exportProfileData() {
+  alert('Eksport danych - funkcja w przygotowaniu');
+}
+
+function showResetConfirmation() {
+  // TODO: Implement reset confirmation drawer
+  resetProfile();
 }
 
 async function resetProfile(){
