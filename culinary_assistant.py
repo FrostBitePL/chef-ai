@@ -74,20 +74,21 @@ class AppMetrics:
                 "user_id": user_id,
             })
     
-    def log_api_call(self, provider, model, input_tokens, output_tokens, 
-                      duration_ms, cost_usd, endpoint=None):
+    def log_api_call(self, provider, model, input_tokens, output_tokens, duration_ms, cost_usd, endpoint=None, user_id=None):
+        """Log an API call with token usage and cost."""
         with self.lock:
-            self.api_calls.append({
-                "ts": time.time(),
+            call_data = {
+                "timestamp": datetime.utcnow().isoformat(),
                 "provider": provider,
                 "model": model,
                 "input_tokens": input_tokens,
                 "output_tokens": output_tokens,
-                "total_tokens": input_tokens + output_tokens,
-                "duration_ms": round(duration_ms, 1),
-                "cost_usd": round(cost_usd, 6),
+                "duration_ms": duration_ms,
+                "cost_usd": cost_usd,
                 "endpoint": endpoint,
-            })
+                "user_id": user_id
+            }
+            self.api_calls.append(call_data)
     
     def get_stats(self, hours=24):
         cutoff = time.time() - (hours * 3600)
@@ -2866,7 +2867,7 @@ class CulinaryAssistant:
 
     # ─── LLM calls ───
     
-    def _call_with_logging(self, prompt, msgs, max_tokens=None, stream=False, response_format=None):
+    def _call_with_logging(self, prompt, msgs, max_tokens=None, stream=False, response_format=None, user_id=None):
         """Wrapper for API calls with metrics logging."""
         start_time = time.time()
         
@@ -2903,6 +2904,7 @@ class CulinaryAssistant:
                     duration_ms=duration_ms,
                     cost_usd=cost,
                     endpoint=getattr(request, 'path', None) if 'request' in globals() else None,
+                    user_id=user_id
                 )
             
             return resp
@@ -2919,11 +2921,12 @@ class CulinaryAssistant:
                 )
             raise
 
-    def _call(self, prompt, msgs, mode=None):
+    def _call(self, prompt, msgs, mode=None, user_id=None):
         resp = self._call_with_logging(
             prompt, msgs, 
             max_tokens=AI_MAX_TOKENS,
-            response_format={"type": "json_object"}
+            response_format={"type": "json_object"},
+            user_id=user_id
         )
         raw = resp.choices[0].message.content
         logger.info(f"[_call] raw response (first 300): {repr(raw[:300]) if raw else 'EMPTY'}")
@@ -2939,11 +2942,12 @@ class CulinaryAssistant:
                 parsed = {"type": "text", "content": raw}
         return parsed, resp.usage
 
-    def _call_text(self, prompt, msgs):
+    def _call_text(self, prompt, msgs, user_id=None):
         """Like _call but without response_format constraint — for models that handle JSON natively."""
         resp = self._call_with_logging(
             prompt, msgs, 
-            max_tokens=AI_MAX_TOKENS
+            max_tokens=AI_MAX_TOKENS,
+            user_id=user_id
         )
         raw = resp.choices[0].message.content or ""
         logger.info(f"[_call_text] raw (first 300): {repr(raw[:300])}")
@@ -2962,12 +2966,13 @@ class CulinaryAssistant:
                     pass
             return {"type": "text", "content": raw}, resp.usage
 
-    def _call_stream(self, prompt, msgs, mode=None):
+    def _call_stream(self, prompt, msgs, mode=None, user_id=None):
         """Streaming version — yields chunks of text as they arrive."""
         resp = self._call_with_logging(
             prompt, msgs, 
             max_tokens=AI_MAX_TOKENS,
-            stream=True
+            stream=True,
+            user_id=user_id
         )
         full = ""
         for chunk in resp:
@@ -3234,7 +3239,7 @@ class CulinaryAssistant:
         msgs = list(history or []) + [{"role": "user", "content": task_prompt}]
 
         # FINAL: LLM call with decision engine
-        parsed, usage = self._call_text(system_prompt, msgs)
+        parsed, usage = self._call_text(system_prompt, msgs, user_id=uid)
         parsed.pop("sources", None)
         parsed.pop("book_references", None)
         parsed = enforce_bans(parsed, bans)
@@ -4970,7 +4975,7 @@ Zwróć JSON:
                 function renderUsers(users) {
                     const html = users.map(user => `
                         <div style="padding: 12px 0; border-bottom: 1px solid #27272A; display: flex; align-items: center; font-size: 13px;">
-                            <span style="flex: 1;">${user.email}</span>
+                            <span style="flex: 1; cursor: pointer; color: #E2B44F;" onclick="showUserDetails('${user.id}')">${user.email}</span>
                             <select onchange="changeUserRole('${user.id}', this.value)" 
                                     style="padding: 4px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; 
                                            background: #18181B; border: 1px solid #27272A; color: #FAFAFA; margin-right: 15px;">
@@ -4984,6 +4989,108 @@ Zwróć JSON:
                         </div>
                     `).join('');
                     document.getElementById('users').innerHTML = html;
+                }
+                
+                async function showUserDetails(userId) {
+                    try {
+                        const headers = getAuthHeaders();
+                        const response = await fetch(`/admin/api/users/${userId}`, { headers });
+                        const user = await response.json();
+                        
+                        if (!response.ok) {
+                            alert('Failed to load user details');
+                            return;
+                        }
+                        
+                        // Create modal
+                        const modal = document.createElement('div');
+                        modal.style.cssText = `
+                            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+                            background: rgba(0,0,0,0.8); z-index: 1000; 
+                            display: flex; align-items: center; justify-content: center;
+                        `;
+                        
+                        modal.innerHTML = `
+                            <div style="background: #18181B; border: 1px solid #27272A; border-radius: 8px; 
+                                        width: 90%; max-width: 800px; max-height: 90%; overflow-y: auto; padding: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                    <h2 style="color: #FAFAFA; margin: 0;">Szczegóły użytkownika</h2>
+                                    <button onclick="this.closest('div').parentElement.remove()" 
+                                            style="background: none; border: none; color: #71717A; font-size: 20px; cursor: pointer;">×</button>
+                                </div>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                                    <div>
+                                        <h3 style="color: #E2B44F; margin: 0 0 10px 0;">Profil</h3>
+                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Email:</strong> ${user.email}</p>
+                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Rola:</strong> ${user.profile.role.toUpperCase()}</p>
+                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Status:</strong> ${user.profile.subscription_status}</p>
+                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Język:</strong> ${user.profile.lang}</p>
+                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Utworzony:</strong> ${user.profile.created_at ? new Date(user.profile.created_at).toLocaleDateString('pl') : 'N/A'}</p>
+                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Ostatnie logowanie:</strong> ${user.profile.last_sign_in ? new Date(user.profile.last_sign_in).toLocaleDateString('pl') : 'Never'}</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <h3 style="color: #E2B44F; margin: 0 0 10px 0;">Użycie API</h3>
+                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Zapytania:</strong> ${user.usage.total_api_calls}</p>
+                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Tokeny:</strong> ${user.usage.total_tokens.toLocaleString()}</p>
+                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Koszt:</strong> $${user.usage.total_cost_usd}</p>
+                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Przepisy:</strong> ${user.usage.recipes_cooked}</p>
+                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Oceny:</strong> ${user.usage.recipes_rated}</p>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <h3 style="color: #E2B44F; margin: 0 0 10px 0;">Ostatnie API calls</h3>
+                                    <div style="max-height: 200px; overflow-y: auto; border: 1px solid #27272A; border-radius: 4px;">
+                                        ${user.recent_api_calls.map(call => `
+                                            <div style="padding: 8px; border-bottom: 1px solid #27272A; font-size: 12px;">
+                                                <span style="color: #71717A;">${new Date(call.timestamp).toLocaleString('pl')}</span>
+                                                <span style="color: #FAFAFA; margin-left: 10px;">${call.endpoint || 'N/A'}</span>
+                                                <span style="color: #E2B44F; margin-left: 10px;">${call.input_tokens + call.output_tokens} tokens</span>
+                                                <span style="color: #71717A; margin-left: 10px;">$${call.cost_usd.toFixed(4)}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h3 style="color: #E2B44F; margin: 0 0 10px 0;">Preferencje</h3>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 12px;">
+                                        <div>
+                                            <strong style="color: #FAFAFA;">Sprzęt:</strong><br>
+                                            <span style="color: #71717A;">${user.equipment.join(', ') || 'Brak'}</span>
+                                        </div>
+                                        <div>
+                                            <strong style="color: #FAFAFA;">Zabronione składniki:</strong><br>
+                                            <span style="color: #71717A;">${user.preferences.banned_ingredients.join(', ') || 'Brak'}</span>
+                                        </div>
+                                        <div>
+                                            <strong style="color: #FAFAFA;">Ulubione składniki:</strong><br>
+                                            <span style="color: #71717A;">${user.preferences.favorite_ingredients.join(', ') || 'Brak'}</span>
+                                        </div>
+                                        <div>
+                                            <strong style="color: #FAFAFA;">Opanowane umiejętności:</strong><br>
+                                            <span style="color: #71717A;">${user.preferences.mastered_skills.join(', ') || 'Brak'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        document.body.appendChild(modal);
+                        
+                        // Close on background click
+                        modal.addEventListener('click', (e) => {
+                            if (e.target === modal) {
+                                modal.remove();
+                            }
+                        });
+                        
+                    } catch (e) {
+                        console.error('Error loading user details:', e);
+                        alert('Error loading user details');
+                    }
                 }
                 
                 async function changeUserRole(userId, newRole) {
@@ -5062,6 +5169,101 @@ Zwróć JSON:
                 })
             return jsonify(result)
         except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    @app.route('/admin/api/users/<user_id>')
+    @admin_required
+    def admin_user_details(user_id):
+        try:
+            # Get user profile
+            profile = db_get_profile(user_id)
+            if not profile:
+                return jsonify({"error": "User not found"}), 404
+            
+            # Get auth data
+            auth_data = {}
+            try:
+                auth_response = sb.auth.admin.get_user_by_id(user_id)
+                if auth_response:
+                    auth_data = {
+                        "email": auth_response.user.email,
+                        "created_at": auth_response.user.created_at,
+                        "last_sign_in_at": auth_response.user.last_sign_in_at,
+                        "email_confirmed_at": auth_response.user.email_confirmed_at,
+                    }
+            except Exception as e:
+                logger.warning(f"Could not fetch auth data for {user_id}: {e}")
+            
+            # Get API usage from metrics (last 30 days)
+            api_calls = []
+            total_tokens = 0
+            total_cost = 0.0
+            
+            # Get recent API calls for this user from metrics
+            for call in metrics.api_calls:
+                if hasattr(call, 'user_id') and call.user_id == user_id:
+                    api_calls.append({
+                        "timestamp": call.timestamp,
+                        "endpoint": call.endpoint,
+                        "model": call.model,
+                        "input_tokens": call.input_tokens,
+                        "output_tokens": call.output_tokens,
+                        "cost_usd": call.cost_usd,
+                        "duration_ms": call.duration_ms
+                    })
+                    total_tokens += call.input_tokens + call.output_tokens
+                    total_cost += call.cost_usd
+            
+            # Sort by timestamp (newest first)
+            api_calls.sort(key=lambda x: x['timestamp'], reverse=True)
+            
+            # Calculate daily usage stats
+            from collections import defaultdict
+            daily_stats = defaultdict(lambda: {"requests": 0, "tokens": 0, "cost": 0.0})
+            
+            for call in api_calls:
+                day = call['timestamp'][:10]  # YYYY-MM-DD
+                daily_stats[day]["requests"] += 1
+                daily_stats[day]["tokens"] += call['input_tokens'] + call['output_tokens']
+                daily_stats[day]["cost"] += call['cost_usd']
+            
+            # Profile statistics
+            cooked_recipes = profile.get('cooked_recipes', [])
+            ratings = profile.get('ratings', [])
+            
+            result = {
+                "user_id": user_id,
+                "email": auth_data.get('email', 'Unknown'),
+                "profile": {
+                    "name": profile.get('name', ''),
+                    "role": profile.get('role', 'free'),
+                    "subscription_status": profile.get('subscription_status', 'free'),
+                    "lang": profile.get('lang', 'pl'),
+                    "created_at": auth_data.get('created_at'),
+                    "last_sign_in": auth_data.get('last_sign_in_at'),
+                    "email_confirmed": auth_data.get('email_confirmed_at') is not None,
+                },
+                "usage": {
+                    "total_api_calls": len(api_calls),
+                    "total_tokens": total_tokens,
+                    "total_cost_usd": round(total_cost, 4),
+                    "recipes_cooked": len(cooked_recipes),
+                    "recipes_rated": len(ratings),
+                    "daily_stats": dict(daily_stats)
+                },
+                "recent_api_calls": api_calls[:20],  # Last 20 calls
+                "equipment": profile.get('equipment', []),
+                "preferences": {
+                    "banned_ingredients": profile.get('banned_ingredients', []),
+                    "favorite_ingredients": profile.get('favorite_ingredients', []),
+                    "favorite_techniques": profile.get('favorite_techniques', []),
+                    "mastered_skills": profile.get('mastered_skills', [])
+                }
+            }
+            
+            return jsonify(result)
+        except Exception as e:
+            logger.error(f"Error getting user details: {e}")
             return jsonify({"error": str(e)}), 500
 
     @app.route('/admin/api/users/<user_id>/role', methods=['POST'])
