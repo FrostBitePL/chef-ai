@@ -31,7 +31,6 @@ function renderProfileView(p,el){
     h+='<span class="profile-free-badge">FREE</span>';
   }
   h+='</div>';
-  h+='<button class="profile-edit-btn">✏️ Edytuj profil</button>';
   h+='</div>';
 
   // ─── STATYSTYKI BAR ───
