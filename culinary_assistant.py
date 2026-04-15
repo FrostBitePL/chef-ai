@@ -30,7 +30,7 @@ MAX_HISTORY=8; SEARCH_RESULTS=8
 
 # ─── AI Model ───
 OPENAI_API_KEY=os.environ.get("OPENAI_API_KEY","")
-AI_MODEL="gpt-4.1-mini"
+AI_MODEL="gpt-4o-mini"
 AI_MAX_TOKENS=4096
 AI_BASE_URL="https://api.openai.com/v1"
 
@@ -165,6 +165,20 @@ def init_supabase():
         logger.warning("Supabase not configured")
 
 # â”€â”€â”€ Auth Middleware â”€â”€â”€
+def get_user_from_session():
+    """Extract user_id from Supabase session cookie. Returns None if not authenticated."""
+    import json
+    try:
+        # Check for Supabase auth token in cookies or localStorage-like headers
+        auth_cookie = request.cookies.get('sb-vmmwhwlglnjyplzlvlxf-auth-token')
+        if auth_cookie:
+            auth_data = json.loads(auth_cookie)
+            if 'user' in auth_data and 'id' in auth_data['user']:
+                return auth_data['user']['id']
+    except:
+        pass
+    return None
+
 def get_user_from_token():
     """Extract user_id from Bearer token. Returns None if not authenticated."""
     auth=request.headers.get("Authorization","")
@@ -2856,9 +2870,9 @@ class CulinaryAssistant:
         """Wrapper for API calls with metrics logging."""
         start_time = time.time()
         
-        # DeepSeek pricing (update these values as needed)
-        INPUT_PRICE = 0.00014   # $/1K tokens (cache miss)
-        OUTPUT_PRICE = 0.00028  # $/1K tokens
+        # GPT-4o-mini pricing (update these values as needed)
+        INPUT_PRICE = 0.00015   # $/1K tokens 
+        OUTPUT_PRICE = 0.0006   # $/1K tokens
         
         try:
             kwargs = {
@@ -2882,7 +2896,7 @@ class CulinaryAssistant:
                 cost = (input_tokens * INPUT_PRICE + output_tokens * OUTPUT_PRICE) / 1000
                 
                 metrics.log_api_call(
-                    provider="deepseek",
+                    provider="openai",
                     model=AI_MODEL,
                     input_tokens=input_tokens,
                     output_tokens=output_tokens,
@@ -3708,7 +3722,8 @@ def create_app():
     def admin_required(f):
         @functools.wraps(f)
         def decorated(*args, **kwargs):
-            user_id = get_user_from_token()
+            # Try session first (for browser), then token (for API)
+            user_id = get_user_from_session() or get_user_from_token()
             if not user_id:
                 return jsonify({"error": "Unauthorized"}), 401
             
@@ -4741,10 +4756,27 @@ Zwróć JSON:
 
     @app.route("/")
     def index(): return send_from_directory("static","index.html")
+    
+    @app.route("/test")
+    def test_route(): return "Test route works! Admin should work too."
+    
+    @app.route("/admin-debug")
+    def admin_debug():
+        user_id_session = get_user_from_session()
+        user_id_token = get_user_from_token()
+        user_id = user_id_session or user_id_token
+        
+        if not user_id:
+            return f"No user_id found.<br>Session: {user_id_session}<br>Token: {user_id_token}<br>Cookies: {dict(request.cookies)}"
+        
+        try:
+            profile = db_get_profile(user_id)
+            return f"User ID: {user_id}<br>Profile: {profile}<br>Role: {profile.get('role', 'NO ROLE')}"
+        except Exception as e:
+            return f"Error getting profile: {e}"
 
     # ─── Admin Panel ───
     @app.route('/admin')
-    @admin_required
     def admin_panel():
         # Simple HTML template for admin panel
         html = '''
@@ -4809,12 +4841,50 @@ Zwróć JSON:
             </div>
             
             <script>
+                // Check auth and get token
+                function getAuthToken() {
+                    const authData = localStorage.getItem('sb-vmmwhwlglnjyplzlvlxf-auth-token');
+                    if (authData) {
+                        try {
+                            const parsed = JSON.parse(authData);
+                            return parsed.access_token;
+                        } catch (e) {
+                            return null;
+                        }
+                    }
+                    return null;
+                }
+                
+                function getAuthHeaders() {
+                    const token = getAuthToken();
+                    return token ? { 'Authorization': `Bearer ${token}` } : {};
+                }
+                
+                // Check if user is logged in and redirect if not
+                function checkAuth() {
+                    const token = getAuthToken();
+                    if (!token) {
+                        document.body.innerHTML = `
+                            <div style="text-align: center; padding: 100px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+                                <h1 style="color: #F87171; margin-bottom: 20px;">Unauthorized</h1>
+                                <p style="color: #A1A1AA; margin-bottom: 30px;">You need to be logged in to access the admin panel.</p>
+                                <a href="/" style="color: #E2B44F; text-decoration: none;">← Go back to Chef AI</a>
+                            </div>
+                        `;
+                        return false;
+                    }
+                    return true;
+                }
+                
                 async function loadData() {
+                    if (!checkAuth()) return;
+                    
                     try {
+                        const headers = getAuthHeaders();
                         const [health, stats, users] = await Promise.all([
-                            fetch('/admin/api/health').then(r => r.json()),
-                            fetch('/admin/api/stats').then(r => r.json()),
-                            fetch('/admin/api/users').then(r => r.json())
+                            fetch('/admin/api/health', { headers }).then(r => r.json()),
+                            fetch('/admin/api/stats', { headers }).then(r => r.json()),
+                            fetch('/admin/api/users', { headers }).then(r => r.json())
                         ]);
                         
                         renderHealth(health);
@@ -4974,15 +5044,15 @@ Zwróć JSON:
         except Exception as e:
             checks["supabase"] = {"status": "error", "message": str(e)}
         
-        # DeepSeek API
+        # OpenAI API
         try:
             # Simple check - if we have the key
             if OPENAI_API_KEY:
-                checks["deepseek"] = {"status": "ok"}
+                checks["openai"] = {"status": "ok"}
             else:
-                checks["deepseek"] = {"status": "error", "message": "No API key"}
+                checks["openai"] = {"status": "error", "message": "No API key"}
         except Exception as e:
-            checks["deepseek"] = {"status": "error", "message": str(e)}
+            checks["openai"] = {"status": "error", "message": str(e)}
         
         # ChromaDB
         try:
