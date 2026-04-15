@@ -221,8 +221,11 @@ function renderUserInfo(){
   if(ddName) ddName.textContent=name;
   const ddEmail=document.getElementById('ddEmail');
   if(ddEmail) ddEmail.textContent=currentUser?.email||'';
-  const proBadge=document.getElementById('proBadge');
-  if(proBadge) proBadge.style.display=subStatus.is_pro?'':'none';
+  const badge=document.getElementById('subBadge');
+  if(badge){
+    badge.textContent=subStatus.is_pro?'PRO':'FREE';
+    badge.classList.toggle('is-pro',subStatus.is_pro);
+  }
   // Update lang label
   const ddLang=document.getElementById('ddLang');
   if(ddLang) ddLang.textContent='🌐 Język ('+((window.currentLang||'pl').toUpperCase())+')';

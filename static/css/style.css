@@ -122,12 +122,16 @@ body{
 .header-title .chef{color:var(--gold)}
 .header-title .ai{color:var(--text)}
 .header-right{display:flex;align-items:center;gap:8px}
-/* PRO badge */
-.pro-badge{
+/* Subscription badge */
+.sub-badge{
   padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;
-  letter-spacing:0.06em;color:var(--gold);
-  background:linear-gradient(135deg,var(--gold-dim),transparent);
-  border:1px solid var(--gold-border)
+  letter-spacing:0.06em;cursor:pointer;transition:all var(--transition-fast);
+  border:1px solid var(--glass-border);color:var(--text-muted);background:var(--glass)
+}
+.sub-badge:hover{border-color:var(--gold-border);color:var(--gold)}
+.sub-badge.is-pro{
+  color:var(--gold);background:linear-gradient(135deg,var(--gold-dim),transparent);
+  border-color:var(--gold-border);cursor:default
 }
 /* Avatar */
 .user-avatar{
