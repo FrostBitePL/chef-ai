@@ -604,19 +604,19 @@ function openFlow(flowType) {
         case 'ingredients':
             // TODO: Implement ingredients flow
             showView('chat');
-            addMessage('system', 'Flow "Z tego co mam" - w trakcie implementacji. Napisz jakie składniki masz.');
+            addMsg('system', 'Flow "Z tego co mam" - w trakcie implementacji. Napisz jakie składniki masz.');
             break;
             
         case 'quick':
             // TODO: Implement quick flow  
             showView('chat');
-            addMessage('system', 'Flow "Szybko" - w trakcie implementacji. Napisz czego szukasz do 30 minut.');
+            addMsg('system', 'Flow "Szybko" - w trakcie implementacji. Napisz czego szukasz do 30 minut.');
             break;
             
         case 'discover':
             // TODO: Implement discover flow
             showView('chat');
-            addMessage('system', 'Flow "Coś nowego" - w trakcie implementacji. Napisz jakiej kuchni chcesz spróbować.');
+            addMsg('system', 'Flow "Coś nowego" - w trakcie implementacji. Napisz jakiej kuchni chcesz spróbować.');
             break;
             
         case 'classic':
@@ -627,13 +627,13 @@ function openFlow(flowType) {
         case 'healthy':
             // TODO: Implement healthy flow
             showView('chat');
-            addMessage('system', 'Flow "Zdrowe" - w trakcie implementacji. Napisz jakie masz cele żywieniowe.');
+            addMsg('system', 'Flow "Zdrowe" - w trakcie implementacji. Napisz jakie masz cele żywieniowe.');
             break;
             
         case 'guests':
             // TODO: Implement guests flow (PRO only)
             showView('chat');
-            addMessage('system', 'Flow "Dla gości" - w trakcie implementacji. Napisz na ile osób planujesz menu.');
+            addMsg('system', 'Flow "Dla gości" - w trakcie implementacji. Napisz na ile osób planujesz menu.');
             break;
     }
 }
@@ -762,16 +762,7 @@ async function generateClassicRecipe(recipeName) {
         if (data.success && data.recipe) {
             // Switch to chat and show recipe
             showView('chat');
-            addMessage('assistant', '', data.recipe);
-            
-            // Add to chat history
-            chatHistory.push({
-                role: 'assistant',
-                content: '',
-                data: data.recipe,
-                type: 'recipe',
-                id: Date.now().toString()
-            });
+            handleResponse(data.recipe);
         } else {
             alert('Nie udało się wygenerować przepisu: ' + (data.error || 'Nieznany błąd'));
         }
