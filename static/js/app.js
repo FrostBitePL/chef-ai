@@ -687,7 +687,8 @@ function showRecipeFromHistory(recipeId) {
 
 // ─── FLOW 4: CLASSIC FUNCTIONS ───
 
-let _classicsData = null; // cached index
+let _classicsData = null;
+let _clsActiveCat = null;
 
 async function loadClassicChips() {
     const container = document.getElementById('classicCategories');
@@ -700,8 +701,68 @@ async function loadClassicChips() {
         if (data.success) {
             _classicsData = data.classics;
             renderClassicIndex(data.classics, container);
+            renderProfileBanner(data.profile);
+            renderCatTabs(data.classics.categories || []);
+            initClsScrollSpy();
         }
     } catch (e) { console.error('Error loading classics:', e); }
+}
+
+function renderProfileBanner(p) {
+    const banner = document.getElementById('clsProfileBanner');
+    const text = document.getElementById('clsProfileText');
+    const sub = document.getElementById('clsHeroSub');
+    if (!banner || !p) return;
+    
+    if (p.filters_active) {
+        const parts = [];
+        if (p.dietary?.length) parts.push(p.dietary.join(', '));
+        if (p.banned?.length) parts.push(`bez: ${p.banned.slice(0,3).join(', ')}${p.banned.length > 3 ? '...' : ''}`);
+        text.innerHTML = `Filtr profilu: <b>${parts.join(' · ')}</b> — ${p.filtered_dishes}/${p.total_dishes} dań`;
+        banner.style.display = 'flex';
+    } else {
+        banner.style.display = 'none';
+    }
+    if (sub) sub.textContent = `${p.filtered_dishes || 230} sprawdzonych przepisów`;
+}
+
+function renderCatTabs(cats) {
+    const bar = document.getElementById('clsCatBar');
+    if (!bar || !cats.length) return;
+    bar.innerHTML = `<button class="cls-cat-tab active" data-cat="all" onclick="scrollToCat('all')">Wszystkie</button>` +
+        cats.sort((a,b) => a.order - b.order).map(c =>
+            `<button class="cls-cat-tab" data-cat="${c.id}" onclick="scrollToCat('${c.id}')">${c.emoji} ${c.name}</button>`
+        ).join('');
+}
+
+function scrollToCat(catId) {
+    // Activate tab
+    document.querySelectorAll('.cls-cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === catId));
+    if (catId === 'all') {
+        document.getElementById('clsContent')?.scrollTo({top: 0, behavior: 'smooth'});
+        return;
+    }
+    const section = document.querySelector(`.category-section[data-cat="${catId}"]`);
+    if (section) section.scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+function initClsScrollSpy() {
+    const content = document.getElementById('clsContent');
+    if (!content) return;
+    content.addEventListener('scroll', () => {
+        const sections = content.querySelectorAll('.category-section');
+        let current = 'all';
+        sections.forEach(s => {
+            if (s.getBoundingClientRect().top < 120) current = s.dataset.cat;
+        });
+        if (current !== _clsActiveCat) {
+            _clsActiveCat = current;
+            document.querySelectorAll('.cls-cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === current));
+            // Scroll tab into view
+            const activeTab = document.querySelector(`.cls-cat-tab[data-cat="${current}"]`);
+            if (activeTab) activeTab.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'center'});
+        }
+    }, {passive: true});
 }
 
 function fmtTime(min) {
@@ -711,21 +772,21 @@ function fmtTime(min) {
 }
 
 function renderClassicIndex(idx, container) {
-    const cats = idx.categories || [];
+    const cats = (idx.categories || []).slice().sort((a,b) => a.order - b.order);
     const dishes = idx.dishes || [];
     const grouped = {};
     dishes.forEach(d => { (grouped[d.category] = grouped[d.category] || []).push(d); });
     
     let html = '';
-    cats.sort((a,b) => a.order - b.order).forEach(cat => {
+    cats.forEach(cat => {
         const items = grouped[cat.id] || [];
         if (!items.length) return;
-        html += `<div class="category-section">
+        html += `<div class="category-section" data-cat="${cat.id}">
           <div class="category-title">${cat.emoji} ${cat.name} <span class="cat-count">${items.length}</span></div>
           <div class="category-chips">${items.map(d => {
             const hc = d.hardcoded ? ' data-hc="1"' : '';
-            const diff = '★'.repeat(d.difficulty) + '☆'.repeat(3-d.difficulty);
-            return `<div class="classic-chip${d.hardcoded ? ' chip-instant' : ''}" onclick="loadClassicRecipe('${d.id}')"${hc}>
+            const diff = '★'.repeat(d.difficulty) + '☆'.repeat(3 - d.difficulty);
+            return `<div class="classic-chip${d.hardcoded ? ' chip-instant' : ''}" onclick="loadClassicRecipe('${d.id}')"${hc} data-name="${d.name.toLowerCase()}">
               <span class="chip-emoji">${d.emoji}</span>
               <span class="chip-name">${d.name}</span>
               <span class="chip-meta">${fmtTime(d.time)} · ${diff}</span>
@@ -733,7 +794,6 @@ function renderClassicIndex(idx, container) {
           }).join('')}</div></div>`;
     });
     container.innerHTML = html;
-    _applyClassicFilter();
 }
 
 function _applyClassicFilter() {
@@ -741,10 +801,14 @@ function _applyClassicFilter() {
     if (!q) {
         document.querySelectorAll('#classicCategories .classic-chip').forEach(c => c.style.display = '');
         document.querySelectorAll('#classicCategories .category-section').forEach(s => s.style.display = '');
+        document.getElementById('clsCatBar') && (document.getElementById('clsCatBar').style.display = '');
         return;
     }
+    // Hide category tabs when searching
+    document.getElementById('clsCatBar') && (document.getElementById('clsCatBar').style.display = 'none');
     document.querySelectorAll('#classicCategories .classic-chip').forEach(c => {
-        c.style.display = c.textContent.toLowerCase().includes(q) ? '' : 'none';
+        const name = c.dataset.name || c.textContent.toLowerCase();
+        c.style.display = name.includes(q) ? '' : 'none';
     });
     document.querySelectorAll('#classicCategories .category-section').forEach(s => {
         const visible = s.querySelectorAll('.classic-chip:not([style*="display: none"])');
@@ -758,9 +822,10 @@ async function loadClassicRecipe(recipeId) {
     const chip = document.querySelector(`.classic-chip[onclick*="'${recipeId}'"]`);
     const isHardcoded = chip?.dataset?.hc === '1';
     
-    if (!isHardcoded && loadingEl && catsEl) {
-        catsEl.style.display = 'none';
-        loadingEl.style.display = 'flex';
+    if (!isHardcoded) {
+        const loadTxt = document.querySelector('#classicLoading .loading-text');
+        if (loadTxt) loadTxt.textContent = `Generuję: ${chip?.querySelector('.chip-name')?.textContent || recipeId}...`;
+        if (loadingEl && catsEl) { catsEl.style.display = 'none'; loadingEl.style.display = 'flex'; }
     }
     
     try {
@@ -780,10 +845,7 @@ async function loadClassicRecipe(recipeId) {
         console.error('Error loading classic recipe:', e);
         alert('Błąd ładowania przepisu');
     } finally {
-        if (loadingEl && catsEl) {
-            loadingEl.style.display = 'none';
-            catsEl.style.display = '';
-        }
+        if (loadingEl && catsEl) { loadingEl.style.display = 'none'; catsEl.style.display = ''; }
     }
 }
 
@@ -792,23 +854,23 @@ function searchClassic() {
     const q = input?.value.trim().toLowerCase();
     if (!q) return;
     
-    // Filter chips live
     const visible = document.querySelectorAll('#classicCategories .classic-chip:not([style*="display: none"])');
     if (visible.length === 1) {
         visible[0].click();
         input.value = '';
+        _applyClassicFilter();
         return;
     }
     if (visible.length === 0) {
-        // Fallback to chat
         input.value = '';
+        _applyClassicFilter();
         showView('chat');
         document.getElementById('input').value = q;
         send();
     }
 }
 
-// Live filter on typing + Enter
+// Live filter + Enter
 document.addEventListener('DOMContentLoaded', () => {
     const el = document.getElementById('classicSearch');
     if (el) {

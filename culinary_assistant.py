@@ -4962,7 +4962,27 @@ Sprzęt użytkownika: {equip_str}
             else:
                 # --- Layer 1: Index chips (instant) ---
                 index_data = get_classic_index_for_profile(profile)
-                return jsonify({"success": True, "classics": index_data})
+                
+                # Profile summary for frontend display
+                dietary_prefs = profile.get("dietary_preferences", [])
+                if isinstance(dietary_prefs, str):
+                    dietary_prefs = json.loads(dietary_prefs) if dietary_prefs else []
+                banned = profile.get("banned_ingredients", [])
+                if isinstance(banned, str):
+                    banned = json.loads(banned) if banned else []
+                equipment = get_user_equipment(profile)
+                
+                profile_summary = {
+                    "dietary": dietary_prefs,
+                    "banned": banned,
+                    "equipment_count": len(equipment),
+                    "name": profile.get("name", ""),
+                    "filters_active": len(dietary_prefs) > 0 or len(banned) > 0,
+                    "total_dishes": len(CLASSICS_INDEX.get("dishes", [])),
+                    "filtered_dishes": len(index_data.get("dishes", []))
+                }
+                
+                return jsonify({"success": True, "classics": index_data, "profile": profile_summary})
                 
         except Exception as e:
             logger.error(f"Classic recipes error: {e}")

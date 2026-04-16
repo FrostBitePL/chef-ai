@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/static/css/style.css?v=4">
+<link rel="stylesheet" href="/static/css/style.css?v=5">
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/static/sw.js').then(reg=>{
@@ -152,18 +152,30 @@ if('serviceWorker' in navigator){
 
   <!-- Flow 4: Classic -->
   <div class="view" id="view-flow-classic">
-    <div class="flow-header">
-      <button class="flow-back" onclick="showView('home')">←</button>
-      <div class="flow-title">Klasyki</div>
-      <div class="flow-subtitle">230 sprawdzonych przepisów</div>
-    </div>
-    
-    <div class="flow-content">
-      <div class="flow-search">
-        <input type="text" class="flow-search-input" id="classicSearch" placeholder="Szukaj np. carbonara, sernik, pad thai...">
-        <button class="flow-search-btn" onclick="searchClassic()">🔍</button>
+    <!-- Hero -->
+    <div class="cls-hero">
+      <button class="cls-back" onclick="showView('home')">←</button>
+      <div class="cls-hero-text">
+        <div class="cls-hero-title">Klasyki</div>
+        <div class="cls-hero-sub" id="clsHeroSub">230 sprawdzonych przepisów</div>
       </div>
-      
+      <div class="cls-search-wrap">
+        <svg class="cls-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="cls-search" id="classicSearch" placeholder="Szukaj np. carbonara, sernik...">
+      </div>
+    </div>
+
+    <!-- Profile banner -->
+    <div class="cls-profile-banner" id="clsProfileBanner" style="display:none">
+      <span class="cls-profile-icon">👤</span>
+      <span class="cls-profile-text" id="clsProfileText"></span>
+    </div>
+
+    <!-- Category tabs -->
+    <div class="cls-cat-bar" id="clsCatBar"></div>
+
+    <!-- Content -->
+    <div class="cls-content" id="clsContent">
       <div class="classic-categories" id="classicCategories"></div>
       
       <div class="flow-loading" id="classicLoading" style="display:none">
@@ -423,16 +435,16 @@ if('serviceWorker' in navigator){
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <!-- JS Modules -->
-<script src="/static/js/i18n.js?v=4"></script>
-<script src="/static/js/app.js?v=4"></script>
-<script src="/static/js/chat.js?v=4"></script>
-<script src="/static/js/training.js?v=4"></script>
-<script src="/static/js/planner.js?v=4"></script>
-<script src="/static/js/history.js?v=4"></script>
-<script src="/static/js/favorites.js?v=4"></script>
-<script src="/static/js/profile.js?v=4"></script>
-<script src="/static/js/live.js?v=4"></script>
-<script src="/static/js/filters.js?v=4"></script>
-<script src="/static/js/recipe_tools.js?v=4"></script>
+<script src="/static/js/i18n.js?v=5"></script>
+<script src="/static/js/app.js?v=5"></script>
+<script src="/static/js/chat.js?v=5"></script>
+<script src="/static/js/training.js?v=5"></script>
+<script src="/static/js/planner.js?v=5"></script>
+<script src="/static/js/history.js?v=5"></script>
+<script src="/static/js/favorites.js?v=5"></script>
+<script src="/static/js/profile.js?v=5"></script>
+<script src="/static/js/live.js?v=5"></script>
+<script src="/static/js/filters.js?v=5"></script>
+<script src="/static/js/recipe_tools.js?v=5"></script>
 </body>
 </html>
