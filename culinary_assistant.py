@@ -4772,6 +4772,27 @@ Zwróć JSON:
     @app.route("/favicon.ico")
     def favicon(): return send_from_directory("static/icons", "icon-192.png")
     
+    @app.route("/robots.txt")
+    def robots():
+        return """User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://chef-ai.netlify.app/sitemap.xml""", 200, {'Content-Type': 'text/plain'}
+    
+    @app.route("/sitemap.xml")
+    def sitemap():
+        return """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://chef-ai.netlify.app/</loc>
+        <lastmod>2026-04-16</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+</urlset>""", 200, {'Content-Type': 'application/xml'}
+    
     @app.route("/test")
     def test_route(): return "Test route works! Admin should work too."
     
