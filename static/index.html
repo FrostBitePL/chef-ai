@@ -150,6 +150,44 @@ if('serviceWorker' in navigator){
     </div>
   </div>
 
+  <!-- Flow 4: Classic -->
+  <div class="view" id="view-flow-classic">
+    <div class="flow-header">
+      <button class="flow-back" onclick="showView('home')">←</button>
+      <div class="flow-title">Klasyki</div>
+      <div class="flow-subtitle">Sprawdzone przepisy</div>
+    </div>
+    
+    <div class="flow-content">
+      <div class="flow-search">
+        <input type="text" class="flow-search-input" id="classicSearch" placeholder="np. rosół, kotlet...">
+        <button class="flow-search-btn" onclick="searchClassic()">🔍</button>
+      </div>
+      
+      <div class="classic-categories" id="classicCategories">
+        <div class="category-section">
+          <div class="category-title">🇵🇱 Polskie:</div>
+          <div class="category-chips" id="polishChips"></div>
+        </div>
+        
+        <div class="category-section">
+          <div class="category-title">🌍 Świata:</div>
+          <div class="category-chips" id="worldChips"></div>
+        </div>
+        
+        <div class="category-section">
+          <div class="category-title">🧁 Wypieki:</div>
+          <div class="category-chips" id="dessertChips"></div>
+        </div>
+      </div>
+      
+      <div class="flow-loading" id="classicLoading" style="display:none">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Generuję przepis...</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Chat -->
   <div class="view" id="view-chat">
     <div class="messages" id="messages"></div>

@@ -620,9 +620,8 @@ function openFlow(flowType) {
             break;
             
         case 'classic':
-            // TODO: Implement classic flow
-            showView('chat');
-            addMessage('system', 'Flow "Klasyk" - w trakcie implementacji. Napisz jakiego klasyka szukasz.');
+            showView('flow-classic');
+            loadClassicChips();
             break;
             
         case 'healthy':
@@ -685,3 +684,128 @@ function showRecipeFromHistory(recipeId) {
     console.log('Show recipe from history:', recipeId);
     showView('chat');
 }
+
+// ─── FLOW 4: CLASSIC FUNCTIONS ───
+
+async function loadClassicChips() {
+    try {
+        const response = await fetch('/api/recipes/classic', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({})
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            renderClassicChips(data.classics);
+        } else {
+            console.error('Failed to load classics:', data.error);
+        }
+    } catch (error) {
+        console.error('Error loading classics:', error);
+    }
+}
+
+function renderClassicChips(classics) {
+    const polishEl = document.getElementById('polishChips');
+    const worldEl = document.getElementById('worldChips');
+    const dessertEl = document.getElementById('dessertChips');
+    
+    if (polishEl) {
+        polishEl.innerHTML = classics.polish.map(recipe => 
+            `<div class="classic-chip" onclick="generateClassicRecipe('${recipe.name}')">${recipe.name}</div>`
+        ).join('');
+    }
+    
+    if (worldEl) {
+        worldEl.innerHTML = classics.world.map(recipe => 
+            `<div class="classic-chip" onclick="generateClassicRecipe('${recipe.name}')">${recipe.name}</div>`
+        ).join('');
+    }
+    
+    if (dessertEl) {
+        dessertEl.innerHTML = classics.desserts.map(recipe => 
+            `<div class="classic-chip" onclick="generateClassicRecipe('${recipe.name}')">${recipe.name}</div>`
+        ).join('');
+    }
+    
+    // Show unavailable recipes as crossed out
+    const dietary = userProfile?.dietary_preferences || [];
+    if (dietary.length > 0) {
+        const subtitle = document.querySelector('.flow-subtitle');
+        if (subtitle) {
+            subtitle.textContent = `Dopasowane do: ${dietary.join(', ')}`;
+        }
+    }
+}
+
+async function generateClassicRecipe(recipeName) {
+    const loadingEl = document.getElementById('classicLoading');
+    const categoriesEl = document.getElementById('classicCategories');
+    
+    // Show loading
+    if (loadingEl && categoriesEl) {
+        categoriesEl.style.display = 'none';
+        loadingEl.style.display = 'flex';
+    }
+    
+    try {
+        const response = await fetch('/api/recipes/classic', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({ query: recipeName })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.recipe) {
+            // Switch to chat and show recipe
+            showView('chat');
+            addMessage('assistant', '', data.recipe);
+            
+            // Add to chat history
+            chatHistory.push({
+                role: 'assistant',
+                content: '',
+                data: data.recipe,
+                type: 'recipe',
+                id: Date.now().toString()
+            });
+        } else {
+            alert('Nie udało się wygenerować przepisu: ' + (data.error || 'Nieznany błąd'));
+        }
+    } catch (error) {
+        console.error('Error generating recipe:', error);
+        alert('Błąd podczas generowania przepisu');
+    } finally {
+        // Hide loading
+        if (loadingEl && categoriesEl) {
+            loadingEl.style.display = 'none';
+            categoriesEl.style.display = 'block';
+        }
+    }
+}
+
+function searchClassic() {
+    const searchInput = document.getElementById('classicSearch');
+    const query = searchInput.value.trim();
+    
+    if (!query) return;
+    
+    generateClassicRecipe(query);
+    searchInput.value = '';
+}
+
+// Add Enter handler for classic search
+document.addEventListener('DOMContentLoaded', () => {
+    const classicSearch = document.getElementById('classicSearch');
+    if (classicSearch) {
+        classicSearch.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchClassic();
+            }
+        });
+    }
+});

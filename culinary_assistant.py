@@ -2593,6 +2593,118 @@ def get_lang_instruction(lang):
     # For other languages, return the appropriate instruction
     return LANG_INSTRUCTIONS.get(lang, "")
 
+# ─── PROFILE CONSTRAINTS HELPERS ───
+
+def build_dietary_constraints(profile_data):
+    """Build dietary constraints string from user profile."""
+    constraints = []
+    
+    dietary_prefs = profile_data.get("dietary_preferences", [])
+    if isinstance(dietary_prefs, str):
+        dietary_prefs = json.loads(dietary_prefs) if dietary_prefs else []
+    
+    banned_ingredients = profile_data.get("banned_ingredients", [])
+    if isinstance(banned_ingredients, str):
+        banned_ingredients = json.loads(banned_ingredients) if banned_ingredients else []
+    
+    # Dietary preferences
+    if "wegetariańskie" in dietary_prefs or "vegetarian" in dietary_prefs:
+        constraints.append("TYLKO dania wegetariańskie - bez mięsa, drobiu, ryb, owoców morza")
+    elif "wegańskie" in dietary_prefs or "vegan" in dietary_prefs:
+        constraints.append("TYLKO dania wegańskie - bez wszystkich produktów zwierzęcych (mięso, nabiał, jajka, miód)")
+    elif "pescetariańskie" in dietary_prefs or "pescetarian" in dietary_prefs:
+        constraints.append("TYLKO dania pescetariańskie - bez mięsa i drobiu, ale ryby i owoce morza dozwolone")
+    
+    if "bezglutenowe" in dietary_prefs or "gluten-free" in dietary_prefs:
+        constraints.append("TYLKO dania bezglutenowe - bez pszenicy, żyta, jęczmienia, owsa")
+    
+    if "keto" in dietary_prefs:
+        constraints.append("TYLKO dania ketogeniczne - bardzo niskie węglowodany (<20g), wysokie tłuszcze")
+    
+    if "low-carb" in dietary_prefs:
+        constraints.append("TYLKO dania niskowęglowodanowe - ograniczone węglowodany (<50g na porcję)")
+    
+    # Banned ingredients
+    if banned_ingredients:
+        constraints.append(f"ZAKAZANE składniki (NIGDY nie używaj): {', '.join(banned_ingredients)}")
+    
+    return " | ".join(constraints) if constraints else ""
+
+def get_favorite_ingredients(profile_data):
+    """Get user's favorite ingredients for suggestions."""
+    favorites = profile_data.get("favorite_ingredients", [])
+    if isinstance(favorites, str):
+        favorites = json.loads(favorites) if favorites else []
+    return favorites
+
+def get_user_equipment(profile_data):
+    """Get user's available equipment."""
+    equipment = profile_data.get("equipment", [])
+    if isinstance(equipment, str):
+        equipment = json.loads(equipment) if equipment else []
+    return equipment
+
+def get_classic_recipes_for_profile(profile_data):
+    """Get classic recipe suggestions filtered by user profile."""
+    dietary_prefs = profile_data.get("dietary_preferences", [])
+    if isinstance(dietary_prefs, str):
+        dietary_prefs = json.loads(dietary_prefs) if dietary_prefs else []
+    
+    # Base classic recipes
+    polish_classics = [
+        {"name": "Rosół", "vegetarian": False, "vegan": False, "gluten_free": True},
+        {"name": "Schabowy", "vegetarian": False, "vegan": False, "gluten_free": False},
+        {"name": "Pierogi ruskie", "vegetarian": True, "vegan": False, "gluten_free": False},
+        {"name": "Kotlet mielony", "vegetarian": False, "vegan": False, "gluten_free": False},
+        {"name": "Bigos", "vegetarian": False, "vegan": False, "gluten_free": True},
+        {"name": "Żurek", "vegetarian": False, "vegan": False, "gluten_free": True},
+        {"name": "Placki ziemniaczane", "vegetarian": True, "vegan": False, "gluten_free": True},
+        {"name": "Kapuśniak", "vegetarian": False, "vegan": False, "gluten_free": True}
+    ]
+    
+    world_classics = [
+        {"name": "Carbonara", "vegetarian": False, "vegan": False, "gluten_free": False},
+        {"name": "Pad Thai", "vegetarian": False, "vegan": False, "gluten_free": True},
+        {"name": "Curry", "vegetarian": True, "vegan": True, "gluten_free": True},
+        {"name": "Sushi", "vegetarian": False, "vegan": False, "gluten_free": True},
+        {"name": "Paella", "vegetarian": False, "vegan": False, "gluten_free": True},
+        {"name": "Ramen", "vegetarian": False, "vegan": False, "gluten_free": False},
+        {"name": "Risotto", "vegetarian": True, "vegan": False, "gluten_free": True}
+    ]
+    
+    desserts = [
+        {"name": "Sernik", "vegetarian": True, "vegan": False, "gluten_free": False},
+        {"name": "Szarlotka", "vegetarian": True, "vegan": False, "gluten_free": False},
+        {"name": "Babka", "vegetarian": True, "vegan": False, "gluten_free": False},
+        {"name": "Chleb", "vegetarian": True, "vegan": True, "gluten_free": False}
+    ]
+    
+    # Filter based on dietary preferences
+    def filter_recipes(recipes):
+        filtered = []
+        for recipe in recipes:
+            # Check vegetarian/vegan
+            if "wegańskie" in dietary_prefs or "vegan" in dietary_prefs:
+                if not recipe.get("vegan", False):
+                    continue
+            elif "wegetariańskie" in dietary_prefs or "vegetarian" in dietary_prefs:
+                if not recipe.get("vegetarian", False):
+                    continue
+            
+            # Check gluten-free
+            if "bezglutenowe" in dietary_prefs or "gluten-free" in dietary_prefs:
+                if not recipe.get("gluten_free", False):
+                    continue
+            
+            filtered.append(recipe)
+        return filtered
+    
+    return {
+        "polish": filter_recipes(polish_classics),
+        "world": filter_recipes(world_classics), 
+        "desserts": filter_recipes(desserts)
+    }
+
 SPECIALIST_EQUIPMENT = {
     "sous-vide": ["sous-vide", "sous_vide", "cyrkulator", "sous vide", "vacuum sealer", "woreczek próżniowy", "cyrkulatorem", "kąpieli wodnej", "kąpiel wodną"],
     "thermomix": ["thermomix", "thermomixem"],
@@ -4765,6 +4877,78 @@ Zwróć JSON:
         recipe = shared_recipes_store.get(token)
         if not recipe: return jsonify({"error": "Link wygasł lub jest nieprawidłowy"}), 404
         return jsonify({"success": True, "recipe": recipe})
+    
+    # ─── FLOW ENDPOINTS ───
+    
+    @app.route("/api/recipes/classic", methods=["POST"])
+    def api_classic_recipes():
+        """Flow 4: Classic recipes with profile filtering"""
+        user_id = get_user_from_token()
+        if not user_id:
+            return jsonify({"error": "Unauthorized"}), 401
+        
+        try:
+            data = request.get_json() or {}
+            query = data.get("query", "").strip()
+            
+            # Get user profile
+            profile = db_get_profile_cached(user_id) if user_id else {}
+            
+            if query:
+                # Search mode - generate recipe for specific classic
+                constraints = build_dietary_constraints(profile)
+                lang = profile.get("lang", "pl")
+                
+                system_prompt = f"""Jesteś ekspertem kulinarnym. Wygeneruj przepis na klasyczne danie: "{query}".
+
+{constraints}
+
+Zwróć JSON w formacie:
+{{
+    "type": "recipe",
+    "title": "Nazwa dania",
+    "subtitle": "Krótki opis",
+    "prep_time": 30,
+    "cook_time": 45,
+    "servings": 4,
+    "kcal": 520,
+    "difficulty": "średnie",
+    "ingredients": [
+        {{"name": "składnik", "amount": "ilość", "unit": "jednostka"}}
+    ],
+    "steps": [
+        {{"step": 1, "instruction": "Opis kroku", "time": 5}}
+    ],
+    "tips": ["Wskazówka 1", "Wskazówka 2"]
+}}"""
+                
+                system_with_lang = system_prompt + get_lang_instruction(lang)
+                
+                parsed, usage = ai._call_text(
+                    system_with_lang, 
+                    [{"role": "user", "content": f"Przepis na: {query}"}],
+                    user_id=user_id
+                )
+                
+                return jsonify({
+                    "success": True,
+                    "recipe": parsed,
+                    "usage": {
+                        "prompt_tokens": usage.prompt_tokens if usage else 0,
+                        "completion_tokens": usage.completion_tokens if usage else 0,
+                    }
+                })
+            else:
+                # Chips mode - return filtered classic suggestions
+                classics = get_classic_recipes_for_profile(profile)
+                return jsonify({
+                    "success": True,
+                    "classics": classics
+                })
+                
+        except Exception as e:
+            logger.error(f"Classic recipes error: {e}")
+            return jsonify({"error": str(e)}), 500
 
     @app.route("/")
     def index(): return send_from_directory("static","index.html")
