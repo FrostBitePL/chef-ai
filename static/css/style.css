@@ -313,6 +313,210 @@ body{
   align-items:center;justify-content:center;margin-left:5px;vertical-align:middle
 }
 .view{display:none;flex:1;flex-direction:column}.view.active{display:flex}
+
+/* ─── HOME VIEW ─── */
+.home-content {
+  padding: 20px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.home-greeting {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.greeting-text {
+  font-size: 15px;
+  color: var(--text-soft);
+  margin-bottom: 8px;
+}
+
+.greeting-name {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.home-question {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.flow-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.flow-card {
+  position: relative;
+  aspect-ratio: 1;
+  padding: 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--card) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.flow-card:hover,
+.flow-card:active {
+  border-color: var(--gold-border);
+  background: linear-gradient(135deg, var(--card) 0%, rgba(226, 180, 79, 0.05) 100%);
+  transform: translateY(-1px);
+}
+
+.flow-emoji {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.flow-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.flow-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.pro-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--gold);
+  color: var(--bg);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.pro-feature {
+  opacity: 0.8;
+}
+
+.home-divider {
+  text-align: center;
+  margin: 30px 0 20px;
+  position: relative;
+}
+
+.home-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--glass-border);
+}
+
+.divider-text {
+  background: var(--bg);
+  padding: 0 15px;
+  font-size: 13px;
+  color: var(--text-muted);
+  position: relative;
+}
+
+.home-input-wrapper {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.home-input {
+  width: 100%;
+  padding: 14px 50px 14px 18px;
+  border-radius: 14px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.home-input:focus {
+  border-color: var(--gold-border);
+  background: var(--card);
+}
+
+.home-input::placeholder {
+  color: var(--text-muted);
+}
+
+.home-input-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.home-input-btn:hover {
+  background: var(--gold-hover);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.recent-recipes {
+  margin-top: 20px;
+}
+
+.recent-title {
+  font-size: 14px;
+  color: var(--text-soft);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.recent-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.recent-chip {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  background: var(--card);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.recent-chip:hover {
+  border-color: var(--gold-border);
+  background: var(--glass);
+}
 /* Status bar */
 .status-bar{padding:8px 20px;text-align:center;font-size:0.72rem;border-bottom:1px solid var(--border);display:none;font-weight:500}
 .status-bar.show{display:block}

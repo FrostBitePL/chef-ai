@@ -35,6 +35,10 @@ document.addEventListener('DOMContentLoaded',async()=>{
   inp.addEventListener('input',()=>{sb.disabled=!inp.value.trim();inp.style.height='auto';inp.style.height=Math.min(Math.max(inp.scrollHeight,36),90)+'px'});
   inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
   document.getElementById('feedbackField')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendFeedback()}});
+  
+  // Home input Enter handler
+  const homeInp=document.getElementById('homeInput');
+  if(homeInp) homeInp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();searchFromHome()}});
 });
 
 // ─── Supabase Init ───
@@ -102,6 +106,8 @@ function enterApp(){
   document.getElementById('appMain').style.display='flex';
   loadSubStatus().then(()=>renderUserInfo());
   renderQuickTags();
+  updateGreeting();
+  loadRecentRecipes();
   addWelcome();
   checkServer();
   initScrollHide();
@@ -565,3 +571,117 @@ document.addEventListener('DOMContentLoaded', () => {
         proBtn.addEventListener('click', openStripeCheckout);
     }
 });
+
+// ─── HOME SCREEN FUNCTIONS ───
+
+function updateGreeting() {
+    const hour = new Date().getHours();
+    const name = userProfile?.name || currentUser?.user_metadata?.name || 'Użytkowniku';
+    let greeting;
+    
+    if (hour < 6) greeting = 'Późna kolacja?';
+    else if (hour < 12) greeting = 'Dzień dobry';
+    else if (hour < 18) greeting = 'Cześć';
+    else greeting = 'Dobry wieczór';
+    
+    const greetingEl = document.getElementById('greetingText');
+    const nameEl = document.getElementById('greetingName');
+    if (greetingEl && nameEl) {
+        greetingEl.innerHTML = `${greeting} <span class="greeting-name" id="greetingName">${name}</span> 👋`;
+    }
+}
+
+function openFlow(flowType) {
+    console.log('Opening flow:', flowType);
+    
+    // Check if PRO feature for FREE user
+    if (flowType === 'guests' && userProfile?.role !== 'pro' && userProfile?.role !== 'admin') {
+        showProModal();
+        return;
+    }
+    
+    switch(flowType) {
+        case 'ingredients':
+            // TODO: Implement ingredients flow
+            showView('chat');
+            addMessage('system', 'Flow "Z tego co mam" - w trakcie implementacji. Napisz jakie składniki masz.');
+            break;
+            
+        case 'quick':
+            // TODO: Implement quick flow  
+            showView('chat');
+            addMessage('system', 'Flow "Szybko" - w trakcie implementacji. Napisz czego szukasz do 30 minut.');
+            break;
+            
+        case 'discover':
+            // TODO: Implement discover flow
+            showView('chat');
+            addMessage('system', 'Flow "Coś nowego" - w trakcie implementacji. Napisz jakiej kuchni chcesz spróbować.');
+            break;
+            
+        case 'classic':
+            // TODO: Implement classic flow
+            showView('chat');
+            addMessage('system', 'Flow "Klasyk" - w trakcie implementacji. Napisz jakiego klasyka szukasz.');
+            break;
+            
+        case 'healthy':
+            // TODO: Implement healthy flow
+            showView('chat');
+            addMessage('system', 'Flow "Zdrowe" - w trakcie implementacji. Napisz jakie masz cele żywieniowe.');
+            break;
+            
+        case 'guests':
+            // TODO: Implement guests flow (PRO only)
+            showView('chat');
+            addMessage('system', 'Flow "Dla gości" - w trakcie implementacji. Napisz na ile osób planujesz menu.');
+            break;
+    }
+}
+
+function searchFromHome() {
+    const input = document.getElementById('homeInput');
+    const query = input.value.trim();
+    
+    if (!query) return;
+    
+    // Switch to chat and send query
+    showView('chat');
+    document.getElementById('input').value = query;
+    send();
+    
+    // Clear home input
+    input.value = '';
+}
+
+function showProModal() {
+    // Simple alert for now - TODO: implement proper modal
+    alert('Ta funkcja jest dostępna w wersji PRO.\n\nUzyskaj dostęp do:\n• Planera menu dla gości\n• Harmonogramu przygotowań\n• Skalowania przepisów\n• Eksportu do kalendarza\n\nKliknij PRO w prawym górnym rogu aby uaktualnić.');
+}
+
+function loadRecentRecipes() {
+    // TODO: Load from history and show recent chips
+    const recentEl = document.getElementById('recentRecipes');
+    const scrollEl = document.getElementById('recentScroll');
+    
+    if (chatHistory.length > 0) {
+        // Show recent recipes from chat history
+        const recent = chatHistory
+            .filter(msg => msg.type === 'recipe')
+            .slice(-5)
+            .reverse();
+            
+        if (recent.length > 0) {
+            scrollEl.innerHTML = recent.map(recipe => 
+                `<div class="recent-chip" onclick="showRecipeFromHistory('${recipe.id}')">${recipe.data?.title || 'Przepis'}</div>`
+            ).join('');
+            recentEl.style.display = 'block';
+        }
+    }
+}
+
+function showRecipeFromHistory(recipeId) {
+    // TODO: Show recipe from history
+    console.log('Show recipe from history:', recipeId);
+    showView('chat');
+}
