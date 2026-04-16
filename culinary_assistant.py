@@ -4924,7 +4924,11 @@ Zwróć JSON w formacie:
                 
                 system_with_lang = system_prompt + get_lang_instruction(lang)
                 
-                parsed, usage = chef_ai._call_text(
+                assistant = app.config.get("assistant")
+                if not assistant:
+                    return jsonify({"error": "AI assistant not available"}), 500
+                
+                parsed, usage = assistant._call_text(
                     system_with_lang, 
                     [{"role": "user", "content": f"Przepis na: {query}"}],
                     user_id=user_id
