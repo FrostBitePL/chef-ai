@@ -4899,28 +4899,16 @@ Zwróć JSON:
                 constraints = build_dietary_constraints(profile)
                 lang = profile.get("lang", "pl")
                 
+                equipment = get_user_equipment(profile)
+                equip_str = ", ".join(equipment) if equipment else "standardowy sprzęt kuchenny"
+                
                 system_prompt = f"""Jesteś ekspertem kulinarnym. Wygeneruj przepis na klasyczne danie: "{query}".
 
 {constraints}
 
-Zwróć JSON w formacie:
-{{
-    "type": "recipe",
-    "title": "Nazwa dania",
-    "subtitle": "Krótki opis",
-    "prep_time": 30,
-    "cook_time": 45,
-    "servings": 4,
-    "kcal": 520,
-    "difficulty": "średnie",
-    "ingredients": [
-        {{"name": "składnik", "amount": "ilość", "unit": "jednostka"}}
-    ],
-    "steps": [
-        {{"step": 1, "instruction": "Opis kroku", "time": 5}}
-    ],
-    "tips": ["Wskazówka 1", "Wskazówka 2"]
-}}"""
+Sprzęt użytkownika: {equip_str}
+
+{RESPONSE_RULES}"""
                 
                 system_with_lang = system_prompt + get_lang_instruction(lang)
                 
