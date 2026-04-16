@@ -2644,54 +2644,82 @@ def get_user_equipment(profile_data):
         equipment = json.loads(equipment) if equipment else []
     return equipment
 
-def load_classic_recipes_db():
-    """Load all classic recipes from JSON files in data/ folder."""
-    recipes = []
+def _load_json(path):
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"Error loading {path}: {e}")
+        return []
+
+def load_classics_system():
+    """Load two-layer classic recipes: index (230 chips) + hardcoded DB (15 full recipes)."""
     data_dir = os.path.join(os.path.dirname(__file__), "data")
-    if not os.path.exists(data_dir):
-        return recipes
-    for fname in os.listdir(data_dir):
-        if fname.startswith("classic_recipes") and fname.endswith(".json"):
-            try:
-                with open(os.path.join(data_dir, fname), "r", encoding="utf-8") as f:
-                    recipes.extend(json.load(f))
-            except Exception as e:
-                logger.error(f"Error loading {fname}: {e}")
-    logger.info(f"Classic recipes DB: {len(recipes)} recipes loaded")
-    return recipes
+    # Layer 1: Index
+    idx_path = os.path.join(data_dir, "classics_index.json")
+    index = _load_json(idx_path) if os.path.exists(idx_path) else {"categories": [], "dishes": []}
+    # Layer 2: Hardcoded full recipes
+    recipes = []
+    if os.path.exists(data_dir):
+        for fname in os.listdir(data_dir):
+            if fname.startswith("classic_recipes") and fname.endswith(".json"):
+                recipes.extend(_load_json(os.path.join(data_dir, fname)))
+    recipe_map = {r["id"]: r for r in recipes}
+    logger.info(f"Classics: {len(index.get('dishes',[]))} index entries, {len(recipe_map)} hardcoded recipes")
+    return index, recipe_map
 
-CLASSIC_RECIPES_DB = load_classic_recipes_db()
+CLASSICS_INDEX, CLASSICS_HARDCODED = load_classics_system()
 
-def get_classic_chips_for_profile(profile_data):
-    """Get classic recipe chip suggestions filtered by user profile."""
+# In-memory cache for AI-generated classic recipes (survives until restart)
+_classics_ai_cache = {}
+
+def get_classic_index_for_profile(profile_data):
+    """Return index categories + dishes filtered by dietary prefs."""
     dietary_prefs = profile_data.get("dietary_preferences", [])
     if isinstance(dietary_prefs, str):
         dietary_prefs = json.loads(dietary_prefs) if dietary_prefs else []
     
-    def passes_filter(recipe):
+    # No filtering needed if no prefs
+    categories = CLASSICS_INDEX.get("categories", [])
+    dishes = CLASSICS_INDEX.get("dishes", [])
+    
+    if not dietary_prefs:
+        return {"categories": categories, "dishes": dishes}
+    
+    # For non-hardcoded dishes we don't have veg/vegan flags in index,
+    # so we only filter hardcoded ones we know about. Non-hardcoded stay visible.
+    def passes(d):
+        rid = d["id"]
+        hc = CLASSICS_HARDCODED.get(rid)
+        if not hc:
+            return True  # unknown → show
         if "wegańskie" in dietary_prefs or "vegan" in dietary_prefs:
-            if not recipe.get("vegan", False):
+            if not hc.get("vegan", False):
                 return False
         elif "wegetariańskie" in dietary_prefs or "vegetarian" in dietary_prefs:
-            if not recipe.get("vegetarian", False):
+            if not hc.get("vegetarian", False):
                 return False
         if "bezglutenowe" in dietary_prefs or "gluten-free" in dietary_prefs:
-            if not recipe.get("gluten_free", False):
+            if not hc.get("gluten_free", False):
                 return False
         return True
     
-    polish = [{"id": r["id"], "name": r["title"].split(" — ")[0]} for r in CLASSIC_RECIPES_DB if r.get("category") == "polish" and passes_filter(r)]
-    world = [{"id": r["id"], "name": r["title"].split(" — ")[0]} for r in CLASSIC_RECIPES_DB if r.get("category") == "world" and passes_filter(r)]
-    desserts = [{"id": r["id"], "name": r["title"].split(" — ")[0]} for r in CLASSIC_RECIPES_DB if r.get("category") == "desserts" and passes_filter(r)]
-    
-    return {"polish": polish, "world": world, "desserts": desserts}
+    filtered = [d for d in dishes if passes(d)]
+    # Only return categories that still have dishes
+    active_cats = set(d["category"] for d in filtered)
+    cats = [c for c in categories if c["id"] in active_cats]
+    return {"categories": cats, "dishes": filtered}
 
 def find_classic_recipe(recipe_id):
-    """Find a classic recipe by ID."""
-    for r in CLASSIC_RECIPES_DB:
-        if r["id"] == recipe_id:
-            return r
-    return None
+    """Find hardcoded recipe by ID."""
+    return CLASSICS_HARDCODED.get(recipe_id)
+
+def find_classic_name(recipe_id):
+    """Find dish name from index."""
+    for d in CLASSICS_INDEX.get("dishes", []):
+        if d["id"] == recipe_id:
+            return d["name"]
+    return recipe_id
 
 SPECIALIST_EQUIPMENT = {
     "sous-vide": ["sous-vide", "sous_vide", "cyrkulator", "sous vide", "vacuum sealer", "woreczek próżniowy", "cyrkulatorem", "kąpieli wodnej", "kąpiel wodną"],
@@ -4870,7 +4898,7 @@ Zwróć JSON:
     
     @app.route("/api/recipes/classic", methods=["POST"])
     def api_classic_recipes():
-        """Flow 4: Classic recipes with profile filtering — instant from DB"""
+        """Flow 4: Two-layer classics — index chips + instant DB / AI on-demand"""
         user_id = get_user_from_token()
         if not user_id:
             return jsonify({"error": "Unauthorized"}), 401
@@ -4879,22 +4907,62 @@ Zwróć JSON:
             data = request.get_json() or {}
             recipe_id = data.get("recipe_id", "").strip()
             
-            # Get user profile
             profile = db_get_profile_cached(user_id) if user_id else {}
             
             if recipe_id:
-                # Instant recipe from DB
+                # --- Layer 2a: Hardcoded DB (0ms) ---
                 recipe = find_classic_recipe(recipe_id)
                 if recipe:
-                    # Return clean recipe (without filter metadata)
                     clean = {k: v for k, v in recipe.items() if k not in ("category", "tags", "vegetarian", "vegan", "gluten_free", "contains", "id")}
                     return jsonify({"success": True, "recipe": clean, "source": "db"})
-                else:
-                    return jsonify({"success": False, "error": f"Przepis '{recipe_id}' nie znaleziony w bazie"}), 404
+                
+                # --- Layer 2b: In-memory cache ---
+                if recipe_id in _classics_ai_cache:
+                    return jsonify({"success": True, "recipe": _classics_ai_cache[recipe_id], "source": "cache"})
+                
+                # --- Layer 2c: AI on-demand generation ---
+                dish_name = find_classic_name(recipe_id)
+                constraints = build_dietary_constraints(profile)
+                lang = profile.get("lang", "pl")
+                equipment = get_user_equipment(profile)
+                equip_str = ", ".join(equipment) if equipment else "standardowy sprzęt kuchenny"
+                
+                system_prompt = f"""Jesteś ekspertem kulinarnym. Wygeneruj PEŁNY przepis na klasyczne danie: "{dish_name}".
+
+{constraints}
+Sprzęt użytkownika: {equip_str}
+
+{RESPONSE_RULES}"""
+                
+                system_with_lang = system_prompt + get_lang_instruction(lang)
+                
+                assistant = app.config.get("assistant")
+                if not assistant:
+                    return jsonify({"error": "AI assistant not available"}), 500
+                
+                parsed, usage = assistant._call_text(
+                    system_with_lang, 
+                    [{"role": "user", "content": f"Przepis na: {dish_name}"}],
+                    user_id=user_id
+                )
+                
+                # Cache for next time
+                if parsed and isinstance(parsed, dict):
+                    _classics_ai_cache[recipe_id] = parsed
+                
+                return jsonify({
+                    "success": True,
+                    "recipe": parsed,
+                    "source": "ai",
+                    "usage": {
+                        "prompt_tokens": usage.prompt_tokens if usage else 0,
+                        "completion_tokens": usage.completion_tokens if usage else 0,
+                    }
+                })
             else:
-                # Chips mode - return filtered classic suggestions
-                classics = get_classic_chips_for_profile(profile)
-                return jsonify({"success": True, "classics": classics})
+                # --- Layer 1: Index chips (instant) ---
+                index_data = get_classic_index_for_profile(profile)
+                return jsonify({"success": True, "classics": index_data})
                 
         except Exception as e:
             logger.error(f"Classic recipes error: {e}")

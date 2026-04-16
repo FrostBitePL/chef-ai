@@ -612,7 +612,18 @@ body{
   font-size: 15px;
   font-weight: 600;
   color: var(--text);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cat-count {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-dim);
+  background: var(--glass);
+  padding: 1px 7px;
+  border-radius: 10px;
 }
 
 .category-chips {
@@ -622,16 +633,22 @@ body{
 }
 
 .classic-chip {
-  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
   background: var(--card);
   border: 1px solid var(--glass-border);
-  border-radius: 20px;
+  border-radius: 14px;
   font-size: 13px;
   color: var(--text);
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
+.chip-emoji { font-size: 15px; }
+.chip-name { font-weight: 500; }
+.chip-meta { font-size: 10px; color: var(--text-dim); }
 
 .classic-chip:hover {
   border-color: var(--gold-border);
@@ -639,16 +656,14 @@ body{
   transform: translateY(-1px);
 }
 
-.classic-chip.unavailable {
-  opacity: 0.5;
-  cursor: not-allowed;
-  text-decoration: line-through;
+.classic-chip.chip-instant {
+  border-color: var(--gold-border);
+  background: rgba(226,180,79,0.06);
 }
-
-.classic-chip.unavailable:hover {
-  transform: none;
-  border-color: var(--glass-border);
-  background: var(--card);
+.classic-chip.chip-instant::after {
+  content: '⚡';
+  font-size: 10px;
+  margin-left: 2px;
 }
 
 .flow-loading {

@@ -1,0 +1,71 @@
+[
+  {
+    "id": "pizza_margherita",
+    "type": "recipe",
+    "title": "Pizza Margherita",
+    "subtitle": "Ciasto napolitańskie, San Marzano, mozzarella, bazylia",
+    "category": "italian",
+    "tags": ["obiad", "włoskie", "wegetariańskie"],
+    "vegetarian": true, "vegan": false, "gluten_free": false,
+    "times": {"prep_min": 30, "cook_min": 5, "total_min": 1500},
+    "difficulty": 3, "servings": 4,
+    "nutrition": {"kcal": 680, "protein_g": 24, "fat_g": 20, "carbs_g": 92},
+    "ingredients": [
+      {"item": "mąka tipo 00", "amount": "500 g", "note": "Caputo lub inna do pizzy"},
+      {"item": "woda", "amount": "325 ml", "note": "temp. pokojowa"},
+      {"item": "sól", "amount": "10 g", "note": ""},
+      {"item": "drożdże świeże", "amount": "3 g", "note": "lub 1 g suchych"},
+      {"item": "pomidory San Marzano (puszka)", "amount": "400 g", "note": "zgniecione ręcznie"},
+      {"item": "mozzarella fior di latte", "amount": "250 g", "note": "odsączona, podarta"},
+      {"item": "bazylia świeża", "amount": "1 pęczek", "note": ""},
+      {"item": "oliwa z oliwek extra virgin", "amount": "2 łyżki", "note": ""},
+      {"item": "sól morska", "amount": "szczypta", "note": "do sosu"}
+    ],
+    "steps": [
+      {"number": 1, "title": "Ciasto — dzień wcześniej", "instruction": "Rozpuść drożdże (3 g) w wodzie (325 ml). Dodaj mąkę (500 g) i sól (10 g). Zagniataj 15 min aż gładkie i elastyczne. Przykryj, temp. pokojowa 1h, potem lodówka 24h.", "equipment": "", "timer_seconds": 900, "tip": "Długa fermentacja na zimno = smak i tekstura.", "why": "24h fermentacja: drożdże produkują CO2 powoli, enzymy rozkładają skrobię na cukry proste = karmelizacja i bąble."},
+      {"number": 2, "title": "Kształtowanie", "instruction": "Ciasto podziel na 4 kulki (ok. 210 g). Temp. pokojowa 2h przed pieczeniem. Rozciągnij ręcznie na 30 cm, zostawiając grubszy brzeg (cornicione).", "equipment": "", "timer_seconds": null, "tip": "NIGDY wałek — niszczy strukturę bąbli. Rozciągaj od środka na zewnątrz.", "why": "Wałek wyciska gaz. Ręczne rozciąganie zachowuje pęcherzyki powietrza w cornicione."},
+      {"number": 3, "title": "Sos — bez gotowania", "instruction": "Pomidory San Marzano (400 g) zgniecione ręcznie + sól morska. To tyle. BEZ gotowania, BEZ czosnku.", "equipment": "", "timer_seconds": null, "tip": "Autentyczny neapolitański sos = SUROWE pomidory.", "why": "Sos gotuje się NA pizzy w piecu. Podwójne gotowanie = mdły smak."},
+      {"number": 4, "title": "Składanie", "instruction": "Na rozciągnięte ciasto: 2-3 łyżki sosu (od środka spiralnie), mozzarella (podarta na kawałki), oliwa.", "equipment": "", "timer_seconds": null, "tip": "NIE za dużo sosu — ciasto nie może moknąć.", "why": ""},
+      {"number": 5, "title": "Pieczenie", "instruction": "Piekarnik MAX (250-300°C) z kamieniem/stalą do pizzy. Piecz 5-8 min (w piecu neapolitańskim 60-90 sekund).", "equipment": "kamień do pizzy", "timer_seconds": 420, "tip": "Kamień/stal do pizzy rozgrzewaj MIN 45 min.", "why": "Kamień akumuluje ciepło i oddaje je ciast. 300°C+ = leopard spotting (brązowe bąble)."},
+      {"number": 6, "title": "Bazylia", "instruction": "Bazylia świeża PO wyjęciu z pieca. Nitka oliwy.", "equipment": "", "timer_seconds": null, "tip": "Bazylia NIGDY do pieca — spali się.", "why": "Olejki eteryczne bazylii ulatniają się powyżej 60°C."}
+    ],
+    "warnings": [
+      {"problem": "Ciasto nie rośnie", "solution": "Drożdże mogą być przeterminowane. Woda za gorąca (max 25°C)."},
+      {"problem": "Pizza mokra w środku", "solution": "Mniej sosu. Odsącz mozzarellę. Gorętszy piekarnik."}
+    ],
+    "upgrade": "Kamień do pizzy + 48h fermentacja = poziom pizzerii.",
+    "science": "Mąka tipo 00 ma drobniejsze mielenie i mniej glutenu niż chlebowa — daje elastyczne, miękkie ciasto. Fermentacja rozkłada skrobię na cukry, które karmelizują na bąblach."
+  },
+  {
+    "id": "biszkopt",
+    "type": "recipe",
+    "title": "Biszkopt klasyczny",
+    "subtitle": "Puszysty, wilgotny, idealny pod tort",
+    "category": "baking_sweet",
+    "tags": ["wypieki", "deser", "wegetariańskie", "baza"],
+    "vegetarian": true, "vegan": false, "gluten_free": false,
+    "times": {"prep_min": 15, "cook_min": 30, "total_min": 45},
+    "difficulty": 2, "servings": 12,
+    "nutrition": {"kcal": 180, "protein_g": 5, "fat_g": 4, "carbs_g": 32},
+    "ingredients": [
+      {"item": "jajka", "amount": "6 szt", "note": "temp. pokojowa, oddzielone"},
+      {"item": "cukier", "amount": "180 g", "note": ""},
+      {"item": "mąka pszenna", "amount": "180 g", "note": "przesiana 2x"},
+      {"item": "mąka ziemniaczana", "amount": "60 g", "note": "przesiana"},
+      {"item": "cukier waniliowy", "amount": "1 saszetka", "note": ""}
+    ],
+    "steps": [
+      {"number": 1, "title": "Ubijanie żółtek", "instruction": "Żółtka (6 szt) ubij z połową cukru (90 g) i cukrem waniliowym na jasną, puszystą masę — min 8 min. Masa musi POTROIĆ objętość.", "equipment": "mikser", "timer_seconds": 480, "tip": "Jajka w temp. pokojowej ubijają się 2x lepiej niż zimne.", "why": "Lecytyna z żółtek stabilizuje emulsję powietrze-tłuszcz. Zimne żółtka mają gęstszą lecytynę — słabsza piana."},
+      {"number": 2, "title": "Piana z białek", "instruction": "Białka (6 szt) ubij na sztywną pianę, dodając resztę cukru (90 g) łyżka po łyżce.", "equipment": "mikser", "timer_seconds": 300, "tip": "Miska SUCHA i ODTŁUSZCZONA. Kropla tłuszczu = porażka.", "why": "Białka albuminy rozwijają się i owijają wokół pęcherzyków powietrza. Tłuszcz destabilizuje tę sieć."},
+      {"number": 3, "title": "Łączenie — KLUCZOWE", "instruction": "Do żółtek dodaj 1/3 piany, delikatnie wymieszaj. Potem przesianą mąkę pszenną (180 g) + ziemniaczaną (60 g) w 3 partiach NA ZMIANĘ z resztą piany. Mieszaj szpatułką OD DOŁU DO GÓRY.", "equipment": "szpatułka", "timer_seconds": null, "tip": "MAX 30 ruchów szpatułką. Każdy dodatkowy = tracisz powietrze.", "why": "Gluten z mąki + pęcherzyki z piany = struktura biszkoptu. Za dużo mieszania = gluten się aktywuje i biszkopt jest gumowaty."},
+      {"number": 4, "title": "Pieczenie", "instruction": "Wlej masę do formy (24-26 cm) wyłożonej papierem. Piecz 170°C (góra-dół, BEZ termoobiegu) 25-30 min.", "equipment": "forma do pieczenia, piekarnik", "timer_seconds": 1800, "tip": "NIE OTWIERAJ piekarnika przez 20 min! Test: patyczek wychodzi suchy.", "why": "Otwarcie drzwi = spadek temp. = biszkopt opada nieodwracalnie."},
+      {"number": 5, "title": "Studzenie", "instruction": "Wyjmij z formy, studź na kratce do góry nogami. Krojenie: następnego dnia.", "equipment": "kratka", "timer_seconds": null, "tip": "Do góry nogami = nie opada pod własnym ciężarem.", "why": "Para ucieka, biszkopt utrzymuje strukturę."}
+    ],
+    "warnings": [
+      {"problem": "Biszkopt opadł", "solution": "Nie otwieraj piekarnika. Mniej mieszaj. Sprawdź drożność piany."},
+      {"problem": "Suchy", "solution": "Przepiekłeś. Następnym razem 5 min krócej. Nasącz syropem."}
+    ],
+    "upgrade": "Zamień 30 g mąki na kakao (przesiane) = biszkopt czekoladowy. Dodaj skórkę z pomarańczy.",
+    "science": "Biszkopt to piana stabilizowana białkami jajka i skrobią mąki. Brak tłuszczu dodanego = cała struktura zależy od ubicia jajek."
+  }
+]

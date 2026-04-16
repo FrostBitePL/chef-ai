@@ -38,7 +38,7 @@
     "science": "Żur to naturalny ferment — bakterie Lactobacillus produkują kwas mlekowy, który nadaje zupie charakterystyczny kwaśny smak."
   },
   {
-    "id": "kotlet-mielony",
+    "id": "kotlet_mielony",
     "type": "recipe",
     "title": "Kotlet mielony — domowy",
     "subtitle": "Soczysty, pulchny, z bułką i cebulą",
@@ -74,7 +74,7 @@
     "science": "Bułka namoczona w mleku to panade — utrzymuje wilgoć w kotlecie zapobiegając suchości."
   },
   {
-    "id": "placki-ziemniaczane",
+    "id": "placki_ziemniaczane",
     "type": "recipe",
     "title": "Placki ziemniaczane — chrupiące",
     "subtitle": "Złociste, chrupiące z zewnątrz, miękkie w środku",

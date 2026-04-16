@@ -687,99 +687,134 @@ function showRecipeFromHistory(recipeId) {
 
 // ─── FLOW 4: CLASSIC FUNCTIONS ───
 
+let _classicsData = null; // cached index
+
 async function loadClassicChips() {
+    const container = document.getElementById('classicCategories');
+    if (!container) return;
     try {
-        const response = await fetch('/api/recipes/classic', {
-            method: 'POST',
-            headers: authHeaders(),
-            body: JSON.stringify({})
+        const res = await fetch('/api/recipes/classic', {
+            method: 'POST', headers: authHeaders(), body: JSON.stringify({})
         });
-        
-        const data = await response.json();
-        
+        const data = await res.json();
         if (data.success) {
-            renderClassicChips(data.classics);
-        } else {
-            console.error('Failed to load classics:', data.error);
+            _classicsData = data.classics;
+            renderClassicIndex(data.classics, container);
         }
-    } catch (error) {
-        console.error('Error loading classics:', error);
-    }
+    } catch (e) { console.error('Error loading classics:', e); }
 }
 
-function renderClassicChips(classics) {
-    const polishEl = document.getElementById('polishChips');
-    const worldEl = document.getElementById('worldChips');
-    const dessertEl = document.getElementById('dessertChips');
+function fmtTime(min) {
+    if (min >= 1440) return Math.round(min/1440) + 'd';
+    if (min >= 60) { const h = Math.floor(min/60); const m = min%60; return m ? h+'h'+m+'m' : h+'h'; }
+    return min + 'm';
+}
+
+function renderClassicIndex(idx, container) {
+    const cats = idx.categories || [];
+    const dishes = idx.dishes || [];
+    const grouped = {};
+    dishes.forEach(d => { (grouped[d.category] = grouped[d.category] || []).push(d); });
     
-    const chipHtml = (recipes) => recipes.map(r => 
-        `<div class="classic-chip" onclick="loadClassicRecipe('${r.id}')">${r.name}</div>`
-    ).join('');
-    
-    if (polishEl) polishEl.innerHTML = chipHtml(classics.polish);
-    if (worldEl) worldEl.innerHTML = chipHtml(classics.world);
-    if (dessertEl) dessertEl.innerHTML = chipHtml(classics.desserts);
-    
-    const dietary = userProfile?.dietary_preferences || [];
-    if (dietary.length > 0) {
-        const subtitle = document.querySelector('#view-flow-classic .flow-subtitle');
-        if (subtitle) subtitle.textContent = `Dopasowane do: ${dietary.join(', ')}`;
+    let html = '';
+    cats.sort((a,b) => a.order - b.order).forEach(cat => {
+        const items = grouped[cat.id] || [];
+        if (!items.length) return;
+        html += `<div class="category-section">
+          <div class="category-title">${cat.emoji} ${cat.name} <span class="cat-count">${items.length}</span></div>
+          <div class="category-chips">${items.map(d => {
+            const hc = d.hardcoded ? ' data-hc="1"' : '';
+            const diff = '★'.repeat(d.difficulty) + '☆'.repeat(3-d.difficulty);
+            return `<div class="classic-chip${d.hardcoded ? ' chip-instant' : ''}" onclick="loadClassicRecipe('${d.id}')"${hc}>
+              <span class="chip-emoji">${d.emoji}</span>
+              <span class="chip-name">${d.name}</span>
+              <span class="chip-meta">${fmtTime(d.time)} · ${diff}</span>
+            </div>`;
+          }).join('')}</div></div>`;
+    });
+    container.innerHTML = html;
+    _applyClassicFilter();
+}
+
+function _applyClassicFilter() {
+    const q = (document.getElementById('classicSearch')?.value || '').trim().toLowerCase();
+    if (!q) {
+        document.querySelectorAll('#classicCategories .classic-chip').forEach(c => c.style.display = '');
+        document.querySelectorAll('#classicCategories .category-section').forEach(s => s.style.display = '');
+        return;
     }
+    document.querySelectorAll('#classicCategories .classic-chip').forEach(c => {
+        c.style.display = c.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+    document.querySelectorAll('#classicCategories .category-section').forEach(s => {
+        const visible = s.querySelectorAll('.classic-chip:not([style*="display: none"])');
+        s.style.display = visible.length ? '' : 'none';
+    });
 }
 
 async function loadClassicRecipe(recipeId) {
+    const loadingEl = document.getElementById('classicLoading');
+    const catsEl = document.getElementById('classicCategories');
+    const chip = document.querySelector(`.classic-chip[onclick*="'${recipeId}'"]`);
+    const isHardcoded = chip?.dataset?.hc === '1';
+    
+    if (!isHardcoded && loadingEl && catsEl) {
+        catsEl.style.display = 'none';
+        loadingEl.style.display = 'flex';
+    }
+    
     try {
-        const response = await fetch('/api/recipes/classic', {
-            method: 'POST',
-            headers: authHeaders(),
+        const res = await fetch('/api/recipes/classic', {
+            method: 'POST', headers: authHeaders(),
             body: JSON.stringify({ recipe_id: recipeId })
         });
-        
-        const data = await response.json();
+        const data = await res.json();
         
         if (data.success && data.recipe) {
             showView('chat');
             handleResponse(data.recipe);
         } else {
-            alert('Przepis nie znaleziony: ' + (data.error || 'Nieznany błąd'));
+            alert('Nie udało się załadować przepisu: ' + (data.error || 'Nieznany błąd'));
         }
-    } catch (error) {
-        console.error('Error loading classic recipe:', error);
+    } catch (e) {
+        console.error('Error loading classic recipe:', e);
         alert('Błąd ładowania przepisu');
+    } finally {
+        if (loadingEl && catsEl) {
+            loadingEl.style.display = 'none';
+            catsEl.style.display = '';
+        }
     }
 }
 
 function searchClassic() {
-    const searchInput = document.getElementById('classicSearch');
-    const query = searchInput.value.trim().toLowerCase();
-    if (!query) return;
+    const input = document.getElementById('classicSearch');
+    const q = input?.value.trim().toLowerCase();
+    if (!q) return;
     
-    // Search in loaded chips first
-    const allChips = document.querySelectorAll('#classicCategories .classic-chip');
-    for (const chip of allChips) {
-        if (chip.textContent.toLowerCase().includes(query)) {
-            chip.click();
-            searchInput.value = '';
-            return;
-        }
+    // Filter chips live
+    const visible = document.querySelectorAll('#classicCategories .classic-chip:not([style*="display: none"])');
+    if (visible.length === 1) {
+        visible[0].click();
+        input.value = '';
+        return;
     }
-    
-    // If not found — use chat as fallback
-    searchInput.value = '';
-    showView('chat');
-    document.getElementById('input').value = query;
-    send();
+    if (visible.length === 0) {
+        // Fallback to chat
+        input.value = '';
+        showView('chat');
+        document.getElementById('input').value = q;
+        send();
+    }
 }
 
-// Add Enter handler for classic search
+// Live filter on typing + Enter
 document.addEventListener('DOMContentLoaded', () => {
-    const classicSearch = document.getElementById('classicSearch');
-    if (classicSearch) {
-        classicSearch.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                searchClassic();
-            }
+    const el = document.getElementById('classicSearch');
+    if (el) {
+        el.addEventListener('input', () => _applyClassicFilter());
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); searchClassic(); }
         });
     }
 });

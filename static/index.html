@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/static/css/style.css?v=3">
+<link rel="stylesheet" href="/static/css/style.css?v=4">
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/static/sw.js').then(reg=>{
@@ -155,31 +155,16 @@ if('serviceWorker' in navigator){
     <div class="flow-header">
       <button class="flow-back" onclick="showView('home')">←</button>
       <div class="flow-title">Klasyki</div>
-      <div class="flow-subtitle">Sprawdzone przepisy</div>
+      <div class="flow-subtitle">230 sprawdzonych przepisów</div>
     </div>
     
     <div class="flow-content">
       <div class="flow-search">
-        <input type="text" class="flow-search-input" id="classicSearch" placeholder="np. rosół, kotlet...">
+        <input type="text" class="flow-search-input" id="classicSearch" placeholder="Szukaj np. carbonara, sernik, pad thai...">
         <button class="flow-search-btn" onclick="searchClassic()">🔍</button>
       </div>
       
-      <div class="classic-categories" id="classicCategories">
-        <div class="category-section">
-          <div class="category-title">🇵🇱 Polskie:</div>
-          <div class="category-chips" id="polishChips"></div>
-        </div>
-        
-        <div class="category-section">
-          <div class="category-title">🌍 Świata:</div>
-          <div class="category-chips" id="worldChips"></div>
-        </div>
-        
-        <div class="category-section">
-          <div class="category-title">🧁 Wypieki:</div>
-          <div class="category-chips" id="dessertChips"></div>
-        </div>
-      </div>
+      <div class="classic-categories" id="classicCategories"></div>
       
       <div class="flow-loading" id="classicLoading" style="display:none">
         <div class="loading-spinner"></div>
@@ -438,16 +423,16 @@ if('serviceWorker' in navigator){
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <!-- JS Modules -->
-<script src="/static/js/i18n.js?v=3"></script>
-<script src="/static/js/app.js?v=3"></script>
-<script src="/static/js/chat.js?v=3"></script>
-<script src="/static/js/training.js?v=3"></script>
-<script src="/static/js/planner.js?v=3"></script>
-<script src="/static/js/history.js?v=3"></script>
-<script src="/static/js/favorites.js?v=3"></script>
-<script src="/static/js/profile.js?v=3"></script>
-<script src="/static/js/live.js?v=3"></script>
-<script src="/static/js/filters.js?v=3"></script>
-<script src="/static/js/recipe_tools.js?v=3"></script>
+<script src="/static/js/i18n.js?v=4"></script>
+<script src="/static/js/app.js?v=4"></script>
+<script src="/static/js/chat.js?v=4"></script>
+<script src="/static/js/training.js?v=4"></script>
+<script src="/static/js/planner.js?v=4"></script>
+<script src="/static/js/history.js?v=4"></script>
+<script src="/static/js/favorites.js?v=4"></script>
+<script src="/static/js/profile.js?v=4"></script>
+<script src="/static/js/live.js?v=4"></script>
+<script src="/static/js/filters.js?v=4"></script>
+<script src="/static/js/recipe_tools.js?v=4"></script>
 </body>
 </html>
