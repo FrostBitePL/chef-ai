@@ -719,8 +719,8 @@ function renderProfileBanner(p) {
     
     const parts = [];
     if (p.dietary?.length) parts.push(`🥗 ${p.dietary.join(', ')}`);
-    if (p.banned?.length) parts.push(`🚫 bez: ${p.banned.join(', ')}`);
-    if (p.hidden > 0) parts.push(`ukryto ${p.hidden} niekompatybilnych`);
+    if (p.banned?.length) parts.push(`� AI zastąpi: ${p.banned.join(', ')}`);
+    if (p.hidden > 0) parts.push(`ukryto ${p.hidden}`);
     
     if (parts.length) {
         text.innerHTML = parts.join(' · ');
@@ -730,9 +730,9 @@ function renderProfileBanner(p) {
     }
     
     const total = p.filtered_dishes || 230;
-    const subParts = [`${total} przepisów`];
-    if (p.banned?.length) subParts.push('AI dostosuje do Twojego profilu');
-    if (sub) sub.textContent = subParts.join(' · ');
+    if (sub) sub.textContent = p.banned?.length
+        ? `${total} przepisów · AI dostosuje do profilu`
+        : `${total} sprawdzonych przepisów`;
 }
 
 function renderCatTabs(cats) {
@@ -793,15 +793,13 @@ function renderClassicIndex(idx, container) {
         html += `<div class="category-section" data-cat="${cat.id}">
           <div class="category-title">${cat.emoji} ${cat.name} <span class="cat-count">${items.length}</span></div>
           <div class="category-chips">${items.map(d => {
-            const warned = d.warned && d.warned.length > 0;
-            const isInstant = d.hardcoded && !warned;
-            const chipClass = isInstant ? ' chip-instant' : (warned ? ' chip-warned' : '');
+            const isInstant = d.hardcoded && !d.adapted;
+            const chipClass = isInstant ? ' chip-instant' : (d.adapted ? ' chip-adapted' : '');
             const hc = isInstant ? ' data-hc="1"' : '';
             const diff = '★'.repeat(d.difficulty) + '☆'.repeat(3 - d.difficulty);
-            const warnBadge = warned ? `<span class="chip-warn" title="Zawiera: ${d.warned.join(', ')} — AI wygeneruje wersję bez">⚠️</span>` : '';
             return `<div class="classic-chip${chipClass}" onclick="loadClassicRecipe('${d.id}')"${hc} data-name="${d.name.toLowerCase()}">
               <span class="chip-emoji">${d.emoji}</span>
-              <span class="chip-name">${d.name}</span>${warnBadge}
+              <span class="chip-name">${d.name}</span>
               <span class="chip-meta">${fmtTime(d.time)} · ${diff}</span>
             </div>`;
           }).join('')}</div></div>`;
@@ -838,9 +836,9 @@ async function loadClassicRecipe(recipeId) {
     
     if (!isInstant) {
         const loadTxt = document.querySelector('#classicLoading .loading-text');
-        const isWarned = chip?.classList.contains('chip-warned');
+        const isAdapted = chip?.classList.contains('chip-adapted');
         if (loadTxt) {
-            loadTxt.textContent = isWarned 
+            loadTxt.textContent = isAdapted 
                 ? `Dostosowuję "${dishName}" do Twojego profilu...`
                 : `Generuję: ${dishName}...`;
         }

@@ -2789,8 +2789,33 @@ def _is_dish_vegan(dish_id):
 def _is_dish_gf(dish_id):
     return dish_id in _GF_DISHES
 
+# Dishes where a banned ingredient IS the dish — removing it destroys the concept
+_CORE_INGREDIENT_DISHES = {
+    "cebula": {"zupa_cebulowa", "soupe_oignon"},
+    "czosnek": {"aglio_olio", "gambas_al_ajillo"},
+    "jajka":  {"jajecznica", "omlet_francuski", "jajka_sadzone", "jajka_w_koszulkach",
+               "jajka_po_benedyktynsku", "pasta_jajeczna", "shakshuka", "tortilla_espanola"},
+    "jajko":  {"jajecznica", "omlet_francuski", "jajka_sadzone", "jajka_w_koszulkach",
+               "jajka_po_benedyktynsku", "pasta_jajeczna", "shakshuka", "tortilla_espanola"},
+    "ser":    {"cacio_e_pepe", "pizza_quattro_formaggi", "mac_and_cheese"},
+    "czekolada": {"mus_czekoladowy", "fondant", "trufle", "brownies", "sacher"},
+    "ziemniaki": {"placki_ziemniaczane", "kopytka"},
+    "ryż":    {"risotto_milanese", "risotto_funghi", "risotto_nero", "biryani",
+               "fried_rice", "bibimbap", "ryz_basmati", "ryz_szafranowy", "pilaf", "paella"},
+    "pomidory": {"gazpacho"},
+    "kapusta": {"bigos", "kapusniak"},
+}
+
+def _is_core_destroyed(dish_id, banned_lower):
+    """Check if removing banned ingredient would destroy this dish."""
+    for b in banned_lower:
+        core_set = _CORE_INGREDIENT_DISHES.get(b, set())
+        if dish_id in core_set:
+            return True
+    return False
+
 def get_classic_index_for_profile(profile_data):
-    """Return index categories + dishes filtered by dietary, with banned warnings."""
+    """Return index filtered by dietary + core-destroyed banned. AI adapts the rest."""
     dietary_prefs = profile_data.get("dietary_preferences", [])
     if isinstance(dietary_prefs, str):
         dietary_prefs = json.loads(dietary_prefs) if dietary_prefs else []
@@ -2823,16 +2848,17 @@ def get_classic_index_for_profile(profile_data):
             hidden_count += 1
             continue
 
-        # --- Banned ingredients: WARN (check hardcoded recipes) ---
-        if banned_lower:
+        # --- Banned: HIDE only if ingredient IS the dish ---
+        if banned_lower and _is_core_destroyed(rid, banned_lower):
+            hidden_count += 1
+            continue
+
+        # --- Banned: hardcoded with banned ingredient → mark as AI-adapted ---
+        if banned_lower and dish.get("hardcoded"):
             hc_recipe = CLASSICS_HARDCODED.get(rid)
-            if hc_recipe:
-                warns = _check_hardcoded_banned(hc_recipe, banned)
-                if warns:
-                    dish["warned"] = warns
-            else:
-                # Non-hardcoded: AI will adapt, no warning needed
-                dish["ai_adapts"] = True
+            if hc_recipe and _check_hardcoded_banned(hc_recipe, banned):
+                dish["hardcoded"] = False  # will go through AI, not instant DB
+                dish["adapted"] = True
 
         result.append(dish)
 
