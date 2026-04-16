@@ -664,6 +664,20 @@ body{
   border-color: var(--gold-border);
   background: linear-gradient(135deg, rgba(226,180,79,0.1), rgba(226,180,79,0.04));
 }
+
+/* Warned chips — has banned ingredient, AI will adapt */
+.classic-chip.chip-warned {
+  border-color: rgba(248,113,113,0.2);
+  background: linear-gradient(135deg, rgba(248,113,113,0.05), transparent);
+}
+.classic-chip.chip-warned:hover {
+  border-color: rgba(248,113,113,0.35);
+  background: linear-gradient(135deg, rgba(248,113,113,0.1), rgba(248,113,113,0.03));
+}
+.chip-warn {
+  font-size: 10px; margin-left: 1px; cursor: help;
+  filter: saturate(0.7);
+}
 /* Status bar */
 .status-bar{padding:8px 20px;text-align:center;font-size:0.72rem;border-bottom:1px solid var(--border);display:none;font-weight:500}
 .status-bar.show{display:block}

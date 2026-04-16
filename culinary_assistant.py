@@ -2673,42 +2673,172 @@ CLASSICS_INDEX, CLASSICS_HARDCODED = load_classics_system()
 # In-memory cache for AI-generated classic recipes (survives until restart)
 _classics_ai_cache = {}
 
+# ─── DISH DIETARY CLASSIFICATION ───
+# Dishes that are classically vegetarian (no meat, fish, shellfish)
+_VEG_DISHES = {
+    # Polish
+    "pierogi_ruskie", "pierogi_z_kapusta", "leniwe", "kopytka", "placki_ziemniaczane",
+    # Soups
+    "zupa_dyniowa", "zupa_pieczarkowa", "zupa_brokulowa", "zupa_kalafiorowa",
+    "zupa_cebulowa", "minestrone", "gazpacho", "miso",
+    # Italian
+    "cacio_e_pepe", "aglio_olio", "pizza_margherita", "pizza_marinara",
+    "pizza_quattro_formaggi", "risotto_funghi", "gnocchi_sorrentina",
+    "caprese", "bruschetta", "tiramisu", "panna_cotta",
+    # Asian
+    "dal", "naan",
+    # French
+    "ratatouille", "crepes", "creme_brulee", "tarte_tatin", "profiterole", "macarons",
+    # Mexican
+    "guacamole", "quesadilla", "elote", "churros",
+    # American
+    "mac_and_cheese", "cheesecake_ny", "brownies", "chocolate_chip_cookies", "pancakes",
+    # Mediterranean
+    "hummus", "baba_ghanoush", "tabouleh", "falafel", "shakshuka",
+    "tzatziki", "tortilla_espanola", "pan_con_tomate",
+    # Breakfast
+    "jajecznica", "omlet_francuski", "jajka_sadzone", "jajka_w_koszulkach",
+    "avocado_toast", "french_toast", "granola", "overnight_oats",
+    "smoothie_bowl", "nalesniki", "racuchy", "pasta_jajeczna",
+    # Salads
+    "salatka_grecka", "waldorf", "coleslaw", "salatka_jarzynowa",
+    "tabbouleh_salad", "panzanella", "salatka_burakowa",
+    # Pasta & Rice
+    "spaghetti_pomodoro", "penne_arrabbiata", "pesto_genovese",
+    "ravioli_szpinak_ricotta", "makaron_wloszczyzna", "ryz_basmati", "ryz_szafranowy",
+    # Baking savory
+    "chleb_pszenny", "chleb_zakwas", "bulki_shokupan", "brioche", "bagietka",
+    "focaccia", "ciabatta", "pretzel", "drozdzowka_wytrawna", "pita",
+    # Baking sweet (all)
+    "biszkopt", "sernik", "szarlotka", "makowiec", "piernik_staropolski",
+    "babka_piaskowa", "keks", "ciasto_marchewkowe", "paczki", "faworki",
+    "kremowka", "karpatka", "jablecznik", "mazurek", "strudel",
+    "sacher", "red_velvet", "tort_bezowy", "drozdzowka_owocami", "rogaliki",
+    # Desserts (all)
+    "lody_waniliowe", "sorbet_cytrynowy", "kompot", "kisiel", "budyn",
+    "mus_czekoladowy", "trufle", "galaretka_owocowa", "fondant",
+    "cheesecake_no_bake", "panna_cotta_malinowa", "crema_catalana",
+    "baklawa", "cannoli", "profiterolki_lody",
+}
+
+_VEGAN_DISHES = {
+    "gazpacho", "hummus", "baba_ghanoush", "tabouleh", "falafel", "guacamole",
+    "pan_con_tomate", "aglio_olio", "spaghetti_pomodoro", "penne_arrabbiata",
+    "ratatouille", "pizza_marinara", "ryz_basmati", "dal",
+    "chleb_pszenny", "chleb_zakwas", "bagietka", "focaccia", "ciabatta", "pita",
+    "sorbet_cytrynowy", "kompot", "kisiel", "galaretka_owocowa",
+    "avocado_toast", "smoothie_bowl",
+}
+
+# Dishes that are gluten-free by nature
+_GF_DISHES = {
+    "rosol", "jajecznica", "omlet_francuski", "jajka_sadzone", "jajka_w_koszulkach",
+    "avocado_toast", "smoothie_bowl", "overnight_oats", "granola",
+    "caprese", "hummus", "baba_ghanoush", "tabouleh", "guacamole", "tzatziki",
+    "ryz_basmati", "ryz_szafranowy", "risotto_milanese", "risotto_funghi",
+    "stek_ribeye", "stek_tomahawk", "rostbef", "tatar",
+    "gazpacho", "kompot", "kisiel", "lody_waniliowe", "sorbet_cytrynowy",
+    "mus_czekoladowy", "trufle", "fondant", "panna_cotta", "panna_cotta_malinowa",
+    "creme_brulee", "crema_catalana",
+    "pad_thai", "curry_green", "curry_red", "curry_massaman", "curry_indian",
+    "butter_chicken", "biryani", "dal", "fried_rice",
+    "shakshuka", "tortilla_espanola", "paella", "gambas_al_ajillo",
+    "salatka_grecka", "salatka_burakowa", "coleslaw",
+}
+
+def _check_hardcoded_banned(recipe, banned_list):
+    """Check if a hardcoded recipe's ingredients contain any banned items."""
+    if not banned_list or not recipe:
+        return []
+    items_text = " ".join(
+        i.get("item", "").lower() + " " + i.get("note", "").lower()
+        for i in recipe.get("ingredients", [])
+    ).lower()
+    found = []
+    for b in banned_list:
+        bl = b.lower().strip()
+        # Check direct match and common variants
+        variants = [bl]
+        if bl in ("cebula", "onion"):
+            variants += ["cebul", "cebulk", "cebuli", "szalotk", "dymk"]
+        elif bl in ("czosnek", "garlic"):
+            variants += ["czosn", "ząbk"]
+        elif bl in ("nabiał", "mleko", "dairy", "milk"):
+            variants += ["mleko", "mlecz", "śmietan", "masło", "ser ", "jogurt",
+                         "twaróg", "twarożk", "ricott", "pecorino", "parmez",
+                         "mozzarell", "gruyère"]
+        elif bl in ("jajka", "jajko", "eggs"):
+            variants += ["jaj", "żółtk", "białk"]
+        elif bl in ("gluten", "pszenica", "wheat"):
+            variants += ["mąka", "mąki", "makaron", "spaghett", "bułk", "chleb",
+                         "panierka", "bułka tarta"]
+        elif bl in ("orzechy", "nuts"):
+            variants += ["orzech", "migdał", "pistacj", "orzeszy", "pini"]
+        for v in variants:
+            if v in items_text:
+                found.append(b)
+                break
+    return list(set(found))
+
+def _is_dish_vegetarian(dish_id):
+    return dish_id in _VEG_DISHES
+
+def _is_dish_vegan(dish_id):
+    return dish_id in _VEGAN_DISHES
+
+def _is_dish_gf(dish_id):
+    return dish_id in _GF_DISHES
+
 def get_classic_index_for_profile(profile_data):
-    """Return index categories + dishes filtered by dietary prefs."""
+    """Return index categories + dishes filtered by dietary, with banned warnings."""
     dietary_prefs = profile_data.get("dietary_preferences", [])
     if isinstance(dietary_prefs, str):
         dietary_prefs = json.loads(dietary_prefs) if dietary_prefs else []
-    
-    # No filtering needed if no prefs
+    banned = profile_data.get("banned_ingredients", [])
+    if isinstance(banned, str):
+        banned = json.loads(banned) if banned else []
+    banned_lower = [b.lower().strip() for b in banned]
+
     categories = CLASSICS_INDEX.get("categories", [])
     dishes = CLASSICS_INDEX.get("dishes", [])
-    
-    if not dietary_prefs:
-        return {"categories": categories, "dishes": dishes}
-    
-    # For non-hardcoded dishes we don't have veg/vegan flags in index,
-    # so we only filter hardcoded ones we know about. Non-hardcoded stay visible.
-    def passes(d):
+
+    is_vegan = any(p in ("wegańskie", "vegan") for p in dietary_prefs)
+    is_veg = any(p in ("wegetariańskie", "vegetarian") for p in dietary_prefs) or is_vegan
+    is_gf = any(p in ("bezglutenowe", "gluten-free") for p in dietary_prefs)
+
+    result = []
+    hidden_count = 0
+    for d in dishes:
         rid = d["id"]
-        hc = CLASSICS_HARDCODED.get(rid)
-        if not hc:
-            return True  # unknown → show
-        if "wegańskie" in dietary_prefs or "vegan" in dietary_prefs:
-            if not hc.get("vegan", False):
-                return False
-        elif "wegetariańskie" in dietary_prefs or "vegetarian" in dietary_prefs:
-            if not hc.get("vegetarian", False):
-                return False
-        if "bezglutenowe" in dietary_prefs or "gluten-free" in dietary_prefs:
-            if not hc.get("gluten_free", False):
-                return False
-        return True
-    
-    filtered = [d for d in dishes if passes(d)]
-    # Only return categories that still have dishes
-    active_cats = set(d["category"] for d in filtered)
+        dish = dict(d)  # copy
+
+        # --- Dietary filter: HIDE incompatible ---
+        if is_vegan and not _is_dish_vegan(rid):
+            hidden_count += 1
+            continue
+        if is_veg and not _is_dish_vegetarian(rid):
+            hidden_count += 1
+            continue
+        if is_gf and not _is_dish_gf(rid):
+            hidden_count += 1
+            continue
+
+        # --- Banned ingredients: WARN (check hardcoded recipes) ---
+        if banned_lower:
+            hc_recipe = CLASSICS_HARDCODED.get(rid)
+            if hc_recipe:
+                warns = _check_hardcoded_banned(hc_recipe, banned)
+                if warns:
+                    dish["warned"] = warns
+            else:
+                # Non-hardcoded: AI will adapt, no warning needed
+                dish["ai_adapts"] = True
+
+        result.append(dish)
+
+    active_cats = set(d["category"] for d in result)
     cats = [c for c in categories if c["id"] in active_cats]
-    return {"categories": cats, "dishes": filtered}
+    return {"categories": cats, "dishes": result, "hidden": hidden_count}
 
 def find_classic_recipe(recipe_id):
     """Find hardcoded recipe by ID."""
@@ -4910,27 +5040,61 @@ Zwróć JSON:
             profile = db_get_profile_cached(user_id) if user_id else {}
             
             if recipe_id:
-                # --- Layer 2a: Hardcoded DB (0ms) ---
+                # Check banned ingredients for hardcoded recipes
+                banned = profile.get("banned_ingredients", [])
+                if isinstance(banned, str):
+                    banned = json.loads(banned) if banned else []
+                force_ai = data.get("force_ai", False)
+                
+                # --- Layer 2a: Hardcoded DB (0ms) — only if no banned match ---
                 recipe = find_classic_recipe(recipe_id)
-                if recipe:
-                    clean = {k: v for k, v in recipe.items() if k not in ("category", "tags", "vegetarian", "vegan", "gluten_free", "contains", "id")}
-                    return jsonify({"success": True, "recipe": clean, "source": "db"})
+                if recipe and not force_ai:
+                    warns = _check_hardcoded_banned(recipe, banned) if banned else []
+                    if not warns:
+                        clean = {k: v for k, v in recipe.items() if k not in ("category", "tags", "vegetarian", "vegan", "gluten_free", "contains", "id")}
+                        return jsonify({"success": True, "recipe": clean, "source": "db"})
+                    # Has banned ingredients → fall through to AI for adapted version
                 
-                # --- Layer 2b: In-memory cache ---
-                if recipe_id in _classics_ai_cache:
-                    return jsonify({"success": True, "recipe": _classics_ai_cache[recipe_id], "source": "cache"})
+                # --- Layer 2b: In-memory cache (key includes banned for uniqueness) ---
+                cache_key = f"{recipe_id}__{'_'.join(sorted(b.lower() for b in banned))}" if banned else recipe_id
+                if cache_key in _classics_ai_cache:
+                    return jsonify({"success": True, "recipe": _classics_ai_cache[cache_key], "source": "cache"})
                 
-                # --- Layer 2c: AI on-demand generation ---
+                # --- Layer 2c: AI on-demand generation with full profile ---
                 dish_name = find_classic_name(recipe_id)
                 constraints = build_dietary_constraints(profile)
                 lang = profile.get("lang", "pl")
                 equipment = get_user_equipment(profile)
                 equip_str = ", ".join(equipment) if equipment else "standardowy sprzęt kuchenny"
+                fav_ings = get_favorite_ingredients(profile)
                 
-                system_prompt = f"""Jesteś ekspertem kulinarnym. Wygeneruj PEŁNY przepis na klasyczne danie: "{dish_name}".
+                # Build rich profile-aware prompt
+                profile_lines = []
+                if constraints:
+                    profile_lines.append(f"⛔ OGRANICZENIA DIETETYCZNE: {constraints}")
+                if banned:
+                    profile_lines.append(f"⛔ ZAKAZANE SKŁADNIKI (NIGDY nie używaj, nawet w niewielkich ilościach): {', '.join(banned)}")
+                    profile_lines.append("Jeśli klasyczny przepis zawiera zakazany składnik — ZASTĄP go sensownym zamiennikiem i wyjaśnij zamianę w polu 'substitutes'.")
+                profile_lines.append(f"🔧 Sprzęt użytkownika: {equip_str}")
+                if fav_ings:
+                    profile_lines.append(f"❤️ Ulubione składniki: {', '.join(fav_ings[:10])}")
+                profile_context = "\n".join(profile_lines)
+                
+                system_prompt = f"""Jesteś ekspertem kulinarnym i mentorem. Wygeneruj PEŁNY, KLASYCZNY przepis na: "{dish_name}".
 
-{constraints}
-Sprzęt użytkownika: {equip_str}
+## PROFIL UŻYTKOWNIKA:
+{profile_context}
+
+## WYMAGANIA:
+- Przepis MUSI być wierny klasycznej wersji, ale dostosowany do profilu użytkownika
+- ZAWSZE dodaj "subtitle" z krótkim opisem (np. "Klasyczny polski rosół z domowego kurczaka")
+- ZAWSZE dodaj "science" z ciekawostką naukową o tym daniu (reakcja Maillarda, emulgacja, fermentacja itp.)
+- ZAWSZE dodaj "upgrade" z sugestią jak podnieść danie na wyższy poziom
+- ZAWSZE w "steps" opisuj DLACZEGO robimy dany krok (pole "why")
+- ZAWSZE dodaj "warnings" z typowymi błędami
+- ZAWSZE dodaj "substitutes" z alternatywnymi składnikami
+- ZAWSZE dodaj "mise_en_place" z listą przygotowań przed gotowaniem
+- Ton: kumpel-ekspert z pasją. Pisz jak ktoś kto KOCHA gotowanie i chce się podzielić.
 
 {RESPONSE_RULES}"""
                 
@@ -4942,18 +5106,19 @@ Sprzęt użytkownika: {equip_str}
                 
                 parsed, usage = assistant._call_text(
                     system_with_lang, 
-                    [{"role": "user", "content": f"Przepis na: {dish_name}"}],
+                    [{"role": "user", "content": f"Daj mi klasyczny przepis na: {dish_name}"}],
                     user_id=user_id
                 )
                 
-                # Cache for next time
+                # Cache for next time (same profile constraints)
                 if parsed and isinstance(parsed, dict):
-                    _classics_ai_cache[recipe_id] = parsed
+                    _classics_ai_cache[cache_key] = parsed
                 
                 return jsonify({
                     "success": True,
                     "recipe": parsed,
                     "source": "ai",
+                    "adapted": bool(banned),
                     "usage": {
                         "prompt_tokens": usage.prompt_tokens if usage else 0,
                         "completion_tokens": usage.completion_tokens if usage else 0,
@@ -4979,7 +5144,8 @@ Sprzęt użytkownika: {equip_str}
                     "name": profile.get("name", ""),
                     "filters_active": len(dietary_prefs) > 0 or len(banned) > 0,
                     "total_dishes": len(CLASSICS_INDEX.get("dishes", [])),
-                    "filtered_dishes": len(index_data.get("dishes", []))
+                    "filtered_dishes": len(index_data.get("dishes", [])),
+                    "hidden": index_data.get("hidden", 0),
                 }
                 
                 return jsonify({"success": True, "classics": index_data, "profile": profile_summary})

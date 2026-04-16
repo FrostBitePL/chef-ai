@@ -708,22 +708,31 @@ async function loadClassicChips() {
     } catch (e) { console.error('Error loading classics:', e); }
 }
 
+let _clsProfile = null;
+
 function renderProfileBanner(p) {
+    _clsProfile = p;
     const banner = document.getElementById('clsProfileBanner');
     const text = document.getElementById('clsProfileText');
     const sub = document.getElementById('clsHeroSub');
     if (!banner || !p) return;
     
-    if (p.filters_active) {
-        const parts = [];
-        if (p.dietary?.length) parts.push(p.dietary.join(', '));
-        if (p.banned?.length) parts.push(`bez: ${p.banned.slice(0,3).join(', ')}${p.banned.length > 3 ? '...' : ''}`);
-        text.innerHTML = `Filtr profilu: <b>${parts.join(' · ')}</b> — ${p.filtered_dishes}/${p.total_dishes} dań`;
+    const parts = [];
+    if (p.dietary?.length) parts.push(`🥗 ${p.dietary.join(', ')}`);
+    if (p.banned?.length) parts.push(`🚫 bez: ${p.banned.join(', ')}`);
+    if (p.hidden > 0) parts.push(`ukryto ${p.hidden} niekompatybilnych`);
+    
+    if (parts.length) {
+        text.innerHTML = parts.join(' · ');
         banner.style.display = 'flex';
     } else {
         banner.style.display = 'none';
     }
-    if (sub) sub.textContent = `${p.filtered_dishes || 230} sprawdzonych przepisów`;
+    
+    const total = p.filtered_dishes || 230;
+    const subParts = [`${total} przepisów`];
+    if (p.banned?.length) subParts.push('AI dostosuje do Twojego profilu');
+    if (sub) sub.textContent = subParts.join(' · ');
 }
 
 function renderCatTabs(cats) {
@@ -784,11 +793,15 @@ function renderClassicIndex(idx, container) {
         html += `<div class="category-section" data-cat="${cat.id}">
           <div class="category-title">${cat.emoji} ${cat.name} <span class="cat-count">${items.length}</span></div>
           <div class="category-chips">${items.map(d => {
-            const hc = d.hardcoded ? ' data-hc="1"' : '';
+            const warned = d.warned && d.warned.length > 0;
+            const isInstant = d.hardcoded && !warned;
+            const chipClass = isInstant ? ' chip-instant' : (warned ? ' chip-warned' : '');
+            const hc = isInstant ? ' data-hc="1"' : '';
             const diff = '★'.repeat(d.difficulty) + '☆'.repeat(3 - d.difficulty);
-            return `<div class="classic-chip${d.hardcoded ? ' chip-instant' : ''}" onclick="loadClassicRecipe('${d.id}')"${hc} data-name="${d.name.toLowerCase()}">
+            const warnBadge = warned ? `<span class="chip-warn" title="Zawiera: ${d.warned.join(', ')} — AI wygeneruje wersję bez">⚠️</span>` : '';
+            return `<div class="classic-chip${chipClass}" onclick="loadClassicRecipe('${d.id}')"${hc} data-name="${d.name.toLowerCase()}">
               <span class="chip-emoji">${d.emoji}</span>
-              <span class="chip-name">${d.name}</span>
+              <span class="chip-name">${d.name}</span>${warnBadge}
               <span class="chip-meta">${fmtTime(d.time)} · ${diff}</span>
             </div>`;
           }).join('')}</div></div>`;
@@ -820,11 +833,17 @@ async function loadClassicRecipe(recipeId) {
     const loadingEl = document.getElementById('classicLoading');
     const catsEl = document.getElementById('classicCategories');
     const chip = document.querySelector(`.classic-chip[onclick*="'${recipeId}'"]`);
-    const isHardcoded = chip?.dataset?.hc === '1';
+    const isInstant = chip?.dataset?.hc === '1';
+    const dishName = chip?.querySelector('.chip-name')?.textContent || recipeId;
     
-    if (!isHardcoded) {
+    if (!isInstant) {
         const loadTxt = document.querySelector('#classicLoading .loading-text');
-        if (loadTxt) loadTxt.textContent = `Generuję: ${chip?.querySelector('.chip-name')?.textContent || recipeId}...`;
+        const isWarned = chip?.classList.contains('chip-warned');
+        if (loadTxt) {
+            loadTxt.textContent = isWarned 
+                ? `Dostosowuję "${dishName}" do Twojego profilu...`
+                : `Generuję: ${dishName}...`;
+        }
         if (loadingEl && catsEl) { catsEl.style.display = 'none'; loadingEl.style.display = 'flex'; }
     }
     
@@ -837,6 +856,9 @@ async function loadClassicRecipe(recipeId) {
         
         if (data.success && data.recipe) {
             showView('chat');
+            if (data.adapted && _clsProfile?.banned?.length) {
+                addMsg('system', `✅ Przepis "${dishName}" dostosowany — bez: ${_clsProfile.banned.join(', ')}`);
+            }
             handleResponse(data.recipe);
         } else {
             alert('Nie udało się załadować przepisu: ' + (data.error || 'Nieznany błąd'));
