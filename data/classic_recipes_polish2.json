@@ -1,0 +1,146 @@
+[
+  {
+    "id": "zurek",
+    "type": "recipe",
+    "title": "Żurek — na zakwasie",
+    "subtitle": "Aromatyczna zupa na żurze z białą kiełbasą i jajkiem",
+    "category": "polish",
+    "tags": ["zupa", "obiad", "comfort"],
+    "vegetarian": false, "vegan": false, "gluten_free": true,
+    "times": {"prep_min": 15, "cook_min": 40, "total_min": 55},
+    "difficulty": 2, "servings": 6,
+    "nutrition": {"kcal": 350, "protein_g": 18, "fat_g": 16, "carbs_g": 32},
+    "ingredients": [
+      {"item": "żur (zakwas)", "amount": "400 ml", "note": "gotowy lub domowy"},
+      {"item": "biała kiełbasa", "amount": "300 g", "note": ""},
+      {"item": "jajka", "amount": "4 szt", "note": "na twardo"},
+      {"item": "boczek wędzony", "amount": "100 g", "note": "w kostkę"},
+      {"item": "ziemniaki", "amount": "400 g", "note": "w kostkę 2 cm"},
+      {"item": "cebula", "amount": "1 szt", "note": ""},
+      {"item": "czosnek", "amount": "4 ząbki", "note": ""},
+      {"item": "liść laurowy", "amount": "2 szt", "note": ""},
+      {"item": "ziele angielskie", "amount": "4 szt", "note": ""},
+      {"item": "majeranek", "amount": "1 łyżeczka", "note": "suszony"},
+      {"item": "sól i pieprz", "amount": "do smaku", "note": ""},
+      {"item": "bulion", "amount": "1 L", "note": "warzywny lub mięsny"}
+    ],
+    "steps": [
+      {"number": 1, "title": "Baza", "instruction": "Boczek (100 g) podsmaż na suchej patelni. Na tłuszczu zeszklij cebulę (1 szt) i czosnek (4 ząbki) — 3 min.", "equipment": "garnek", "timer_seconds": 180, "tip": "Boczek daje tłuszcz I smak — dwa w jednym.", "why": "Rendering boczku uwalnia wędzone aromaty do tłuszczu."},
+      {"number": 2, "title": "Gotowanie", "instruction": "Dodaj bulion (1 L), ziemniaki (400 g), liść laurowy (2) i ziele angielskie (4). Gotuj 15 min aż ziemniaki miękkie.", "equipment": "", "timer_seconds": 900, "tip": "", "why": ""},
+      {"number": 3, "title": "Żur i kiełbasa", "instruction": "Wlej żur (400 ml). Dodaj pokrojoną kiełbasę (300 g) i majeranek (1 łyżeczka). Gotuj 10 min na wolnym ogniu.", "equipment": "", "timer_seconds": 600, "tip": "Żur dodawaj NA KOŃCU — długie gotowanie zabija kwasowość.", "why": "Kwas mlekowy w żurze jest delikatny i ulatnia się w wysokiej temp."},
+      {"number": 4, "title": "Podanie", "instruction": "Jajka (4 szt) ugotuj na twardo, pokrój na pół. Podawaj z jajkiem i pieprzem. Opcja: w chlebie.", "equipment": "", "timer_seconds": null, "tip": "Żurek podany w chlebie — efektowne i tradycyjne.", "why": ""}
+    ],
+    "warnings": [
+      {"problem": "Za kwaśny", "solution": "Dodaj mniej żuru lub łyżkę śmietany."},
+      {"problem": "Za wodnisty", "solution": "Zgniataj część ziemniaków widelcem — zagęszczą."}
+    ],
+    "upgrade": "Prażony czosnek (4 ząbki w piekarniku 180°C/20 min) wmieszany na końcu — łagodna, głęboka aromatyczność.",
+    "science": "Żur to naturalny ferment — bakterie Lactobacillus produkują kwas mlekowy, który nadaje zupie charakterystyczny kwaśny smak."
+  },
+  {
+    "id": "kotlet-mielony",
+    "type": "recipe",
+    "title": "Kotlet mielony — domowy",
+    "subtitle": "Soczysty, pulchny, z bułką i cebulą",
+    "category": "polish",
+    "tags": ["obiad", "mięso", "comfort", "szybkie"],
+    "vegetarian": false, "vegan": false, "gluten_free": false,
+    "times": {"prep_min": 15, "cook_min": 15, "total_min": 30},
+    "difficulty": 1, "servings": 4,
+    "nutrition": {"kcal": 420, "protein_g": 30, "fat_g": 22, "carbs_g": 24},
+    "ingredients": [
+      {"item": "mięso mielone (wieprzowo-wołowe)", "amount": "500 g", "note": ""},
+      {"item": "cebula", "amount": "1 szt", "note": "drobno posiekana"},
+      {"item": "jajko", "amount": "1 szt", "note": ""},
+      {"item": "bułka", "amount": "1 szt", "note": "namoczona w mleku"},
+      {"item": "mleko", "amount": "100 ml", "note": "do namoczenia bułki"},
+      {"item": "czosnek", "amount": "2 ząbki", "note": "starty"},
+      {"item": "bułka tarta", "amount": "50 g", "note": "do obtoczenia"},
+      {"item": "sól", "amount": "1 łyżeczka", "note": ""},
+      {"item": "pieprz", "amount": "do smaku", "note": ""},
+      {"item": "olej", "amount": "do smażenia", "note": ""}
+    ],
+    "steps": [
+      {"number": 1, "title": "Masa mięsna", "instruction": "Bułkę (1 szt) namocz w mleku (100 ml) i odciśnij. Wymieszaj z mięsem (500 g), cebulą (1 szt), jajkiem (1 szt), czosnkiem (2 ząbki), solą i pieprzem. Wyrabiaj 3 min.", "equipment": "", "timer_seconds": null, "tip": "Wyrabiaj energicznie — białka w mięsie wiążą masę.", "why": "Miozyna uwalniana przez wyrabianie tworzy sieć białkową. Bułka zatrzymuje wilgoć."},
+      {"number": 2, "title": "Formowanie", "instruction": "Mokrymi dłońmi formuj kotlety (8 szt, ok. 2 cm grubości). Lekko obtocz w bułce tartej (50 g).", "equipment": "", "timer_seconds": null, "tip": "Mokre dłonie = masa nie klei się do rąk.", "why": ""},
+      {"number": 3, "title": "Smażenie", "instruction": "Na rozgrzanym oleju smaż 4-5 min z każdej strony na średnim ogniu aż złote.", "equipment": "patelnia", "timer_seconds": 300, "tip": "Średni ogień — za duży spali papierkę a środek zostanie surowy.", "why": "Temperatura 160-170°C daje Maillarda na powierzchni a środek dociera wolniej."},
+      {"number": 4, "title": "Podanie", "instruction": "Podawaj z ziemniakami purée i surówką z buraczków. Klasyka polska.", "equipment": "", "timer_seconds": null, "tip": "Odłóż na 2 min — soki się rozłożą.", "why": ""}
+    ],
+    "warnings": [
+      {"problem": "Kotlety suche", "solution": "Więcej bułki i mleka. Nie przesmaż. Dodaj łyżkę majonezu do masy."},
+      {"problem": "Rozpadają się", "solution": "Dłużej wyrabiaj masę. Schłódź 15 min w lodówce przed smażeniem."}
+    ],
+    "upgrade": "Dodaj do masy łyżkę musztardy i łyżkę posiekanego koperku — subtelna głębia.",
+    "science": "Bułka namoczona w mleku to panade — utrzymuje wilgoć w kotlecie zapobiegając suchości."
+  },
+  {
+    "id": "placki-ziemniaczane",
+    "type": "recipe",
+    "title": "Placki ziemniaczane — chrupiące",
+    "subtitle": "Złociste, chrupiące z zewnątrz, miękkie w środku",
+    "category": "polish",
+    "tags": ["obiad", "wegetariańskie", "comfort", "szybkie"],
+    "vegetarian": true, "vegan": false, "gluten_free": true,
+    "times": {"prep_min": 15, "cook_min": 20, "total_min": 35},
+    "difficulty": 2, "servings": 4,
+    "nutrition": {"kcal": 340, "protein_g": 8, "fat_g": 16, "carbs_g": 42},
+    "ingredients": [
+      {"item": "ziemniaki", "amount": "1 kg", "note": "surowe, mączyste"},
+      {"item": "cebula", "amount": "1 szt", "note": ""},
+      {"item": "jajko", "amount": "1 szt", "note": ""},
+      {"item": "mąka ziemniaczana", "amount": "2 łyżki", "note": ""},
+      {"item": "sól", "amount": "1 łyżeczka", "note": ""},
+      {"item": "olej do smażenia", "amount": "100 ml", "note": ""}
+    ],
+    "steps": [
+      {"number": 1, "title": "Tarcie", "instruction": "Ziemniaki (1 kg) i cebulę (1 szt) zetrzyj na drobnej tarce. Cebulę dodaj DO ziemniaków.", "equipment": "tarka", "timer_seconds": null, "tip": "Cebula zapobiega ciemnieniu.", "why": "Siarczki z cebuli blokują enzymy polifenolooksydazy."},
+      {"number": 2, "title": "Odciskanie", "instruction": "Odciśnij przez ściereczkę. ZACHOWAJ biały osad na dnie (skrobia!) — dodaj z powrotem.", "equipment": "", "timer_seconds": null, "tip": "Biały osad = spoiwo. Bez niego placki się rozpadną.", "why": "Skrobia to naturalny klej. Woda = wróg chrupkości."},
+      {"number": 3, "title": "Masa", "instruction": "Dodaj jajko (1), mąkę ziemniaczaną (2 łyżki), sól. Wymieszaj.", "equipment": "", "timer_seconds": null, "tip": "", "why": ""},
+      {"number": 4, "title": "Smażenie", "instruction": "Olej (3-4 mm) rozgrzej. Nakładaj łyżką, spłaszczaj na 5-7 mm. Smaż 3-4 min/stronę.", "equipment": "patelnia", "timer_seconds": 240, "tip": "CIENKIE = chrupiące. Grube nie będą chrupiące.", "why": "170-180°C = Maillard na powierzchni, żelatynizacja skrobi w środku."},
+      {"number": 5, "title": "Podanie", "instruction": "Odsącz na papierze. Podawaj NATYCHMIAST z kwaśną śmietaną.", "equipment": "", "timer_seconds": null, "tip": "Tracą chrupkość bardzo szybko.", "why": ""}
+    ],
+    "warnings": [
+      {"problem": "Rozpadają się", "solution": "Odciśnij wodę. Więcej mąki ziemniaczanej."},
+      {"problem": "Nie chrupią", "solution": "Gorący olej. Cienkie placki. Bez pokrywki."}
+    ],
+    "upgrade": "2 łyżki parmezanu i rozmaryn w masie — włosko-polski fusion.",
+    "science": "Skrobia żeluje w 60-70°C wewnątrz, a na powierzchni odwadnia się i karmelizuje powyżej 150°C."
+  },
+  {
+    "id": "bigos",
+    "type": "recipe",
+    "title": "Bigos — staropolski",
+    "subtitle": "Gęsty, aromatyczny, lepszy następnego dnia",
+    "category": "polish",
+    "tags": ["obiad", "comfort", "jednogarnkowe"],
+    "vegetarian": false, "vegan": false, "gluten_free": true,
+    "times": {"prep_min": 30, "cook_min": 120, "total_min": 150},
+    "difficulty": 2, "servings": 8,
+    "nutrition": {"kcal": 380, "protein_g": 22, "fat_g": 24, "carbs_g": 16},
+    "ingredients": [
+      {"item": "kapusta kiszona", "amount": "500 g", "note": "lekko odciśnięta"},
+      {"item": "kapusta biała", "amount": "500 g", "note": "poszatkowana"},
+      {"item": "kiełbasa myśliwska", "amount": "300 g", "note": "w plastry"},
+      {"item": "boczek wędzony", "amount": "200 g", "note": "w kostkę"},
+      {"item": "łopatka wieprzowa", "amount": "400 g", "note": "w kostkę 3 cm"},
+      {"item": "cebula", "amount": "2 szt", "note": ""},
+      {"item": "suszone grzyby", "amount": "30 g", "note": "namoczone 2h"},
+      {"item": "śliwki suszone", "amount": "6 szt", "note": ""},
+      {"item": "koncentrat pomidorowy", "amount": "2 łyżki", "note": ""},
+      {"item": "liść laurowy", "amount": "3 szt", "note": ""},
+      {"item": "ziele angielskie", "amount": "5 szt", "note": ""}
+    ],
+    "steps": [
+      {"number": 1, "title": "Mięso", "instruction": "Boczek (200 g) podsmaż bez tłuszczu. Dodaj łopatkę (400 g), obsmaż na brązowo 5-7 min.", "equipment": "patelnia + garnek 6L", "timer_seconds": 420, "tip": "Nie ruszaj mięsa 2-3 min — niech się zrumieni.", "why": "Maillard na mięsie = setki związków smakowych dla bigosu."},
+      {"number": 2, "title": "Warzywa", "instruction": "Na tłuszczu podsmaż cebulę (2 szt) i kiełbasę (300 g) 5 min. Dodaj koncentrat (2 łyżki), smaż 1 min.", "equipment": "", "timer_seconds": 300, "tip": "", "why": "Likopen w koncentracie jest rozpuszczalny w tłuszczu."},
+      {"number": 3, "title": "Składanie", "instruction": "W garnku połącz kapustę kiszoną (500 g), białą (500 g), mięsa, grzyby (30 g) z wywarem, śliwki (6 szt), przyprawy.", "equipment": "garnek 6L", "timer_seconds": null, "tip": "Proporcja kapust 1:1 = balans kwasowości i słodyczy.", "why": "Kiszona daje kwas mlekowy, biała cukry."},
+      {"number": 4, "title": "Duszenie", "instruction": "Na minimalnym ogniu pod pokrywą 1.5-2h, mieszając co 20 min.", "equipment": "", "timer_seconds": 5400, "tip": "IDEAŁ: ugotuj, schłódź, podgrzej następnego dnia.", "why": "Schłodzenie i podgrzanie intensyfikuje smak — cząsteczki smakowe penetrują głębiej."}
+    ],
+    "warnings": [
+      {"problem": "Za kwaśny", "solution": "Więcej białej kapusty lub łyżeczka cukru."},
+      {"problem": "Za wodnisty", "solution": "Ostatnie 30 min bez pokrywki."}
+    ],
+    "upgrade": "Dzień przed: ugotuj, schłódź, lodówka. Podgrzej następnego dnia — głębszy smak.",
+    "science": "W niższej temp. dyfuzja molekularna pozwala cząsteczkom smakowym głębiej penetrować struktury kapusty i mięsa."
+  }
+]

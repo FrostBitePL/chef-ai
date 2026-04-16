@@ -712,80 +712,63 @@ function renderClassicChips(classics) {
     const worldEl = document.getElementById('worldChips');
     const dessertEl = document.getElementById('dessertChips');
     
-    if (polishEl) {
-        polishEl.innerHTML = classics.polish.map(recipe => 
-            `<div class="classic-chip" onclick="generateClassicRecipe('${recipe.name}')">${recipe.name}</div>`
-        ).join('');
-    }
+    const chipHtml = (recipes) => recipes.map(r => 
+        `<div class="classic-chip" onclick="loadClassicRecipe('${r.id}')">${r.name}</div>`
+    ).join('');
     
-    if (worldEl) {
-        worldEl.innerHTML = classics.world.map(recipe => 
-            `<div class="classic-chip" onclick="generateClassicRecipe('${recipe.name}')">${recipe.name}</div>`
-        ).join('');
-    }
+    if (polishEl) polishEl.innerHTML = chipHtml(classics.polish);
+    if (worldEl) worldEl.innerHTML = chipHtml(classics.world);
+    if (dessertEl) dessertEl.innerHTML = chipHtml(classics.desserts);
     
-    if (dessertEl) {
-        dessertEl.innerHTML = classics.desserts.map(recipe => 
-            `<div class="classic-chip" onclick="generateClassicRecipe('${recipe.name}')">${recipe.name}</div>`
-        ).join('');
-    }
-    
-    // Show unavailable recipes as crossed out
     const dietary = userProfile?.dietary_preferences || [];
     if (dietary.length > 0) {
-        const subtitle = document.querySelector('.flow-subtitle');
-        if (subtitle) {
-            subtitle.textContent = `Dopasowane do: ${dietary.join(', ')}`;
-        }
+        const subtitle = document.querySelector('#view-flow-classic .flow-subtitle');
+        if (subtitle) subtitle.textContent = `Dopasowane do: ${dietary.join(', ')}`;
     }
 }
 
-async function generateClassicRecipe(recipeName) {
-    const loadingEl = document.getElementById('classicLoading');
-    const categoriesEl = document.getElementById('classicCategories');
-    
-    // Show loading
-    if (loadingEl && categoriesEl) {
-        categoriesEl.style.display = 'none';
-        loadingEl.style.display = 'flex';
-    }
-    
+async function loadClassicRecipe(recipeId) {
     try {
         const response = await fetch('/api/recipes/classic', {
             method: 'POST',
             headers: authHeaders(),
-            body: JSON.stringify({ query: recipeName })
+            body: JSON.stringify({ recipe_id: recipeId })
         });
         
         const data = await response.json();
         
         if (data.success && data.recipe) {
-            // Switch to chat and show recipe
             showView('chat');
             handleResponse(data.recipe);
         } else {
-            alert('Nie udało się wygenerować przepisu: ' + (data.error || 'Nieznany błąd'));
+            alert('Przepis nie znaleziony: ' + (data.error || 'Nieznany błąd'));
         }
     } catch (error) {
-        console.error('Error generating recipe:', error);
-        alert('Błąd podczas generowania przepisu');
-    } finally {
-        // Hide loading
-        if (loadingEl && categoriesEl) {
-            loadingEl.style.display = 'none';
-            categoriesEl.style.display = 'block';
-        }
+        console.error('Error loading classic recipe:', error);
+        alert('Błąd ładowania przepisu');
     }
 }
 
 function searchClassic() {
     const searchInput = document.getElementById('classicSearch');
-    const query = searchInput.value.trim();
-    
+    const query = searchInput.value.trim().toLowerCase();
     if (!query) return;
     
-    generateClassicRecipe(query);
+    // Search in loaded chips first
+    const allChips = document.querySelectorAll('#classicCategories .classic-chip');
+    for (const chip of allChips) {
+        if (chip.textContent.toLowerCase().includes(query)) {
+            chip.click();
+            searchInput.value = '';
+            return;
+        }
+    }
+    
+    // If not found — use chat as fallback
     searchInput.value = '';
+    showView('chat');
+    document.getElementById('input').value = query;
+    send();
 }
 
 // Add Enter handler for classic search

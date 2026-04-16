@@ -2644,66 +2644,54 @@ def get_user_equipment(profile_data):
         equipment = json.loads(equipment) if equipment else []
     return equipment
 
-def get_classic_recipes_for_profile(profile_data):
-    """Get classic recipe suggestions filtered by user profile."""
+def load_classic_recipes_db():
+    """Load all classic recipes from JSON files in data/ folder."""
+    recipes = []
+    data_dir = os.path.join(os.path.dirname(__file__), "data")
+    if not os.path.exists(data_dir):
+        return recipes
+    for fname in os.listdir(data_dir):
+        if fname.startswith("classic_recipes") and fname.endswith(".json"):
+            try:
+                with open(os.path.join(data_dir, fname), "r", encoding="utf-8") as f:
+                    recipes.extend(json.load(f))
+            except Exception as e:
+                logger.error(f"Error loading {fname}: {e}")
+    logger.info(f"Classic recipes DB: {len(recipes)} recipes loaded")
+    return recipes
+
+CLASSIC_RECIPES_DB = load_classic_recipes_db()
+
+def get_classic_chips_for_profile(profile_data):
+    """Get classic recipe chip suggestions filtered by user profile."""
     dietary_prefs = profile_data.get("dietary_preferences", [])
     if isinstance(dietary_prefs, str):
         dietary_prefs = json.loads(dietary_prefs) if dietary_prefs else []
     
-    # Base classic recipes
-    polish_classics = [
-        {"name": "Rosół", "vegetarian": False, "vegan": False, "gluten_free": True},
-        {"name": "Schabowy", "vegetarian": False, "vegan": False, "gluten_free": False},
-        {"name": "Pierogi ruskie", "vegetarian": True, "vegan": False, "gluten_free": False},
-        {"name": "Kotlet mielony", "vegetarian": False, "vegan": False, "gluten_free": False},
-        {"name": "Bigos", "vegetarian": False, "vegan": False, "gluten_free": True},
-        {"name": "Żurek", "vegetarian": False, "vegan": False, "gluten_free": True},
-        {"name": "Placki ziemniaczane", "vegetarian": True, "vegan": False, "gluten_free": True},
-        {"name": "Kapuśniak", "vegetarian": False, "vegan": False, "gluten_free": True}
-    ]
+    def passes_filter(recipe):
+        if "wegańskie" in dietary_prefs or "vegan" in dietary_prefs:
+            if not recipe.get("vegan", False):
+                return False
+        elif "wegetariańskie" in dietary_prefs or "vegetarian" in dietary_prefs:
+            if not recipe.get("vegetarian", False):
+                return False
+        if "bezglutenowe" in dietary_prefs or "gluten-free" in dietary_prefs:
+            if not recipe.get("gluten_free", False):
+                return False
+        return True
     
-    world_classics = [
-        {"name": "Carbonara", "vegetarian": False, "vegan": False, "gluten_free": False},
-        {"name": "Pad Thai", "vegetarian": False, "vegan": False, "gluten_free": True},
-        {"name": "Curry", "vegetarian": True, "vegan": True, "gluten_free": True},
-        {"name": "Sushi", "vegetarian": False, "vegan": False, "gluten_free": True},
-        {"name": "Paella", "vegetarian": False, "vegan": False, "gluten_free": True},
-        {"name": "Ramen", "vegetarian": False, "vegan": False, "gluten_free": False},
-        {"name": "Risotto", "vegetarian": True, "vegan": False, "gluten_free": True}
-    ]
+    polish = [{"id": r["id"], "name": r["title"].split(" — ")[0]} for r in CLASSIC_RECIPES_DB if r.get("category") == "polish" and passes_filter(r)]
+    world = [{"id": r["id"], "name": r["title"].split(" — ")[0]} for r in CLASSIC_RECIPES_DB if r.get("category") == "world" and passes_filter(r)]
+    desserts = [{"id": r["id"], "name": r["title"].split(" — ")[0]} for r in CLASSIC_RECIPES_DB if r.get("category") == "desserts" and passes_filter(r)]
     
-    desserts = [
-        {"name": "Sernik", "vegetarian": True, "vegan": False, "gluten_free": False},
-        {"name": "Szarlotka", "vegetarian": True, "vegan": False, "gluten_free": False},
-        {"name": "Babka", "vegetarian": True, "vegan": False, "gluten_free": False},
-        {"name": "Chleb", "vegetarian": True, "vegan": True, "gluten_free": False}
-    ]
-    
-    # Filter based on dietary preferences
-    def filter_recipes(recipes):
-        filtered = []
-        for recipe in recipes:
-            # Check vegetarian/vegan
-            if "wegańskie" in dietary_prefs or "vegan" in dietary_prefs:
-                if not recipe.get("vegan", False):
-                    continue
-            elif "wegetariańskie" in dietary_prefs or "vegetarian" in dietary_prefs:
-                if not recipe.get("vegetarian", False):
-                    continue
-            
-            # Check gluten-free
-            if "bezglutenowe" in dietary_prefs or "gluten-free" in dietary_prefs:
-                if not recipe.get("gluten_free", False):
-                    continue
-            
-            filtered.append(recipe)
-        return filtered
-    
-    return {
-        "polish": filter_recipes(polish_classics),
-        "world": filter_recipes(world_classics), 
-        "desserts": filter_recipes(desserts)
-    }
+    return {"polish": polish, "world": world, "desserts": desserts}
+
+def find_classic_recipe(recipe_id):
+    """Find a classic recipe by ID."""
+    for r in CLASSIC_RECIPES_DB:
+        if r["id"] == recipe_id:
+            return r
+    return None
 
 SPECIALIST_EQUIPMENT = {
     "sous-vide": ["sous-vide", "sous_vide", "cyrkulator", "sous vide", "vacuum sealer", "woreczek próżniowy", "cyrkulatorem", "kąpieli wodnej", "kąpiel wodną"],
@@ -4882,61 +4870,31 @@ Zwróć JSON:
     
     @app.route("/api/recipes/classic", methods=["POST"])
     def api_classic_recipes():
-        """Flow 4: Classic recipes with profile filtering"""
+        """Flow 4: Classic recipes with profile filtering — instant from DB"""
         user_id = get_user_from_token()
         if not user_id:
             return jsonify({"error": "Unauthorized"}), 401
         
         try:
             data = request.get_json() or {}
-            query = data.get("query", "").strip()
+            recipe_id = data.get("recipe_id", "").strip()
             
             # Get user profile
             profile = db_get_profile_cached(user_id) if user_id else {}
             
-            if query:
-                # Search mode - generate recipe for specific classic
-                constraints = build_dietary_constraints(profile)
-                lang = profile.get("lang", "pl")
-                
-                equipment = get_user_equipment(profile)
-                equip_str = ", ".join(equipment) if equipment else "standardowy sprzęt kuchenny"
-                
-                system_prompt = f"""Jesteś ekspertem kulinarnym. Wygeneruj przepis na klasyczne danie: "{query}".
-
-{constraints}
-
-Sprzęt użytkownika: {equip_str}
-
-{RESPONSE_RULES}"""
-                
-                system_with_lang = system_prompt + get_lang_instruction(lang)
-                
-                assistant = app.config.get("assistant")
-                if not assistant:
-                    return jsonify({"error": "AI assistant not available"}), 500
-                
-                parsed, usage = assistant._call_text(
-                    system_with_lang, 
-                    [{"role": "user", "content": f"Przepis na: {query}"}],
-                    user_id=user_id
-                )
-                
-                return jsonify({
-                    "success": True,
-                    "recipe": parsed,
-                    "usage": {
-                        "prompt_tokens": usage.prompt_tokens if usage else 0,
-                        "completion_tokens": usage.completion_tokens if usage else 0,
-                    }
-                })
+            if recipe_id:
+                # Instant recipe from DB
+                recipe = find_classic_recipe(recipe_id)
+                if recipe:
+                    # Return clean recipe (without filter metadata)
+                    clean = {k: v for k, v in recipe.items() if k not in ("category", "tags", "vegetarian", "vegan", "gluten_free", "contains", "id")}
+                    return jsonify({"success": True, "recipe": clean, "source": "db"})
+                else:
+                    return jsonify({"success": False, "error": f"Przepis '{recipe_id}' nie znaleziony w bazie"}), 404
             else:
                 # Chips mode - return filtered classic suggestions
-                classics = get_classic_recipes_for_profile(profile)
-                return jsonify({
-                    "success": True,
-                    "classics": classics
-                })
+                classics = get_classic_chips_for_profile(profile)
+                return jsonify({"success": True, "classics": classics})
                 
         except Exception as e:
             logger.error(f"Classic recipes error: {e}")

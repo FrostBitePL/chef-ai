@@ -1,0 +1,220 @@
+[
+  {
+    "id": "carbonara",
+    "type": "recipe",
+    "title": "Carbonara — prawdziwa rzymska",
+    "subtitle": "Kremowy sos z jajek i pecorino, bez śmietany",
+    "category": "world",
+    "tags": ["makaron", "obiad", "włoskie", "szybkie"],
+    "vegetarian": false, "vegan": false, "gluten_free": false,
+    "times": {"prep_min": 10, "cook_min": 15, "total_min": 25},
+    "difficulty": 3, "servings": 4,
+    "nutrition": {"kcal": 580, "protein_g": 24, "fat_g": 28, "carbs_g": 54},
+    "ingredients": [
+      {"item": "spaghetti lub rigatoni", "amount": "400 g", "note": ""},
+      {"item": "guanciale (lub pancetta)", "amount": "200 g", "note": "w kostkę 1 cm"},
+      {"item": "żółtka", "amount": "6 szt", "note": "temp. pokojowa"},
+      {"item": "jajko całe", "amount": "1 szt", "note": ""},
+      {"item": "pecorino romano", "amount": "100 g", "note": "drobno starty"},
+      {"item": "pieprz czarny", "amount": "2 łyżeczki", "note": "grubo mielony"}
+    ],
+    "steps": [
+      {"number": 1, "title": "Guanciale", "instruction": "Guanciale (200 g) wrzuć na ZIMNĄ patelnię. Smaż na średnim ogniu 8-10 min aż złoto-chrupiące.", "equipment": "patelnia", "timer_seconds": 600, "tip": "Zimny start = równomierne wytopienie tłuszczu.", "why": "Powolne rendering daje chrupiącą teksturę i aromatyczny tłuszcz."},
+      {"number": 2, "title": "Masa jajeczna", "instruction": "Wymieszaj żółtka (6) + jajko (1) z pecorino (100 g) i pieprzem (2 łyżeczki). Gęsta, kremowa masa.", "equipment": "", "timer_seconds": null, "tip": "Jajka w temp. pokojowej — zimne zetną się na gorącym makaronie.", "why": "Pecorino z jajkami tworzy emulsję — dlatego carbonara jest kremowa BEZ śmietany."},
+      {"number": 3, "title": "Makaron", "instruction": "Ugotuj makaron (400 g) 1 min krócej niż al dente. ZACHOWAJ kubek wody z gotowania.", "equipment": "garnek", "timer_seconds": null, "tip": "Woda słona jak morze. Zachowaj 200 ml.", "why": "Skrobia w wodzie emulguje tłuszcz i jajka."},
+      {"number": 4, "title": "Łączenie — KLUCZOWE", "instruction": "ZDEJMIJ patelnię z ognia. Wrzuć makaron, wymieszaj z tłuszczem. POCZEKAJ 1 min. Wlej masę jajeczną, szybko mieszaj 30 sek. Dodawaj wodę po łyżce aż sos kremowy.", "equipment": "", "timer_seconds": 60, "tip": "NIGDY jajek na ogniu — zrobisz jajecznicę.", "why": "Żółtka koagulują w 68-70°C. Po zdjęciu z ognia temp. spada do ~72°C — idealna."},
+      {"number": 5, "title": "Podanie", "instruction": "Posyp pecorino i pieprzem. Podawaj NATYCHMIAST.", "equipment": "", "timer_seconds": null, "tip": "Carbonara czeka na nikogo.", "why": ""}
+    ],
+    "warnings": [
+      {"problem": "Jajecznica zamiast kremu", "solution": "Zdejmij z ognia ZANIM dodasz jajka. Mieszaj szybko. Dodawaj wodę."},
+      {"problem": "Za gęsty sos", "solution": "Więcej wody z makaronu."}
+    ],
+    "upgrade": "Mix 50% pecorino + 50% parmigiano reggiano dla łagodniejszego smaku.",
+    "science": "Carbonara to emulsja: tłuszcz guanciale + woda ze skrobią + lecytyna z żółtek. Pecorino jako emulgator."
+  },
+  {
+    "id": "pad-thai",
+    "type": "recipe",
+    "title": "Pad Thai — uliczny klasyk",
+    "subtitle": "Słodko-kwaśno-słony, z woka w 15 minut",
+    "category": "world",
+    "tags": ["azjatyckie", "szybkie", "obiad"],
+    "vegetarian": false, "vegan": false, "gluten_free": true,
+    "times": {"prep_min": 15, "cook_min": 10, "total_min": 25},
+    "difficulty": 2, "servings": 2,
+    "nutrition": {"kcal": 520, "protein_g": 28, "fat_g": 18, "carbs_g": 62},
+    "ingredients": [
+      {"item": "makaron ryżowy (płaski)", "amount": "200 g", "note": "namoczony 30 min"},
+      {"item": "krewetki lub kurczak", "amount": "200 g", "note": ""},
+      {"item": "jajka", "amount": "2 szt", "note": ""},
+      {"item": "tofu", "amount": "100 g", "note": "twarde, w kostkę"},
+      {"item": "sos rybny", "amount": "3 łyżki", "note": ""},
+      {"item": "sok z tamaryndowca", "amount": "2 łyżki", "note": "lub sok z limonki"},
+      {"item": "cukier palmowy", "amount": "2 łyżki", "note": "lub brązowy"},
+      {"item": "kiełki fasoli mung", "amount": "100 g", "note": ""},
+      {"item": "szczypiorek chiński", "amount": "4 łodygi", "note": "w 3 cm kawałki"},
+      {"item": "orzeszki ziemne", "amount": "3 łyżki", "note": "prażone, posiekane"},
+      {"item": "limonka", "amount": "1 szt", "note": "do podania"},
+      {"item": "olej", "amount": "3 łyżki", "note": ""},
+      {"item": "czosnek", "amount": "2 ząbki", "note": "posiekany"}
+    ],
+    "steps": [
+      {"number": 1, "title": "Sos Pad Thai", "instruction": "Wymieszaj sos rybny (3 łyżki), sok z tamaryndowca (2 łyżki) i cukier palmowy (2 łyżki). Odłóż.", "equipment": "", "timer_seconds": null, "tip": "To balans 3 smaków: słony (rybny), kwaśny (tamaryndowiec), słodki (cukier).", "why": "Tajska kuchnia opiera się na równowadze smaków — żaden nie dominuje."},
+      {"number": 2, "title": "Białko", "instruction": "Na mocno rozgrzanym oleju (2 łyżki) podsmaż tofu (100 g) 2 min. Dodaj krewetki/kurczaka (200 g) i czosnek (2 ząbki). Smaż 2-3 min. Zepchnij na bok.", "equipment": "wok", "timer_seconds": 180, "tip": "Wok musi DYMIĆ — to 'wok hei', dusza woka.", "why": "Ekstremalnie wysoka temp. daje karmelizację w sekundy, zachowując soczystość."},
+      {"number": 3, "title": "Jajka i makaron", "instruction": "W pustą strefę woka wbij jajka (2 szt), rozbij, zamieszaj. Zanim zetną się całkiem, dodaj namoczony makaron (200 g) i sos Pad Thai. Mieszaj intensywnie 2-3 min.", "equipment": "", "timer_seconds": 180, "tip": "Makaron musi być elastyczny ale NIE ugotowany — dotrze w woku.", "why": "Makaron ryżowy wchłania sos — dlatego namaczamy go, nie gotujemy."},
+      {"number": 4, "title": "Finisz", "instruction": "Dodaj kiełki (100 g) i szczypiorek (4 łodygi). Mieszaj 30 sek. Podawaj z orzeszkami (3 łyżki), limonką i chili.", "equipment": "", "timer_seconds": null, "tip": "Kiełki dodawaj na KOŃCU — muszą pozostać chrupiące.", "why": ""}
+    ],
+    "warnings": [
+      {"problem": "Makaron się skleja", "solution": "Namaczaj max 30 min. Nie gotuj go. Dodaj więcej oleju."},
+      {"problem": "Za słodki lub za słony", "solution": "Koryguj: za słodki → limonka, za słony → cukier, za kwaśny → sos rybny."}
+    ],
+    "upgrade": "Dodaj łyżkę suszonej krewetki (kung haeng) do sosu — głębia umami z innego wymiaru.",
+    "science": "Wok hei (oddech woka) to efekt reakcji Maillarda i Leidentrosta w 300°C+. Dlatego Pad Thai z woka smakuje inaczej niż z patelni."
+  },
+  {
+    "id": "curry-warzywne",
+    "type": "recipe",
+    "title": "Curry warzywne — kremowe",
+    "subtitle": "Rozgrzewające, pełne smaków, wegańskie",
+    "category": "world",
+    "tags": ["obiad", "wegańskie", "azjatyckie", "comfort"],
+    "vegetarian": true, "vegan": true, "gluten_free": true,
+    "times": {"prep_min": 15, "cook_min": 25, "total_min": 40},
+    "difficulty": 2, "servings": 4,
+    "nutrition": {"kcal": 420, "protein_g": 10, "fat_g": 22, "carbs_g": 48},
+    "ingredients": [
+      {"item": "mleko kokosowe", "amount": "400 ml", "note": "pełnotłuste"},
+      {"item": "pasta curry (żółta lub czerwona)", "amount": "3 łyżki", "note": ""},
+      {"item": "ciecierzyca (puszka)", "amount": "400 g", "note": "odsączona"},
+      {"item": "bataty", "amount": "300 g", "note": "w kostkę 2 cm"},
+      {"item": "szpinak", "amount": "200 g", "note": "świeży"},
+      {"item": "cebula", "amount": "1 szt", "note": ""},
+      {"item": "czosnek", "amount": "3 ząbki", "note": ""},
+      {"item": "imbir", "amount": "3 cm", "note": "starty"},
+      {"item": "olej kokosowy", "amount": "2 łyżki", "note": ""},
+      {"item": "sok z limonki", "amount": "2 łyżki", "note": ""},
+      {"item": "ryż basmati", "amount": "300 g", "note": "do podania"}
+    ],
+    "steps": [
+      {"number": 1, "title": "Baza", "instruction": "Na oleju (2 łyżki) podsmaż cebulę (1 szt) 3 min. Dodaj czosnek (3 ząbki) i imbir (3 cm) — 1 min.", "equipment": "garnek", "timer_seconds": 240, "tip": "Czosnek PO cebuli — pali się szybciej.", "why": "Olejki eteryczne z czosnku i imbiru są lotne."},
+      {"number": 2, "title": "Pasta curry", "instruction": "Dodaj pastę curry (3 łyżki), smaż 1-2 min mieszając.", "equipment": "", "timer_seconds": 120, "tip": "Smażenie pasty na tłuszczu aktywuje smak!", "why": "Kurkumina jest rozpuszczalna w tłuszczu — smażenie ją uwalnia."},
+      {"number": 3, "title": "Gotowanie", "instruction": "Dodaj bataty (300 g), ciecierzycę (400 g) i mleko kokosowe (400 ml). Gotuj 15-20 min aż bataty miękkie.", "equipment": "", "timer_seconds": 1200, "tip": "Nie mieszaj za często — bataty się rozpadną.", "why": "Skrobia z batatów zagęszcza sos."},
+      {"number": 4, "title": "Wykończenie", "instruction": "Dodaj szpinak (200 g), mieszaj aż opadnie. Sok z limonki (2 łyżki). Dopraw solą. Podawaj na ryżu.", "equipment": "", "timer_seconds": null, "tip": "Limonkę na KOŃCU — kwas traci aromat przy gotowaniu.", "why": "Kwas balansuje tłustość mleka kokosowego."}
+    ],
+    "warnings": [
+      {"problem": "Za łagodne", "solution": "Więcej pasty curry lub świeże chili."},
+      {"problem": "Za wodniste", "solution": "Gotuj bez pokrywki 5 min. Zgniataj bataty widelcem."}
+    ],
+    "upgrade": "Łyżka masła orzechowego na końcu — kremowość i głębia smaku.",
+    "science": "Kurkumina 2000x lepiej przyswajalna z pieperyną i tłuszczem."
+  },
+  {
+    "id": "risotto",
+    "type": "recipe",
+    "title": "Risotto — klasyczne z parmezanem",
+    "subtitle": "Kremowe, al dente, aksamitne",
+    "category": "world",
+    "tags": ["obiad", "włoskie", "wegetariańskie"],
+    "vegetarian": true, "vegan": false, "gluten_free": true,
+    "times": {"prep_min": 10, "cook_min": 25, "total_min": 35},
+    "difficulty": 3, "servings": 4,
+    "nutrition": {"kcal": 450, "protein_g": 14, "fat_g": 18, "carbs_g": 56},
+    "ingredients": [
+      {"item": "ryż arborio lub carnaroli", "amount": "320 g", "note": ""},
+      {"item": "bulion warzywny", "amount": "1.2 L", "note": "gorący"},
+      {"item": "cebula/szalotka", "amount": "1 szt", "note": "drobno posiekana"},
+      {"item": "białe wino", "amount": "150 ml", "note": "wytrawne"},
+      {"item": "masło", "amount": "60 g", "note": "zimne, do mantecatury"},
+      {"item": "parmezan", "amount": "80 g", "note": "drobno starty"},
+      {"item": "oliwa z oliwek", "amount": "2 łyżki", "note": ""},
+      {"item": "sól i pieprz", "amount": "do smaku", "note": ""}
+    ],
+    "steps": [
+      {"number": 1, "title": "Soffritto", "instruction": "Na oliwie (2 łyżki) podsmaż cebulę (1 szt) na szklistą, 3-4 min. NIE rumienić.", "equipment": "szeroki garnek", "timer_seconds": 240, "tip": "Szalotka lepsza niż cebula — delikatniejsza.", "why": "Szklistość = pektyny zmiękły bez karmelizacji cukrów."},
+      {"number": 2, "title": "Tostatura", "instruction": "Dodaj ryż (320 g), smaż 2 min mieszając aż ziarenka staną się lekko przezroczyste na brzegach.", "equipment": "", "timer_seconds": 120, "tip": "Ryż musi być SUCHY i gorący przed dodaniem wina.", "why": "Prażenie zamyka zewnętrzną warstwę skrobi — ryż zachowa al dente."},
+      {"number": 3, "title": "Wino", "instruction": "Wlej wino (150 ml) i mieszaj aż wyparuje. Usłyszysz syk.", "equipment": "", "timer_seconds": null, "tip": "Wino dodaje kwasowość balansującą tłustość sera.", "why": "Alkohol wyparowuje, pozostaje kwas i złożone aromaty."},
+      {"number": 4, "title": "Gotowanie", "instruction": "Dodawaj bulion (1.2 L) po chochli (100 ml), mieszając często. Następna chochla gdy poprzednia wsiąkła. Powtarzaj 18-20 min.", "equipment": "", "timer_seconds": 1200, "tip": "GORĄCY bulion — zimny zatrzyma gotowanie. Nie dodawaj za dużo naraz.", "why": "Mieszanie uwalnia skrobię amylozę, która tworzy kremowy sos. To serce risotto."},
+      {"number": 5, "title": "Mantecatura", "instruction": "Zdejmij z ognia. Dodaj zimne masło (60 g) i parmezan (80 g). Energicznie mieszaj 1 min. Przykryj na 2 min.", "equipment": "", "timer_seconds": 120, "tip": "Masło ZIMNE — tworzy emulsję. Ciepłe po prostu się roztopi.", "why": "Zimne masło emulguje z gorącą skrobią tworząc aksamitny sos. To mantecatura — sekret kremowości."}
+    ],
+    "warnings": [
+      {"problem": "Ryż rozgotowany", "solution": "Mniej mieszaj w ostatnich minutach. Zdejmij minutę za wcześnie."},
+      {"problem": "Za gęste/suche", "solution": "Dodaj łyżkę gorącego bulionu tuż przed podaniem."}
+    ],
+    "upgrade": "Dodaj grzyby porcini: namoczone suszone (30 g) + wywar z grzybów zamiast części bulionu.",
+    "science": "Amyloza uwalniana przez mieszanie tworzy żel wiążący płyn w kremowy sos bez śmietany."
+  },
+  {
+    "id": "sernik",
+    "type": "recipe",
+    "title": "Sernik — tradycyjny pieczony",
+    "subtitle": "Gładki, kremowy, idealnie wyrośnięty",
+    "category": "desserts",
+    "tags": ["deser", "wypieki", "wegetariańskie"],
+    "vegetarian": true, "vegan": false, "gluten_free": false,
+    "times": {"prep_min": 30, "cook_min": 60, "total_min": 90},
+    "difficulty": 3, "servings": 12,
+    "nutrition": {"kcal": 340, "protein_g": 12, "fat_g": 18, "carbs_g": 32},
+    "ingredients": [
+      {"item": "twaróg tłusty", "amount": "1 kg", "note": "mielony 2x"},
+      {"item": "masło", "amount": "100 g", "note": "miękkie"},
+      {"item": "cukier", "amount": "200 g", "note": ""},
+      {"item": "jajka", "amount": "6 szt", "note": "oddzielone"},
+      {"item": "cukier waniliowy", "amount": "2 saszetki", "note": ""},
+      {"item": "skórka cytrynowa", "amount": "1 cytryna", "note": "starta"},
+      {"item": "mąka ziemniaczana", "amount": "3 łyżki", "note": ""},
+      {"item": "budyń waniliowy", "amount": "1 opak.", "note": "suchy"},
+      {"item": "herbatniki", "amount": "200 g", "note": "na spód"},
+      {"item": "masło na spód", "amount": "80 g", "note": "rozpuszczone"}
+    ],
+    "steps": [
+      {"number": 1, "title": "Spód", "instruction": "Herbatniki (200 g) rozkrusz, wymieszaj z masłem (80 g). Wyłóż na dno formy (24 cm), ubij. Lodówka.", "equipment": "forma 24 cm", "timer_seconds": null, "tip": "Łyżka kakao do herbatników = bardziej chrupiący spód.", "why": ""},
+      {"number": 2, "title": "Masa serowa", "instruction": "Masło (100 g) utrzyj z cukrem (200 g) 5 min. Żółtka (6 szt) po jednym. Dodaj twaróg (1 kg), mąkę (3 łyżki), budyń, skórkę cytrynową.", "equipment": "mikser", "timer_seconds": 300, "tip": "Żółtka PO JEDNYM.", "why": "Lecytyna z żółtek emulguje tłuszcz masła z wodą twarogu."},
+      {"number": 3, "title": "Białka", "instruction": "Białka (6 szt) ubij na sztywną pianę. Delikatnie wmieszaj w masę w 3 częściach.", "equipment": "mikser", "timer_seconds": null, "tip": "Piana SUCHA (sztywne szczyty). Szpatułka od dołu do góry.", "why": "Pęcherzyki powietrza w pianie = puszysty sernik."},
+      {"number": 4, "title": "Pieczenie", "instruction": "Piecz 170°C przez 50-60 min. Gotowy gdy trzęsie się w środku ale ścięty na brzegach.", "equipment": "piekarnik", "timer_seconds": 3300, "tip": "NIE otwieraj 40 min! Po upieczeniu uchyl drzwi, zostaw 30 min.", "why": "Gwałtowna zmiana temp. = pękanie."},
+      {"number": 5, "title": "Studzenie", "instruction": "Uchylony piekarnik 30 min → temp. pokojowa 1h → lodówka min 4h (najlepiej noc).", "equipment": "", "timer_seconds": null, "tip": "Sernik najlepszy NASTĘPNEGO DNIA.", "why": "Żelatyna z białek stabilizuje się na zimno."}
+    ],
+    "warnings": [
+      {"problem": "Sernik pękł", "solution": "Nie otwieraj piekarnika. Studź powoli. Nie przepiecz."},
+      {"problem": "Ciężki środek", "solution": "Dokładniej ubij białka. Delikatniej wmieszaj szpatułką."}
+    ],
+    "upgrade": "Polewa z białej czekolady (100 g) + śmietanka (50 ml) na schłodzony sernik.",
+    "science": "Pieczenie sernika to kontrolowana koagulacja białek — zbyt szybko = pęknięcia, zbyt wolno = surowy środek."
+  },
+  {
+    "id": "szarlotka",
+    "type": "recipe",
+    "title": "Szarlotka — kruche ciasto z jabłkami",
+    "subtitle": "Maślane kruche ciasto, soczyste jabłka z cynamonem",
+    "category": "desserts",
+    "tags": ["deser", "wypieki", "wegetariańskie"],
+    "vegetarian": true, "vegan": false, "gluten_free": false,
+    "times": {"prep_min": 30, "cook_min": 45, "total_min": 75},
+    "difficulty": 2, "servings": 12,
+    "nutrition": {"kcal": 310, "protein_g": 4, "fat_g": 14, "carbs_g": 42},
+    "ingredients": [
+      {"item": "mąka pszenna", "amount": "400 g", "note": "na ciasto"},
+      {"item": "masło", "amount": "200 g", "note": "zimne, w kostkę"},
+      {"item": "cukier puder", "amount": "100 g", "note": ""},
+      {"item": "żółtka", "amount": "3 szt", "note": ""},
+      {"item": "proszek do pieczenia", "amount": "1 łyżeczka", "note": ""},
+      {"item": "jabłka", "amount": "1.5 kg", "note": "kwaśne, np. antonówka"},
+      {"item": "cukier", "amount": "100 g", "note": "do jabłek"},
+      {"item": "cynamon", "amount": "2 łyżeczki", "note": ""},
+      {"item": "sok z cytryny", "amount": "2 łyżki", "note": ""},
+      {"item": "bułka tarta", "amount": "3 łyżki", "note": "na spód pod jabłka"}
+    ],
+    "steps": [
+      {"number": 1, "title": "Ciasto kruche", "instruction": "Mąkę (400 g) posiekaj z zimnym masłem (200 g) na kruszonkę. Dodaj cukier puder (100 g), żółtka (3) i proszek (1 łyżeczka). Zagniataj szybko. Podziel 60/40. Lodówka 30 min.", "equipment": "", "timer_seconds": 1800, "tip": "Im zimniejsze masło i im mniej wyrabiasz, tym bardziej kruche ciasto.", "why": "Zimne masło tworzy warstewki tłuszczu między warstwami mąki — to daje kruchość."},
+      {"number": 2, "title": "Jabłka", "instruction": "Jabłka (1.5 kg) obierz, zetrzyj na grubej tarce. Wymieszaj z cukrem (100 g), cynamonem (2 łyżeczki) i cytryną (2 łyżki). Odcedź nadmiar soku.", "equipment": "tarka", "timer_seconds": null, "tip": "ODCEDŹ jabłka — za dużo soku = mokry spód.", "why": "Cytryna zapobiega utlenianiu i dodaje kwasowość balansującą słodycz."},
+      {"number": 3, "title": "Składanie", "instruction": "Większą część ciasta (60%) rozwałkuj i wyłóż formę (24x34 cm). Posyp bułką tartą (3 łyżki). Nałóż jabłka. Mniejszą część zetrzyj na tarce na wierzch.", "equipment": "forma prostokątna", "timer_seconds": null, "tip": "Bułka tarta wchłania sok — spód nie rozmoknie.", "why": "Skrobia w bułce tartej działa jak gąbka."},
+      {"number": 4, "title": "Pieczenie", "instruction": "Piecz 180°C przez 40-45 min aż wierzch złoty.", "equipment": "piekarnik", "timer_seconds": 2700, "tip": "Sprawdź po 35 min — każdy piekarnik inaczej piecze.", "why": ""},
+      {"number": 5, "title": "Studzenie", "instruction": "Ostudź w formie min 30 min. Posyp cukrem pudrem. Kroi się łatwiej zimna.", "equipment": "", "timer_seconds": null, "tip": "Następnego dnia smakuje jeszcze lepiej — jabłka się 'układają'.", "why": ""}
+    ],
+    "warnings": [
+      {"problem": "Mokry spód", "solution": "Odcedź jabłka. Posyp spód bułką tartą. Nie kładź ciepłych jabłek."},
+      {"problem": "Ciasto twarde", "solution": "Za dużo wyrabiane. Masło musi być ZIMNE. Szybko zagniataj."}
+    ],
+    "upgrade": "Dodaj do jabłek 2 łyżki rumu i garść żurawiny — szarlotka z charakterem.",
+    "science": "Pektyny w jabłkach żelują powyżej 70°C z cukrem i kwasem, tworząc gęstą konsystencję nadzienia."
+  }
+]

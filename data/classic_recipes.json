@@ -1,0 +1,113 @@
+[
+  {
+    "id": "rosol",
+    "type": "recipe",
+    "title": "Rosół — klasyczny polski",
+    "subtitle": "Złocisty, aromatyczny bulion z makaronem",
+    "category": "polish",
+    "tags": ["zupa", "obiad", "comfort"],
+    "vegetarian": false, "vegan": false, "gluten_free": false,
+    "times": {"prep_min": 20, "cook_min": 180, "total_min": 200},
+    "difficulty": 2, "servings": 6,
+    "nutrition": {"kcal": 320, "protein_g": 28, "fat_g": 12, "carbs_g": 22},
+    "ingredients": [
+      {"item": "kurczak (cały lub ćwiartki)", "amount": "1.5 kg", "note": "najlepiej z wolnego wybiegu"},
+      {"item": "marchew", "amount": "3 szt", "note": "duże"},
+      {"item": "pietruszka (korzeń)", "amount": "2 szt", "note": ""},
+      {"item": "seler (korzeń)", "amount": "0.5 szt", "note": ""},
+      {"item": "por", "amount": "1 szt", "note": ""},
+      {"item": "cebula", "amount": "1 szt", "note": "z łuską, przepołowiona"},
+      {"item": "czosnek", "amount": "3 ząbki", "note": ""},
+      {"item": "liść laurowy", "amount": "3 szt", "note": ""},
+      {"item": "ziele angielskie", "amount": "5 szt", "note": ""},
+      {"item": "pieprz czarny (ziarna)", "amount": "8 szt", "note": ""},
+      {"item": "sól", "amount": "do smaku", "note": ""},
+      {"item": "makaron", "amount": "200 g", "note": ""},
+      {"item": "natka pietruszki", "amount": "1 pęczek", "note": ""},
+      {"item": "koperek", "amount": "1 pęczek", "note": ""}
+    ],
+    "steps": [
+      {"number": 1, "title": "Zimny start", "instruction": "Kurczaka (1.5 kg) włóż do garnka i zalej zimną wodą (4L). Zimny start = czysty bulion.", "equipment": "garnek 6L", "timer_seconds": null, "tip": "Nigdy nie zalewaj wrzątkiem — białka zetną się i bulion będzie mętny.", "why": "Powolne podgrzewanie pozwala białkom koagulować stopniowo i wypływać jako szum."},
+      {"number": 2, "title": "Szumowanie", "instruction": "Doprowadź do wrzenia. Zbieraj szum (szarą pianę) łyżką cedzakową przez 5-10 min.", "equipment": "", "timer_seconds": 600, "tip": "Im dokładniej zbierzesz szum, tym klarowniejszy rosół.", "why": "Szum to skoagulowane białka — ich usunięcie daje krystaliczny bulion."},
+      {"number": 3, "title": "Warzywa i przyprawy", "instruction": "Dodaj marchew (3), pietruszkę (2), seler (0.5), por (1), cebulę z łuską (1), czosnek (3 ząbki), liść laurowy (3), ziele angielskie (5) i pieprz (8 ziaren).", "equipment": "", "timer_seconds": null, "tip": "Cebula z łuską nadaje piękny złoty kolor.", "why": "Warzywa korzeniowe dodają słodycz, przyprawy głębię smaku."},
+      {"number": 4, "title": "Wolne gotowanie", "instruction": "Zmniejsz ogień do minimum — rosół ledwo bulgocze. Gotuj bez przykrycia 2.5-3h.", "equipment": "", "timer_seconds": 9000, "tip": "NIE mieszaj i NIE gotuj na dużym ogniu.", "why": "Delikatne gotowanie ekstrahuje kolagen bez rozbijania tłuszczu na kropelki."},
+      {"number": 5, "title": "Klarowanie i podanie", "instruction": "Wyjmij mięso i warzywa. Przecedź przez gazę. Makaron (200 g) ugotuj OSOBNO. Podawaj z koperkiem i natką.", "equipment": "sito", "timer_seconds": null, "tip": "Makaron gotuj osobno — w rosole zrobi się kleisty.", "why": "Skrobia z makaronu mąci bulion."}
+    ],
+    "warnings": [
+      {"problem": "Mętny rosół", "solution": "Gotuj na minimalnym ogniu, nie mieszaj, zbieraj szum."},
+      {"problem": "Mdły smak", "solution": "Dosolij na końcu. Więcej warzyw korzeniowych."}
+    ],
+    "upgrade": "Podpraż cebulę i marchew na suchej patelni — karmelizacja doda głębię smaku.",
+    "science": "Kolagen hydrolizuje w 80-95°C do żelatyny, nadając rosołowi aksamitność."
+  },
+  {
+    "id": "schabowy",
+    "type": "recipe",
+    "title": "Kotlet schabowy — klasyczny",
+    "subtitle": "Chrupiący, soczysty, złocisty polski klasyk",
+    "category": "polish",
+    "tags": ["obiad", "mięso", "comfort"],
+    "vegetarian": false, "vegan": false, "gluten_free": false,
+    "times": {"prep_min": 15, "cook_min": 10, "total_min": 25},
+    "difficulty": 2, "servings": 4,
+    "nutrition": {"kcal": 480, "protein_g": 35, "fat_g": 24, "carbs_g": 30},
+    "ingredients": [
+      {"item": "schab wieprzowy", "amount": "600 g", "note": "4 plastry po 150 g"},
+      {"item": "jajka", "amount": "3 szt", "note": ""},
+      {"item": "mąka pszenna", "amount": "100 g", "note": ""},
+      {"item": "bułka tarta", "amount": "150 g", "note": ""},
+      {"item": "smalec lub masło klarowane", "amount": "150 g", "note": ""},
+      {"item": "sól", "amount": "do smaku", "note": ""},
+      {"item": "pieprz czarny", "amount": "do smaku", "note": ""}
+    ],
+    "steps": [
+      {"number": 1, "title": "Rozbijanie", "instruction": "Plastry schabu (600 g) rozbij tłuczkiem do 1 cm. Natnij błonę na brzegach.", "equipment": "tłuczek", "timer_seconds": null, "tip": "Rozbijaj przez folię — mięso się nie rwie.", "why": "Rozbijanie niszczy włókna kolagenowe i wyrównuje grubość."},
+      {"number": 2, "title": "Przyprawianie", "instruction": "Posól i popieprz z obu stron. Odłóż na 5 min.", "equipment": "", "timer_seconds": 300, "tip": "Sól 5 min przed smażeniem wciągnie się w mięso.", "why": "Osmoza wciąga wilgoć, która wraca — lepsze przyprawienie w głąb."},
+      {"number": 3, "title": "Panierowanie", "instruction": "Obtocz w mące (100 g), potem w jajku (3 szt), na końcu w bułce tartej (150 g).", "equipment": "", "timer_seconds": null, "tip": "Jedna ręka sucha, druga mokra.", "why": "Mąka → jajko → bułka = trzywarstwowy chrupiący pancerz."},
+      {"number": 4, "title": "Smażenie", "instruction": "Smalec (150 g) rozgrzej na 170°C. Smaż 3-4 min z każdej strony na złoto.", "equipment": "patelnia", "timer_seconds": 240, "tip": "Tłuszcz do połowy kotleta. Nie przykrywaj.", "why": "170°C to punkt Maillarda dla panierki."},
+      {"number": 5, "title": "Odsączanie", "instruction": "Odłóż na kratce na 2 min.", "equipment": "", "timer_seconds": 120, "tip": "Kratka lepsza niż papier — chrupie z dołu.", "why": "Odpoczynek rozkłada soki równomiernie."}
+    ],
+    "warnings": [
+      {"problem": "Panierka odpada", "solution": "Mięso musi być suche. Dociskaj bułkę. Nie ruszaj 2 min."},
+      {"problem": "Suche mięso", "solution": "Max 3-4 min/stronę. Nie cieńsze niż 1 cm."}
+    ],
+    "upgrade": "Łyżka musztardy i gałka muszkatołowa do jajek — subtelnie podbije smak.",
+    "science": "Maillard w papierce 160-180°C. Skrobia żeluje tworząc chrupiącą strukturę."
+  },
+  {
+    "id": "pierogi-ruskie",
+    "type": "recipe",
+    "title": "Pierogi ruskie — klasyczne",
+    "subtitle": "Ciasto elastyczne, farsz kremowy z ziemniaków i twarogu",
+    "category": "polish",
+    "tags": ["obiad", "wegetariańskie", "comfort"],
+    "vegetarian": true, "vegan": false, "gluten_free": false,
+    "times": {"prep_min": 45, "cook_min": 30, "total_min": 75},
+    "difficulty": 3, "servings": 4,
+    "nutrition": {"kcal": 420, "protein_g": 16, "fat_g": 14, "carbs_g": 58},
+    "ingredients": [
+      {"item": "mąka pszenna", "amount": "400 g", "note": "na ciasto"},
+      {"item": "woda gorąca", "amount": "200 ml", "note": "ok. 80°C"},
+      {"item": "jajko", "amount": "1 szt", "note": ""},
+      {"item": "olej", "amount": "2 łyżki", "note": ""},
+      {"item": "ziemniaki", "amount": "500 g", "note": "mączyste"},
+      {"item": "twaróg półtłusty", "amount": "250 g", "note": "suchy"},
+      {"item": "cebula", "amount": "2 szt", "note": "na farsz + podanie"},
+      {"item": "masło", "amount": "60 g", "note": ""},
+      {"item": "sól i pieprz", "amount": "do smaku", "note": ""}
+    ],
+    "steps": [
+      {"number": 1, "title": "Ciasto", "instruction": "Mąkę (400 g) z solą, jajkiem (1) i olejem (2 łyżki) zalej gorącą wodą (200 ml, 80°C). Zagniataj 8-10 min. Owiń folią, odłóż 30 min.", "equipment": "", "timer_seconds": 1800, "tip": "Gorąca woda to sekret elastycznego ciasta.", "why": "Gorąca woda żelatynizuje skrobię — ciasto bardziej elastyczne."},
+      {"number": 2, "title": "Farsz", "instruction": "Ziemniaki (500 g) ugotuj, przepuść przez praskę. Cebulę (1 szt) podsmaż na maśle (30 g). Wymieszaj z twarogiem (250 g), dopraw.", "equipment": "praska", "timer_seconds": 1200, "tip": "PRASKA nie mikser — mikser robi klej.", "why": "Praska nie rozrywa granul skrobi."},
+      {"number": 3, "title": "Lepienie", "instruction": "Rozwałkuj ciasto na 2-3 mm. Wycinaj krążki 8 cm. Łyżka farszu, złóż, zaklej brzegi.", "equipment": "wałek", "timer_seconds": null, "tip": "Brzegi SUCHE i dobrze dociśnięte.", "why": "Gluten łączy się pod wpływem ciepła."},
+      {"number": 4, "title": "Gotowanie", "instruction": "Gotuj w osolonej wodzie po 6-8 szt. 3-4 min od wypłynięcia.", "equipment": "garnek", "timer_seconds": 240, "tip": "Duży garnek, mało pierogów naraz.", "why": "Wypływają gdy para rozprężyła się wystarczająco."},
+      {"number": 5, "title": "Podanie", "instruction": "Podawaj z podsmażoną cebulą na maśle. Opcja: kwaśna śmietana.", "equipment": "", "timer_seconds": null, "tip": "Można podsmażyć po ugotowaniu — chrupiące brzegi.", "why": ""}
+    ],
+    "warnings": [
+      {"problem": "Otwierają się w wodzie", "solution": "Lepiej dociskaj brzegi. Farsz dalej od krawędzi."},
+      {"problem": "Ciasto twarde", "solution": "Za mało wyrabiane lub za zimna woda. Min 30 min odpoczynku."}
+    ],
+    "upgrade": "2 łyżki szczypiorku i gałka muszkatołowa do farszu.",
+    "science": "Żelatynizacja skrobi dzięki gorącej wodzie tworzy sieć zatrzymującą wilgoć."
+  }
+]
