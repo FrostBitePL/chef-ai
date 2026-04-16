@@ -4924,7 +4924,7 @@ Zwróć JSON w formacie:
                 
                 system_with_lang = system_prompt + get_lang_instruction(lang)
                 
-                parsed, usage = ai._call_text(
+                parsed, usage = chef_ai._call_text(
                     system_with_lang, 
                     [{"role": "user", "content": f"Przepis na: {query}"}],
                     user_id=user_id
