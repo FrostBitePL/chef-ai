@@ -5062,27 +5062,17 @@ Zwróć JSON:
         try:
             data = request.get_json() or {}
             recipe_id = data.get("recipe_id", "").strip()
+            version = data.get("version", "classic")  # 'classic' or 'best'
             
             profile = db_get_profile_cached(user_id) if user_id else {}
             
             if recipe_id:
-                # Check banned ingredients for hardcoded recipes
                 banned = profile.get("banned_ingredients", [])
                 if isinstance(banned, str):
                     banned = json.loads(banned) if banned else []
-                force_ai = data.get("force_ai", False)
                 
-                # --- Layer 2a: Hardcoded DB (0ms) — only if no banned match ---
-                recipe = find_classic_recipe(recipe_id)
-                if recipe and not force_ai:
-                    warns = _check_hardcoded_banned(recipe, banned) if banned else []
-                    if not warns:
-                        clean = {k: v for k, v in recipe.items() if k not in ("category", "tags", "vegetarian", "vegan", "gluten_free", "contains", "id")}
-                        return jsonify({"success": True, "recipe": clean, "source": "db"})
-                    # Has banned ingredients → fall through to AI for adapted version
-                
-                # --- Layer 2b: In-memory cache (key includes banned for uniqueness) ---
-                cache_key = f"{recipe_id}__{'_'.join(sorted(b.lower() for b in banned))}" if banned else recipe_id
+                # --- Cache (keyed by recipe + profile constraints + version) ---
+                cache_key = f"{recipe_id}__{version}__{'_'.join(sorted(b.lower() for b in banned))}" if banned else f"{recipe_id}__{version}"
                 if cache_key in _classics_ai_cache:
                     return jsonify({"success": True, "recipe": _classics_ai_cache[cache_key], "source": "cache"})
                 
@@ -5093,6 +5083,13 @@ Zwróć JSON:
                 equipment = get_user_equipment(profile)
                 equip_str = ", ".join(equipment) if equipment else "standardowy sprzęt kuchenny"
                 fav_ings = get_favorite_ingredients(profile)
+                
+                # Get best_version techniques if version=best
+                best_techniques = []
+                if version == "best":
+                    dish_data = next((d for d in CLASSICS_INDEX.get("dishes", []) if d["id"] == recipe_id), None)
+                    if dish_data and dish_data.get("best_version"):
+                        best_techniques = dish_data["best_version"]["techniques"]
                 
                 # Build rich profile-aware prompt
                 profile_lines = []
@@ -5106,10 +5103,24 @@ Zwróć JSON:
                     profile_lines.append(f"❤️ Ulubione składniki: {', '.join(fav_ings[:10])}")
                 profile_context = "\n".join(profile_lines)
                 
-                system_prompt = f"""Jesteś ekspertem kulinarnym i mentorem. Wygeneruj PEŁNY, KLASYCZNY przepis na: "{dish_name}".
+                # Build version-specific prompt
+                version_context = ""
+                if version == "best" and best_techniques:
+                    techniques_text = "\n".join([f"• {t['emoji']} {t['name']}: {t['why']}" for t in best_techniques])
+                    version_context = f"""
+## 👑 NAJLEPSZA WERSJA — ZASTOSUJ TE TECHNIKI:
+{techniques_text}
+
+KRYTYCZNE: Każda z powyższych technik MUSI pojawić się w przepisie jako konkretny krok.
+W sekcji "science" wyjaśnij fizykę/chemię każdej techniki.
+W sekcji "upgrade" zaproponuj jeszcze bardziej zaawansowaną opcję dla power usera."""
+                
+                version_title = "👑 NAJLEPSZĄ WERSJĘ" if version == "best" else "KLASYCZNY przepis"
+                
+                system_prompt = f"""Jesteś ekspertem kulinarnym i mentorem. Wygeneruj PEŁNY {version_title} na: "{dish_name}".
 
 ## PROFIL UŻYTKOWNIKA:
-{profile_context}
+{profile_context}{version_context}
 
 ## WYMAGANIA:
 - Przepis MUSI być wierny klasycznej wersji, ale dostosowany do profilu użytkownika

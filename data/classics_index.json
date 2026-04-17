@@ -17,11 +17,68 @@
     {"id": "desserts", "name": "Desery", "emoji": "🍰", "order": 15}
   ],
   "dishes": [
-    {"id": "rosol", "name": "Rosół", "category": "polish", "emoji": "🍲", "time": 180, "difficulty": 2, "hardcoded": true},
-    {"id": "schabowy", "name": "Kotlet schabowy", "category": "polish", "emoji": "🍖", "time": 30, "difficulty": 2, "hardcoded": true},
-    {"id": "pierogi_ruskie", "name": "Pierogi ruskie", "category": "polish", "emoji": "🥟", "time": 90, "difficulty": 3, "hardcoded": true},
-    {"id": "zurek", "name": "Żurek", "category": "polish", "emoji": "🍜", "time": 60, "difficulty": 2, "hardcoded": true},
-    {"id": "kotlet_mielony", "name": "Kotlet mielony", "category": "polish", "emoji": "🍔", "time": 25, "difficulty": 1, "hardcoded": true},
+    {
+      "id": "rosol", "name": "Rosół", "category": "polish", "emoji": "🍲", "time": 180, "difficulty": 2, "hardcoded": true,
+      "best_version": {
+        "time": 300, "difficulty": 3,
+        "techniques": [
+          {"emoji": "🦴", "name": "Kości pieczone", "why": "200°C/40min przed gotowaniem — głębia smaku z Maillarda"},
+          {"emoji": "❄️", "name": "Start od zimnej wody", "why": "Powolna ekstrakcja kolagenu, klarowny bulion"},
+          {"emoji": "🫧", "name": "Szumowanie co 15 min", "why": "Pierwsza godzina — klarowność bez mętnego osadu"},
+          {"emoji": "🧂", "name": "Solenie na końcu", "why": "Ostatnia godzina — nie blokuje ekstrakcji białek"},
+          {"emoji": "🥕", "name": "Warzywa w ostatnich 45 min", "why": "Świeżość, nie rozgotowana papka"}
+        ]
+      }
+    },
+    {
+      "id": "schabowy", "name": "Kotlet schabowy", "category": "polish", "emoji": "🍖", "time": 30, "difficulty": 2, "hardcoded": true,
+      "best_version": {
+        "time": 155, "difficulty": 3,
+        "techniques": [
+          {"emoji": "🧂", "name": "Solanka 4%", "why": "40g soli/L wody przez 2h — osmoza wciąga wilgoć do włókien"},
+          {"emoji": "🥩", "name": "Równomierne rozbijanie", "why": "Butelką na folii do 8mm — równa grubość, zero surowego środka"},
+          {"emoji": "🍞", "name": "Panko zamiast bułki tartej", "why": "Większe płatki = więcej powietrza = chrupkość 3× dłuższa"},
+          {"emoji": "🧈", "name": "Masło klarowane", "why": "250°C bez przypalania białek mlecznych — złoty kolor"},
+          {"emoji": "🌡️", "name": "Odpoczynek na kratce", "why": "2 min — panierka nie mięknie od pary"}
+        ]
+      }
+    },
+    {
+      "id": "pierogi_ruskie", "name": "Pierogi ruskie", "category": "polish", "emoji": "🥟", "time": 90, "difficulty": 3, "hardcoded": true,
+      "best_version": {
+        "time": 120, "difficulty": 4,
+        "techniques": [
+          {"emoji": "🥔", "name": "Ziemniaki pieczone", "why": "W mundurkach 200°C/1h — mniej wody, intensywniejszy smak"},
+          {"emoji": "🧅", "name": "Twaróg odsączony 24h", "why": "W gazie — zero wody w farszu, nie rozlewa się"},
+          {"emoji": "🫘", "name": "Ciasto z wrzątkiem", "why": "Tangzhong — elastyczność bez gumowatości"},
+          {"emoji": "🧈", "name": "Finisz na patelni", "why": "Masło + prażona cebulka — chrupka warstwa"}
+        ]
+      }
+    },
+    {
+      "id": "zurek", "name": "Żurek", "category": "polish", "emoji": "🍜", "time": 60, "difficulty": 2, "hardcoded": true,
+      "best_version": {
+        "time": 90, "difficulty": 3,
+        "techniques": [
+          {"emoji": "🫙", "name": "Zakwas domowy 5-dniowy", "why": "Mąka żytnia + czosnek + ziele — głębia vs kupny"},
+          {"emoji": "🥓", "name": "Boczek wędzony na zimno", "why": "Nie gotowany — dymna nuta, nie gumowa tekstura"},
+          {"emoji": "🥚", "name": "Jajko sous-vide 63°C", "why": "45min — kremowe żółtko, nie gumowe białko"},
+          {"emoji": "🌿", "name": "Majeranek PO zdjęciu", "why": "Zachowanie olejków eterycznych — aromat nie ginie"}
+        ]
+      }
+    },
+    {
+      "id": "kotlet_mielony", "name": "Kotlet mielony", "category": "polish", "emoji": "🍔", "time": 25, "difficulty": 1, "hardcoded": true,
+      "best_version": {
+        "time": 45, "difficulty": 2,
+        "techniques": [
+          {"emoji": "🥩", "name": "Mięso z łopatki", "why": "Nie karczek — proporcja tłuszczu 15-20%, soczystość bez tłustości"},
+          {"emoji": "🍞", "name": "Bułka namoczona w mleku", "why": "Nie w wodzie — kremowość i wilgotność"},
+          {"emoji": "🧅", "name": "Cebula duszona", "why": "Nie surowa — słodycz bez ostrości, nie wypływa sok"},
+          {"emoji": "🔥", "name": "Searing + duszenie", "why": "2 min/stronę na wysokiej, potem pokrywka — Maillard + soczystość"}
+        ]
+      }
+    },
     {"id": "placki_ziemniaczane", "name": "Placki ziemniaczane", "category": "polish", "emoji": "🥔", "time": 30, "difficulty": 2, "hardcoded": true},
     {"id": "bigos", "name": "Bigos", "category": "polish", "emoji": "🍲", "time": 180, "difficulty": 3, "hardcoded": true},
     {"id": "golabki", "name": "Gołąbki", "category": "polish", "emoji": "🌯", "time": 120, "difficulty": 3},

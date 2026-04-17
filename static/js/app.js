@@ -698,8 +698,9 @@ async function loadClassicChips() {
             method: 'POST', headers: authHeaders(), body: JSON.stringify({})
         });
         const data = await res.json();
-        if (data.success) {
+        if (data.success && data.classics) {
             _classicsData = data.classics;
+            _clsIndex = data.classics;
             renderClassicIndex(data.classics, container);
             renderProfileBanner(data.profile);
             renderCatTabs(data.classics.categories || []);
@@ -709,6 +710,7 @@ async function loadClassicChips() {
 }
 
 let _clsProfile = null;
+let _clsIndex = null;
 
 function renderProfileBanner(p) {
     _clsProfile = p;
@@ -793,15 +795,33 @@ function renderClassicIndex(idx, container) {
         html += `<div class="category-section" data-cat="${cat.id}">
           <div class="category-title">${cat.emoji} ${cat.name} <span class="cat-count">${items.length}</span></div>
           <div class="category-chips">${items.map(d => {
-            const isInstant = d.hardcoded && !d.adapted;
-            const chipClass = isInstant ? ' chip-instant' : (d.adapted ? ' chip-adapted' : '');
-            const hc = isInstant ? ' data-hc="1"' : '';
             const diff = '★'.repeat(d.difficulty) + '☆'.repeat(3 - d.difficulty);
-            return `<div class="classic-chip${chipClass}" onclick="loadClassicRecipe('${d.id}')"${hc} data-name="${d.name.toLowerCase()}">
-              <span class="chip-emoji">${d.emoji}</span>
-              <span class="chip-name">${d.name}</span>
-              <span class="chip-meta">${fmtTime(d.time)} · ${diff}</span>
-            </div>`;
+            const hasBest = d.best_version;
+            
+            if (hasBest) {
+              return `<div class="classic-chip chip-expandable" data-name="${d.name.toLowerCase()}" data-dish-id="${d.id}">
+                <div class="chip-header" onclick="toggleChipExpansion('${d.id}')">
+                  <span class="chip-emoji">${d.emoji}</span>
+                  <span class="chip-name">${d.name}</span>
+                  <span class="chip-meta">${fmtTime(d.time)} · ${diff}</span>
+                  <span class="chip-expand">▼</span>
+                </div>
+                <div class="chip-versions" style="display: none;">
+                  <button class="version-btn classic-version" onclick="loadClassicRecipe('${d.id}', 'classic')">
+                    🏠 Klasyczny <span class="version-meta">${fmtTime(d.time)} · ${diff}</span>
+                  </button>
+                  <button class="version-btn best-version" onclick="showBestVersionPreview('${d.id}')">
+                    👑 Najlepsza <span class="version-meta">${fmtTime(d.best_version.time)} · ${'★'.repeat(d.best_version.difficulty) + '☆'.repeat(4 - d.best_version.difficulty)}</span>
+                  </button>
+                </div>
+              </div>`;
+            } else {
+              return `<div class="classic-chip" onclick="loadClassicRecipe('${d.id}')" data-name="${d.name.toLowerCase()}">
+                <span class="chip-emoji">${d.emoji}</span>
+                <span class="chip-name">${d.name}</span>
+                <span class="chip-meta">${fmtTime(d.time)} · ${diff}</span>
+              </div>`;
+            }
           }).join('')}</div></div>`;
     });
     container.innerHTML = html;
@@ -827,34 +847,102 @@ function _applyClassicFilter() {
     });
 }
 
-async function loadClassicRecipe(recipeId) {
+function toggleChipExpansion(dishId) {
+    const chip = document.querySelector(`[data-dish-id="${dishId}"]`);
+    if (!chip) return;
+    
+    const versions = chip.querySelector('.chip-versions');
+    const expand = chip.querySelector('.chip-expand');
+    
+    if (versions.style.display === 'none') {
+        versions.style.display = 'block';
+        expand.textContent = '▲';
+        chip.classList.add('expanded');
+    } else {
+        versions.style.display = 'none';
+        expand.textContent = '▼';
+        chip.classList.remove('expanded');
+    }
+}
+
+function showBestVersionPreview(dishId) {
+    const dish = _clsIndex?.dishes?.find(d => d.id === dishId);
+    if (!dish?.best_version) return;
+    
+    const modal = document.getElementById('bestVersionModal') || createBestVersionModal();
+    const content = modal.querySelector('.modal-content');
+    
+    const techniques = dish.best_version.techniques.map(t => 
+        `<div class="technique-item">
+            <span class="technique-emoji">${t.emoji}</span>
+            <div class="technique-text">
+                <strong>${t.name}</strong> — ${t.why}
+            </div>
+        </div>`
+    ).join('');
+    
+    content.innerHTML = `
+        <div class="modal-header">
+            <h3>${dish.emoji} ${dish.name}</h3>
+            <span class="modal-close" onclick="closeBestVersionModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="version-badge">👑 Najlepsza wersja</div>
+            <div class="version-stats">
+                ⏱ ${fmtTime(dish.best_version.time)} · ${'★'.repeat(dish.best_version.difficulty) + '☆'.repeat(4 - dish.best_version.difficulty)}
+            </div>
+            <h4>Co robimy inaczej:</h4>
+            <div class="techniques-list">
+                ${techniques}
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeBestVersionModal()">Anuluj</button>
+                <button class="btn-primary" onclick="loadClassicRecipe('${dishId}', 'best'); closeBestVersionModal()">Otwórz przepis →</button>
+            </div>
+        </div>
+    `;
+    
+    modal.style.display = 'flex';
+}
+
+function createBestVersionModal() {
+    const modal = document.createElement('div');
+    modal.id = 'bestVersionModal';
+    modal.className = 'modal-overlay';
+    modal.innerHTML = '<div class="modal-content"></div>';
+    document.body.appendChild(modal);
+    return modal;
+}
+
+function closeBestVersionModal() {
+    const modal = document.getElementById('bestVersionModal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function loadClassicRecipe(recipeId, version = 'classic') {
     const loadingEl = document.getElementById('classicLoading');
     const catsEl = document.getElementById('classicCategories');
-    const chip = document.querySelector(`.classic-chip[onclick*="'${recipeId}'"]`);
-    const isInstant = chip?.dataset?.hc === '1';
+    const chip = document.querySelector(`[data-dish-id="${recipeId}"], .classic-chip[onclick*="'${recipeId}'"]`);
     const dishName = chip?.querySelector('.chip-name')?.textContent || recipeId;
     
-    if (!isInstant) {
-        const loadTxt = document.querySelector('#classicLoading .loading-text');
-        const isAdapted = chip?.classList.contains('chip-adapted');
-        if (loadTxt) {
-            loadTxt.textContent = isAdapted 
-                ? `Dostosowuję "${dishName}" do Twojego profilu...`
-                : `Generuję: ${dishName}...`;
-        }
-        if (loadingEl && catsEl) { catsEl.style.display = 'none'; loadingEl.style.display = 'flex'; }
-    }
+    const loadTxt = document.querySelector('#classicLoading .loading-text');
+    if (loadTxt) loadTxt.textContent = version === 'best' 
+        ? `Generuję najlepszą wersję: ${dishName}...`
+        : `Generuję: ${dishName}...`;
+    if (loadingEl && catsEl) { catsEl.style.display = 'none'; loadingEl.style.display = 'flex'; }
     
     try {
         const res = await fetch('/api/recipes/classic', {
             method: 'POST', headers: authHeaders(),
-            body: JSON.stringify({ recipe_id: recipeId })
+            body: JSON.stringify({ recipe_id: recipeId, version: version })
         });
         const data = await res.json();
         
         if (data.success && data.recipe) {
             showView('chat');
-            if (data.adapted && _clsProfile?.banned?.length) {
+            if (version === 'best') {
+                addMsg('system', `👑 Wygenerowano najlepszą wersję przepisu "${dishName}" z zaawansowanymi technikami kulinarnymi`);
+            } else if (data.adapted && _clsProfile?.banned?.length) {
                 addMsg('system', `✅ Przepis "${dishName}" dostosowany — bez: ${_clsProfile.banned.join(', ')}`);
             }
             handleResponse(data.recipe);
