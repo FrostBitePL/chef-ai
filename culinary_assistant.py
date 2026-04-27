@@ -2382,14 +2382,34 @@ Zakazy dotyczą AUTOMATYCZNYCH propozycji AI (gdy to TY wybierasz składniki), n
 - ⛔ ZAKAZ SPRZĘTU KTÓREGO NIE MA: Jeśli danie WYMAGA specjalistycznego sprzętu (sous-vide/cyrkulator, Thermomix, wędzarnia, wok, robot planetarny, maszyna do makaronu, pacojet, syfon ISI, dehydrator itp.) a użytkownik NIE MA go w profilu — NIE proponuj tego dania ani techniki. Zamień na wersję możliwą do wykonania dostępnym sprzętem. Sous-vide bez cyrkulatora = nie ma sous-vide. Brak maszynki do makaronu = makaron na wałku lub kupny.
 
 ## PRZYPRAWY I PRZYPRAWIENIE (OBOWIĄZKOWO)
-- KAŻDY przepis MUSI zawierać WSZYSTKIE użyte przyprawy i przyprawy z DOKŁADNYMI ilościami w gramach.
+- KAŻDY przepis MUSI zawierać WSZYSTKIE użyte przyprawy z DOKŁADNYMI ilościami w gramach.
 - Nigdy nie pisz "dopraw do smaku", "sól i pieprz" bez ilości. Podaj konkretnie: "sól 5g", "pieprz czarny świeżo mielony 2g".
-- KAŻDA przyprawa, zioło, olej, ocet, sos — MUSI pojawić się w trzech miejscach:
+- KAŻDA przyprawa/zioło/olej/sos — MUSI pojawić się w:
   1. "ingredients" — z dokładną ilością i notatką dlaczego ta przyprawa
-  2. "shopping_list" — w sekcji "Przyprawy" lub "Pantry"
-  3. "steps" — w instrukcji kroku z dokładną ilością (np. "dodaj 3g kuminu i 2g wędzonej papryki")
-- Typowe przyprawy do uwzględnienia: sól, pieprz, olej/masło do smażenia, oliwa, czosnek, cebula, zioła (tymianek, rozmaryn, oregano, bazylia), przyprawy (kumin, papryka, kurkuma, cynamon etc.), sosy (sojowy, rybny, Worcestershire), octy, cukier, mąka do obtaczania.
-- NIE zakładaj, że użytkownik ma przyprawy w domu. Traktuj je jak pełnoprawne składniki.
+  2. "steps" — w instrukcji kroku z dokładną ilością (np. "dodaj 3g kuminu i 2g wędzonej papryki")
+  3. "shopping_list" — TYLKO jeśli to NIE jest pantry basic (patrz niżej)
+
+## PANTRY BASICS — SKŁADNIKI ZAKŁADANE W KAŻDYM DOMU
+Zakładamy że user MA w domu bez deklarowania w pantry:
+- BAZA: sól, pieprz czarny (mielony i cały), oliwa, olej rzepakowy/słonecznikowy, masło, mąka pszenna, cukier biały
+- PŁYNNE: ocet spirytusowy/jabłkowy/winny, sos sojowy (podstawowy), koncentrat pomidorowy
+- ŚWIEŻE PODSTAWY: czosnek, cebula, cytryna (zwykle są)
+- ZIOŁA SUCHE: oregano, bazylia, tymianek, majeranek, liść laurowy, rozmaryn
+- PRZYPRAWY PODSTAWOWE: papryka słodka, papryka ostra, kumin, kurkuma, cynamon, imbir mielony, gałka muszkatołowa mielona
+
+Te składniki:
+- MUSZĄ pojawić się w "ingredients" (z ilościami) i "steps" (jak zwykle)
+- W "shopping_list" pomiń je lub oznacz "have": true (nie są "do kupienia")
+- NIE licz ich jako dokupywane w trybie zakupowym spiżarni
+
+## SKŁADNIKI SPECJALNE (NIE są pantry basics) — traktuj jak pełnoprawne składniki do kupienia:
+- Pieprze specjalne (cayenne, Sichuan, biały, różowy), wędzona papryka, za'atar, harissa, ras el hanout
+- Azjatyckie: miso, sos rybny, tamarind, fish sauce, sambal, gochujang, mirin, sake kulinarne
+- Sery specjalne (parmigiano, pecorino, feta, halloumi, burrata), wędzony boczek/guanciale/pancetta
+- Świeże zioła (bazylia świeża, kolendra, mięta, estragon), szafran, gałka świeża, wanilia, trufla
+- Ocet balsamiczny, ocet ryżowy, ocet sherry
+- Alkohol kulinarny (wino, koniak, brandy, porto) — traktuj jak osobny składnik
+- Mąki specjalne (00, razowa, gryczana, ryżowa, migdałowa), makarony specjalne (ramen, soba, udon)
 
 ## REGUŁY FORMATU
 - ZAWSZE gramy/ml (nigdy łyżki/szklanki)
@@ -3685,16 +3705,40 @@ class CulinaryAssistant:
             ingredients = pantry.get("ingredients", [])
             shopping_mode = pantry.get("shopping_mode", False)
             if ingredients:
+                PANTRY_BASICS_NOTE = (
+                    "ZAŁOŻENIE O PODSTAWACH: User ma w domu podstawowe przyprawy i bazę: sól, pieprz czarny, "
+                    "oliwa, olej rzepakowy/słonecznikowy, masło, mąka pszenna, cukier, ocet (spirytusowy/jabłkowy/winny), "
+                    "czosnek, cebula, podstawowe zioła suche (oregano, bazylia, tymianek, majeranek, liść laurowy), "
+                    "podstawowe przyprawy (papryka słodka/ostra, kmin, kurkuma, cynamon). Tych NIE trzeba deklarować "
+                    "w spiżarni ani w shopping_list jako 'do kupienia'. Jeśli danie wymaga czegoś SPECJALNEGO "
+                    "(np. pieprz cayenne, harissa, miso, sos rybny, wędzona papryka, szafran, gałka muszkatołowa "
+                    "świeża, tamarind, fish sauce) — wtedy dopiero traktuj jak prawdziwy składnik."
+                )
                 if shopping_mode:
                     constraints_parts.append(
                         f"## SPIŻARNIA (tryb zakupowy):\nMam w domu: {', '.join(ingredients)}\n"
-                        "Użyj tego co mam jako bazę. Możesz zaproponować dokupienie max 3-5 składników które dramatycznie podniosą danie.\n"
-                        "W shopping_list oznacz każdy składnik polem \"have\": true (mam) lub false (do kupienia)."
+                        f"{PANTRY_BASICS_NOTE}\n"
+                        "ZASADY:\n"
+                        "1. NIE musisz użyć wszystkich składników z listy na siłę. Wybierz SENSOWNĄ kombinację 3-6 rzeczy "
+                        "które razem tworzą spójne danie. Reszta zostaje w spiżarni na inny dzień.\n"
+                        "2. Priorytet: jakość dania > wykorzystanie wszystkiego. Lepiej zrobić jedno świetne danie z 4 składników "
+                        "niż średnie z 10.\n"
+                        "3. Możesz zaproponować dokupienie max 3-5 składników KLUCZOWYCH które dramatycznie podniosą danie "
+                        "(nie licząc podstaw z ZAŁOŻENIA O PODSTAWACH).\n"
+                        "4. W shopping_list oznacz każdy składnik polem \"have\": true (mam z listy / jest w pantry basics) "
+                        "lub false (do kupienia specjalnie na to danie)."
                     )
                 else:
                     constraints_parts.append(
                         f"## SPIŻARNIA (gotuję z tego co mam):\nDOSTĘPNE SKŁADNIKI: {', '.join(ingredients)}\n"
-                        "UŻYWAJ WYŁĄCZNIE tych składników. Nie proponuj nic poza nimi (poza solą, pieprzem, olejem jako pantry basics)."
+                        f"{PANTRY_BASICS_NOTE}\n"
+                        "ZASADY:\n"
+                        "1. UŻYJ tylko składników z listy DOSTĘPNE SKŁADNIKI + pantry basics (patrz ZAŁOŻENIE). "
+                        "Nie dodawaj nic spoza tego.\n"
+                        "2. NIE musisz użyć wszystkich składników z listy. Wybierz SENSOWNĄ kombinację — jakość ważniejsza "
+                        "od wykorzystania wszystkiego. Jeśli z 12 rzeczy na liście sensownie pasuje 5 do jednego dania — "
+                        "użyj tych 5, nie rozmazuj dania próbując wcisnąć resztę.\n"
+                        "3. W shopping_list wszystkie pozycje mają \"have\": true (user ma wszystko)."
                     )
 
         constraints = "\n".join(constraints_parts) if constraints_parts else "none"
@@ -3993,8 +4037,20 @@ class CulinaryAssistant:
         if pantry:
             ings = pantry.get("ingredients", [])
             if ings:
-                mode = "zakupowy" if pantry.get("shopping_mode") else "tylko z dostępnych"
-                constraints_parts.append(f"SPIŻARNIA ({mode}): {', '.join(ings)}")
+                if pantry.get("shopping_mode"):
+                    constraints_parts.append(
+                        f"SPIŻARNIA (tryb zakupowy, user ma w domu): {', '.join(ings)}. "
+                        "Proponuj dania które sensownie wykorzystają te składniki jako BAZĘ (nie musisz użyć wszystkich). "
+                        "Zakładaj że user ma też pantry basics: sól, pieprz, oliwa, olej, masło, mąka, cukier, ocet, czosnek, cebula, "
+                        "zioła suche, papryka, kumin, kurkuma."
+                    )
+                else:
+                    constraints_parts.append(
+                        f"SPIŻARNIA (gotuję TYLKO z tego co mam + pantry basics): {', '.join(ings)}. "
+                        "Proponuj dania które można zrobić z tych składników + bazy (sól, pieprz, oliwa, masło, mąka, ocet, czosnek, "
+                        "cebula, zioła suche podstawowe). NIE wszystkie składniki muszą być użyte w jednym daniu — wybieraj SENSOWNE "
+                        "kombinacje. Propozycje różnorodne: każde danie wykorzystuje inny podzbiór listy."
+                    )
 
         constraints = "\n".join(constraints_parts) if constraints_parts else "brak"
 
