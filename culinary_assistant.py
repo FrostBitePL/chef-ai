@@ -2518,6 +2518,50 @@ Gdy w sekcji BAKING bazy wiedzy znajdziesz techniki takie jak tangzhong, autoliz
 - 150-500ml → blender zanurzeniowy Braun MQ7
 - Powyżej 500ml → robot kuchenny Bosch MUM5
 
+## EMULSJE GORĄCE (HOLLANDAISE, BÉARNAISE, BEURRE BLANC) — KOLEJNOŚĆ KROKÓW JEST ŚWIĘTA:
+1. KLARUJ MASŁO offline — rozpuść w rondelku 3 do ~80°C, zbierz pianę z powierzchni, zlej klarowną fazę zostawiając mleczną serwatkę na dnie. To NIE jest "roztopione", to "klarowane" — bez tego emulsja się rozdziela. Powiedz to wprost w kroku.
+2. PRZYGOTUJ BAIN-MARIE — woda LEDWIE PARUJE (~80°C), miska NIE dotyka wody. Nigdy nie wrząca.
+3. UBIJAJ ŻÓŁTKA + KWAS NAD BAIN-MARIE — żółtka, sok cytryny/redukcja octu, łyżka zimnej wody → trzepaczką przez 2-3 min aż masa staje się jasna, puszysta i tworzy "wstążkę" (sabayon). Termometr: 60-65°C. To MUSI dziać się NAD CIEPŁEM, nie na zimno.
+4. WLEWAJ KLAROWANE MASŁO cienkim strumieniem nieprzerwanie ubijając — zaczynaj kroplami, potem cieniutki strumień. Cały proces ~60-90 sekund dla 150g masła. Temp masła ~60°C (ciepłe, nie gorące).
+5. KIEDY GOTOWE: sos pokrywa łyżkę grubo (płaszczy łyżkę), pozostawia ślad gdy przeciągniesz palcem, temp 65-70°C. Jeśli widzisz parę z miski lub pierwsze kropelki tłuszczu na powierzchni — NATYCHMIAST zdejmij i wbij łyżkę zimnej wody (monter à l'eau).
+6. PRZECHOWYWANIE: termos lub miska w cieple 55°C max do podania. Hollandaise NIE wraca po wystudzeniu — nie odgrzewaj.
+
+⛔ TYPOWE BŁĘDY DO UNIKNIĘCIA W INSTRUKCJI:
+- "Rozpuść masło" bez "klaruj/zdejmij pianę/oddziel serwatkę" = niekompletny krok
+- "Ubij żółtka, potem włóż nad parę" = ZŁA KOLEJNOŚĆ — żółtka MUSZĄ być na cieple od początku
+- "Włóż nad wrzącą wodę" = ZA GORĄCO, jajka się zetną
+- "Ubijaj aż gęste" bez kryterium = za mało precyzji. Daj: "wstążka", "płaszczy łyżkę", temp 65°C
+
+## DONENESS CRITERIA — OBOWIĄZKOWE W KAŻDYM KROKU OBRÓBKI:
+Każdy krok który polega na transformacji składnika MUSI mieć JAWNE KRYTERIUM ZAKOŃCZENIA. Czas to wskazówka, nie kryterium.
+- Karmelizacja cebuli: "ciemnozłota, lepi się do dna, smak słodki bez goryczy" (~25 min, ale obserwuj)
+- Brązowe masło: "ciemnobursztynowe, zapach orzechowy, brązowe drobiny na dnie" (180°C wewnętrzna, ~5 min)
+- Sabayon: "wstążka — ciasto opada w paśmie i utrzymuje się 2-3 sek na powierzchni"
+- Smażenie warzyw: "krawędzie złociste, środek nadal jędrny" (NIE "smaż 5 min")
+- Bulion: "na powierzchni jednolity film tłuszczu, zapach pełny, kolor ustabilizowany"
+- Roux: blond = "blada słoma, zapach ciastkowy" / brązowy = "kolor mlecznej czekolady, zapach prażonych orzechów"
+- Stek: TERMOSONDA + DOTYK (medium-rare = 54°C + ustępuje jak miękisz dłoni przy kciuk-środkowy)
+- Drób: TERMOSONDA 74-75°C wewnętrzna w najgrubszym miejscu (nie szacuj wzrokowo)
+- Ryba: 52-54°C medium, 60°C well-done; mięso łuszczy się ale nadal wilgotne
+- Reduckcje: "powleka tylną stronę łyżki", konkretne ml końcowe (np. "z 250ml do 80ml")
+
+## PRO TIPS — AUTENTYCZNE, NIE GIMMICKI:
+Pole "tip" w krokach i sekcja "pro_tip" muszą być oparte na technice, nie marketingu.
+✅ DOBRE pro tipy:
+- "Z hollandaise robisz Béarnaise — zastąp sok cytryny redukcją octu winnego z estragonem i szalotką"
+- "Carbonara: zarezerwuj 60ml wody z makaronu PRZED odcedzeniem — krochmal stabilizuje emulsję żółtek z guanciale"
+- "Risotto: tostuj ryż na sucho 1 min PRZED dodaniem wina — to budzi skrobię i daje głębszy smak"
+- "Stek: ostatnie 30 sek smażenia — basting masłem z czosnkiem i tymiankiem na łyżce, polewaj kotleta nieprzerwanie"
+- "Roux do béchamel: użyj klarowanego masła — czyste tłuszcze nie palą się przy 1-min wcisku z mąką"
+
+⛔ ZAKAZANE "pro tipy" (fuzion gimmicki / marketing):
+- "Dodaj oliwę truflową na koniec" — w 90% to syntetyczny 2,4-dithiapentan, nie trufla. Profesjonaliści tego nie używają.
+- "Posyp solą Maldon dla luxury" bez uzasadnienia chemicznego (kiedy ma sens? finisz mięsa/awokado, NIE w sosie)
+- "Dodaj kawiork dla elegancji" do dań które tego nie wymagają
+- Generyczne "podawaj z białym winem" bez konkretnego pairing rationale
+- "Płatki złota / jadalne kwiaty" do klasyków francuskich/włoskich
+ZASADA: Pro tip MUSI uczyć technicznie. Jeśli nie potrafisz wyjaśnić DLACZEGO ten dodatek/krok poprawia danie chemicznie/technicznie — NIE DAWAJ tego pro tipa, daj inny.
+
 ## PURÉE — METODY ZALEżNE OD WARZYWA:
 - ZIEMNIAKI: ZAWSZE praska lub sito — NIGDY blender/mikser/robot (rozrywają granulki skrobi, uwalniają amylozę → kleista guma nie do naprawienia)
 - Inne warzywa (seler, kalafior, marchew, groszek, burąk): blender zanurzeniowy Braun MQ7 dozwolony i preferowany
@@ -2556,6 +2600,9 @@ Zanim zwrócisz odpowiedź, sprawdź:
 16. SKŁADNIKI W KROKACH: Każdy składnik użyty w krokach MUSI być na liście składników. Jeśli krok dodaje składnik którego nie ma na liście → dodaj go do listy składników z poprawną ilością.
 17. OLEJ DO DEEP FRY: Jeśli przepis wymaga głębokiego smażenia, olej do fryowania (500ml+) podaj OSOBNO od oleju użytego do sosu/smażenia (20-50ml). Nie sumuj razem — to inna pozycja na liście składników.
 18. DANIA KANONICZNE — WERYFIKACJA GLOBALNA: Jeśli danie ma nazwę własną z konkretnej kuchni (ramen, pho, risotto, bouillabaisse, pad thai, bibimbap, tagine) → sprawdź czy zawiera WSZYSTKIE elementy definicyjne. Ramen = tare + bulion + makaron + aromatyzowany olej. Pho = bulion na kościach z anyżem/cynamonem + makaron ryżowy + zioła świeże. Pad thai = tamarind + ryżowy makaron + jajko + kiełki + orzeszki. Brak kluczowego elementu = zmień nazwę lub dodaj element.
+19. EMULSJE GORĄCE: Hollandaise/Béarnaise/Beurre Blanc — sprawdź czy KOLEJNOŚĆ kroków jest poprawna: (1) klaruj masło, (2) sabayon NAD bain-marie z żółtek+kwasu+wody, (3) wlej klarowane masło cienkim strumieniem KONTYNUUJĄC ubijanie nad ciepłem, (4) doneness criterion (płaszczy łyżkę / 65-70°C). Ubijanie żółtek na zimno przed bain-marie = BŁĄD KRYTYCZNY napraw. Brak słowa "klaruj" przy maśle = BŁĄD napraw.
+20. KRYTERIUM DONENESS w każdym kroku obróbki: Każdy krok smażenia/karmelizacji/redukcji/emulsji MUSI zawierać widoczne kryterium ("złoty kolor", "płaszczy łyżkę", "wstążka", temperatura). Sam czas to za mało. Jeśli krok kończy się "smaż 5 min" bez sygnału wizualnego/temperatury — popraw na "smaż aż X (~5 min)".
+21. AUTENTYCZNOŚĆ PRO TIPÓW: Sekcje "tip", "pro_tip", "upgrade" — sprawdź czy każdy zawiera UZASADNIENIE TECHNICZNE (chemia/fizyka/technika), a NIE marketing. Zakazane: oliwa truflowa, generyczne "płatki złota", "Maldon dla luxury" bez kontekstu, "podawaj z winem" bez konkretnego pairing rationale. Jeśli nie umiesz wyjaśnić DLACZEGO chemicznie/technicznie — daj INNY pro tip oparty na technice.
 
 ---
 
@@ -4132,8 +4179,9 @@ def create_app():
 
     def check_daily_limit(uid,limit_type="recipes"):
         """Check if free user exceeded daily limit. Returns (allowed, count, limit)."""
+        # PRO/admin/premium role or active subscription — unlimited
+        if is_pro(uid): return True,0,999
         p=db_get_profile(uid)
-        if p.get("subscription_status")=="active": return True,0,999
         stats=p.get("stats",{})
         if isinstance(stats,str): stats=json.loads(stats) if stats else {}
         today=datetime.utcnow().strftime("%Y-%m-%d")
@@ -4839,6 +4887,7 @@ def create_app():
             updates["feedback_history"]=fb[-50:]
         if updates:
             db_update_profile(g.user_id,updates)
+            invalidate_profile_cache(g.user_id)
         return jsonify({"success":True,"profile":db_get_profile(g.user_id)})
 
     @app.route("/api/profile/reset",methods=["POST"])
