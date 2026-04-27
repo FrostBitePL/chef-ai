@@ -1,4 +1,4 @@
-// ─── Internationalization ───
+﻿// ─── Internationalization ───
 const SUPPORTED_LANGS = ['pl','en','de','es','fr'];
 
 function detectBrowserLang() {
@@ -52,7 +52,7 @@ const I18N = {
     'kcal.remove': 'Usuń limit',
 
     // Welcome & quick tags
-    'welcome': 'Cześć! 🍳 Co dziś gotujemy?\n\nPowiedz mi co chcesz ugotować, a przygotuję przepis dopasowany do Twojego sprzętu i preferencji.\n\nMożesz też kliknąć jedną z podpowiedzi poniżej, aby szybko zacząć.',
+    'welcome': 'Cześć! Co dziś gotujemy? 🍳',
     'welcome.hi': 'Cześć',
 
     // Status
@@ -415,7 +415,7 @@ const I18N = {
     'kcal.servings': 'servings',
     'kcal.total': 'kcal total',
     'kcal.remove': 'Remove limit',
-    'welcome': "Hi! 🍳 What are we cooking today?\n\nTell me what you'd like to cook and I'll create a recipe tailored to your equipment and preferences.\n\nYou can also click one of the suggestions below to get started.",
+    'welcome': 'Hi! What are we cooking today? 🍳',
     'welcome.hi': 'Hi',
     'status.connecting': 'Connecting...',
     'status.connected': '✓ Connected',
@@ -721,7 +721,7 @@ const I18N = {
     'kcal.servings': 'Portionen',
     'kcal.total': 'kcal gesamt',
     'kcal.remove': 'Limit entfernen',
-    'welcome': 'Hallo! 🍳 Was kochen wir heute?\n\nSag mir, was du kochen möchtest, und ich erstelle ein Rezept, das auf deine Ausstattung und Vorlieben abgestimmt ist.\n\nDu kannst auch auf einen der Vorschläge unten klicken, um schnell loszulegen.',
+    'welcome': 'Hallo! Was kochen wir heute? 🍳',
     'welcome.hi': 'Hallo',
     'status.connecting': 'Verbinde...',
     'status.connected': '✓ Verbunden',
@@ -1027,7 +1027,7 @@ const I18N = {
     'kcal.servings': 'raciones',
     'kcal.total': 'kcal en total',
     'kcal.remove': 'Quitar límite',
-    'welcome': '¡Hola! 🍳 ¿Qué cocinamos hoy?\n\nDime qué quieres cocinar y crearé una receta adaptada a tu equipamiento y preferencias.\n\nTambién puedes hacer clic en una de las sugerencias de abajo para empezar.',
+    'welcome': '¡Hola! ¿Qué cocinamos hoy? 🍳',
     'welcome.hi': 'Hola',
     'status.connecting': 'Conectando...',
     'status.connected': '✓ Conectado',
@@ -1333,7 +1333,7 @@ const I18N = {
     'kcal.servings': 'portions',
     'kcal.total': 'kcal au total',
     'kcal.remove': 'Supprimer la limite',
-    'welcome': "Bonjour ! 🍳 Qu'est-ce qu'on cuisine aujourd'hui ?\n\nDites-moi ce que vous voulez cuisiner et je créerai une recette adaptée à votre équipement et vos préférences.\n\nVous pouvez aussi cliquer sur une des suggestions ci-dessous pour commencer.",
+    'welcome': "Bonjour ! Qu'est-ce qu'on cuisine aujourd'hui ? 🍳",
     'welcome.hi': 'Bonjour',
     'status.connecting': 'Connexion...',
     'status.connected': '✓ Connecté',

@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/static/css/style.css?v=9">
+<link rel="stylesheet" href="/static/css/style.css?v=16">
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/static/sw.js').then(reg=>{
@@ -182,6 +182,93 @@ if('serviceWorker' in navigator){
         <div class="loading-spinner"></div>
         <div class="loading-text">Generuję przepis...</div>
       </div>
+    </div>
+  </div>
+
+  <!-- Flow 2: Quick -->
+  <div class="view" id="view-flow-quick">
+    <!-- Hero -->
+    <div class="quick-hero">
+      <button class="quick-back" onclick="showView('home')">←</button>
+      <div class="quick-title">⚡ Szybko</div>
+      <div class="quick-subtitle">Ile masz czasu?</div>
+    </div>
+
+    <!-- Time chips -->
+    <div class="time-chips" id="timeChips">
+      <button class="time-chip" data-time="10" onclick="selectTime(10)">10<span>m</span></button>
+      <button class="time-chip" data-time="15" onclick="selectTime(15)">15<span>m</span></button>
+      <button class="time-chip" data-time="20" onclick="selectTime(20)">20<span>m</span></button>
+      <button class="time-chip active" data-time="30" onclick="selectTime(30)">30<span>m</span></button>
+      <button class="time-chip" data-time="45" onclick="selectTime(45)">45<span>m</span></button>
+    </div>
+
+    <!-- Category question -->
+    <div class="category-question">Na co masz ochotę?</div>
+
+    <!-- Category grid -->
+    <div class="category-grid" id="categoryGrid">
+      <div class="category-tile" data-category="mieso" onclick="selectCategory('mieso')">
+        <div class="category-emoji">🍗</div>
+        <div class="category-label">Mięso</div>
+      </div>
+      <div class="category-tile" data-category="ryba" onclick="selectCategory('ryba')">
+        <div class="category-emoji">🐟</div>
+        <div class="category-label">Ryba</div>
+      </div>
+      <div class="category-tile" data-category="makaron" onclick="selectCategory('makaron')">
+        <div class="category-emoji">🍝</div>
+        <div class="category-label">Makaron</div>
+      </div>
+      <div class="category-tile" data-category="salatka" onclick="selectCategory('salatka')">
+        <div class="category-emoji">🥗</div>
+        <div class="category-label">Sałatka</div>
+      </div>
+      <div class="category-tile" data-category="jajka" onclick="selectCategory('jajka')">
+        <div class="category-emoji">🍳</div>
+        <div class="category-label">Jajka</div>
+      </div>
+      <div class="category-tile" data-category="zupa" onclick="selectCategory('zupa')">
+        <div class="category-emoji">🥣</div>
+        <div class="category-label">Zupa</div>
+      </div>
+      <div class="category-tile" data-category="kanapka" onclick="selectCategory('kanapka')">
+        <div class="category-emoji">🥪</div>
+        <div class="category-label">Kanapka</div>
+      </div>
+      <div class="category-tile" data-category="wrap" onclick="selectCategory('wrap')">
+        <div class="category-emoji">🌯</div>
+        <div class="category-label">Wrap</div>
+      </div>
+      <div class="category-tile" data-category="one_pot" onclick="selectCategory('one_pot')">
+        <div class="category-emoji">🥘</div>
+        <div class="category-label">One-pot</div>
+      </div>
+    </div>
+
+    <!-- Random button -->
+    <button class="random-btn" onclick="randomQuick()">
+      🎲 Losuj mi coś!
+    </button>
+  </div>
+
+  <!-- Quick Results -->
+  <div class="view" id="view-quick-results">
+    <div class="quick-results-header">
+      <button class="quick-back" onclick="showView('flow-quick')">←</button>
+      <div class="quick-results-title" id="quickResultsTitle">⚡ Makaron · do 30 min</div>
+      <div class="quick-results-count" id="quickResultsCount">Znaleziono 8 przepisów</div>
+    </div>
+    
+    <div class="quick-results-content" id="quickResultsContent">
+      <!-- Results will be populated here -->
+    </div>
+
+    <div class="quick-fallback">
+      <div class="quick-fallback-divider">─── Nie znalazłeś? ─────</div>
+      <button class="quick-fallback-btn" onclick="quickFallbackToAI()">
+        💬 Opisz co chcesz, wygeneruję
+      </button>
     </div>
   </div>
 
@@ -435,16 +522,16 @@ if('serviceWorker' in navigator){
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <!-- JS Modules -->
-<script src="/static/js/i18n.js?v=9"></script>
-<script src="/static/js/app.js?v=9"></script>
-<script src="/static/js/chat.js?v=9"></script>
-<script src="/static/js/training.js?v=9"></script>
-<script src="/static/js/planner.js?v=9"></script>
-<script src="/static/js/history.js?v=9"></script>
-<script src="/static/js/favorites.js?v=9"></script>
-<script src="/static/js/profile.js?v=9"></script>
-<script src="/static/js/live.js?v=9"></script>
-<script src="/static/js/filters.js?v=9"></script>
-<script src="/static/js/recipe_tools.js?v=9"></script>
+<script src="/static/js/i18n.js?v=16"></script>
+<script src="/static/js/app.js?v=16"></script>
+<script src="/static/js/chat.js?v=16"></script>
+<script src="/static/js/training.js?v=16"></script>
+<script src="/static/js/planner.js?v=16"></script>
+<script src="/static/js/history.js?v=16"></script>
+<script src="/static/js/favorites.js?v=16"></script>
+<script src="/static/js/profile.js?v=16"></script>
+<script src="/static/js/live.js?v=16"></script>
+<script src="/static/js/filters.js?v=16"></script>
+<script src="/static/js/recipe_tools.js?v=16"></script>
 </body>
 </html>

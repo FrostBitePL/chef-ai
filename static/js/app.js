@@ -217,6 +217,17 @@ async function socialLogin(provider){
 // ─── User Info ───
 let subStatus={is_pro:false,status:'free',recipes_today:0,recipes_limit:5};
 
+// Unified PRO/admin check across all sources of truth
+function isPro(){
+  if(subStatus?.is_pro) return true;
+  const role=(userProfile?.role||'').toLowerCase();
+  if(role==='pro'||role==='admin'||role==='premium') return true;
+  const status=(userProfile?.subscription_status||subStatus?.status||'').toLowerCase();
+  if(status==='pro'||status==='active'||status==='premium'||status==='trial') return true;
+  return false;
+}
+window.isPro=isPro;
+
 function renderUserInfo(){
   const name=userProfile?.name||currentUser?.email?.split('@')[0]||'User';
   const initials=name.slice(0,2).toUpperCase();
@@ -356,6 +367,14 @@ function showView(n){
   if(n==='history') loadHistory();
   if(n==='profile') loadProfileView();
   if(n==='planner'){if(typeof ensurePlannerForm==='function') ensurePlannerForm(); renderSavedPlans();}
+  if(n==='chat'){
+    initMessagesScrollTracking();
+    // Reset scroll-up state when entering chat; jump to bottom
+    _userScrolledUp=false;
+    hideNewMessagePill();
+    const m=document.getElementById('messages');
+    if(m) requestAnimationFrame(()=>{m.scrollTop=m.scrollHeight});
+  }
 }
 
 async function loadModulesFromServer(){
@@ -371,9 +390,60 @@ function getServingsValue(){return parseInt(document.getElementById('kcalServing
 function updateKcalSummary(){const k=getKcalValue(),s=getServingsValue(),el=document.getElementById('kcalSummary');if(k>0){el.textContent='= '+(k*s)+' '+t('kcal.total')}else{el.textContent=''}}
 
 function esc(s){if(!s)return'';const d=document.createElement('div');d.textContent=s;return d.innerHTML}
-function scrollBottom(){const m=document.getElementById('messages');setTimeout(()=>m.scrollTop=m.scrollHeight,40)}
+// Smart scroll: only auto-scroll if user is near bottom; otherwise show "new" pill
+let _userScrolledUp=false;
+let _lastNewMsgId=0;
+function isNearBottom(m,threshold=120){return (m.scrollHeight-m.scrollTop-m.clientHeight)<threshold}
+function scrollBottom(force){
+  const m=document.getElementById('messages');
+  if(!m) return;
+  if(force||!_userScrolledUp){
+    setTimeout(()=>{m.scrollTo({top:m.scrollHeight,behavior:'smooth'})},40);
+  } else {
+    showNewMessagePill();
+  }
+}
+function showNewMessagePill(){
+  let pill=document.getElementById('newMsgPill');
+  if(!pill){
+    pill=document.createElement('button');
+    pill.id='newMsgPill';
+    pill.className='new-msg-pill';
+    pill.innerHTML='↓ Nowa wiadomość';
+    pill.onclick=()=>{
+      const m=document.getElementById('messages');
+      m.scrollTo({top:m.scrollHeight,behavior:'smooth'});
+      pill.remove();
+    };
+    const chatView=document.getElementById('view-chat');
+    if(chatView) chatView.appendChild(pill);
+  }
+  pill.classList.add('visible');
+}
+function hideNewMessagePill(){
+  const pill=document.getElementById('newMsgPill');
+  if(pill) pill.remove();
+}
+// Track manual scroll
+function initMessagesScrollTracking(){
+  const m=document.getElementById('messages');
+  if(!m||m.dataset.tracked) return;
+  m.dataset.tracked='1';
+  m.addEventListener('scroll',()=>{
+    _userScrolledUp=!isNearBottom(m,120);
+    if(!_userScrolledUp) hideNewMessagePill();
+  },{passive:true});
+}
 function fmtT(s){if(s<0)s=0;return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
-function addMsg(role,text){const d=document.createElement('div');d.className='msg';if(role==='user')d.innerHTML='<div class="msg-user">'+esc(text)+'</div>';else{d.innerHTML='<div class="msg-text">'+esc(text)+'</div>'}document.getElementById('messages').appendChild(d);scrollBottom()}
+function addMsg(role,text){
+  const d=document.createElement('div');d.className='msg';
+  if(role==='user')d.innerHTML='<div class="msg-user">'+esc(text)+'</div>';
+  else{d.innerHTML='<div class="msg-text">'+esc(text)+'</div>'}
+  document.getElementById('messages').appendChild(d);
+  // Always force scroll on user-initiated message; smart scroll for assistant
+  if(role==='user'){_userScrolledUp=false;hideNewMessagePill();scrollBottom(true)}
+  else scrollBottom();
+}
 function loadingDots(){return'<div class="loading-dots"><span></span><span></span><span></span></div>'}
 
 // ─── Onboarding ───
@@ -595,47 +665,198 @@ function openFlow(flowType) {
     console.log('Opening flow:', flowType);
     
     // Check if PRO feature for FREE user
-    if (flowType === 'guests' && userProfile?.role !== 'pro' && userProfile?.role !== 'admin') {
+    if (flowType === 'guests' && !isPro()) {
         showProModal();
         return;
     }
     
     switch(flowType) {
         case 'ingredients':
-            // TODO: Implement ingredients flow
-            showView('chat');
-            addMsg('system', 'Flow "Z tego co mam" - w trakcie implementacji. Napisz jakie składniki masz.');
+            openFlowPicker('ingredients');
             break;
-            
         case 'quick':
-            // TODO: Implement quick flow  
-            showView('chat');
-            addMsg('system', 'Flow "Szybko" - w trakcie implementacji. Napisz czego szukasz do 30 minut.');
+            showView('flow-quick');
+            initQuickFlow();
             break;
-            
         case 'discover':
-            // TODO: Implement discover flow
-            showView('chat');
-            addMsg('system', 'Flow "Coś nowego" - w trakcie implementacji. Napisz jakiej kuchni chcesz spróbować.');
+            openFlowPicker('discover');
             break;
-            
         case 'classic':
             showView('flow-classic');
             loadClassicChips();
             break;
-            
         case 'healthy':
-            // TODO: Implement healthy flow
-            showView('chat');
-            addMsg('system', 'Flow "Zdrowe" - w trakcie implementacji. Napisz jakie masz cele żywieniowe.');
+            openFlowPicker('healthy');
             break;
-            
         case 'guests':
-            // TODO: Implement guests flow (PRO only)
-            showView('chat');
-            addMsg('system', 'Flow "Dla gości" - w trakcie implementacji. Napisz na ile osób planujesz menu.');
+            openFlowPicker('guests');
             break;
     }
+}
+
+// ─── Flow Picker (ingredients / discover / healthy / guests) ───
+const FLOW_CONFIG = {
+    ingredients: {
+        title: '🥬 Z tego co mam',
+        subtitle: 'Wpisz składniki, które masz w lodówce/szafce',
+        inputType: 'text',
+        placeholder: 'np. kurczak, masło, czosnek, cytryna',
+        buildQuery: v => `Mam w domu: ${v}. Zaproponuj przepis wykorzystujący te składniki.`
+    },
+    discover: {
+        title: '✨ Coś nowego',
+        subtitle: 'Wybierz kuchnię świata lub styl',
+        inputType: 'chips',
+        options: [
+            {e:'🍜', l:'Azjatycka', v:'azjatyckiej'},
+            {e:'🌮', l:'Meksykańska', v:'meksykańskiej'},
+            {e:'🍝', l:'Włoska', v:'włoskiej'},
+            {e:'🥘', l:'Indyjska', v:'indyjskiej'},
+            {e:'🥙', l:'Bliskowschodnia', v:'bliskowschodniej'},
+            {e:'🍱', l:'Japońska', v:'japońskiej'},
+            {e:'🌶️', l:'Tajska', v:'tajskiej'},
+            {e:'🥐', l:'Francuska', v:'francuskiej'}
+        ],
+        buildQuery: v => `Zaproponuj ciekawe, nietypowe danie z kuchni ${v} którego jeszcze nie próbowałem.`
+    },
+    healthy: {
+        title: '🥗 Zdrowe',
+        subtitle: 'Wybierz swój cel żywieniowy',
+        inputType: 'chips',
+        options: [
+            {e:'💪', l:'Wysokobiałkowe', v:'wysokobiałkowe, min. 30g białka na porcję'},
+            {e:'🥦', l:'Wege/warzywne', v:'wegetariańskie, bogate w warzywa'},
+            {e:'🔥', l:'Niskokaloryczne', v:'niskokaloryczne (do 400 kcal na porcję)'},
+            {e:'🥑', l:'Keto', v:'keto, niskowęglowodanowe'},
+            {e:'🌾', l:'Bezglutenowe', v:'bezglutenowe'},
+            {e:'⚖️', l:'Zbilansowane', v:'zbilansowane pod makroskładniki'},
+            {e:'🫀', l:'Serce/DASH', v:'dieta DASH, niska zawartość sodu'},
+            {e:'🧘', l:'Lekkostrawne', v:'lekkostrawne, łagodne dla żołądka'}
+        ],
+        buildQuery: v => `Zaproponuj zdrowe danie: ${v}.`
+    },
+    guests: {
+        title: '🍽️ Dla gości',
+        subtitle: 'Na ile osób i jaka okazja?',
+        inputType: 'guests',
+        buildQuery: (persons, occasion) => `Przygotuj menu dla ${persons} osób na okazję: ${occasion}. Danie powinno robić wrażenie, ale być wykonalne.`
+    }
+};
+
+function openFlowPicker(flowType) {
+    const cfg = FLOW_CONFIG[flowType];
+    if (!cfg) return;
+    
+    // Remove any existing picker
+    const existing = document.getElementById('flowPicker');
+    if (existing) existing.remove();
+    
+    let body = '';
+    if (cfg.inputType === 'text') {
+        body = `
+            <input type="text" class="fp-input" id="fpTextInput" placeholder="${cfg.placeholder}" autofocus>
+            <button class="fp-submit" onclick="submitFlowPicker('${flowType}')">Wygeneruj przepis →</button>
+        `;
+    } else if (cfg.inputType === 'chips') {
+        body = `
+            <div class="fp-chips">
+                ${cfg.options.map(o => `
+                    <button class="fp-chip" onclick="submitFlowPickerChip('${flowType}','${o.v.replace(/'/g,"\\'")}')">
+                        <span class="fp-chip-emoji">${o.e}</span>
+                        <span class="fp-chip-label">${o.l}</span>
+                    </button>
+                `).join('')}
+            </div>
+        `;
+    } else if (cfg.inputType === 'guests') {
+        body = `
+            <label class="fp-label">Ile osób?</label>
+            <div class="fp-stepper">
+                <button onclick="fpStep(-1)">−</button>
+                <span id="fpPersons">4</span>
+                <button onclick="fpStep(1)">+</button>
+            </div>
+            <label class="fp-label">Okazja</label>
+            <div class="fp-chips">
+                ${['Kolacja','Urodziny','Rocznica','Spotkanie','Święta','Wigilia'].map(o => `
+                    <button class="fp-chip" onclick="fpSelectOccasion(this,'${o}')">
+                        <span class="fp-chip-label">${o}</span>
+                    </button>
+                `).join('')}
+            </div>
+            <button class="fp-submit" onclick="submitFlowPickerGuests()">Przygotuj menu →</button>
+        `;
+    }
+    
+    const html = `
+        <div class="fp-backdrop" id="flowPicker" onclick="if(event.target===this)closeFlowPicker()">
+            <div class="fp-card">
+                <button class="fp-close" onclick="closeFlowPicker()">✕</button>
+                <div class="fp-title">${cfg.title}</div>
+                <div class="fp-subtitle">${cfg.subtitle}</div>
+                ${body}
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', html);
+    
+    // Focus text input
+    const txt = document.getElementById('fpTextInput');
+    if (txt) {
+        txt.addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); submitFlowPicker(flowType); }
+        });
+        setTimeout(() => txt.focus(), 50);
+    }
+}
+
+function closeFlowPicker() {
+    const p = document.getElementById('flowPicker');
+    if (p) p.remove();
+}
+
+function submitFlowPicker(flowType) {
+    const cfg = FLOW_CONFIG[flowType];
+    const val = document.getElementById('fpTextInput')?.value.trim();
+    if (!val) return;
+    closeFlowPicker();
+    runFlowQuery(cfg.buildQuery(val));
+}
+
+function submitFlowPickerChip(flowType, value) {
+    const cfg = FLOW_CONFIG[flowType];
+    closeFlowPicker();
+    runFlowQuery(cfg.buildQuery(value));
+}
+
+let _fpPersons = 4;
+let _fpOccasion = null;
+function fpStep(delta) {
+    _fpPersons = Math.max(2, Math.min(20, _fpPersons + delta));
+    const el = document.getElementById('fpPersons');
+    if (el) el.textContent = _fpPersons;
+}
+function fpSelectOccasion(btn, occasion) {
+    _fpOccasion = occasion;
+    document.querySelectorAll('#flowPicker .fp-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+}
+function submitFlowPickerGuests() {
+    if (!_fpOccasion) { alert('Wybierz okazję'); return; }
+    const cfg = FLOW_CONFIG.guests;
+    closeFlowPicker();
+    runFlowQuery(cfg.buildQuery(_fpPersons, _fpOccasion));
+    _fpPersons = 4;
+    _fpOccasion = null;
+}
+
+function runFlowQuery(query) {
+    showView('chat');
+    const input = document.getElementById('input');
+    input.value = query;
+    // Trigger input event to enable send button
+    input.dispatchEvent(new Event('input'));
+    send();
 }
 
 function searchFromHome() {
@@ -955,6 +1176,232 @@ async function loadClassicRecipe(recipeId, version = 'classic') {
     } finally {
         if (loadingEl && catsEl) { loadingEl.style.display = 'none'; catsEl.style.display = ''; }
     }
+}
+
+// ─── FLOW 2: QUICK FUNCTIONS ───
+
+let _quickSelectedTime = 30;
+let _quickSelectedCategory = null;
+
+function initQuickFlow() {
+    _quickSelectedTime = 30;
+    _quickSelectedCategory = null;
+    
+    // Reset time chips
+    document.querySelectorAll('.time-chip').forEach(chip => {
+        chip.classList.toggle('active', parseInt(chip.dataset.time) === 30);
+    });
+    
+    // Reset category tiles
+    document.querySelectorAll('.category-tile').forEach(tile => {
+        tile.classList.remove('active');
+    });
+}
+
+function selectTime(time) {
+    _quickSelectedTime = time;
+    
+    // Update UI
+    document.querySelectorAll('.time-chip').forEach(chip => {
+        chip.classList.toggle('active', parseInt(chip.dataset.time) === time);
+    });
+    
+    // Haptic feedback if mobile
+    if (navigator.vibrate) navigator.vibrate(10);
+}
+
+function selectCategory(category) {
+    _quickSelectedCategory = category;
+    
+    // Visual feedback
+    const tile = document.querySelector(`[data-category="${category}"]`);
+    if (tile) {
+        tile.classList.add('active');
+        setTimeout(() => {
+            loadQuickResults(category, _quickSelectedTime);
+        }, 200);
+    }
+}
+
+async function loadQuickResults(category, maxTime) {
+    // Show loading state immediately
+    showView('quick-results');
+    const content = document.getElementById('quickResultsContent');
+    if (content) content.innerHTML = `
+        <div style="text-align:center;padding:60px 20px;color:var(--text-muted);">
+            <div class="loading-dots" style="margin:0 auto 16px;display:inline-flex;gap:6px"><span></span><span></span><span></span></div>
+            <div style="font-size:14px">AI dobiera dla Ciebie 8 dań…</div>
+        </div>`;
+    document.getElementById('quickResultsTitle').textContent = '⚡ Szukam propozycji…';
+    document.getElementById('quickResultsCount').textContent = '';
+    
+    try {
+        const res = await fetch('/api/recipes/quick', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({ category, max_time: maxTime, random: false })
+        });
+        const data = await res.json();
+        if (data.success && data.type === 'list') {
+            renderQuickResults(data, category, maxTime);
+        } else {
+            content.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-muted)"><div style="font-size:32px;margin-bottom:12px">😕</div>${data.error || 'Nie udało się załadować propozycji'}</div>`;
+        }
+    } catch (e) {
+        console.error('Error loading quick results:', e);
+        content.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-muted)"><div style="font-size:32px;margin-bottom:12px">⚠️</div>Błąd połączenia</div>`;
+    }
+}
+
+function renderQuickResults(data, category, maxTime) {
+    const categoryNames = {
+        'mieso': 'Mięso', 'ryba': 'Ryba', 'makaron': 'Makaron',
+        'salatka': 'Sałatka', 'jajka': 'Jajka', 'zupa': 'Zupa',
+        'kanapka': 'Kanapka', 'wrap': 'Wrap', 'one_pot': 'One-pot'
+    };
+    
+    const categoryName = categoryNames[category] || category;
+    
+    // Update header
+    document.getElementById('quickResultsTitle').textContent = `⚡ ${categoryName} · do ${maxTime} min`;
+    document.getElementById('quickResultsCount').textContent = `Znaleziono ${data.dishes.length} przepisów`;
+    
+    // Render cards
+    const content = document.getElementById('quickResultsContent');
+    if (!data.dishes.length) {
+        content.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+                <div style="font-size: 48px; margin-bottom: 16px;">🤷‍♂️</div>
+                <div style="font-size: 16px; margin-bottom: 8px;">Brak przepisów w tej kombinacji</div>
+                <div style="font-size: 14px;">Spróbuj wydłużyć czas lub zmienić kategorię</div>
+                <button onclick="randomQuickFromOther()" style="margin-top: 16px; padding: 8px 16px; border-radius: 8px; background: var(--gold); border: none; color: var(--bg); font-weight: 600; cursor: pointer;">
+                    🎲 Losuj z innej kategorii
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    content.innerHTML = data.dishes.map((dish, i) => {
+        const safeName = esc(dish.name);
+        const safeDesc = esc(dish.desc || '');
+        const stars = '★'.repeat(dish.difficulty) + '☆'.repeat(3 - dish.difficulty);
+        return `
+        <div class="quick-result-card" data-dish-name="${safeName}" data-dish-idx="${i}">
+            <div class="quick-result-header">
+                <div class="quick-result-emoji">${dish.emoji || '🍽️'}</div>
+                <div style="flex:1;min-width:0">
+                    <div class="quick-result-name">${safeName}</div>
+                    ${safeDesc ? `<div class="quick-result-desc">${safeDesc}</div>` : ''}
+                </div>
+                <div class="quick-result-open">→</div>
+            </div>
+            <div class="quick-result-meta">
+                <span>⏱ ${dish.time} min</span>
+                <span>${stars}</span>
+            </div>
+        </div>`;
+    }).join('');
+    
+    // Wire up click via delegation (avoids quote-escape bugs in dish names)
+    content.querySelectorAll('.quick-result-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const name = card.getAttribute('data-dish-name');
+            if (name) generateQuickRecipe(name);
+        });
+    });
+}
+
+async function generateQuickRecipe(recipeName) {
+    showView('chat');
+    addMsg('user', recipeName);
+    
+    // Loading bubble
+    const msgs = document.getElementById('messages');
+    const ld = document.createElement('div');
+    ld.className = 'msg';
+    ld.innerHTML = '<div class="msg-text">' + loadingDots() + '</div>';
+    msgs.appendChild(ld);
+    scrollBottom(true);
+    
+    try {
+        const res = await fetch(API + '/api/ask', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({ question: recipeName, history: [], lang: currentLang })
+        });
+        const data = await res.json();
+        ld.remove();
+        if (data.data) {
+            handleResponse(data.data);
+        } else {
+            addMsg('t', 'Nie udało się wygenerować przepisu: ' + (data.error || 'Nieznany błąd'));
+        }
+    } catch (e) {
+        ld.remove();
+        console.error('Error generating quick recipe:', e);
+        addMsg('t', 'Błąd generowania przepisu');
+    }
+}
+
+async function randomQuick() {
+    try {
+        // Animate dice
+        const btn = document.querySelector('.random-btn');
+        btn.style.transform = 'rotate(360deg)';
+        setTimeout(() => btn.style.transform = '', 300);
+        
+        // Get all categories
+        const categories = ['mieso', 'ryba', 'makaron', 'salatka', 'jajka', 'zupa', 'kanapka', 'wrap', 'one_pot'];
+        const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+        
+        const res = await fetch('/api/recipes/quick', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({
+                category: randomCategory,
+                max_time: _quickSelectedTime,
+                random: true
+            })
+        });
+        
+        const data = await res.json();
+        
+        if (data.success && data.dishes && data.dishes.length > 0) {
+            const randomDish = data.dishes[0];
+            showView('chat');
+            addMsg('system', `🎲 Wylosowano dla Ciebie przepis na: ${randomDish.name} (${_quickSelectedTime} min)!`);
+            
+            // Generate the actual recipe
+            const recipeRes = await fetch(API + '/api/ask', {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify({ 
+                    question: randomDish.name,
+                    history: [],
+                    lang: currentLang
+                })
+            });
+            
+            const recipeData = await recipeRes.json();
+            if (recipeData.data) {
+                handleResponse(recipeData.data);
+            }
+        } else {
+            alert('Nie udało się wylosować przepisu: ' + (data.error || 'Nieznany błąd'));
+        }
+    } catch (e) {
+        console.error('Error random quick:', e);
+        alert('Błąd losowania przepisu');
+    }
+}
+
+function randomQuickFromOther() {
+    // Pick a random category and try again
+    const categories = ['mieso', 'ryba', 'makaron', 'salatka', 'jajka', 'zupa', 'kanapka', 'wrap', 'one_pot'];
+    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+    
+    selectCategory(randomCategory);
 }
 
 function searchClassic() {

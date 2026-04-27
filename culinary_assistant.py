@@ -218,8 +218,13 @@ DEFAULT_PROFILE={"name":"","role":"free","equipment":[],"banned_ingredients":[],
 def db_get_profile(uid):
     try:
         r=sb.table("profiles").select("*").eq("id",uid).single().execute()
-        return r.data if r.data else dict(DEFAULT_PROFILE)
-    except: return dict(DEFAULT_PROFILE)
+        if r.data:
+            return r.data
+        logger.warning(f"db_get_profile: no row for uid={uid}, returning DEFAULT")
+        return dict(DEFAULT_PROFILE)
+    except Exception as e:
+        logger.error(f"db_get_profile error for uid={uid}: {e}")
+        return dict(DEFAULT_PROFILE)
 
 def db_update_profile(uid,updates):
     updates["updated_at"]=datetime.utcnow().isoformat()
@@ -2302,11 +2307,25 @@ Masz dostęp do 4 warstw bazy wiedzy kulinarnej:
 3. CORE — fizyka gotowania: temperatury, czasy, przemiany chemiczne, punkty krytyczne, stany awaryjne
 4. TECHNIQUES — procedury wykonania, kroki krytyczne, troubleshooting
 
-## TRYB ROZPOZNAWANIA DANIA
+## TRYB ROZPOZNAWANIA INTENCJI
 
-Przed rozpoczęciem ZAWSZE określ typ zapytania:
+PRZED generowaniem przepisu ZAWSZE określ CO DOKŁADNIE user chce:
 
-### A) DANIE KANONICZNE (carbonara, ramen tonkotsu, sos boloński, boeuf bourguignon, pad thai, risotto, pierogi ruskie, barszcz, ossobuco, cacio e pepe, french onion soup, etc.)
+### A) PEŁNE DANIE: "zrób pierogi ruskie", "carbonara", "coś z kurczakiem"
+User chce CAŁY przepis na kompletne danie. → Generuj pełny przepis.
+
+### B) KOMPONENT / TECHNIKA: "okrasa do pierogów", "sos do steka", "marynata do kurczaka", "ciasto na pizzę", "panierka do schabowego"
+User chce TYLKO ten konkretny element, NIE całe danie.
+→ Generuj przepis WYŁĄCZNIE na ten komponent/technikę.
+→ NIE generuj całego dania, do którego się odnosi.
+→ Tytuł przepisu = nazwa komponentu (np. "Okrasa cebulowa", "Sos pieprzowy", "Marynata jogurtowa").
+
+**Sygnały że user chce KOMPONENT, nie całe danie:**
+- Frazy "do pierogów", "do steka", "na pizzę", "do kurczaka" = kontekst użycia, NIE zamówienie na to danie
+- Słowa: "okrasa", "sos", "marynata", "dressing", "panierka", "glaze", "brine", "rub", "ciasto na...", "krem do...", "posypka"
+- Frazy: "jako dodatek", "na bok", "jako topping", "do podania z"
+
+### C) DANIE KANONICZNE (carbonara, ramen tonkotsu, sos boloński, boeuf bourguignon, pad thai, risotto, pierogi ruskie, barszcz, ossobuco, cacio e pepe, french onion soup, etc.)
 Jeśli użytkownik pyta o danie z ustaloną tożsamością kulinarną:
 - NIE wymyślaj na nowo. NIE "ulepszaj" klasyki na siłę.
 - Skup się na tym CO ODRÓŻNIA wersję doskonałą od przeciętnej.
@@ -2317,7 +2336,7 @@ Jeśli użytkownik pyta o danie z ustaloną tożsamością kulinarną:
 - Traktuj to jak masterclass: "Tak robi to ktoś, kto naprawdę rozumie to danie."
 - W polu "why_this_recipe" wyjaśnij filozofię tego dania i dlaczego kanon działa.
 
-### B) ZAPYTANIE KREATYWNE ("coś z kurczakiem", "lekki obiad", "kolacja na randkę")
+### D) ZAPYTANIE KREATYWNE ("coś z kurczakiem", "lekki obiad", "kolacja na randkę")
 Jeśli użytkownik daje otwarte zapytanie:
 - ZAWSZE proponuj danie na poziomie dobrej restauracji, nigdy "szybki obiad z patelni".
 - Myśl jak szef kuchni: co sprawi, że to danie będzie wyjątkowe? Jaki element zaskoczenia?
@@ -2325,8 +2344,15 @@ Jeśli użytkownik daje otwarte zapytanie:
 - Każde danie musi mieć wyraźną architekturę: hero ingredient + supporting cast + accent.
 - Nie proponuj "kurczaka z ryżem" — proponuj "kurczak w miso-karmelowym glaze z pickled rzodkiewką i furikake".
 
+### E) PYTANIE / INSTRUKCJA: "jak zrobić brązowe masło?", "czym się różni blanszowanie od gotowania?"
+User chce wyjaśnienie/instrukcję, nie pełny przepis. → Odpowiedz zwięźle i merytorycznie.
+
+## ZAKAZY A JAWNE PROŚBY UŻYTKOWNIKA
+Jeśli user JAWNIE wymienia składnik z listy zakazów w swoim zapytaniu (np. "zrób okrasę z cebuli", "sos czosnkowy") — UŻYJ tego składnika.
+Zakazy dotyczą AUTOMATYCZNYCH propozycji AI (gdy to TY wybierasz składniki), nie jawnych próśb użytkownika. User wie co robi.
+
 ## KOLEJNOŚĆ MYŚLENIA (ZAWSZE)
-1. Zidentyfikuj typ dania (kanoniczne vs kreatywne)
+1. Zidentyfikuj intencję (komponent vs pełne danie vs pytanie)
 2. Zaprojektuj architekturę dania (composition)
 3. Zablokuj logikę smakową (flavor)
 4. Zdefiniuj parametry fizyczne — temp, czas, mechanizmy (core)
@@ -3268,7 +3294,7 @@ class CulinaryAssistant:
 
     # ─── 2-STEP PIPELINE: generate_recipe() ───
 
-    def generate_recipe(self, question, history=None, profile="lukasz", uid=None):
+    def generate_recipe(self, question, history=None, profile="lukasz", uid=None, lang=None):
         """2-step pipeline: SOS check (HIGHEST PRIORITY) → planner → executor → validation."""
         # STEP 0: SOS Emergency Check (HIGHEST PRIORITY)
         sos_intent = detect_sos_intent(question)
@@ -3363,7 +3389,10 @@ class CulinaryAssistant:
             # Use simplified prompt with context injection
             planner_prompt = PLANNER_PROMPT.format(question=question, context=context)
             planner_msgs = [{"role": "user", "content": planner_prompt}]
-            plan, plan_usage = self._call_text("", planner_msgs)  # Empty system prompt, user prompt contains everything
+            # Resolve language and inject instruction so plan stays in user's language
+            effective_lang = lang or prof_data.get("lang") or "pl"
+            lang_sys = get_lang_instruction(effective_lang).strip()
+            plan, plan_usage = self._call_text(lang_sys, planner_msgs)
             # Cache the plan
             if not hasattr(self, '_plan_cache'):
                 self._plan_cache = {}
@@ -3397,7 +3426,10 @@ class CulinaryAssistant:
                 # Use fast executor prompt for speed
                 executor_prompt = (EXECUTOR_PROMPT_FAST if use_fast_mode else EXECUTOR_PROMPT).replace("<<PLAN JSON>>", json.dumps(plan, ensure_ascii=False, indent=2))
                 executor_msgs = [{"role": "user", "content": executor_prompt}]
-                recipe, recipe_usage = self._call_text("", executor_msgs)  # Empty system prompt for speed
+                # Resolve language - same as planner
+                effective_lang = lang or prof_data.get("lang") or "pl"
+                lang_sys = get_lang_instruction(effective_lang).strip()
+                recipe, recipe_usage = self._call_text(lang_sys, executor_msgs)
             
             # Cache the recipe
             if not hasattr(self, '_recipe_cache'):
@@ -3441,7 +3473,7 @@ class CulinaryAssistant:
 
     # ─── 4-STAGE PIPELINE: ask() ───
 
-    def ask(self, question, history=None, profile="lukasz", uid=None):
+    def ask(self, question, history=None, profile="lukasz", uid=None, lang=None):
         """Main pipeline: SOS check (HIGHEST PRIORITY) → normal pipeline."""
         # STEP 0: SOS Emergency Check (HIGHEST PRIORITY)
         sos_intent = detect_sos_intent(question)
@@ -3519,7 +3551,9 @@ class CulinaryAssistant:
             baking_ctx=baking_ctx,
         )
 
-        system_prompt = SYSTEM_PROMPT_ENGINE
+        # Resolve language: explicit param > profile setting > Polish default
+        effective_lang = lang or prof_data.get("lang") or "pl"
+        system_prompt = SYSTEM_PROMPT_ENGINE + get_lang_instruction(effective_lang)
         msgs = list(history or []) + [{"role": "user", "content": task_prompt}]
 
         # FINAL: LLM call with decision engine
@@ -3564,7 +3598,7 @@ class CulinaryAssistant:
         if prof_ctx:
             constraints_parts.append(prof_ctx)
         if bans:
-            constraints_parts.append("ABSOLUTNE ZAKAZY (nigdy nie używaj): " + ", ".join(bans))
+            constraints_parts.append("ZAKAZY AUTOMATYCZNE (nie używaj w SWOICH propozycjach, ale UŻYJ jeśli user JAWNIE prosi o dany składnik): " + ", ".join(bans))
 
         # ─── Seasonality injection ───
         season_hint = get_season_hint()
@@ -3889,7 +3923,7 @@ class CulinaryAssistant:
         logger.info(f"[plan_finalize] parsed type={parsed.get('type')}, n_days={len(parsed.get('days', []))}")
         return {"data": parsed, "usage": {"prompt_tokens": resp.usage.prompt_tokens if resp.usage else 0, "completion_tokens": resp.usage.completion_tokens if resp.usage else 0}}
 
-    def proposals(self, question, uid=None, filters=None, pantry=None, kcal_target=0):
+    def proposals(self, question, uid=None, filters=None, pantry=None, kcal_target=0, lang=None):
         """Fast proposal step: detect specific vs vague query, return 5 dish ideas or skip."""
         prof_data = db_get_profile_cached(uid) if uid else dict(DEFAULT_PROFILE)
         bans = prof_data.get("banned_ingredients", [])
@@ -3917,6 +3951,11 @@ class CulinaryAssistant:
 
         constraints = "\n".join(constraints_parts) if constraints_parts else "brak"
 
+        # Resolve language for output text fields (title/subtitle/cuisine/wow must match user's UI language)
+        effective_lang = lang or prof_data.get("lang") or "pl"
+        LANG_NAMES = {"pl":"Polish","en":"English","de":"German","es":"Spanish","fr":"French"}
+        out_lang = LANG_NAMES.get(effective_lang, "Polish")
+
         prompt = f"""You are a culinary assistant. The user typed: "{question}". Constraints: {constraints}.
 
 Is this a specific dish name (like "carbonara", "pad thai", "pierogi ruskie") or a general query (like "chicken", "dessert", "something Italian", "quick lunch")?
@@ -3926,10 +3965,15 @@ If specific dish: return JSON: {{"is_specific": true, "dish": "exact dish name"}
 If general query: return JSON with 5 diverse restaurant-quality dish proposals:
 {{"is_specific": false, "proposals": [{{"id": 1, "title": "dish name", "subtitle": "one appetizing sentence", "time_min": 30, "difficulty": 3, "cuisine": "cuisine type", "wow": "surprise element"}}, {{"id": 2, "title": "...", "subtitle": "...", "time_min": 25, "difficulty": 2, "cuisine": "...", "wow": "..."}}, {{"id": 3, "title": "...", "subtitle": "...", "time_min": 40, "difficulty": 4, "cuisine": "...", "wow": "..."}}, {{"id": 4, "title": "...", "subtitle": "...", "time_min": 20, "difficulty": 2, "cuisine": "...", "wow": "..."}}, {{"id": 5, "title": "...", "subtitle": "...", "time_min": 35, "difficulty": 3, "cuisine": "...", "wow": "..."}}]}}
 
+CRITICAL LANGUAGE RULE:
+All user-facing text fields (title, subtitle, cuisine, wow, dish) MUST be in {out_lang}.
+This is mandatory regardless of the language of the user's query.
+
 Return only valid JSON, nothing else."""
 
         try:
-            parsed, usage = self._call_text("You are a culinary assistant. Respond only with valid JSON.", [{"role": "user", "content": prompt}])
+            sys_prompt = f"You are a culinary assistant. Respond only with valid JSON. All text content must be in {out_lang}."
+            parsed, usage = self._call_text(sys_prompt, [{"role": "user", "content": prompt}])
             logger.info(f"[proposals] parsed keys: {list(parsed.keys()) if isinstance(parsed,dict) else type(parsed)} is_specific={parsed.get('is_specific') if isinstance(parsed,dict) else '?'}")
         except Exception as e:
             logger.error(f"[proposals] _call_text error: {e}")
@@ -4070,8 +4114,11 @@ def create_app():
 
     # â”€â”€â”€ Subscription Helpers â”€â”€â”€
     def is_pro(uid):
-        """Check if user has active PRO subscription."""
+        """Check if user has active PRO subscription or PRO/admin role."""
         p=db_get_profile(uid)
+        # Role-based override (manually granted PRO/admin)
+        role=(p.get("role") or "").lower()
+        if role in ("pro","admin","premium"): return True
         status=p.get("subscription_status","free")
         if status=="active": return True
         # Check expiry for canceled but still valid
@@ -4157,6 +4204,34 @@ def create_app():
         except Exception as e:
             return jsonify({"error":str(e)}),500
 
+    @app.route("/api/debug/grant-pro", methods=["POST"])
+    @require_auth
+    def debug_grant_pro():
+        """DEV ONLY: grant PRO+admin role to current user."""
+        db_update_profile(g.user_id, {
+            "role": "admin",
+            "subscription_status": "active"
+        })
+        # Bust cache
+        if g.user_id in _profile_cache:
+            del _profile_cache[g.user_id]
+        return jsonify({"success": True, "user_id": g.user_id, "role": "admin", "subscription_status": "active"})
+
+    @app.route("/api/debug/me")
+    @require_auth
+    def debug_me():
+        """Debug: show what the server actually reads about current user."""
+        p=db_get_profile(g.user_id)
+        return jsonify({
+            "user_id": g.user_id,
+            "role": p.get("role"),
+            "subscription_status": p.get("subscription_status"),
+            "subscription_end": p.get("subscription_end"),
+            "is_pro_result": is_pro(g.user_id),
+            "profile_keys": list(p.keys()),
+            "raw_role_type": type(p.get("role")).__name__,
+        })
+
     @app.route("/api/stripe/status")
     @require_auth
     def subscription_status():
@@ -4167,6 +4242,7 @@ def create_app():
         allowed_i,count_i,limit_i=check_daily_limit(g.user_id,"imports")
         return jsonify({
             "is_pro":pro,
+            "role":p.get("role","free"),
             "status":p.get("subscription_status","free"),
             "recipes_today":count_r,"recipes_limit":limit_r,
             "imports_today":count_i,"imports_limit":limit_i
@@ -4266,9 +4342,10 @@ def create_app():
         if not q: return jsonify({"error":"No question"}),400
         p=db_get_profile_cached(g.user_id)
         pr=p.get("bot_profile","guest")
+        lang=d.get("lang") or p.get("lang") or "pl"
         h=[{"role":m["role"],"content":m["content"]} for m in (d.get("conversation_history") or []) if isinstance(m,dict) and m.get("role") in ("user","assistant")][-MAX_HISTORY:]
         try:
-            result=a.ask(q,h,profile=pr,uid=g.user_id)
+            result=a.ask(q,h,profile=pr,uid=g.user_id,lang=lang)
             increment_daily(g.user_id,"recipes")
             return jsonify({"success":True,**result})
         except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad serwera."}),500
@@ -4286,11 +4363,12 @@ def create_app():
         if not q: return jsonify({"error":"No question"}),400
         p=db_get_profile_cached(g.user_id)
         pr=p.get("bot_profile","guest")
+        lang=d.get("lang") or p.get("lang") or "pl"
         h=[{"role":m["role"],"content":m["content"]} for m in (d.get("conversation_history") or []) if isinstance(m,dict) and m.get("role") in ("user","assistant")][-MAX_HISTORY:]
         
         # Force 2-step pipeline
         try:
-            result=a.generate_recipe(q,h,profile=pr,uid=g.user_id)
+            result=a.generate_recipe(q,h,profile=pr,uid=g.user_id,lang=lang)
             increment_daily(g.user_id,"recipes")
             return jsonify({"success":True,**result})
         except: logger.error(traceback.format_exc()); return jsonify({"error":"Blad serwera."}),500
@@ -4839,8 +4917,10 @@ def create_app():
         pantry = d.get("pantry") or None
         try:
             kcal_target = int(d.get("kcal_target") or 0)
-            logger.info(f"[proposals] query='{q}' filters={filters} pantry_items={len(pantry.get('ingredients',[]) if pantry else [])} kcal={kcal_target}")
-            parsed, _ = a.proposals(q, uid=g.user_id, filters=filters, pantry=pantry, kcal_target=kcal_target)
+            p = db_get_profile_cached(g.user_id) if g.user_id else {}
+            lang = d.get("lang") or p.get("lang") or "pl"
+            logger.info(f"[proposals] query='{q}' filters={filters} pantry_items={len(pantry.get('ingredients',[]) if pantry else [])} kcal={kcal_target} lang={lang}")
+            parsed, _ = a.proposals(q, uid=g.user_id, filters=filters, pantry=pantry, kcal_target=kcal_target, lang=lang)
             logger.info(f"[proposals] result: is_specific={parsed.get('is_specific')} dish={parsed.get('dish','—')} proposals_count={len(parsed.get('proposals',[]))}")
             return jsonify({"success": True, "data": parsed})
         except Exception as e:
@@ -5051,6 +5131,118 @@ Zwróć JSON:
         return jsonify({"success": True, "recipe": recipe})
     
     # ─── FLOW ENDPOINTS ───
+    
+    # Cache for quick proposals: key=(category, max_time, profile_hash) -> list[dish]
+    _quick_cache = {}
+
+    @app.route("/api/recipes/quick", methods=["POST"])
+    def api_quick_recipes():
+        """Flow 2: Quick recipes — AI generates 6-8 dish ideas by category+time+profile."""
+        user_id = get_user_from_token()
+        if not user_id:
+            return jsonify({"error": "Unauthorized"}), 401
+
+        CATEGORY_NAMES = {
+            "mieso": "z mięsa (kurczak, wieprzowina, wołowina, indyk)",
+            "ryba": "z ryby lub owoców morza",
+            "makaron": "makaronowych",
+            "salatka": "sałatek (jako pełny posiłek)",
+            "jajka": "z jajkami jako głównym składnikiem",
+            "zupa": "zup",
+            "kanapka": "kanapek lub tostów",
+            "wrap": "wrapów / tortilli / burrito",
+            "one_pot": "jednogarnkowych (one-pot)"
+        }
+        EMOJI_MAP = {"mieso":"🍗","ryba":"🐟","makaron":"🍝","salatka":"🥗","jajka":"🍳","zupa":"🥣","kanapka":"🥪","wrap":"🌯","one_pot":"🥘"}
+
+        try:
+            data = request.get_json() or {}
+            category = data.get("category", "").strip()
+            max_time = int(data.get("max_time", 30))
+            wants_random = bool(data.get("random", False))
+
+            if category not in CATEGORY_NAMES:
+                return jsonify({"error": f"Nieznana kategoria: {category}"}), 400
+
+            profile = db_get_profile_cached(user_id) if user_id else {}
+            banned = profile.get("banned_ingredients", [])
+            if isinstance(banned, str):
+                banned = json.loads(banned) if banned else []
+            dietary = profile.get("dietary_preferences", []) or []
+            if isinstance(dietary, str):
+                dietary = json.loads(dietary) if dietary else []
+
+            # Cache key includes profile constraints so different users get different suggestions
+            prof_key = "_".join(sorted([b.lower() for b in banned] + [d.lower() for d in dietary]))
+            cache_key = f"{category}__{max_time}__{prof_key}"
+
+            if cache_key in _quick_cache:
+                dishes = _quick_cache[cache_key]
+            else:
+                cat_desc = CATEGORY_NAMES[category]
+                constraints = []
+                if banned:
+                    constraints.append(f"NIGDY nie używaj: {', '.join(banned)}")
+                if dietary:
+                    constraints.append(f"Dieta: {', '.join(dietary)}")
+                constraints_text = ("\n" + "\n".join(constraints)) if constraints else ""
+
+                prompt = f"""Wygeneruj 8 pomysłów na SZYBKIE dania {cat_desc}, gotowe w max {max_time} minut.{constraints_text}
+
+Zasady:
+- Konkretne, sprawdzone dania (nie ogólniki typu "danie z kurczaka")
+- Różnorodne (różne kuchnie świata, techniki)
+- Realny czas wykonania ≤ {max_time} min
+- Difficulty: 1=łatwe, 2=średnie, 3=trudne
+
+Zwróć WYŁĄCZNIE JSON:
+{{"dishes":[
+  {{"name":"Dokładna nazwa dania","time":15,"difficulty":1,"desc":"jednoliniowy hook"}},
+  ...8 pozycji...
+]}}"""
+                a = app.config.get("assistant")
+                if not a:
+                    return jsonify({"error": "AI assistant unavailable"}), 500
+                try:
+                    parsed, _ = a._call_text("", [{"role":"user","content":prompt}])
+                    raw_dishes = parsed.get("dishes", []) if isinstance(parsed, dict) else []
+                    dishes = []
+                    for d in raw_dishes[:8]:
+                        if not isinstance(d, dict) or not d.get("name"):
+                            continue
+                        try:
+                            t = int(d.get("time", max_time))
+                        except: t = max_time
+                        if t > max_time:
+                            continue
+                        dishes.append({
+                            "name": str(d["name"])[:80],
+                            "time": t,
+                            "difficulty": max(1, min(3, int(d.get("difficulty", 1)))),
+                            "desc": str(d.get("desc", ""))[:120],
+                            "emoji": EMOJI_MAP.get(category, "🍽️")
+                        })
+                    if dishes:
+                        _quick_cache[cache_key] = dishes
+                except Exception as e:
+                    logger.error(f"Quick AI generation failed: {e}")
+                    dishes = []
+
+            if wants_random and dishes:
+                import random as rand
+                dishes = [rand.choice(dishes)]
+
+            return jsonify({
+                "success": True,
+                "type": "list",
+                "dishes": dishes,
+                "category": category,
+                "max_time": max_time
+            })
+
+        except Exception as e:
+            logger.error(f"Quick recipes error: {e}")
+            return jsonify({"error": str(e)}), 500
     
     @app.route("/api/recipes/classic", methods=["POST"])
     def api_classic_recipes():

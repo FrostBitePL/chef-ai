@@ -320,7 +320,7 @@ async function askLiveHelp(){
   document.getElementById('liveHelpField').value='';
   try{
     const r=await fetch(API+'/api/ask',{method:'POST',headers:authHeaders(),
-      body:JSON.stringify({question:context+'\n\nMój problem: '+q})});
+      body:JSON.stringify({question:context+'\n\nMój problem: '+q,lang:currentLang})});
     const d=await r.json();
     document.getElementById('liveHelpAnswer').innerHTML=
       '<div class="live-help-text">'+(d.data?.content?esc(d.data.content):esc(JSON.stringify(d.data)))+'</div>';

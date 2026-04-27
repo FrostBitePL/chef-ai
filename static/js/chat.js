@@ -27,7 +27,7 @@ async function send(){
   let proposalResult=null;
   try{
     const pr=await fetch(API+'/api/proposals',{method:'POST',headers:authHeaders(),
-      body:JSON.stringify({question:q,filters:getActiveFilters?.(),pantry:getActivePantry?.(),kcal_target:kcalVal||undefined,servings:kcalVal?servingsVal:undefined})});
+      body:JSON.stringify({question:q,filters:getActiveFilters?.(),pantry:getActivePantry?.(),kcal_target:kcalVal||undefined,servings:kcalVal?servingsVal:undefined,lang:currentLang})});
     const pd=await pr.json();
     console.log('[proposals] status:',pr.status,'response:',pd);
     if(pr.ok && pd.success) proposalResult=pd.data;
@@ -159,7 +159,7 @@ async function loadMoreProposals(btn,originalQuery){
   try{
     const pr=await fetch(API+'/api/proposals',{method:'POST',headers:authHeaders(),
       body:JSON.stringify({question:originalQuery+' (inne propozycje niż poprzednie)',
-        filters:getActiveFilters?.(),pantry:getActivePantry?.()})});
+        filters:getActiveFilters?.(),pantry:getActivePantry?.(),lang:currentLang})});
     const pd=await pr.json();
     wrap.remove();
     if(pd.success&&pd.data?.proposals) renderProposals(originalQuery,pd.data.proposals);
