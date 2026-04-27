@@ -4220,17 +4220,23 @@ def create_app():
         """Check if user has active PRO subscription or PRO/admin role."""
         p=db_get_profile(uid)
         # Role-based override (manually granted PRO/admin)
-        role=(p.get("role") or "").lower()
-        if role in ("pro","admin","premium"): return True
-        status=p.get("subscription_status","free")
-        if status=="active": return True
+        role=(p.get("role") or "").lower().strip()
+        status=(p.get("subscription_status") or "").lower().strip()
+        if role in ("pro","admin","premium"):
+            logger.info(f"[is_pro] uid={uid} → True (role={role})")
+            return True
+        if status=="active":
+            logger.info(f"[is_pro] uid={uid} → True (status=active)")
+            return True
         # Check expiry for canceled but still valid
         end=p.get("subscription_end")
         if end and status in ("canceled","past_due"):
             try:
                 if datetime.fromisoformat(str(end).replace("Z","+00:00"))>datetime.utcnow().replace(tzinfo=None):
+                    logger.info(f"[is_pro] uid={uid} → True (canceled but valid until {end})")
                     return True
             except: pass
+        logger.info(f"[is_pro] uid={uid} → False (role={role!r}, status={status!r}, end={end!r})")
         return False
 
     def check_daily_limit(uid,limit_type="recipes"):
@@ -4312,14 +4318,29 @@ def create_app():
     @require_auth
     def debug_grant_pro():
         """DEV ONLY: grant PRO+admin role to current user."""
-        db_update_profile(g.user_id, {
-            "role": "admin",
-            "subscription_status": "active"
-        })
+        try:
+            sb.table("profiles").update({
+                "role": "admin",
+                "subscription_status": "active",
+                "updated_at": datetime.utcnow().isoformat()
+            }).eq("id", g.user_id).execute()
+        except Exception as e:
+            logger.error(f"[grant-pro] update failed for uid={g.user_id}: {e}")
+            return jsonify({"success": False, "error": str(e)}), 500
         # Bust cache
         if g.user_id in _profile_cache:
             del _profile_cache[g.user_id]
-        return jsonify({"success": True, "user_id": g.user_id, "role": "admin", "subscription_status": "active"})
+        # Read back fresh to verify
+        fresh = db_get_profile(g.user_id)
+        is_pro_now = is_pro(g.user_id)
+        logger.info(f"[grant-pro] uid={g.user_id} role={fresh.get('role')!r} status={fresh.get('subscription_status')!r} is_pro={is_pro_now}")
+        return jsonify({
+            "success": True,
+            "user_id": g.user_id,
+            "verified_role": fresh.get("role"),
+            "verified_status": fresh.get("subscription_status"),
+            "is_pro": is_pro_now
+        })
 
     @app.route("/api/debug/me")
     @require_auth
