@@ -2452,3 +2452,12 @@ body{
 .quick-result-card .quick-result-desc{font-size:.78rem;color:rgba(255,255,255,.6);line-height:1.4;word-break:break-word}
 .quick-result-card .quick-result-open{color:var(--gold,#d4af37);font-size:1.2rem;flex-shrink:0;font-weight:600}
 .quick-result-card .quick-result-meta{display:flex;gap:14px;font-size:.78rem;color:rgba(255,255,255,.55);padding-left:38px}
+
+/* Step chevron — rotates when expanded */
+.step-chevron{margin-left:auto;color:var(--text-muted);font-size:.85rem;transition:transform .2s ease;flex-shrink:0}
+.step.active .step-chevron{transform:rotate(180deg);color:var(--gold,#d4af37)}
+.step-header{cursor:pointer}
+/* Steps toolbar */
+.steps-toolbar{display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border)}
+.steps-toolbar-btn{padding:6px 12px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-soft);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .15s}
+.steps-toolbar-btn:hover{background:rgba(212,175,55,.1);border-color:var(--gold,#d4af37);color:var(--gold,#d4af37)}

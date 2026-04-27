@@ -379,15 +379,16 @@ function bSubs(it){return it.map(s=>{let h='<div style="padding:6px 0 6px;border
 // Warnings
 function bWarnings(it){return it.map(w=>`<div class="warning-card"><div class="warning-problem">${esc(w.problem)}</div><div class="warning-solution">→ ${esc(w.solution)}</div></div>`).join('')}
 
-// New steps with progress dots, expand/collapse, science toggle
+// New steps with progress dots, expand/collapse (independent), science toggle
 function bSteps2(st,recipeTitle){
-  const dots=st.map((_,i)=>`<div class="prog-dot" data-idx="${i}"></div>`).join('');
+  const dots=st.map((_,i)=>`<div class="prog-dot${i===0?' active':''}" data-idx="${i}"></div>`).join('');
   const stepsH=st.map((s,i)=>{
     const hasScience=s.why||s.tip;
     return `<div class="step${i===0?' active':''}" onclick="activateStep(this,${i})">
       <div class="step-header">
         <div class="step-num">${s.number}</div>
         <div class="step-title">${esc(s.title||'')}</div>
+        <div class="step-chevron">▾</div>
       </div>
       <div class="step-body">
         <div class="step-text">${esc(s.instruction)}</div>
@@ -404,21 +405,41 @@ function bSteps2(st,recipeTitle){
       </div>
     </div>`;
   }).join('');
-  return `<div class="steps-progress">${dots}</div>${stepsH}`;
+  // Toolbar: expand all / collapse all
+  const toolbar=`<div class="steps-toolbar">
+    <button class="steps-toolbar-btn" onclick="event.stopPropagation();expandAllSteps(this)">Rozwiń wszystkie</button>
+    <button class="steps-toolbar-btn" onclick="event.stopPropagation();collapseAllSteps(this)">Zwiń wszystkie</button>
+  </div>`;
+  return `<div class="steps-progress">${dots}</div>${toolbar}${stepsH}`;
 }
 
+// Toggle a single step independently — multiple can stay open at once
 function activateStep(el,idx){
+  el.classList.toggle('active');
+  // Mark this dot as done (visited); active dot follows the most recently clicked
   const container=el.closest('.section-body-inner');
-  container.querySelectorAll('.step').forEach((s,i)=>{
-    s.classList.toggle('active',i===idx);
-  });
-  // Update progress dots
-  const dots=el.closest('.section-body-inner').querySelectorAll('.prog-dot');
-  dots.forEach((d,i)=>{
-    d.classList.remove('active','done');
-    if(i<idx) d.classList.add('done');
-    else if(i===idx) d.classList.add('active');
-  });
+  if(!container) return;
+  const dots=container.querySelectorAll('.prog-dot');
+  dots.forEach(d=>d.classList.remove('active'));
+  const dot=dots[idx];
+  if(dot){
+    if(el.classList.contains('active')) dot.classList.add('active','done');
+    else dot.classList.remove('active');
+  }
+}
+
+function expandAllSteps(btn){
+  const container=btn.closest('.section-body-inner');
+  if(!container) return;
+  container.querySelectorAll('.step').forEach(s=>s.classList.add('active'));
+  container.querySelectorAll('.prog-dot').forEach(d=>d.classList.add('done'));
+}
+
+function collapseAllSteps(btn){
+  const container=btn.closest('.section-body-inner');
+  if(!container) return;
+  container.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  container.querySelectorAll('.prog-dot').forEach(d=>d.classList.remove('active'));
 }
 
 // Legacy bSteps (used in step mode / buildRecipeHTML)
