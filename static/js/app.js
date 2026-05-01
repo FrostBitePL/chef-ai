@@ -185,12 +185,10 @@ async function submitAuth(e){
       const{data,error}=await sbClient.auth.signUp({email,password:pass,options:{data:{name}}});
       if(error){errEl.textContent=error.message;return}
       if(data.user){
-        // Update profile name
-        if(name){
-          setTimeout(async()=>{
-            try{await fetch(API+'/api/profile',{method:'POST',headers:authHeaders(),body:JSON.stringify({name})})}catch{}
-          },1000);
-        }
+        // Force-anchor Polish on the new profile + save name (only PL is supported for now)
+        setTimeout(async()=>{
+          try{await fetch(API+'/api/profile',{method:'POST',headers:authHeaders(),body:JSON.stringify({name:name||'',lang:'pl'})})}catch{}
+        },1000);
       }
     } else {
       const{data,error}=await sbClient.auth.signInWithPassword({email,password:pass});
@@ -452,24 +450,28 @@ function loadingDots(){return'<div class="loading-dots"><span></span><span></spa
 
 // ─── Onboarding ───
 let obStep=0;
-const OB_EQUIPMENT={
-  basic:['Piekarnik','Płyta indukcyjna/gazowa','Patelnia nieprzywierająca','Garnek','Waga kuchenna','Nóż szefa kuchni'],
-  advanced:['Piekarnik z termoobiegiem','Płyta indukcyjna','Patelnia stalowa','Patelnia żeliwna','Patelnia nieprzywierająca','Sous-vide cyrkulator','Robot kuchenny','Blender','Waga kuchenna','Termometr sondowy'],
-  pro:['Płyta indukcyjna (poziomy 1-14)','Piekarnik z termosondą','Sous-vide cyrkulator','Płyta stalowa 8mm','Blender (prędkość 1-5)','Robot kuchenny (prędkość 1-7)','Maszynka do makaronu','Maszynka do mielenia','Waga analityczna 0.001g','Waga kuchenna','Syfon iSi (N2O)','Vacuum sealer','Pirometr','Hydrokoloidy']
-};
-const OB_BANS={
+// Standard kitchen equipment — pre-selected by default (most kitchens have these)
+const OB_STANDARD_EQUIPMENT=['Piekarnik','Płyta indukcyjna/gazowa','Patelnia nieprzywierająca','Garnek','Nóż szefa kuchni','Waga kuchenna'];
+// Advanced equipment — opt-in, user can toggle individually
+const OB_ADVANCED_EQUIPMENT=['Patelnia żeliwna','Patelnia stalowa','Termoobieg','Termometr sondowy','Sous-vide cyrkulator','Robot kuchenny','Blender','Mikser planetarny','Maszynka do makaronu','Maszynka do mielenia','Vacuum sealer','Syfon iSi (N2O)','Pirometr','Wok'];
+// Diet presets — translate to bans
+const OB_DIET_BANS={
   none:[],
-  lactose:['Mleko','Śmietana','Masło','Ser żółty','Jogurt'],
-  gluten:['Mąka pszenna','Chleb','Makaron pszenny','Panierka'],
-  vegan:['Mięso','Ryby','Nabiał','Jajka','Miód']
+  vegetarian:['Mięso','Wołowina','Wieprzowina','Kurczak','Drób','Indyk','Ryby','Owoce morza','Krewetki','Tuńczyk','Łosoś'],
+  vegan:['Mięso','Wołowina','Wieprzowina','Kurczak','Drób','Indyk','Ryby','Owoce morza','Krewetki','Tuńczyk','Łosoś','Mleko','Śmietana','Masło','Ser','Jogurt','Jajka','Miód']
 };
-let obData={name:'',level:'mid',equipment:[],bans:[]};
+let obData={name:'',level:'mid',equipment:[],bans:[],diet:'none',dietOther:''};
 
 function showOnboarding(){
   document.getElementById('appMain').style.display='none';
   document.getElementById('onboardingOverlay').style.display='flex';
   obStep=0;
   obData.name=userProfile?.name||currentUser?.user_metadata?.full_name||currentUser?.email?.split('@')[0]||'';
+  // Pre-select standard equipment by default (everyone has these)
+  obData.equipment=[...OB_STANDARD_EQUIPMENT];
+  obData.bans=[];
+  obData.diet='none';
+  obData.dietOther='';
   renderObStep();
 }
 
@@ -490,54 +492,73 @@ function renderObStep(){
       +'<button class="auth-submit" onclick="obNext()" style="margin-top:20px">'+t('ob.next')+'</button>';
   }
   else if(obStep===1){
+    // STEP 1: Equipment - standard pre-selected, advanced opt-in
+    const stdHtml=OB_STANDARD_EQUIPMENT.map(item=>{
+      const checked=obData.equipment.includes(item);
+      return '<label class="ob-check'+(checked?' active':'')+'"><input type="checkbox" '+(checked?'checked':'')+' onchange="toggleObEquip(\''+esc(item).replace(/'/g,"\\'")+'\')"><span>'+esc(item)+'</span></label>';
+    }).join('');
+    const advExpanded=!!obData.advancedExpanded;
+    const advHtml=advExpanded?OB_ADVANCED_EQUIPMENT.map(item=>{
+      const checked=obData.equipment.includes(item);
+      return '<label class="ob-check'+(checked?' active':'')+'"><input type="checkbox" '+(checked?'checked':'')+' onchange="toggleObEquip(\''+esc(item).replace(/'/g,"\\'")+'\')"><span>'+esc(item)+'</span></label>';
+    }).join(''):'';
+    // Custom equipment chips (anything user added that's not in standard/advanced lists)
+    const customItems=obData.equipment.filter(e=>!OB_STANDARD_EQUIPMENT.includes(e)&&!OB_ADVANCED_EQUIPMENT.includes(e));
+    const customHtml=customItems.length?'<div class="ob-tags" style="margin-top:10px">'+customItems.map((e)=>'<span class="ob-tag" onclick="removeObEquip(\''+esc(e).replace(/'/g,"\\'")+'\')">'+esc(e)+' ✕</span>').join('')+'</div>':'';
     el.innerHTML=dots+'<h2 class="ob-title">'+t('ob.equip_title')+'</h2>'
-      +'<p class="ob-sub">'+t('ob.equip_sub')+'</p>'
-      +'<div class="ob-presets">'
-      +'<button class="ob-preset'+(obData.equipmentPreset==='basic'?' active':'')+'" onclick="selectEquipPreset(\'basic\')">'+t('ob.equip_basic')+'</button>'
-      +'<button class="ob-preset'+(obData.equipmentPreset==='advanced'?' active':'')+'" onclick="selectEquipPreset(\'advanced\')">'+t('ob.equip_advanced')+'</button>'
-      +'<button class="ob-preset'+(obData.equipmentPreset==='pro'?' active':'')+'" onclick="selectEquipPreset(\'pro\')">'+t('ob.equip_pro')+'</button>'
-      +'</div>'
-      +'<div class="ob-tags" id="obEquipTags"></div>'
-      +'<div class="ob-add-row"><input type="text" class="auth-input" id="obNewEquip" placeholder="'+t('ob.equip_add')+'" style="margin:0;flex:1"><button class="ob-add-btn" onclick="obAddEquip()">+</button></div>'
+      +'<p class="ob-sub">'+t('ob.equip_sub_v2')+'</p>'
+      +'<div class="ob-checkbox-list">'+stdHtml+'</div>'
+      +'<button class="ob-toggle-adv" onclick="obData.advancedExpanded=!obData.advancedExpanded;renderObStep()">'+(advExpanded?'▾ ':'▸ ')+t('ob.equip_advanced_toggle')+'</button>'
+      +(advExpanded?'<div class="ob-checkbox-list ob-advanced-list">'+advHtml+'</div>':'')
+      +customHtml
+      +'<div class="ob-add-row" style="margin-top:12px"><input type="text" class="auth-input" id="obNewEquip" placeholder="'+t('ob.equip_add')+'" style="margin:0;flex:1"><button class="ob-add-btn" onclick="obAddEquip()">+</button></div>'
       +'<div class="ob-nav"><button class="ob-back" onclick="obStep=0;renderObStep()">'+t('ob.back')+'</button><button class="auth-submit" onclick="obNext()" style="flex:1">'+t('ob.next')+'</button></div>';
-    renderObEquipTags();
   }
   else if(obStep===2){
-    el.innerHTML=dots+'<h2 class="ob-title">'+t('ob.bans_title')+'</h2>'
-      +'<p class="ob-sub">'+t('ob.bans_sub')+'</p>'
-      +'<div class="ob-presets">'
-      +'<button class="ob-preset" onclick="addBanPresetOb(\'lactose\')">'+t('ob.ban_lactose')+'</button>'
-      +'<button class="ob-preset" onclick="addBanPresetOb(\'gluten\')">'+t('ob.ban_gluten')+'</button>'
-      +'<button class="ob-preset" onclick="addBanPresetOb(\'vegan\')">'+t('ob.ban_vegan')+'</button>'
-      +'</div>'
+    // STEP 2: Diet preset + custom dislikes
+    const dietOpts=[
+      {key:'none',icon:'🍽️',label:t('ob.diet_none')},
+      {key:'vegetarian',icon:'🥗',label:t('ob.diet_vegetarian')},
+      {key:'vegan',icon:'🌱',label:t('ob.diet_vegan')},
+      {key:'other',icon:'✏️',label:t('ob.diet_other')}
+    ];
+    const dietHtml=dietOpts.map(o=>'<button class="ob-diet'+(obData.diet===o.key?' active':'')+'" onclick="selectDiet(\''+o.key+'\')"><span class="ob-diet-icon">'+o.icon+'</span><span class="ob-diet-label">'+o.label+'</span></button>').join('');
+    const otherInput=obData.diet==='other'?'<input type="text" class="auth-input" id="obDietOther" value="'+esc(obData.dietOther)+'" placeholder="'+t('ob.diet_other_placeholder')+'" style="margin-top:10px" oninput="obData.dietOther=this.value">':'';
+    el.innerHTML=dots+'<h2 class="ob-title">'+t('ob.bans_title_v2')+'</h2>'
+      +'<p class="ob-sub">'+t('ob.diet_q')+'</p>'
+      +'<div class="ob-diet-grid">'+dietHtml+'</div>'
+      +otherInput
+      +'<p class="ob-sub" style="margin-top:20px">'+t('ob.dislikes_q')+'</p>'
+      +'<p class="ob-sub-small">'+t('ob.dislikes_hint')+'</p>'
       +'<div class="ob-tags" id="obBanTags"></div>'
-      +'<div class="ob-add-row"><input type="text" class="auth-input" id="obNewBan" placeholder="'+t('ob.ban_add')+'" style="margin:0;flex:1"><button class="ob-add-btn" onclick="obAddBan()">+</button></div>'
+      +'<div class="ob-add-row"><input type="text" class="auth-input" id="obNewBan" placeholder="'+t('ob.ban_add_v2')+'" style="margin:0;flex:1" onkeydown="if(event.key===\'Enter\'){event.preventDefault();obAddBan()}"><button class="ob-add-btn" onclick="obAddBan()">+</button></div>'
       +'<div class="ob-nav"><button class="ob-back" onclick="obStep=1;renderObStep()">'+t('ob.back')+'</button><button class="auth-submit ob-finish" onclick="finishOnboarding()" style="flex:1">'+t('ob.finish')+'</button></div>';
     renderObBanTags();
   }
 }
 
-function selectEquipPreset(key){
-  obData.equipmentPreset=key;
-  obData.equipment=[...OB_EQUIPMENT[key]];
+function toggleObEquip(item){
+  const i=obData.equipment.indexOf(item);
+  if(i>=0) obData.equipment.splice(i,1);
+  else obData.equipment.push(item);
   renderObStep();
 }
 
-function renderObEquipTags(){
-  const el=document.getElementById('obEquipTags');
-  if(!el) return;
-  el.innerHTML=obData.equipment.map((e,i)=>'<span class="ob-tag" onclick="obData.equipment.splice('+i+',1);renderObEquipTags()">'+esc(e)+' ✕</span>').join('');
+function removeObEquip(item){
+  const i=obData.equipment.indexOf(item);
+  if(i>=0){obData.equipment.splice(i,1);renderObStep()}
 }
 
 function obAddEquip(){
   const inp=document.getElementById('obNewEquip');
   const v=inp?.value?.trim();
-  if(v&&!obData.equipment.includes(v)){obData.equipment.push(v);inp.value='';renderObEquipTags()}
+  if(v&&!obData.equipment.includes(v)){obData.equipment.push(v);inp.value='';renderObStep()}
 }
 
-function addBanPresetOb(key){
-  OB_BANS[key].forEach(b=>{if(!obData.bans.includes(b))obData.bans.push(b)});
-  renderObBanTags();
+function selectDiet(key){
+  obData.diet=key;
+  if(key==='other') obData.dietOther='';
+  renderObStep();
 }
 
 function renderObBanTags(){
@@ -556,13 +577,6 @@ function obNext(){
   if(obStep===0){
     const name=document.getElementById('obName')?.value?.trim();
     if(name) obData.name=name;
-    if(!obData.equipment.length){
-      // Pre-select based on level
-      if(obData.level==='beginner') obData.equipment=[...OB_EQUIPMENT.basic];
-      else if(obData.level==='mid') obData.equipment=[...OB_EQUIPMENT.advanced];
-      else obData.equipment=[...OB_EQUIPMENT.pro];
-      obData.equipmentPreset=obData.level==='beginner'?'basic':obData.level==='mid'?'advanced':'pro';
-    }
   }
   obStep++;
   renderObStep();
@@ -572,11 +586,29 @@ async function finishOnboarding(){
   const btn=document.querySelector('.ob-finish');
   if(btn){btn.disabled=true;btn.textContent=t('ob.saving')}
   
+  // Combine diet-derived bans with user's custom dislikes (deduplicated)
+  const dietBans=OB_DIET_BANS[obData.diet]||[];
+  const allBans=[...new Set([...dietBans,...obData.bans])];
+  // Map diet preset to backend dietary_preferences format
+  const dietaryPrefs=[];
+  if(obData.diet==='vegetarian') dietaryPrefs.push('wegetariańskie');
+  else if(obData.diet==='vegan') dietaryPrefs.push('wegańskie');
+  else if(obData.diet==='other' && obData.dietOther.trim()){
+    // Try to map common keywords; otherwise add as-is so it lands in profile
+    const o=obData.dietOther.toLowerCase();
+    if(o.includes('bezglut')||o.includes('gluten')) dietaryPrefs.push('bezglutenowe');
+    if(o.includes('keto')) dietaryPrefs.push('keto');
+    if(o.includes('low-carb')||o.includes('niskowęg')) dietaryPrefs.push('low-carb');
+    if(o.includes('pescet')) dietaryPrefs.push('pescetariańskie');
+    if(!dietaryPrefs.length) dietaryPrefs.push(obData.dietOther.trim());
+  }
   const profile={
     name:obData.name,
     equipment:obData.equipment,
-    banned_ingredients:obData.bans,
-    bot_profile:obData.level==='pro'?'lukasz':'guest'
+    banned_ingredients:allBans,
+    dietary_preferences:dietaryPrefs,
+    bot_profile:obData.level==='pro'?'lukasz':'guest',
+    lang:'pl'
   };
   
   try{

@@ -215,7 +215,7 @@ def optional_auth(f):
     return wrapper
 
 # â”€â”€â”€ Database Operations â”€â”€â”€
-DEFAULT_PROFILE={"name":"","role":"free","equipment":[],"banned_ingredients":[],"favorite_ingredients":[],"favorite_techniques":[],"mastered_skills":[],"discovered_preferences":[],"cooked_recipes":[],"ratings":[],"feedback_history":[],"stats":{"total_recipes":0},"lang":"pl"}
+DEFAULT_PROFILE={"name":"","role":"free","equipment":[],"banned_ingredients":[],"dietary_preferences":[],"favorite_ingredients":[],"favorite_techniques":[],"mastered_skills":[],"discovered_preferences":[],"cooked_recipes":[],"ratings":[],"feedback_history":[],"stats":{"total_recipes":0},"lang":"pl"}
 
 def db_get_profile(uid):
     try:
@@ -363,6 +363,11 @@ def profile_to_context(p):
         parts.append("⛔ ZAKAZ: NIE proponuj dań wymagających sprzętu spoza tej listy (np. sous-vide bez cyrkulatora, Thermomix bez Thermomixa, wędzarnia bez wędzarni).")
     else:
         parts.append("⛔ SPRZĘT: Użytkownik nie podał sprzętu — używaj tylko podstawowego (garnek, patelnia, piekarnik, deski, noże). NIE używaj sous-vide, Thermomix, wędzarni ani innego sprzętu specjalistycznego.")
+    diet_prefs=p.get("dietary_preferences",[])
+    if isinstance(diet_prefs,str): diet_prefs=json.loads(diet_prefs) if diet_prefs else []
+    if diet_prefs:
+        diet_str=", ".join(diet_prefs[:5])
+        parts.append(f"DIETA UŻYTKOWNIKA: {diet_str} — KAŻDE Twoje danie MUSI być zgodne z tą dietą. NIE proponuj nic co ją łamie.")
     if bans: parts.append("ABSOLUTNE ZAKAZY (NIGDY nie uzywaj!): "+", ".join(bans[:20]))
     if fav: parts.append("ULUBIONE SKLADNIKI: "+", ".join(fav[:12]))
     if cooked:
@@ -5240,7 +5245,7 @@ def create_app():
     def update_profile_ep():
         d=request.get_json(silent=True) or {}
         updates={}
-        for key in ["favorite_ingredients","favorite_techniques","discovered_preferences","mastered_skills","equipment","banned_ingredients","bot_profile","name","lang"]:
+        for key in ["favorite_ingredients","favorite_techniques","discovered_preferences","mastered_skills","equipment","banned_ingredients","dietary_preferences","bot_profile","name","lang"]:
             if key in d: updates[key]=d[key]
         if "rating" in d:
             p=db_get_profile(g.user_id)

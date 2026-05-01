@@ -73,6 +73,23 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .ob-add-btn{width:40px;background:var(--gold);color:#0a0908;border:none;border-radius:8px;font-size:1.2rem;font-weight:700;cursor:pointer}
 .ob-nav{display:flex;gap:10px;margin-top:16px}
 .ob-back{padding:12px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-dim);font-family:var(--sans);font-size:0.88rem;cursor:pointer}
+/* Onboarding v2 — checkbox list, diet grid, advanced toggle */
+.ob-checkbox-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:14px}
+.ob-check{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.85rem;transition:all 0.15s;user-select:none}
+.ob-check:hover{border-color:var(--gold-dim)}
+.ob-check.active{border-color:var(--gold);background:var(--gold-glow);color:var(--gold)}
+.ob-check input[type="checkbox"]{accent-color:var(--gold);cursor:pointer;width:16px;height:16px;flex-shrink:0}
+.ob-check span{flex:1}
+.ob-toggle-adv{display:block;width:100%;padding:10px;margin:8px 0 14px;background:transparent;border:1px dashed var(--border);border-radius:8px;color:var(--text-dim);font-family:var(--sans);font-size:0.85rem;cursor:pointer;transition:all 0.2s;text-align:left}
+.ob-toggle-adv:hover{border-color:var(--gold-dim);color:var(--gold)}
+.ob-advanced-list{margin-top:0;margin-bottom:14px}
+.ob-diet-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px}
+.ob-diet{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px 8px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-family:var(--sans);transition:all 0.15s}
+.ob-diet:hover{border-color:var(--gold-dim)}
+.ob-diet.active{border-color:var(--gold);background:var(--gold-glow);color:var(--gold)}
+.ob-diet-icon{font-size:1.4rem}
+.ob-diet-label{font-size:0.85rem;font-weight:500}
+.ob-sub-small{font-size:0.75rem;color:var(--text-faint);margin:-6px 0 8px}
 /* User info in header */
 .user-info{display:flex;align-items:center;gap:8px}
 .user-name{font-size:0.78rem;color:var(--text-dim);font-weight:500;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
