@@ -551,7 +551,8 @@ def enforce_pro_quality(data, prof_data=None):
     has_acid = _pq_has_any(all_text, [
         "cytryn", "limon", "ocet", "octu", "wino", "wina", "winem",
         "labneh", "jogurt", "kefir", "kimchi", "kapary", "kapar",
-        "pickle", "marynow", "ferment", "kwaśn"
+        "pickle", "marynow", "ferment", "kwaśn", "kwaskow",
+        "rabarbar", "żurawina", "porzeczk", "agrest", "tamarind", "sumak"
     ])
     if not has_acid:
         _pq_add_ingredient_if_missing(ingredients, {"item": "cytryna", "amount": "10ml soku", "note": "finishing — świeżość i balans"})
