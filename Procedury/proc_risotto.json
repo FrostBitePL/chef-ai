@@ -1,0 +1,71 @@
+[
+  {
+    "rule": "risotto_rice_toasting",
+    "category": "cooking_procedures",
+    "applies_to": ["risotto", "risotto ze szparagami", "risotto grzybowe", "risotto z krewetkami", "risotto z dynią"],
+    "trick": "Tostuj ryż arborio na sucho (bez tłuszczu) na średnim ogniu 1-2 min PRZED dodaniem masła/oliwy i soffritto",
+    "why_it_works": "Suche prażenie ryżu aktywuje skrobię na powierzchni ziaren — tworzy cienką warstwę żelatynizowanej skrobi która kontroluje tempo uwalniana amylozy podczas gotowania. Efekt: kremowe risotto które nie zamienia się w kleik. Dodatkowo reakcja Maillarda na suchych ziarnach dodaje orzechowej głębi smaku.",
+    "how_to": "Suchy rondelek lub garnek, średni ogień (poziom 5-6 na indukcji). Wsyp ryż, mieszaj drewnianą łyżką 1-2 min aż ziarna staną się lekko przezroczyste na brzegach i poczujesz zapach prażonego zboża. NIE dodawaj tłuszczu na tym etapie. Dopiero po tostowaniu dodaj masło/oliwę i kontynuuj klasycznie.",
+    "impact": "high",
+    "effort": "2 min extra",
+    "confidence": 0.97
+  },
+  {
+    "rule": "risotto_hot_stock_only",
+    "category": "cooking_procedures",
+    "applies_to": ["risotto"],
+    "trick": "Bulion do risotto MUSI być gorący (85-90°C) przez cały czas gotowania — trzymaj w osobnym garnku na wolnym ogniu",
+    "why_it_works": "Zimny bulion obniża temperaturę ryżu przy każdym dodaniu — skrobia przestaje się żelatynizować, ryż gotuje się nierównomiernie, czas się wydłuża. Gorący bulion utrzymuje stałą temperaturę gotowania (~85°C) co zapewnia równomierne uwalnianie amylozy i kremową konsystencję.",
+    "how_to": "Osobny garnek z bulionem na sąsiednim palniku, na wolnym ogniu (poziom 2-3). Bulion ma delikatnie parować, nie wrzeć. Dodawaj po chochli (~100ml), mieszaj, czekaj aż ryż wchłonie — dopiero wtedy następna porcja. Całość 18-22 min.",
+    "impact": "very high — fundamentalna różnica między kremowym a gruzełkowatym risotto",
+    "effort": "zero extra — tylko planowanie (drugi garnek)",
+    "confidence": 0.99
+  },
+  {
+    "rule": "risotto_mantecatura",
+    "category": "cooking_procedures",
+    "applies_to": ["risotto"],
+    "trick": "Mantecatura — zdejmij risotto z ognia, dodaj zimne masło + parmezan, energicznie mieszaj 30-60 sekund",
+    "why_it_works": "Mantecatura to emulsyfikacja — zimne masło (nie roztopione!) wchodzi w emulsję ze skrobią uwolnioną z ryżu, tworząc jedwabistą, kremową konsystencję. Parmezan dodaje umami i sól. Robienie tego NA OGNIU powoduje że masło się rozdziela (tłuszcz+woda) zamiast emulsyfikować. Zdejmij z ognia = emulsja trzyma.",
+    "how_to": "Gdy ryż jest al dente (nadal lekko twardy w środku — dojdzie poza ogniem): zdejmij z palnika. Dodaj 30-40g zimnego masła pokrojonego w kostki + 40-50g startego parmigiano reggiano. Mieszaj energicznie drewnianą łyżką okrężnymi ruchami 30-60 sekund. Risotto powinno 'falować' jak lawa — jeśli jest za gęste, dodaj łyżkę gorącego bulionu.",
+    "doneness": "Gotowe risotto na talerzu powinno powoli się rozpływać (all'onda — jak fala). Jeśli stoi nieruchomo w kopce — za gęste. Jeśli cieknie jak zupa — za rzadkie.",
+    "impact": "very high — TO jest różnica między risotto restauracyjnym a domowym",
+    "effort": "30 sekund",
+    "confidence": 0.99
+  },
+  {
+    "rule": "risotto_asparagus_dual_technique",
+    "category": "cooking_procedures",
+    "applies_to": ["risotto ze szparagami", "risotto szparagowe"],
+    "trick": "Szparagi dwutorowo: (1) krem z łodyg blendowany do bazy risotto + (2) tips sautéowane na maśle osobno na finishing",
+    "why_it_works": "Łodygi szparagów mają intensywny smak ale twardą, włóknistą teksturę — blendowanie wydobywa smak eliminując teksturę. Tips są delikatne i chrupiące — sautéowanie na maśle zachowuje ich teksturę i kolor. Razem: głębia smaku szparagowego + kontrast tekstury na wierzchu.",
+    "how_to": "Łodygi (dolne 2/3): obierz, pokrój, blanszuj 3 min w osolonym wrzątku. Blenduj z 2 łyżkami bulionu na gładki krem. Dodaj krem do risotto w ostatnich 3 minutach gotowania. Tips (górne 1/3): sautéuj na maśle (15g) z odrobiną soli, 90 sekund na średnio-wysokim ogniu. Ułóż na wierzchu gotowego risotto.",
+    "finishing": "Skórka z cytryny (Microplane) + odrobina soku z cytryny (5ml) + oliwa extra virgin na sam koniec. Opcjonalnie: prażone migdały w płatkach lub orzeszki piniowe na teksturowy kontrast.",
+    "impact": "very high",
+    "effort": "5 min extra",
+    "confidence": 0.98
+  },
+  {
+    "rule": "risotto_acid_balance",
+    "category": "cooking_procedures",
+    "applies_to": ["risotto"],
+    "trick": "Risotto MUSI mieć element kwaśny — wino na deglazing na początku + cytryna lub labneh na końcu",
+    "why_it_works": "Risotto jest z natury ciężkie (skrobia + masło + ser). Kwas równoważy tłuszcz i dodaje jasności. Wino deglazes fond ze dna (Maillard z tostowania cebuli), dodaje głębię. Cytryna na koniec 'otwiera' smak — bez niej risotto jest płaskie i jednowymiarowe.",
+    "how_to": "Deglazing: po zeszkleniu cebuli/szalotki i tostowaniu ryżu, wlej 100ml białego wytrawnego wina. Mieszaj aż całkowicie odparuje (1-2 min). Dopiero potem zacznij dodawać bulion. Na koniec (po mantecaturze): 5ml soku z cytryny LUB łyżka labneh/mascarpone. Labneh daje kwaśność BEZ ciężkości śmietany.",
+    "pro_note": "Labneh zamiast śmietany to pro-level upgrade: fermentowana kwaśność + lekkość + kremowość bez tłuszczu.",
+    "impact": "high",
+    "effort": "zero extra",
+    "confidence": 0.98
+  },
+  {
+    "rule": "risotto_wine_deglazing",
+    "category": "cooking_procedures",
+    "applies_to": ["risotto"],
+    "trick": "Wino dodawaj PRZED bulionem — wlej na gorący ryż po tostowaniu, mieszaj aż CAŁKOWICIE odparuje",
+    "why_it_works": "Alkohol wydobywa związki smakowe rozpuszczalne w alkoholu (nie w wodzie ani tłuszczu) z soffritto i ryżu. Kwas z wina reaguje ze skrobią pomagając w kremowej teksturze. Jeśli wino nie odparuje całkowicie przed dodaniem bulionu, risotto będzie miało surowy, ostry posmak alkoholu.",
+    "how_to": "Po tostowaniu ryżu z masłem i szalotką: wlej 100ml wytrawnego białego wina (Pinot Grigio, Vermentino — NIE aromatyczne jak Riesling). Mieszaj 1-2 min aż patelnia jest prawie sucha i nie czuć alkoholu. Test: pochyl nos nad ryżem — jeśli czujesz ostrość alkoholu, gotuj dalej.",
+    "impact": "high",
+    "effort": "1-2 min",
+    "confidence": 0.99
+  }
+]

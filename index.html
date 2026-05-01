@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Chef AI</title>
+<meta name="theme-color" content="#0f0a0d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- Auth Overlay -->
+<div class="auth-overlay" id="authOverlay" style="display:flex">
+  <div class="auth-card">
+    <div class="auth-logo">🍳</div>
+    <h1 class="auth-brand">Chef AI</h1>
+    <p class="auth-subtitle">Gotowanie z parametrami zamiast zgadywania</p>
+    <h2 class="auth-mode-title" id="authTitle">Logowanie</h2>
+    <div class="auth-social">
+      <button class="auth-social-btn google" onclick="socialLogin('google')"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Google</button>
+      <button class="auth-social-btn facebook" onclick="socialLogin('facebook')"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> Facebook</button>
+      <button class="auth-social-btn apple" onclick="socialLogin('apple')"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg> Apple</button>
+    </div>
+    <div class="auth-divider"><span>lub email</span></div>
+    <div id="authForm" data-mode="login" onsubmit="submitAuth(event)">
+      <div id="authNameRow" style="display:none">
+        <input type="text" class="auth-input" id="authName" placeholder="Twoje imię" autocomplete="name">
+      </div>
+      <input type="email" class="auth-input" id="authEmail" placeholder="Email" autocomplete="email">
+      <input type="password" class="auth-input" id="authPass" placeholder="Hasło (min. 6 znaków)" autocomplete="current-password">
+      <div class="auth-error" id="authError"></div>
+      <button type="button" class="auth-submit" id="authSubmitBtn" onclick="submitAuth(event)">Zaloguj się</button>
+      <div class="auth-toggle" id="authToggle">Nie masz konta? <a href="#" onclick="toggleAuthMode();return false">Zarejestruj się</a></div>
+    </div>
+    <div class="auth-legal">Rejestrując się akceptujesz <a href="/terms" target="_blank">Regulamin</a> i <a href="/privacy" target="_blank">Politykę Prywatności</a></div>
+  </div>
+</div>
+
+<!-- Onboarding Overlay -->
+<div class="ob-overlay" id="onboardingOverlay" style="display:none">
+  <div class="ob-card" id="obContent"></div>
+</div>
+
+<!-- Main App -->
+<div class="app" id="appMain" style="display:none">
+  <div class="header">
+    <div class="header-title">🍳 <span>Chef</span> AI</div>
+    <div class="user-info" id="userInfo"></div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showView('chat')" id="tab-chat">💬 Chat</button>
+    <button class="tab-btn" onclick="showView('training')" id="tab-training">📚 Szkolenie</button>
+    <button class="tab-btn" onclick="showView('planner')" id="tab-planner">📅 Plan</button>
+    <button class="tab-btn" onclick="showView('history')" id="tab-history">🕐 Historia</button>
+    <button class="tab-btn" onclick="showView('favorites')" id="tab-fav">❤️<span class="tab-badge" id="fav-badge" style="display:none">0</span></button>
+    <button class="tab-btn" onclick="showView('profile')" id="tab-profile">👤 Profil</button>
+  </div>
+
+  <div class="status-bar" id="status"></div>
+
+  <!-- Chat -->
+  <div class="view active" id="view-chat">
+    <div class="messages" id="messages"></div>
+    <div class="input-area">
+      <div class="quick-tags" id="quickTags"></div>
+      <div class="input-row">
+        <textarea class="input-field" id="input" placeholder="Co dziś gotujemy?" rows="1"></textarea>
+        <button class="icon-btn" onclick="surprise()" title="Zaskoczy mnie!">🎲</button>
+        <button class="icon-btn" onclick="importFromUrl()" title="Importuj z URL">🔗</button>
+        <button class="icon-btn" id="kcalToggle" onclick="toggleKcal()">🔥</button>
+        <button class="send-btn" id="sendBtn" onclick="send()" disabled>➤</button>
+      </div>
+      <div class="kcal-row" id="kcalRow" style="display:none">
+        <input type="number" class="kcal-input" id="kcalInput" placeholder="500" min="100" max="3000" step="50">
+        <span class="kcal-label">kcal</span>
+        <button class="kcal-clear" onclick="clearKcal()">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Training -->
+  <div class="view" id="view-training">
+    <div class="progress-summary"><span class="p-label">Postęp szkolenia</span><span class="p-value" id="progressText">0/45</span></div>
+    <div class="progress-bar-global"><div class="progress-bar-global-fill" id="progressBarFill"></div></div>
+    <div id="skillTree" class="skill-tree-wrap"></div>
+    <div class="training-session" id="trainingSession">
+      <div class="training-header">
+        <button class="training-back" onclick="backToModules()">←</button>
+        <div class="training-info"><div class="t-title" id="tTitle"></div><div class="t-sub" id="tSub"></div></div>
+      </div>
+      <div class="phase-tabs">
+        <button class="phase-tab active" onclick="loadPhase('theory')" id="phaseTheory">📖 Teoria</button>
+        <button class="phase-tab" onclick="loadPhase('exercise')" id="phaseExercise">👨‍🍳 Ćwicz.</button>
+        <button class="phase-tab" onclick="loadPhase('feedback')" id="phaseFeedback">💬 Feedback</button>
+      </div>
+      <div class="training-content" id="trainingContent"></div>
+      <div class="input-area" id="feedbackInput" style="display:none">
+        <div class="input-row">
+          <textarea class="input-field" id="feedbackField" placeholder="Opisz jak ci poszło..." rows="1"></textarea>
+          <button class="send-btn" onclick="sendFeedback()">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Meal Planner -->
+  <div class="view" id="view-planner">
+    <div class="planner-form" id="plannerForm">
+      <div style="text-align:center;font-size:2rem;margin-bottom:8px">📅</div>
+      <div style="text-align:center;font-family:var(--serif);font-size:1.1rem;margin-bottom:16px">Plan posiłków</div>
+      <label>Ile dni?</label>
+      <select id="planDays"><option value="3">3 dni</option><option value="5">5 dni</option><option value="7" selected>7 dni</option></select>
+      <label>Preferencje (opcjonalnie)</label>
+      <input type="text" id="planPrefs" placeholder="np. dużo warzyw, szybkie obiady...">
+      <button class="planner-btn" onclick="generatePlan()">🍽 Generuj plan</button>
+    </div>
+    <div class="planner-result" id="plannerResult"></div>
+  </div>
+
+  <!-- History -->
+  <div class="view" id="view-history"><div class="history-list" id="historyList"></div></div>
+
+  <!-- Favorites -->
+  <div class="view" id="view-favorites"><div class="fav-list" id="favList"></div></div>
+
+  <!-- Profile -->
+  <div class="view" id="view-profile"><div class="profile-view" id="profileContent"></div></div>
+</div>
+
+<!-- Step mode overlay -->
+<div class="step-mode" id="stepMode">
+  <div class="step-mode-header">
+    <div style="font-family:var(--serif);font-size:0.95rem" id="stepModeTitle"></div>
+    <button class="step-mode-close" onclick="closeStepMode()">✕</button>
+  </div>
+  <div style="padding:0 14px"><div class="step-mode-bar"><div class="step-mode-fill" id="stepFill"></div></div></div>
+  <div class="step-mode-content" id="stepContent"></div>
+  <div class="step-mode-nav">
+    <button class="step-nav-btn" id="stepPrev" onclick="stepNav(-1)">←</button>
+    <button class="step-nav-btn primary" id="stepNext" onclick="stepNav(1)">Dalej →</button>
+  </div>
+</div>
+
+<!-- Live Cooking Mode -->
+<div class="live-mode" id="liveMode">
+  <div class="live-header">
+    <div class="live-title" id="liveTitle"></div>
+    <div class="live-step-count" id="liveStepCount"></div>
+    <button class="live-close" onclick="closeLive()">✕</button>
+  </div>
+  <div class="live-progress"><div class="live-progress-fill" id="liveProgressFill"></div></div>
+  <div class="live-body" id="liveBody"></div>
+  <div class="live-timer-bar" id="liveTimerBar" style="display:none">
+    <div class="live-timer-icon">⏱</div>
+    <div class="live-timer-time" id="liveTimerTime">0:00</div>
+    <div class="live-timer-label" id="liveTimerLabel"></div>
+    <button class="live-timer-stop" onclick="stopLiveTimer()">Stop</button>
+  </div>
+  <div class="live-help-panel" id="liveHelpPanel" style="display:none">
+    <div class="live-help-header"><span>🆘 Pomoc</span><button class="live-help-close" onclick="closeLiveHelp()">✕</button></div>
+    <div class="live-help-answer" id="liveHelpAnswer"></div>
+    <div class="live-help-input">
+      <textarea id="liveHelpField" placeholder="Co poszło nie tak?" rows="1"></textarea>
+      <button class="send-btn" onclick="askLiveHelp()">➤</button>
+    </div>
+  </div>
+  <div class="live-nav">
+    <button class="live-nav-btn" id="livePrev" onclick="liveNav(-1)">← Wstecz</button>
+    <button class="live-nav-btn live-help-btn" onclick="openLiveHelp()">🆘</button>
+    <button class="live-nav-btn live-primary" id="liveNext" onclick="liveNav(1)">Dalej →</button>
+  </div>
+</div>
+
+<div class="timer-overlay" id="timerOverlay"></div>
+
+<!-- Supabase JS (must be before app.js) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<!-- JS Modules -->
+<script src="/static/js/app.js"></script>
+<script src="/static/js/chat.js"></script>
+<script src="/static/js/training.js"></script>
+<script src="/static/js/planner.js"></script>
+<script src="/static/js/history.js"></script>
+<script src="/static/js/favorites.js"></script>
+<script src="/static/js/profile.js"></script>
+<script src="/static/js/live.js"></script>
+</body>
+</html>

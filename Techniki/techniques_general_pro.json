@@ -1,0 +1,96 @@
+[
+  {
+    "rule": "dry_brining_meat",
+    "category": "cooking_procedures",
+    "applies_to": ["stek", "steak", "wieprzowina", "kurczak", "drób", "kaczka", "mięso"],
+    "trick": "Suche solenie: posól mięso 1-1.5% wagi, odkryte w lodówce min 40 min (optymalnie 4-24h)",
+    "why_it_works": "Sól przez osmozę wyciąga wilgoć na powierzchnię (pierwsze 10 min). Potem wilgoć rozpuszcza sól i roztwór wchłania się z powrotem do wnętrza mięsa (30+ min). Efekt: mięso jest solone WEWNĄTRZ, nie tylko na powierzchni. Bonus: sucha powierzchnia = lepsza reakcja Maillarda = brązowa skorupka. Mokre mięso się GOTUJE a nie smaży.",
+    "how_to": "Zważ mięso. Wylicz 1-1.5% wagi w soli (np. 300g stek = 3-4.5g soli). Posól równomiernie z obu stron. Połóż na kratce nad talerzem (NIE w folii). Lodówka odkryte min 40 min, optymalnie overnight. Przed smażeniem: NIE płucz, NIE osuszaj ręcznikiem (jeśli solone >4h, powierzchnia jest sucha).",
+    "ratio": "1% = delikatne, 1.5% = optymalne, 2% = intensywne (do duszenia)",
+    "impact": "very high — fundamentalna technika profesjonalnej kuchni",
+    "effort": "1 min + czas oczekiwania",
+    "confidence": 0.99
+  },
+  {
+    "rule": "butter_basting_technique",
+    "category": "cooking_procedures",
+    "applies_to": ["stek", "steak", "ryba", "kurczak", "wieprzowina"],
+    "trick": "Basting masłem: ostatnie 30-60 sek smażenia — przechyl patelnię, nabieraj roztopione masło z czosnkiem i tymiankiem, polewaj mięso",
+    "why_it_works": "Masło w 130-160°C to beurre noisette — brązowieje, daje orzechowy aromat. Polewanie mięsa od góry gotuje je od dwóch stron jednocześnie — skraca czas smażenia, zmniejsza gradient temperatury (bardziej równomierny medium-rare). Czosnek i tymianek infuzują masło aromatami.",
+    "how_to": "Gdy mięso jest 30-60 sek od gotowości: dodaj do patelni masło (30g) + 2 rozgniecione ząbki czosnku + 3 gałązki tymianku. Przechyl patelnię 30° (masło zbiera się po jednej stronie). Dużą łyżką nabieraj masło i polewaj wierzch mięsa — nieprzerwanie przez 30-60 sek. Masło powinno być złotobrązowe i pieniste.",
+    "impact": "very high — restauracyjna technika finishing",
+    "effort": "1 min",
+    "confidence": 0.99
+  },
+  {
+    "rule": "pan_sauce_deglazing",
+    "category": "cooking_procedures",
+    "applies_to": ["stek", "steak", "wieprzowina", "kurczak", "drób", "sos do mięsa"],
+    "trick": "Sos z patelni po smażeniu mięsa: szalotka → deglazing winem/koniakiem → redukcja → masło (montaż)",
+    "why_it_works": "Fond (brązowy osad na dnie patelni) to skoncentrowana reakcja Maillarda — setki związków smakowych. Deglazing rozpuszcza fond. Redukcja zagęszcza. Montaż masłem (monter au beurre) emulsyfikuje sos — jedwabisty, błyszczący, otulający. To kompletny sos z jednej patelni.",
+    "how_to": "1. Wyjmij mięso, odpoczywa na kratce. 2. Na tłuszczu w patelni zeszklij szalotkę (1, drobno) — 1 min. 3. Deglazing: wlej 80ml wina/koniaku (OSTROŻNIE przy gazie — może się zapalić), drewnianą łyżką odrywaj fond ze dna. 4. Gotuj aż redukuje o 2/3 (~3 min). 5. Zdejmij z ognia. 6. Wrzuć 20-30g ZIMNEGO masła pokrojonego w kostki, mieszaj aż emulsja (błyszcząca, kremowa). 7. Dopraw: sól, pieprz, opcjonalnie 1 łyżeczka musztardy Dijon.",
+    "critical_rule": "Masło do montażu MUSI być zimne i dodane POZA ogniem. Ciepłe masło na ogniu = rozdziela się (tłuszcz+woda) zamiast emulsyfikować.",
+    "impact": "very high",
+    "effort": "5 min",
+    "confidence": 0.99
+  },
+  {
+    "rule": "blooming_spices_in_fat",
+    "category": "cooking_procedures",
+    "applies_to": ["curry", "danie azjatyckie", "zupa", "sos", "ragù", "chili", "danie korzenne"],
+    "trick": "Blooming — podgrzej suche przyprawy w gorącym tłuszczu 30-60 sek ZANIM dodasz płyny lub warzywa",
+    "why_it_works": "80% związków aromatycznych w przyprawach jest rozpuszczalnych w tłuszczu, nie w wodzie. Podgrzanie w oleju/maśle uwalnia i wzmacnia aromat 3-5x względem dodania suchych przypraw do sosu. Ciepło aktywuje lotne oleje eteryczne i rozpuszcza je w tłuszczu — smak dystrybuuje się równomiernie w całym daniu.",
+    "how_to": "Rozgrzej olej/masło na średnim ogniu (nie za gorąco — przyprawy palą się szybko). Dodaj suche przyprawy (kumin, kurkuma, papryka, garam masala, itp.). Mieszaj 30-60 sek aż poczujesz intensywny aromat. NATYCHMIAST dodaj cebulę/czosnek/warzywa — przerywają smażenie i absorbują aromatyczny tłuszcz.",
+    "warning": "NIE na wysokim ogniu — przyprawy palą się w sekundach, dając gorzki smak nie do naprawienia.",
+    "impact": "high",
+    "effort": "30 sekund",
+    "confidence": 0.99
+  },
+  {
+    "rule": "pasta_water_emulsion",
+    "category": "cooking_procedures",
+    "applies_to": ["makaron", "pasta", "spaghetti", "carbonara", "cacio e pepe", "aglio e olio"],
+    "trick": "Zarezerwuj 200ml wody z makaronu PRZED odcedzeniem — skrobia w wodzie to naturalny emulgator sosu",
+    "why_it_works": "Woda z gotowania makaronu zawiera rozpuszczoną skrobię. Skrobia działa jak naturalny emulgator — łączy tłuszcz (oliwa/masło/guanciale) z wodą w stabilną, jedwabistą emulsję. Carbonara bez wody z makaronu = jajecznica na makaronie. Cacio e pepe bez wody z makaronu = grudki sera.",
+    "how_to": "Przed odcedzeniem makaronu: nabierz kubek/chochlę wody z garnka (200ml). Dodawaj po łyżce do sosu mieszając energicznie — buduj emulsję stopniowo. Makaron powinien być odsączony al dente i wrzucony BEZPOŚREDNIO do patelni z sosem (nie na talerz).",
+    "pro_note": "Pro-level: gotuj makaron w mniejszej ilości wody niż zwykle (2L zamiast 5L) → wyższa koncentracja skrobi → mocniejsza emulsja.",
+    "impact": "very high",
+    "effort": "zero — tylko pamiętaj",
+    "confidence": 0.99
+  },
+  {
+    "rule": "brown_butter_universal",
+    "category": "cooking_procedures",
+    "applies_to": ["makaron", "gnocchi", "naleśniki", "pierogi", "warzywa", "ryba", "muffiny", "ciasto"],
+    "trick": "Brązowe masło (beurre noisette) — podgrzej masło do 160°C aż zbrązowieje i pachnie orzechami",
+    "why_it_works": "W 130-160°C białka mleka w maśle reagują z cukrami (reakcja Maillarda) — powstają setki nowych związków smakowych: orzechowe, karmelowe, toffi. Jeden składnik, dramatyczna zmiana. Działa w praktycznie KAŻDYM daniu gdzie jest masło — od pierogów po gnocchi po ciasta.",
+    "how_to": "Masło w jasnym rondelku (żeby widzieć kolor) na średnim ogniu. Nie mieszaj — tylko potrząsaj co 30 sek. Kolejność: topnienie → pianienie → złocisty → brązowy + zapach orzechów (30 sek od złocistego do gotowego). NATYCHMIAST zdejmij z ognia i przelej do zimnej miski. Masło przypala się w sekundy po przekroczeniu brązowego.",
+    "doneness": "Kolor: ciemnobursztynowy (nie jasny, nie czarny). Zapach: prażone orzechy, toffi. Na dnie: drobne brązowe cząstki (mleko w proszku — to złoto, nie spal ich). Temperatura: ~160°C pirometrem.",
+    "impact": "very high — universalny upgrade",
+    "effort": "5 min, wymaga uwagi",
+    "confidence": 0.99
+  },
+  {
+    "rule": "finishing_acid_and_fat",
+    "category": "cooking_procedures",
+    "applies_to": ["zupa", "sos", "risotto", "sałatka", "danie główne", "warzywa"],
+    "trick": "Finishing: dodaj kwas (cytryna/ocet) + tłuszcz (oliwa/masło) na SAM KONIEC, po wyłączeniu ognia",
+    "why_it_works": "Gotowanie niszczy lotne związki aromatyczne w oliwie extra virgin i cytrynie. Dodanie PO wyłączeniu ognia zachowuje pełny aromat. Kwas 'otwiera' smak — bez niego danie jest płaskie. Tłuszcz niesie aromaty do nosa (lotne). Razem: kontrast i głębia. To najczęstsza różnica między domowym a restauracyjnym jedzeniem.",
+    "how_to": "Gotowe danie zdjęte z ognia. Dodaj: 5-10ml soku z cytryny LUB 1 łyżeczka dobrego octu (balsamiczny/sherry/ryżowy). Skórkę cytryny zetrzyj na Microplane. 1 łyżka oliwy extra virgin (najlepsza jaką masz). Wymieszaj, podawaj natychmiast.",
+    "pro_note": "Restauracje robią to z KAŻDYM daniem. To nie jest kwestia przepisu — to nawyk. Spróbuj dodać kwas + oliwę do zupy marchewkowej, risotto, grillowanych warzyw, nawet jajecznicy.",
+    "impact": "very high — największy ROI ze wszystkich trików",
+    "effort": "10 sekund",
+    "confidence": 0.99
+  },
+  {
+    "rule": "textural_contrast_rule",
+    "category": "cooking_procedures",
+    "applies_to": ["każde danie"],
+    "trick": "Każdy talerz MUSI mieć kontrast tekstury: coś chrupiącego na czymś kremowym/miękkim",
+    "why_it_works": "Mózg traci zainteresowanie monotoną teksturą po 3-4 kęsach (adaptacja sensoryczna). Kontrast tekstury resetuje percepcję — każdy kęs jest interesujący. To dlaczego: chips na zupie kremowej, prażone orzechy na sałatce, panko na purée, grzanki na risotto, kruszonka na szarlotce.",
+    "how_to": "Do KAŻDEGO przepisu dodaj element chrupiący: prażone orzechy/nasiona (30 sek na suchej patelni), panko w brązowym maśle (1 min), grzanki (kostki chleba smażone na maśle), chips z warzywa (plasterki pieczone 180°C 15 min), prażony czosnek w płatkach, dukkah, furikake.",
+    "impact": "very high",
+    "effort": "2-5 min",
+    "confidence": 0.99
+  }
+]

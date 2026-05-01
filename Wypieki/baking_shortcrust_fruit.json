@@ -1,0 +1,74 @@
+[
+  {
+    "rule": "shortcrust_potato_starch_substitution",
+    "category": "cooking_procedures",
+    "applies_to": ["ciasto kruche", "kruche ciasto", "tarta owocowa", "kruche z rabarbarem", "kruche z jabłkami", "kruche z truskawkami", "ciasto kruche owocowe", "tarta"],
+    "trick": "Zamień 20-30% mąki na skrobię ziemniaczaną w cieście kruchym — drobniejsza, bardziej krucha tekstura",
+    "why_it_works": "Skrobia ziemniaczana nie tworzy glutenu — każdy gram skrobi to gram mniej siatki glutenowej. Cząstki skrobi przerywają ciągłość glutenu tworząc krótsze, bardziej kruche struktury. Ciasto dosłownie rozpada się w ustach zamiast być sprężyste. Polskie babcie zawsze mieszały skrobię z mąką — to nie jest nowoczesny trick, to zapomniana tradycja.",
+    "how_to": "Na 300g mąki: użyj 210-240g mąki tortowej typ 450 + 60-90g skrobi ziemniaczanej. Przesiej razem 2 razy przed dodaniem do masła. Reszta przepisu bez zmian. UWAGA: ciasto jest bardziej delikatne — wałkuj ostrożniej, nie rozciągaj.",
+    "ratio": "20% skrobi = subtelna różnica, bezpieczne. 25% = optymalne. 30% = bardzo kruche, trudniejsze w obsłudze. Nie przekraczaj 30%.",
+    "impact": "very high — natychmiastowa poprawa tekstury przy zerowym dodatkowym wysiłku",
+    "effort": "zero — zmiana proporcji",
+    "confidence": 0.98
+  },
+  {
+    "rule": "moisture_barrier_for_fruit_tarts",
+    "category": "cooking_procedures",
+    "applies_to": ["tarta owocowa", "kruche z rabarbarem", "kruche z jabłkami", "kruche z truskawkami", "kruche z śliwkami", "kruche z wiśniami", "ciasto kruche owocowe", "tarta z owocami"],
+    "trick": "Bariera wilgoci pod owocami — cienka warstwa powideł, marmolady lub jajka zapobiega rozmoczeniu spodu",
+    "why_it_works": "Owoce (szczególnie rabarbar, śliwki, wiśnie, jabłka) wydzielają dużo soku podczas pieczenia. Sok wnika w kruche ciasto od góry i rozmacza je — spód jest mokry, gumowaty, nie chrupie. Bariera z powideł/marmolady tworzy hydrofobową warstwę (cukier + pektyna) która nie przepuszcza wody. Alternatywa: posmaruj blind-baked spód rozbełtanym żółtkiem i wstaw na 2 min do piekarnika — białko koaguluje i uszczelnia.",
+    "how_to": "OPCJA A (powidła): Po blind baking spodu — posmaruj cienką warstwą (2mm) powideł śliwkowych, marmolady morelowej lub dżemu bez pestek. Ułóż owoce NA powidłach. OPCJA B (żółtko): Rozbełtaj 1 żółtko, posmaruj gorący spód po blind baking, wstaw na 2 min do piekarnika 180°C. OPCJA C (frangipane): Nałóż 3-4mm kremu frangipane (patrz osobny rule) na spód — pełni funkcję bariery + dodaje smak migdałowy.",
+    "pro_note": "Powidła śliwkowe to najlepsza bariera dla rabarbaru — lekkia kwaśność powideł współgra z kwasem rabarbaru zamiast go przytłaczać.",
+    "impact": "very high — różnica między rozmoczonym spodem a chrupiącym",
+    "effort": "1 min",
+    "confidence": 0.99
+  },
+  {
+    "rule": "pre_cooking_watery_fruits",
+    "category": "cooking_procedures",
+    "applies_to": ["kruche z rabarbarem", "kruche z jabłkami", "kruche z śliwkami", "kruche z wiśniami", "tarta owocowa", "ciasto kruche owocowe"],
+    "trick": "Pre-cooking owoców wodnych: podsmaż z cukrem 3-5 min i ODLEJ SOK zanim położysz na cieście",
+    "why_it_works": "Rabarbar, śliwki, wiśnie i jabłka zawierają 80-90% wody. Podczas pieczenia ta woda się uwalnia i zalewia ciasto. Pre-cooking na patelni z cukrem: (1) osmoza wyciąga wodę z owoców, (2) cukier karmelizuje na powierzchni owoców dodając głębię smaku, (3) odlany sok można zagęścić na glazurę. Efekt: intensywniejszy smak owoców + suche ciasto.",
+    "how_to": "Rabarbar: pokrój na 2-3cm kawałki, wymieszaj z cukrem (80g na 500g rabarbaru) + szczypta soli. Opcja A (pasywna): odstaw 20-30 min w misce — osmoza wyciągnie sok. Odlej sok. Opcja B (aktywna): podsmaż na średnim ogniu 3-4 min mieszając, aż rabarbar lekko zmięknie ale ZACHOWA kształt. Przelej przez sito. Rabarbar na ciasto, sok do rondelka.",
+    "bonus": "Odlany sok: zagotuj z 1 łyżką cukru na syrop (5 min) → polej upieczony placek po wystudzeniu. Albo: dodaj żelatynę (2g na 100ml) na błyszczącą glazurę.",
+    "impact": "very high",
+    "effort": "5-20 min (zależnie od metody)",
+    "confidence": 0.99
+  },
+  {
+    "rule": "frangipane_cream_under_fruit",
+    "category": "cooking_procedures",
+    "applies_to": ["tarta owocowa", "tarta z rabarbarem", "tarta z jabłkami", "tarta z śliwkami", "tarta z wiśniami", "tarta z gruszkami"],
+    "trick": "Krem frangipane pod owocami — migdałowy krem który pełni potrójną rolę: bariera wilgoci + dodatkowy smak + puszystość",
+    "why_it_works": "Frangipane to emulsja masła, cukru, jajka i mąki migdałowej. Podczas pieczenia (1) jajko koaguluje tworząc nieprzepuszczalną barierę, (2) mąka migdałowa absorbuje sok z owoców zamiast go przepuszczać do ciasta, (3) masło dodaje bogactwo, (4) migdałowy smak kompletuje profil smakowy. To standard w każdej francuskiej cukierni.",
+    "how_to": "Ubij miękkie masło (75g) z cukrem pudrem (75g) do puszystości (2 min). Dodaj 1 jajko, mieszaj. Dodaj mąkę migdałową (75g) + 1 łyżka mąki pszennej + ekstrakt waniliowy. Nałóż 5-8mm warstwę na blind-baked spód. Ułóż owoce NA frangipane. Piecz 25-30 min w 180°C.",
+    "ratio": "Proporcje 1:1:1 — równe wagi masła, cukru pudru i mąki migdałowej. Łatwe do zapamiętania.",
+    "impact": "very high — transformuje zwykłą tartę w cukiernię",
+    "effort": "5 min",
+    "confidence": 0.99
+  },
+  {
+    "rule": "streusel_crumble_topping",
+    "category": "cooking_procedures",
+    "applies_to": ["ciasto kruche owocowe", "kruche z rabarbarem", "kruche z jabłkami", "tarta owocowa", "crumble"],
+    "trick": "Kruszonka (streusel) na wierzch: mąka+masło+cukier 3:2:1, schłodzona, tarta na dużej tarce",
+    "why_it_works": "Kruszonka dodaje kontrast tekstury: chrupiące na wierzchu vs miękkie owoce vs kruche ciasto na spodzie. Trzy różne tekstury w jednym kęsie. Tarta na dużej tarce (nie kruszona palcami) daje równomierne kawałki które piecą się jednakowo — bez przypalonych grudek i surowej mąki.",
+    "how_to": "Wymieszaj mąkę (90g) + zimne masło pokrojone w kostkę (60g) + cukier (30g) + szczypta soli + opcjonalnie cynamon (2g). Rozetrzyj palcami do grubych grudek. Uformuj w dysk, owiń folią, zamroź 15-20 min. Zetrzyj na dużej tarce (buraczanej) bezpośrednio na ułożone owoce. Piecz normalnie.",
+    "pro_note": "Upgrade: dodaj 30g mielonych orzechów (włoskie/laskowe/migdały) do kruszonki → orzechowy smak + dodatkowy crunch. Albo: zamień 20g mąki na płatki owsiane → rustykalny charakter.",
+    "impact": "high",
+    "effort": "5 min + 15 min mrożenie",
+    "confidence": 0.99
+  },
+  {
+    "rule": "lard_in_shortcrust_polish_tradition",
+    "category": "cooking_procedures",
+    "applies_to": ["ciasto kruche", "kruche ciasto", "ciasto kruche owocowe", "tarta", "paszteciki"],
+    "trick": "Zamień 50% masła na smalec w cieście kruchym — ekstremalnie krucha tekstura (polska tradycja)",
+    "why_it_works": "Smalec ma (1) wyższy punkt topnienia niż masło — kryształy tłuszczu utrzymują się dłużej podczas pieczenia tworząc wyraźniejsze warstwy, (2) 100% tłuszczu bez wody — masło ma 15-20% wody, smalec 0%, więc zero dodatkowego glutenu z tej frakcji, (3) większe, płaskie kryształy tłuszczu — tworzą lepszą laminated texture. Efekt: bezkonkurencyjna kruchość której samo masło nie osiągnie.",
+    "how_to": "Na 200g tłuszczu w przepisie: użyj 100g zimnego masła + 100g smalcu. Oba zimne (4-6°C). Pokrój w kostki, rozetrzyj z mąką. Reszta procedury identyczna. Ciasto jest bardziej kruche i delikatne — wałkuj ostrożniej.",
+    "pro_note": "Do wytrawnych zastosowań (paszteciki, quiche) można użyć 100% smalcu. Do słodkich — 50/50 daje najlepszy balans kruchości i smaku maślanego.",
+    "impact": "high",
+    "effort": "zero — zmiana składnika",
+    "confidence": 0.97
+  }
+]

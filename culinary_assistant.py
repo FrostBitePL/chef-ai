@@ -78,11 +78,13 @@ class AppMetrics:
         """Log an API call with token usage and cost."""
         with self.lock:
             call_data = {
+                "ts": time.time(),
                 "timestamp": datetime.utcnow().isoformat(),
                 "provider": provider,
                 "model": model,
                 "input_tokens": input_tokens,
                 "output_tokens": output_tokens,
+                "total_tokens": input_tokens + output_tokens,
                 "duration_ms": duration_ms,
                 "cost_usd": cost_usd,
                 "endpoint": endpoint,
@@ -532,6 +534,173 @@ def enforce_bans(data,banned_ingredients):
             if not data.get("warnings"): data["warnings"]=[]
             data["warnings"].insert(0,warn)
     return data
+
+# ─── Pro Quality Enforcer ───
+
+def enforce_pro_quality(data, prof_data=None):
+    """Post-process recipe JSON to enforce pro-level quality.
+    Works INDEPENDENTLY of LLM — catches what the model missed."""
+    if not isinstance(data, dict) or data.get("type") != "recipe":
+        return data
+    steps = data.get("steps", [])
+    ingredients = data.get("ingredients", [])
+    warnings = data.get("warnings", [])
+    all_text = _pq_get_all_text(data)
+
+    # CHECK 1: ACID
+    has_acid = _pq_has_any(all_text, [
+        "cytryn", "limon", "ocet", "octu", "wino", "wina", "winem",
+        "labneh", "jogurt", "kefir", "kimchi", "kapary", "kapar",
+        "pickle", "marynow", "ferment", "kwaśn"
+    ])
+    if not has_acid:
+        _pq_add_ingredient_if_missing(ingredients, {"item": "cytryna", "amount": "10ml soku", "note": "finishing — świeżość i balans"})
+        _pq_add_finishing_note(steps, "Na koniec dodaj sok z cytryny (10ml) — kwas otwiera smak i równoważy tłuszcz.")
+
+    # CHECK 2: CRUNCH
+    has_crunch = _pq_has_any(all_text, [
+        "prażon", "tostow", "chrupią", "chrupiąc", "crunch",
+        "panko", "grzank", "chips", "kruszonk", "orzechy",
+        "orzeszk", "migdał", "sezam", "nasion", "dukkah", "furikake"
+    ])
+    if not has_crunch:
+        title_lower = data.get("title", "").lower()
+        if any(w in title_lower for w in ["risotto", "zupa", "krem", "purée", "puree"]):
+            crunch, amount, instr = "prażone orzechy piniowe", "20g", "Praż orzechy piniowe (20g) na suchej patelni 60-90 sek, potrząsając — złociste, nie brązowe. Posyp na wierzch przy podaniu."
+        elif any(w in title_lower for w in ["makaron", "pasta", "spaghetti"]):
+            crunch, amount, instr = "panko w brązowym maśle", "30g", "Panko (30g) smaż na maśle (10g) na średnim ogniu 90 sek aż złociste. Posyp makaron na talerzu."
+        elif any(w in title_lower for w in ["sałat", "salat"]):
+            crunch, amount, instr = "prażone nasiona słonecznika", "20g", "Praż nasiona słonecznika (20g) na suchej patelni 60 sek. Posyp sałatkę."
+        elif any(w in title_lower for w in ["ciasto", "tarta", "kruche", "szarlotk"]):
+            crunch, amount, instr = None, None, None
+        else:
+            crunch, amount, instr = "prażone orzechy lub nasiona", "20g", "Praż orzechy/nasiona (20g) na suchej patelni 60 sek. Posyp danie przy podaniu — kontrast tekstury."
+        if crunch and instr:
+            _pq_add_ingredient_if_missing(ingredients, {"item": crunch, "amount": amount, "note": "kontrast tekstury — chrupiące na kremowym"})
+            _pq_add_finishing_note(steps, instr)
+
+    # CHECK 3: FINISHING
+    has_finishing_herb = _pq_has_any(all_text, ["świeża bazylia", "świeży koperek", "świeża mięta", "szczypiorek", "natka", "microgreen", "kolendra świeża"])
+    has_finishing_oil = _pq_has_any(all_text, ["oliwa extra virgin", "finishing oil", "olej sezamowy", r"oliw.* na koniec", r"skrop.* oliwą"])
+    has_zest = _pq_has_any(all_text, [r"skórk.* cytry", r"skórk.* limon", "zest", "microplane"])
+    if not any([has_finishing_herb, has_finishing_oil, has_zest]):
+        title_lower = data.get("title", "").lower()
+        is_baking = any(w in title_lower for w in ["ciasto", "tarta", "kruche", "biszkopt", "sernik", "muffin", "chleb", "babka", "drożdżów", "ciastk"])
+        if not is_baking:
+            _pq_add_finishing_note(steps, "Skrop oliwą extra virgin (10ml) przy podaniu — aromaty oliwy zachowujesz tylko bez gotowania.")
+
+    # CHECK 4: UPGRADE field
+    upgrade = data.get("upgrade", "")
+    if not upgrade or len(str(upgrade)) < 20:
+        data["upgrade"] = _pq_generate_upgrade(data.get("title", "").lower(), all_text)
+
+    # CHECK 5: MANTECATURA for risotto
+    if "risotto" in data.get("title", "").lower():
+        has_mantecatura = _pq_has_any(all_text, ["mantecatur", "zdejmij z ognia", "poza ogniem", "zdejmij z palnika", "po zdjęciu"])
+        if not has_mantecatura:
+            for step in reversed(steps):
+                instr = step.get("instruction", "").lower()
+                if "parmezan" in instr or "masło" in instr or "wykończ" in instr:
+                    maslo = _pq_find_amount(ingredients, "masło") or "30g"
+                    parm = _pq_find_amount(ingredients, "parmezan") or "50g"
+                    step["instruction"] = (f"MANTECATURA: Zdejmij risotto z ognia. Dodaj zimne masło ({maslo}) pokrojone w kostki i starty parmezan ({parm}). Mieszaj energicznie drewnianą łyżką 30-60 sekund — emulsja masła ze skrobią tworzy jedwabistą kremowość. Na talerzu risotto powinno powoli się rozpływać (all'onda).")
+                    step["why"] = "Mantecatura to emulsyfikacja — zimne masło łączy się ze skrobią z ryżu tworząc stabilną emulsję. Na ogniu masło się rozdziela. Zdejmij z ognia = emulsja trzyma."
+                    step["tip"] = "Risotto na talerzu powinno powoli się rozpływać jak lawa — jeśli stoi w kopce, jest za gęste (dodaj łyżkę gorącego bulionu)."
+                    break
+
+    # CHECK 6: MOISTURE BARRIER for fruit tarts
+    title_lower = data.get("title", "").lower()
+    is_fruit_tart = (any(w in title_lower for w in ["kruche", "tarta", "placek"]) and
+                     any(w in title_lower for w in ["rabarbar", "jabłk", "śliwk", "wiśni", "truskawk", "owoc"]))
+    if is_fruit_tart:
+        if not isinstance(warnings, list):
+            warnings = []
+            data["warnings"] = warnings
+        if not _pq_has_any(all_text, ["powidł", "marmolad", "dżem", "bariera", "frangipane", r"posmaruj żółtk"]):
+            warnings.append({"problem": "Owoce wydzielają dużo soku — spód rozmoknie", "solution": "Posmaruj upieczony spód cienką warstwą powideł (2mm) LUB rozbełtanym żółtkiem przed ułożeniem owoców — bariera wilgoci."})
+        if not _pq_has_any(all_text, ["skrobi", "starch", "ziemniacz"]):
+            warnings.append({"problem": "Ciasto kruche z samej mąki może być sprężyste zamiast kruchego", "solution": "Zamień 20-25% mąki na skrobię ziemniaczaną (np. na 250g mąki: 190g mąki + 60g skrobi) — skrobia nie tworzy glutenu, ciasto będzie kruchsze."})
+
+    # CHECK 7: ASPARAGUS DUAL TECHNIQUE
+    if "risotto" in title_lower and _pq_has_any(all_text, ["szparag"]):
+        has_dual = _pq_has_any(all_text, [r"krem z", "zblenduj", "blenduj łodyg", r"tips.*sauté", r"tips.*smaż", "końcówki.*osobno", "łodygi.*krem"])
+        if not has_dual:
+            dual = ("Szparagi dwutorowo: łodygi (dolne 2/3) blanszuj i zblenduj na krem — dodaj do risotto 3 min przed końcem. Tips (górne 1/3) sautéuj osobno na maśle 90 sek — ułóż na wierzchu. Efekt: głębia smaku + kontrast tekstury.")
+            existing = data.get("upgrade", "")
+            data["upgrade"] = (dual + " | " + existing) if existing and len(existing) > 20 else dual
+
+    return data
+
+
+def _pq_get_all_text(data):
+    parts = [data.get("title",""), data.get("subtitle",""), data.get("science",""), data.get("upgrade",""), data.get("flavor_logic","")]
+    for s in data.get("steps", []):
+        parts += [s.get("instruction",""), s.get("tip",""), s.get("why",""), s.get("title","")]
+    for i in data.get("ingredients", []):
+        parts += [i.get("item",""), i.get("note","")]
+    for w in data.get("warnings", []):
+        parts += [w.get("problem",""), w.get("solution","")]
+    for m in data.get("mise_en_place", []):
+        parts.append(str(m))
+    pt = data.get("pro_tip", "")
+    if isinstance(pt, str): parts.append(pt)
+    return " ".join(str(p) for p in parts).lower()
+
+
+def _pq_has_any(text, patterns):
+    for pat in patterns:
+        if any(c in pat for c in r".*["):
+            if re.search(pat, text, re.IGNORECASE): return True
+        else:
+            if pat.lower() in text: return True
+    return False
+
+
+def _pq_add_ingredient_if_missing(ingredients, new_ing):
+    item_lower = new_ing["item"].lower()
+    for e in ingredients:
+        if item_lower in e.get("item","").lower(): return
+    ingredients.append(new_ing)
+
+
+def _pq_find_amount(ingredients, keyword):
+    for i in ingredients:
+        if keyword.lower() in i.get("item","").lower(): return i.get("amount","")
+    return ""
+
+
+def _pq_add_finishing_note(steps, instruction):
+    if not steps: return
+    last = steps[-1]
+    last_title = last.get("title","").lower()
+    if any(w in last_title for w in ["serwow","podaj","podanie","finishing","wykończ"]):
+        last["instruction"] = last.get("instruction","").rstrip(". ") + ". " + instruction
+    else:
+        max_num = max((s.get("number",0) for s in steps), default=0)
+        steps.append({"number": max_num+1, "title": "Finishing", "instruction": instruction, "equipment": "brak"})
+
+
+def _pq_generate_upgrade(title_lower, all_text):
+    if "risotto" in title_lower:
+        return "Mantecatura poza ogniem: zdejmij risotto z palnika, wbij zimne masło + parmezan, mieszaj energicznie 30 sek. Emulsja skrobi z tłuszczem daje jedwabistą kremowość której nie osiągniesz mieszając na ogniu."
+    if any(w in title_lower for w in ["stek","steak","wołowin"]):
+        return "Basting: ostatnie 30 sek smażenia — dodaj masło (30g) + czosnek + tymianek. Przechyl patelnię, polewaj mięso łyżką nieprzerwanie. Brązowe masło + aromaty = restauracyjny finish."
+    if any(w in title_lower for w in ["kurczak","drób","pierś"]):
+        return "Suche solenie: posól kurczaka 1.5% wagi, odkryty w lodówce min 2h (optymalnie overnight). Sól wnika do środka + suszy powierzchnię = lepsza skorupa Maillarda."
+    if any(w in title_lower for w in ["makaron","pasta","spaghetti"]):
+        return "Woda z makaronu: zarezerwuj 200ml PRZED odcedzeniem. Skrobia w wodzie to naturalny emulgator — dodawaj po łyżce do sosu mieszając energicznie."
+    if any(w in title_lower for w in ["zupa","krem"]):
+        return "Finishing trio: oliwa extra virgin + sok z cytryny + grzanki w brązowym maśle. Trzy elementy które zmieniają domową zupę w restauracyjną."
+    if any(w in title_lower for w in ["ciasto","muffin","babk"]):
+        return "Brązowe masło zamiast zwykłego: podgrzej w jasnym rondelku do 160°C aż zbrązowieje i pachnie orzechami (~5 min). Ostudź przed użyciem. Orzechowa głębia w każdym kęsie."
+    if any(w in title_lower for w in ["kruche","tart"]):
+        return "Zamień 25% mąki na skrobię ziemniaczaną — skrobia nie tworzy glutenu, ciasto będzie kruchsze. Na 250g mąki: 190g mąki + 60g skrobi. Smalec 50/50 z masłem dla ekstremalnej kruchości."
+    if any(w in title_lower for w in ["sałat","salat"]):
+        return "Domowy dressing: 3:1 oliwa:kwas (cytryna/ocet sherry) + 5g musztardy Dijon + 3g miodu + sól. Wstrząśnij w słoiczku 10 sek."
+    if any(w in title_lower for w in ["jajk","jajec","omlet","frittata"]):
+        return "Brązowe masło + kapary (10g): kapary eksplodują smakowo w gorącym tłuszczu. Polej jajka. Orzechowość + kwasowość + sól w jednym geście."
+    return "Element chrupiący na finishing: praż orzechy/nasiona (20g) na suchej patelni 60 sek lub panko w brązowym maśle 90 sek. Kontrast tekstury to najczęstsza różnica między domowym a restauracyjnym jedzeniem."
+
 
 # ─── Skill Tree ───
 SKILL_CATEGORIES=[
@@ -1614,10 +1783,11 @@ def build_layer_queries(question, main_ingredient, dish_type):
     """Build optimized per-layer search queries."""
     return {
         "core": f"{main_ingredient} temperature doneness process" if main_ingredient else question,
-        "techniques": f"{main_ingredient} cooking technique" if main_ingredient else question,
-        "composition": f"{dish_type} structure balance" if dish_type else question,
-        "flavor": f"{main_ingredient} pairing flavor" if main_ingredient else question,
-        "baking": f"{main_ingredient} baking ratio structure failure" if main_ingredient else question,
+        "techniques": f"{main_ingredient} cooking technique method" if main_ingredient else question,
+        "composition": f"{dish_type} structure balance plating" if dish_type else question,
+        "flavor": f"{main_ingredient} pairing flavor contrast" if main_ingredient else question,
+        "baking": f"{main_ingredient} {dish_type} baking ratio structure" if main_ingredient else question,
+        "procedures": f"{dish_type} {main_ingredient} pro trick upgrade technique" if (dish_type or main_ingredient) else question,
     }
 
 def ultra_trim(text, max_chars=600):
@@ -1676,37 +1846,52 @@ def generate_fast_recipe(plan):
 
 PLANNER_PROMPT = """# SYSTEM
 
-Jesteś silnikiem planowania kulinarnego.
+Jesteś silnikiem planowania kulinarnego. Projektujesz danie na NAJWYŻSZYM MOŻLIWYM POZIOMIE — lepsze niż to co user znajdzie na pierwszej stronie Google.
 
 ZAPYTANIE: {question}
 
-# MAX OUTPUT SIZE:
-- core_decisions: EXACTLY 3
-- techniques: EXACTLY 2  
-- execution_flow: EXACTLY 3 steps
-- failure_risks: MAX 2
+# TWOJE ZADANIE:
+1. Zidentyfikuj danie i jego tożsamość
+2. Zaprojektuj architekturę smaku (kwas, umami, kontrast, finishing)
+3. Wybierz NAJLEPSZE techniki (nie domyślne — najlepsze)
+4. Dodaj 1-3 PRO TRICKI które podnoszą danie na wyższy poziom
 
-Keep responses minimal.
+# OUTPUT GUIDE:
+- core_decisions: 2-5 (kluczowe decyzje fizyczne/chemiczne, tyle ile danie potrzebuje)
+- techniques: 2-5 (konkretne techniki wykonania z uzasadnieniem)
+- pro_tricks: 1-3 (OBOWIĄZKOWE — elementy podnoszące danie z "dobrego" na "wybitne")
+- execution_flow: 3-8 kroków
+- failure_risks: 1-3
+
+# PRO TRICKS — OBOWIĄZKOWE
+Dla KAŻDEGO dania zidentyfikuj 1-3 triki. Kategorie do rozważenia:
+- TŁUSZCZ: brązowe masło, ghee, finishing oil, aromatyzowany tłuszcz
+- KWAS: deglazing winem, cytryna finishing, quickpickle, ferment (labneh/miso/kimchi)
+- TEKSTURA: element chrupiący, kontrast kremowe-jędrne
+- UMAMI: miso, parmezan, sear Maillard, suszony grzyb, sos sojowy
+- TECHNIKA: suche solenie, basting, mantecatura, tangzhong, autoliza, cold retard, blooming
+- FINISHING: fresh herb, skórka cytrusu, finishing oil, flake salt
+JEŚLI W KONTEKŚCIE SĄ PRO PROCEDURES — UŻYJ ICH BEZWZGLĘDNIE.
 
 # JSON OUTPUT:
 {{
   "dish_identity": {{"dish_type": "", "main_ingredient": "", "style": ""}},
   "structure": {{"structure_rule": "", "elements": []}},
   "core_decisions": [
-    {{"ingredient": "", "intent": "", "target_temp": 65, "reason": "", "decision_type": "protein_doneness"}},
-    {{"ingredient": "", "intent": "", "target_temp": 180, "reason": "", "decision_type": "browning"}},
-    {{"ingredient": "", "intent": "", "target_temp": 75, "reason": "", "decision_type": "moisture"}}
+    {{"ingredient": "", "intent": "", "target": "", "reason": "", "science": ""}}
   ],
   "techniques": [
-    {{"technique": "", "applies_to": "", "goal": ""}},
-    {{"technique": "", "applies_to": "", "goal": ""}}
+    {{"technique": "", "applies_to": "", "goal": "", "why": ""}}
   ],
-  "flavor_logic": {{"pairings": "", "contrast": "", "balancing_elements": ""}},
-  "execution_flow": ["sear", "cook", "finish"],
+  "pro_tricks": [
+    {{"trick": "", "why_it_works": "", "effort": "", "impact": "high/very high"}}
+  ],
+  "flavor_logic": {{"pairings": "", "contrast": "", "acid": "", "umami": "", "finishing": ""}},
+  "execution_flow": [],
   "failure_risks": []
 }}
 
-# KONTEKST:
+# KONTEKST Z BAZY WIEDZY (użyj jako wsparcie, ale NIE OGRANICZAJ SIĘ do tego — Twoja wiedza kulinarna jest równie ważna):
 {context}"""
 
 EXECUTOR_PROMPT_FAST = """# SYSTEM
@@ -1862,6 +2047,22 @@ Dla każdej decyzji:
 
 ---
 
+# PRO TRICKS — OBOWIĄZKOWE
+
+Plan zawiera sekcję "pro_tricks". Każdy pro trick MUSI:
+1. Mieć dedykowany krok w steps LUB być wbudowany w istniejący krok
+2. Mieć wyjaśnienie w polu "why" odpowiedniego kroku
+3. Jeśli opcjonalny/zaawansowany → opisz w polu "upgrade"
+
+Pro trick który jest w planie ale NIE w przepisie = przepis NIEKOMPLETNY.
+
+Dodatkowo, niezależnie od planu, sprawdź:
+- Czy jest element CHRUPIĄCY? Jeśli nie — dodaj (prażone orzechy/panko/grzanki)
+- Czy jest KWAS na koniec? Jeśli nie — dodaj (cytryna/ocet)
+- Czy jest FINISHING? Jeśli nie — dodaj (oliwa extra virgin/świeże zioło/skórka cytrusu)
+
+---
+
 # FAILURE CONTROL
 
 Uwzględnij failure_risks z planu i zapobiegaj im w krokach.
@@ -1897,66 +2098,36 @@ def smart_trim(entry):
 # ─── 2-STEP PIPELINE VALIDATION ───
 
 def validate_plan(plan):
-    """Validate plan meets minimum requirements."""
+    """Validate plan meets minimum requirements — flexible limits."""
     errors = []
     
-    # Check required sections
-    required_sections = ["dish_identity", "structure", "core_decisions", "techniques", "flavor_logic", "execution_flow", "failure_risks"]
+    required_sections = ["dish_identity", "structure", "core_decisions", "techniques", "flavor_logic", "execution_flow"]
     for section in required_sections:
         if section not in plan:
             errors.append(f"Missing required section: {section}")
     
-    # Check exact core decisions (3 max)
     core_count = len(plan.get("core_decisions", []))
-    if core_count != 3:
-        errors.append(f"Need exactly 3 core decisions, got {core_count}")
+    if core_count < 2 or core_count > 6:
+        errors.append(f"Need 2-6 core decisions, got {core_count}")
     
-    # Check exact techniques (2 max)
     tech_count = len(plan.get("techniques", []))
-    if tech_count != 2:
-        errors.append(f"Need exactly 2 techniques, got {tech_count}")
+    if tech_count < 1 or tech_count > 6:
+        errors.append(f"Need 1-6 techniques, got {tech_count}")
     
-    # Check execution flow
     flow_count = len(plan.get("execution_flow", []))
     if flow_count < 2:
         errors.append(f"Need at least 2 execution steps, got {flow_count}")
     
-    # Check failure risks limit
-    risk_count = len(plan.get("failure_risks", []))
-    if risk_count > 2:
-        errors.append(f"Too many failure risks, max 2 allowed, got {risk_count}")
-    
-    # Validate core decisions structure
-    for i, decision in enumerate(plan.get("core_decisions", [])):
-        if not isinstance(decision, dict):
-            errors.append(f"Core decision {i} must be dict")
-            continue
-        
-        required_fields = ["ingredient", "intent", "target_temp", "reason", "decision_type"]
-        for field in required_fields:
-            if field not in decision:
-                errors.append(f"Core decision {i} missing field: {field}")
-        
-        if "target_temp" in decision and not isinstance(decision["target_temp"], (int, float)):
-            errors.append(f"Core decision {i} target_temp must be number")
-        
-        # Check decision type is valid
-        valid_types = ["protein_doneness", "browning", "moisture"]
-        decision_type = decision.get("decision_type", "")
-        if decision_type not in valid_types:
-            errors.append(f"Core decision {i} invalid decision_type: {decision_type}")
-        
-        # Check temperature is reasonable
-        temp = decision.get("target_temp", 0)
-        if temp < 0 or temp > 250:
-            errors.append(f"Core decision {i} unreasonable temperature: {temp}°C")
+    # Pro tricks are required
+    tricks = plan.get("pro_tricks", [])
+    if not tricks:
+        errors.append("Missing pro_tricks — every dish needs at least 1 pro trick")
     
     # Validate techniques structure
     for i, technique in enumerate(plan.get("techniques", [])):
         if not isinstance(technique, dict):
             errors.append(f"Technique {i} must be dict")
             continue
-        
         required_fields = ["technique", "applies_to", "goal"]
         for field in required_fields:
             if field not in technique:
@@ -2493,6 +2664,87 @@ Jeśli danie ma nazwę własną, MUSISZ zawrzeć WSZYSTKIE elementy definicyjne:
 Gdy w sekcji BAKING bazy wiedzy znajdziesz techniki takie jak tangzhong, autoliza, brązowe masło, blooming przypraw, cold retard, reverse creaming, para w piekarniku — AKTYWNIE je stosuj.
 - Trick ≤5 min → wbuduj bezpośrednio w kroki
 - Opcjonalny lub zaawansowany → pole "upgrade"
+
+---
+
+## 🔥 PRO ELEVATION FRAMEWORK — OBOWIĄZKOWY DLA KAŻDEGO PRZEPISU
+
+Zanim wygenerujesz przepis, MUSISZ przejść przez te 7 pytań.
+Każde pytanie wymusza konkretną decyzję — nie pozwól sobie na generyczną odpowiedź.
+
+### 1. TŁUSZCZ — CZY MOGĘ GO ULEPSZYĆ?
+- Czy zwykłe masło mogę zamienić na brązowe masło (beurre noisette)? → TAK dla: wypieki, pierogi, gnocchi, warzywa, ryba, naleśniki, finishing
+- Czy olej mogę zamienić na finishing oliwę extra virgin NA KONIEC (po wyłączeniu ognia)?
+- Czy mogę dodać aromatyzowany tłuszcz? (masło z czosnkiem/tymiankiem, olej chili, ghee)
+- Czy smalec/ghee nie byłoby lepsze? (kruche ciasto, smażenie w wysokiej temp)
+DOMYŚLNIE: brązowe masło zamiast zwykłego tam gdzie to ma sens. Finishing oil na koniec.
+
+### 2. KWAS — CZY DANIE MA ELEMENT KWAŚNY?
+Danie bez kwasu jest płaskie. KAŻDE danie musi mieć min 1 źródło kwasu:
+- Sok z cytryny/limonki na sam koniec (5-10ml)
+- Ocet (balsamiczny, sherry, ryżowy, jabłkowy) w procesie lub na koniec
+- Element fermentowany (labneh, jogurt, kimchi, kapary, miso)
+- Wino/koniak w deglazing
+- Quickpickle jako garnir (ogórek/rzodkiewka/cebula w occie 20 min)
+DOMYŚLNIE: jeśli danie nie ma kwasu — DODAJ cytrynę/ocet na koniec. Nie pytaj, dodaj.
+
+### 3. TEKSTURA — CZY JEST KONTRAST?
+Monotonna tekstura = nudne danie po 3 kęsach. WYMAGANE:
+- Coś CHRUPIĄCEGO na czymś MIĘKKIM (orzechy, panko, grzanki, chips, kruszonka, dukkah, furikake)
+- Lub coś KREMOWEGO obok czegoś JĘDRNEGO (purée + blanszowane al dente)
+- Lub element ŚWIEŻY obok GOTOWANEGO (świeże zioła, microgreens, surowy pickle)
+DOMYŚLNIE: ZAWSZE dodaj element chrupiący. Prażone orzechy/nasiona (30 sek sucha patelnia), panko w brązowym maśle, chips z warzywa, grzanki — ZERO WYJĄTKÓW.
+
+### 4. UMAMI — CZY DANIE MA GŁĘBIĘ?
+Umami = profesjonalny smak. Min 1 źródło:
+- Parmezan/pecorino (nawet w nie-włoskich daniach — tarte na Microplane na wierzch)
+- Sos sojowy (1 łyżeczka do KAŻDEGO sosu mięsnego — nikt nie poczuje "azjatycki" smak, tylko głębię)
+- Miso (5g rozpuszczone w sosie/zupie — transformatywne)
+- Koncentrat pomidorowy (karmelizowany 2 min na patelni przed dodaniem płynów)
+- Maillard zmaksymalizowany (dobry sear, karmelizacja cebuli, tostowanie przypraw/ryżu/orzechów)
+- Suszony grzyb (moczony w wodzie → woda grzyba jako bulion)
+DOMYŚLNIE: sprawdź czy Maillard jest zmaksymalizowany. Dodaj 1 ukryte źródło umami.
+
+### 5. TECHNIKA — CZY ROBIĘ TO NAJLEPSZĄ METODĄ?
+Dla KAŻDEGO kluczowego procesu w przepisie:
+- Smażenie mięsa: osuszone? suche solenie 40min+? patelnia 280°C+ (pirometr)? basting na koniec?
+- Pieczenie: preheating 30 min? optymalny tryb (grzałki/termoobieg)? termosonda?
+- Gotowanie w wodzie: czy to nie powinno być blanszowanie+szok lodowy zamiast rozgotowania?
+- Warzywa: karmelizacja > gotowanie. Pieczenie 200°C > gotowanie w wodzie. Grillowanie > smażenie na płasko.
+- Duszenie: sear PRZED duszeniem ZAWSZE. Deglazing fond ze dna.
+- Wypieki: tangzhong? autoliza? cold retard? blooming kakao w espresso? skrobia zamiast mąki?
+- Sos: deglazing → redukcja → montaż masłem. NIGDY "dodaj śmietanę i gotowe".
+DOMYŚLNIE: dla każdej techniki podaj DLACZEGO + doneness criteria (wizualne, zapachowe, temperaturowe).
+
+### 6. FINISHING — CZY MAM ELEMENTY WYKOŃCZENIOWE?
+MINIMUM 2 finishing elements na każdy przepis:
+- Fresh herb (bazylia, mięta, koperek, szczypiorek, natka — dodany NA TALERZU nie do garnka)
+- Skórka cytrusu (Microplane — cytryna, limonka, pomarańcza)
+- Finishing oil (oliwa extra virgin, olej sezamowy — NA KONIEC po wyłączeniu ognia)
+- Flake salt (Maldon/fleur de sel na mięso, czekoladę, awokado — NIE do sosu)
+- Pikantny akcent (płatki chili Aleppo/gochugaru, świeżo mielony pieprz)
+- Tekstura (sezam, dukkah, furikake, prażone nasiona)
+DOMYŚLNIE: herb + acid LUB oil + zest LUB crunch + herb. Zawsze 2+.
+
+### 7. UPGRADE — CO BY ZROBIŁ SZEF KUCHNI Z GWIAZDKĄ?
+Pole "upgrade" w JSON NIGDY nie jest puste. Jeden konkretny element który:
+- Wymaga max 5-10 min dodatkowej pracy
+- Jest oparty na technice/nauce, nie na drogim składniku
+- Dramatycznie zmienia odbiór dania
+Nie pisz ogólników ("dodaj truflowy olej"). Pisz konkret z mechaniką:
+"Zrób compound butter: 50g miękkiego masła + 10g miso + 5ml soku z cytryny + 2g wędzonej papryki. Uformuj w wałek w folii, schłódź. Plasterek na gorący stek — topi się w żywą glazurę umami."
+
+### WALIDACJA PRO ELEVATION — PRZED ZWRÓCENIEM JSON:
+Sprawdź czy przepis przechodzi ≥5 z 7:
+☐ Tłuszcz ulepszona wersja (brązowe masło / ghee / finishing oil)
+☐ Kwas obecny (cytryna / ocet / pickle / ferment / wino)
+☐ Kontrast tekstury (chrupiące na miękkim)
+☐ Umami / głębia (Maillard / parmezan / miso / sos sojowy)
+☐ Technika z WHY + doneness criteria w każdym kroku
+☐ Min 2 finishing elements
+☐ Pole upgrade z konkretnym trickiem
+
+Jeśli <5 z 7 — PRZEPISZ przepis zanim zwrócisz JSON. Nie zwracaj generycznego przepisu.
 
 ---
 
@@ -3254,7 +3506,7 @@ class CulinaryAssistant:
         
         try:
             kwargs = {
-                "model": AI_MODEL,
+                "model": getattr(self, '_recipe_model', AI_MODEL),
                 "max_tokens": max_tokens or AI_MAX_TOKENS,
                 "temperature": 0.7,
                 "messages": [{"role": "system", "content": prompt}] + msgs,
@@ -3407,6 +3659,12 @@ class CulinaryAssistant:
         if isinstance(bans, str):
             bans = json.loads(bans) if bans else []
 
+        # Model selection: PRO gets gpt-4o, FREE gets gpt-4o-mini
+        user_is_pro = is_pro(uid) if uid else False
+        self._recipe_model = "gpt-4o" if user_is_pro else AI_MODEL
+        if user_is_pro:
+            logger.info(f"PRO user {uid} — using gpt-4o for recipe generation")
+
         # STEP 1: Layer-specific retrieval (PARALLEL for speed)
         main_ingredient, dish_type = extract_query_terms(question)
         layer_queries = build_layer_queries(question, main_ingredient, dish_type)
@@ -3414,11 +3672,13 @@ class CulinaryAssistant:
         # PARALLEL SEARCH - 4x speed improvement
         layers = parallel_search(self, layer_queries)
         
-        # Build context for planner (ULTRA TRIM for max speed)
-        core_data = ultra_trim('\n---\n'.join(layers.get('core', [])), 600)
-        comp_data = ultra_trim('\n---\n'.join(layers.get('composition', [])), 400)
-        tech_data = ultra_trim('\n---\n'.join(layers.get('techniques', [])), 400)
-        flavor_data = ultra_trim('\n---\n'.join(layers.get('flavor', [])), 300)
+        # Build context for planner
+        core_data = ultra_trim('\n---\n'.join(layers.get('core', [])), 1500)
+        comp_data = ultra_trim('\n---\n'.join(layers.get('composition', [])), 1000)
+        tech_data = ultra_trim('\n---\n'.join(layers.get('techniques', [])), 1000)
+        flavor_data = ultra_trim('\n---\n'.join(layers.get('flavor', [])), 800)
+        baking_data = ultra_trim('\n---\n'.join(layers.get('baking', [])), 1500)
+        procedures_data = ultra_trim('\n---\n'.join(layers.get('procedures', [])), 1500)
         banned_text = ', '.join(bans) if bans else 'none'
         
         context = f"""# KNOWLEDGE CONTEXT
@@ -3434,6 +3694,12 @@ class CulinaryAssistant:
 
 ## FLAVOR DATA (parowanie smaków, balans)
 {flavor_data}
+
+## BAKING DATA (wypieki, ciasta, struktury)
+{baking_data}
+
+## PRO PROCEDURES (triki per danie — OBOWIĄZKOWO UŻYJ)
+{procedures_data}
 
 ## USER PROFILE
 {prof_ctx}
@@ -3513,6 +3779,7 @@ class CulinaryAssistant:
         # STEP 6: Post-processing
         recipe = enforce_bans(recipe, bans)
         recipe = enforce_equipment(recipe, prof_data)
+        recipe = enforce_pro_quality(recipe, prof_data)
         auto_update_profile(uid, recipe)
         
         # Combine usage
@@ -3629,6 +3896,7 @@ class CulinaryAssistant:
         parsed.pop("book_references", None)
         parsed = enforce_bans(parsed, bans)
         parsed = enforce_equipment(parsed, prof_data)
+        parsed = enforce_pro_quality(parsed, prof_data)
         auto_update_profile(uid, parsed)
 
         return {
@@ -3784,6 +4052,7 @@ class CulinaryAssistant:
             bans = json.loads(bans) if bans else []
         parsed = enforce_bans(parsed, bans)
         parsed = enforce_equipment(parsed, prof_data)
+        parsed = enforce_pro_quality(parsed, prof_data)
         auto_update_profile(uid, parsed)
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
 
@@ -4135,6 +4404,7 @@ Przekształć poniższy przepis na JSON type:recipe.
             parsed["type"] = "recipe"
         parsed = enforce_bans(parsed, bans)
         parsed = enforce_equipment(parsed, prof_data)
+        parsed = enforce_pro_quality(parsed, prof_data)
         auto_update_profile(uid, parsed)
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
 
@@ -4554,6 +4824,7 @@ def create_app():
                 if isinstance(bans,str): bans=json.loads(bans) if bans else []
                 parsed=enforce_bans(parsed,bans)
                 parsed=enforce_equipment(parsed,prof_data)
+                parsed=enforce_pro_quality(parsed,prof_data)
                 auto_update_profile(uid,parsed)
                 increment_daily(uid,"recipes")
                 logger.info(f"[ask-stream] parsed type={parsed.get('type')} title={parsed.get('title','?')[:50]} keys={list(parsed.keys())[:8]}")
@@ -5153,6 +5424,7 @@ Zwróć pełny JSON przepisu (ten sam format co oryginał) z dodanym polem "vari
             parsed["type"]="recipe"
             parsed=enforce_bans(parsed,bans)
             parsed=enforce_equipment(parsed,p)
+            parsed=enforce_pro_quality(parsed,p)
             increment_daily(g.user_id,"recipes")
             return jsonify({"success":True,"data":parsed})
         except Exception as e:
@@ -5557,341 +5829,547 @@ Sitemap: https://chef-ai.netlify.app/sitemap.xml""", 200, {'Content-Type': 'text
     # ─── Admin Panel ───
     @app.route('/admin')
     def admin_panel():
-        # Simple HTML template for admin panel
-        html = '''
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Chef AI Admin</title>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <style>
-                * { margin: 0; padding: 0; box-sizing: border-box; }
-                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
-                       background: #09090B; color: #FAFAFA; line-height: 1.5; }
-                .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-                .header { display: flex; justify-content: space-between; align-items: center; 
-                         margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #27272A; }
-                .title { font-size: 24px; font-weight: 700; color: #E2B44F; }
-                .back-link { color: #A1A1AA; text-decoration: none; font-size: 14px; }
-                .back-link:hover { color: #E2B44F; }
-                .card { background: #18181B; border: 1px solid #27272A; border-radius: 12px; 
-                       padding: 20px; margin-bottom: 20px; }
-                .card-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; }
-                .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-                .metric { text-align: center; }
-                .metric-value { font-size: 28px; font-weight: 800; font-family: 'SF Mono', monospace; }
-                .metric-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; 
-                               color: #71717A; margin-top: 5px; }
-                .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
-                .status-ok { background: #34D399; }
-                .status-error { background: #F87171; }
-                .health-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
-                .health-item { display: flex; align-items: center; font-size: 12px; }
-                .loading { text-align: center; padding: 40px; color: #71717A; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1 class="title">🔧 Chef AI Admin</h1>
-                    <a href="/" class="back-link">← Wróć do aplikacji</a>
-                </div>
-                
-                <div class="card">
-                    <h2 class="card-title">Health Status</h2>
-                    <div id="health" class="loading">Loading...</div>
-                </div>
-                
-                <div class="card">
-                    <h2 class="card-title">Overview (24h)</h2>
-                    <div id="overview" class="loading">Loading...</div>
-                </div>
-                
-                <div class="card">
-                    <h2 class="card-title">Recent Errors</h2>
-                    <div id="errors" class="loading">Loading...</div>
-                </div>
-                
-                <div class="card">
-                    <h2 class="card-title">Users</h2>
-                    <div id="users" class="loading">Loading...</div>
-                </div>
+        html = '''<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Chef AI Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            zinc: { 950: '#09090b' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-zinc-950">
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const { useState, useEffect, useCallback } = React;
+
+    function getAuthToken() {
+      try {
+        const raw = localStorage.getItem("sb-vmmwhwlglnjyplzlvlxf-auth-token");
+        if (raw) return JSON.parse(raw)?.access_token;
+      } catch {}
+      return null;
+    }
+    function hdrs() {
+      const t = getAuthToken();
+      return t ? { Authorization: `Bearer ${t}`, "Content-Type": "application/json" } : {};
+    }
+    async function api(path) {
+      const r = await fetch(path, { headers: hdrs() });
+      if (!r.ok) throw new Error(`${r.status}`);
+      return r.json();
+    }
+
+    const fmt = {
+      num: (n) => (n ?? 0).toLocaleString("pl"),
+      money: (n) => `$${(n ?? 0).toFixed(4)}`,
+      pct: (n) => `${(n ?? 0).toFixed(1)}%`,
+      ms: (n) => `${Math.round(n ?? 0)}ms`,
+      date: (d) => d ? new Date(d).toLocaleDateString("pl", { day: "numeric", month: "short", year: "numeric" }) : "—",
+      time: (d) => d ? new Date(d).toLocaleTimeString("pl", { hour: "2-digit", minute: "2-digit" }) : "—",
+      ago: (ts) => {
+        if (!ts) return "—";
+        const s = Math.floor((Date.now() / 1000) - ts);
+        if (s < 60) return `${s}s temu`;
+        if (s < 3600) return `${Math.floor(s / 60)}m temu`;
+        if (s < 86400) return `${Math.floor(s / 3600)}h temu`;
+        return `${Math.floor(s / 86400)}d temu`;
+      },
+      uptime: (s) => {
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        return h > 0 ? `${h}h ${m}m` : `${m}m`;
+      },
+    };
+
+    function Badge({ variant, children }) {
+      const colors = {
+        ok: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
+        error: "bg-red-500/15 text-red-400 border-red-500/20",
+        warn: "bg-amber-500/15 text-amber-400 border-amber-500/20",
+        info: "bg-sky-500/15 text-sky-400 border-sky-500/20",
+        pro: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+        free: "bg-zinc-500/15 text-zinc-400 border-zinc-500/20",
+        admin: "bg-purple-500/15 text-purple-400 border-purple-500/20",
+      };
+      return (
+        <span className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold tracking-wide uppercase border rounded-full ${colors[variant] || colors.info}`}>
+          {children}
+        </span>
+      );
+    }
+
+    function Metric({ label, value, sub, color = "text-zinc-100" }) {
+      return (
+        <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-zinc-800/50 border border-zinc-700/50">
+          <div className={`text-2xl font-black tracking-tight tabular-nums ${color}`}>{value}</div>
+          <div className="text-xs text-zinc-500 uppercase tracking-widest mt-1">{label}</div>
+          {sub && <div className="text-xs text-zinc-600 mt-0.5">{sub}</div>}
+        </div>
+      );
+    }
+
+    function HealthDot({ name, status, detail }) {
+      return (
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-zinc-800/30">
+          <div className={`w-2 h-2 rounded-full ${status === "ok" ? "bg-emerald-400" : "bg-red-400"}`} />
+          <span className="text-sm text-zinc-300">{name}</span>
+          {detail && <span className="text-xs text-zinc-600 ml-auto">{detail}</span>}
+        </div>
+      );
+    }
+
+    function Card({ title, action, children, className = "" }) {
+      return (
+        <div className={`bg-zinc-900/80 border border-zinc-800 rounded-2xl overflow-hidden ${className}`}>
+          {title && (
+            <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-800/80">
+              <h2 className="text-sm font-bold text-zinc-300 uppercase tracking-wider">{title}</h2>
+              {action}
             </div>
-            
-            <script>
-                // Check auth and get token
-                function getAuthToken() {
-                    const authData = localStorage.getItem('sb-vmmwhwlglnjyplzlvlxf-auth-token');
-                    if (authData) {
-                        try {
-                            const parsed = JSON.parse(authData);
-                            return parsed.access_token;
-                        } catch (e) {
-                            return null;
-                        }
-                    }
-                    return null;
-                }
-                
-                function getAuthHeaders() {
-                    const token = getAuthToken();
-                    return token ? { 'Authorization': `Bearer ${token}` } : {};
-                }
-                
-                // Check if user is logged in and redirect if not
-                function checkAuth() {
-                    const token = getAuthToken();
-                    if (!token) {
-                        document.body.innerHTML = `
-                            <div style="text-align: center; padding: 100px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
-                                <h1 style="color: #F87171; margin-bottom: 20px;">Unauthorized</h1>
-                                <p style="color: #A1A1AA; margin-bottom: 30px;">You need to be logged in to access the admin panel.</p>
-                                <a href="/" style="color: #E2B44F; text-decoration: none;">← Go back to Chef AI</a>
-                            </div>
-                        `;
-                        return false;
-                    }
-                    return true;
-                }
-                
-                async function loadData() {
-                    if (!checkAuth()) return;
-                    
-                    try {
-                        const headers = getAuthHeaders();
-                        const [health, stats, users] = await Promise.all([
-                            fetch('/admin/api/health', { headers }).then(r => r.json()),
-                            fetch('/admin/api/stats', { headers }).then(r => r.json()),
-                            fetch('/admin/api/users', { headers }).then(r => r.json())
-                        ]);
-                        
-                        renderHealth(health);
-                        renderOverview(stats);
-                        renderErrors(stats.errors);
-                        renderUsers(users);
-                    } catch (e) {
-                        console.error('Failed to load admin data:', e);
-                    }
-                }
-                
-                function renderHealth(data) {
-                    const html = `
-                        <div class="health-grid">
-                            ${Object.entries(data.checks).map(([name, check]) => `
-                                <div class="health-item">
-                                    <span class="status-dot ${check.status === 'ok' ? 'status-ok' : 'status-error'}"></span>
-                                    ${name}
-                                </div>
-                            `).join('')}
+          )}
+          <div className="p-5">{children}</div>
+        </div>
+      );
+    }
+
+    function Detail({ label, items, variant = "info" }) {
+      if (!items?.length) return null;
+      return (
+        <div>
+          <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">{label}</span>
+          <div className="flex flex-wrap gap-1.5 mt-1">
+            {items.map((item, i) => <Badge key={i} variant={variant}>{item}</Badge>)}
+          </div>
+        </div>
+      );
+    }
+
+    function UserModal({ user, onClose }) {
+      if (!user) return null;
+      const p = user.profile || {};
+      const u = user.usage || {};
+      const prefs = user.preferences || {};
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
+          <div className="bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto m-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
+              <div>
+                <h2 className="text-lg font-bold text-zinc-100">{user.email}</h2>
+                <div className="flex gap-2 mt-1">
+                  <Badge variant={p.role}>{p.role}</Badge>
+                  <Badge variant={p.subscription_status === "active" ? "ok" : "free"}>{p.subscription_status || "free"}</Badge>
+                </div>
+              </div>
+              <button onClick={onClose} className="text-zinc-500 hover:text-zinc-300 text-xl leading-none">&times;</button>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <Metric label="API Calls" value={fmt.num(u.total_api_calls)} />
+                <Metric label="Tokeny" value={fmt.num(u.total_tokens)} />
+                <Metric label="Koszt" value={fmt.money(u.total_cost_usd)} color="text-amber-400" />
+                <Metric label="Przepisy" value={fmt.num(u.recipes_cooked)} />
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div><span className="text-zinc-500">Język:</span><span className="text-zinc-300 ml-2">{p.lang || "pl"}</span></div>
+                <div><span className="text-zinc-500">Utworzony:</span><span className="text-zinc-300 ml-2">{fmt.date(p.created_at)}</span></div>
+                <div><span className="text-zinc-500">Ostatnie logowanie:</span><span className="text-zinc-300 ml-2">{fmt.date(p.last_sign_in)}</span></div>
+                <div><span className="text-zinc-500">Oceny:</span><span className="text-zinc-300 ml-2">{fmt.num(u.recipes_rated)}</span></div>
+              </div>
+              <div className="space-y-3">
+                <Detail label="Sprzęt" items={user.equipment} />
+                <Detail label="Zakazy" items={prefs.banned_ingredients} variant="error" />
+                <Detail label="Ulubione" items={prefs.favorite_ingredients} variant="ok" />
+                <Detail label="Umiejętności" items={prefs.mastered_skills} variant="info" />
+              </div>
+              {user.recent_api_calls?.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Ostatnie API calls</h3>
+                  <div className="max-h-48 overflow-y-auto rounded-lg border border-zinc-800">
+                    {user.recent_api_calls.slice(0, 15).map((c, i) => (
+                      <div key={i} className="flex items-center gap-3 px-3 py-2 text-xs border-b border-zinc-800/50 last:border-0">
+                        <span className="text-zinc-600 w-20 shrink-0">{fmt.time(c.timestamp)}</span>
+                        <span className="text-zinc-400 truncate flex-1">{c.endpoint || "—"}</span>
+                        <span className="text-zinc-500 tabular-nums">{fmt.num((c.input_tokens || 0) + (c.output_tokens || 0))} tok</span>
+                        <span className="text-amber-500/70 tabular-nums w-16 text-right">{fmt.money(c.cost_usd)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function AdminDashboard() {
+      const [health, setHealth] = useState(null);
+      const [stats, setStats] = useState(null);
+      const [users, setUsers] = useState([]);
+      const [selectedUser, setSelectedUser] = useState(null);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+      const [tab, setTab] = useState("overview");
+      const [timeRange, setTimeRange] = useState(24);
+
+      const loadData = useCallback(async () => {
+        try {
+          setError(null);
+          const [h, s, u] = await Promise.all([
+            api("/admin/api/health"),
+            api(`/admin/api/stats?hours=${timeRange}`),
+            api("/admin/api/users"),
+          ]);
+          setHealth(h);
+          setStats(s);
+          setUsers(u);
+        } catch (e) {
+          setError(e.message);
+        } finally {
+          setLoading(false);
+        }
+      }, [timeRange]);
+
+      useEffect(() => {
+        const token = getAuthToken();
+        if (!token) { setError("auth"); setLoading(false); return; }
+        loadData();
+        const interval = setInterval(loadData, 30000);
+        return () => clearInterval(interval);
+      }, [loadData]);
+
+      const showUserDetail = async (userId) => {
+        try { const data = await api(`/admin/api/users/${userId}`); setSelectedUser(data); } catch {}
+      };
+
+      const changeRole = async (userId, role) => {
+        try {
+          await fetch(`/admin/api/users/${userId}/role`, { method: "POST", headers: hdrs(), body: JSON.stringify({ role }) });
+          loadData();
+        } catch {}
+      };
+
+      if (error === "auth") {
+        return (
+          <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-5xl mb-4">🔒</div>
+              <h1 className="text-xl font-bold text-red-400 mb-2">Brak autoryzacji</h1>
+              <p className="text-zinc-500 mb-4">Zaloguj się jako admin w aplikacji Chef AI.</p>
+              <a href="/" className="text-amber-400 hover:text-amber-300 text-sm">&larr; Wróć do aplikacji</a>
+            </div>
+          </div>
+        );
+      }
+
+      const s = stats || { requests: { total: 0, avg_duration_ms: 0, error_rate_pct: 0, hourly: {}, top_endpoints: [] }, errors: { total: 0, recent: [] }, api: { total_calls: 0, total_tokens: 0, total_cost_usd: 0, cost_by_provider: {}, tokens_by_provider: {}, recent: [] } };
+      const checks = health?.checks || {};
+      const allOk = Object.values(checks).every((c) => c.status === "ok");
+      const totalUsers = users.length;
+      const proUsers = users.filter((u) => u.role === "pro" || u.role === "admin").length;
+      const freeUsers = totalUsers - proUsers;
+      const activeToday = users.filter((u) => {
+        if (!u.last_sign_in) return false;
+        return new Date(u.last_sign_in).toDateString() === new Date().toDateString();
+      }).length;
+
+      return (
+        <div className="min-h-screen bg-zinc-950 text-zinc-100">
+          <div className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm sticky top-0 z-40">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🍳</span>
+                <div>
+                  <h1 className="text-base font-black tracking-tight text-zinc-100">Chef AI</h1>
+                  <span className="text-xs text-zinc-600">Admin Dashboard</span>
+                </div>
+                <div className={`ml-3 w-2 h-2 rounded-full ${allOk ? "bg-emerald-400" : "bg-red-400"}`} />
+              </div>
+              <div className="flex items-center gap-4">
+                <select value={timeRange} onChange={(e) => setTimeRange(Number(e.target.value))}
+                  className="bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs rounded-lg px-2 py-1.5 focus:outline-none">
+                  <option value={1}>1h</option>
+                  <option value={6}>6h</option>
+                  <option value={24}>24h</option>
+                  <option value={72}>3 dni</option>
+                  <option value={168}>7 dni</option>
+                </select>
+                <button onClick={loadData} className="text-zinc-500 hover:text-amber-400 text-sm" title="Odśwież">↻</button>
+                <a href="/" className="text-xs text-zinc-500 hover:text-amber-400">&larr; Aplikacja</a>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-b border-zinc-800">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 flex gap-1">
+              {[
+                { id: "overview", label: "Przegląd" },
+                { id: "users", label: `Użytkownicy (${totalUsers})` },
+                { id: "api", label: "API & Koszty" },
+                { id: "errors", label: `Błędy (${s.errors.total})` },
+                { id: "system", label: "System" },
+              ].map((t) => (
+                <button key={t.id} onClick={() => setTab(t.id)}
+                  className={`px-4 py-2.5 text-xs font-semibold tracking-wide transition-colors border-b-2 ${tab === t.id ? "border-amber-400 text-amber-400" : "border-transparent text-zinc-500 hover:text-zinc-300"}`}>
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
+            {loading ? (
+              <div className="text-center py-20 text-zinc-600">Ładowanie...</div>
+            ) : (
+              <>
+                {tab === "overview" && (
+                  <>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                      <Metric label="Użytkownicy" value={totalUsers} sub={`${proUsers} PRO`} />
+                      <Metric label="Aktywni dziś" value={activeToday} />
+                      <Metric label="Requesty" value={fmt.num(s.requests.total)} sub={`${timeRange}h`} />
+                      <Metric label="Śr. czas" value={fmt.ms(s.requests.avg_duration_ms)} />
+                      <Metric label="Tokeny" value={fmt.num(s.api.total_tokens)} />
+                      <Metric label="Koszt" value={fmt.money(s.api.total_cost_usd)} color="text-amber-400" />
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                      <Card title="Health">
+                        <div className="grid grid-cols-2 gap-2">
+                          {Object.entries(checks).map(([name, check]) => (
+                            <HealthDot key={name} name={name} status={check.status} detail={name === "server" ? fmt.uptime(check.uptime || 0) : undefined} />
+                          ))}
                         </div>
-                        <div style="margin-top: 15px; font-size: 12px; color: #71717A;">
-                            Uptime: ${Math.floor(data.checks.server?.uptime / 3600) || 0}h
+                      </Card>
+                      <Card title="Top Endpointy">
+                        {s.requests.top_endpoints?.length > 0 ? (
+                          <div className="space-y-2">
+                            {s.requests.top_endpoints.slice(0, 6).map(([ep, count], i) => (
+                              <div key={i} className="flex items-center justify-between text-sm">
+                                <span className="text-zinc-400 font-mono text-xs truncate">{ep}</span>
+                                <span className="text-zinc-500 tabular-nums ml-2">{count}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : <p className="text-zinc-600 text-sm italic">Brak danych</p>}
+                      </Card>
+                    </div>
+                    {s.errors.recent?.length > 0 && (
+                      <Card title={`Ostatnie błędy (${s.errors.total})`}
+                        action={<button onClick={() => setTab("errors")} className="text-xs text-amber-400 hover:text-amber-300">Pokaż wszystkie &rarr;</button>}>
+                        <div className="space-y-1">
+                          {s.errors.recent.slice(0, 5).map((err, i) => (
+                            <div key={i} className="flex items-center gap-3 text-xs py-1.5 border-b border-zinc-800/50 last:border-0">
+                              <span className="text-zinc-600 w-16 shrink-0">{fmt.ago(err.ts)}</span>
+                              <span className="text-zinc-500">{err.endpoint}</span>
+                              <Badge variant="error">{err.type}</Badge>
+                              <span className="text-zinc-600 truncate ml-auto max-w-xs">{err.message?.slice(0, 80)}</span>
+                            </div>
+                          ))}
                         </div>
-                    `;
-                    document.getElementById('health').innerHTML = html;
-                }
-                
-                function renderOverview(data) {
-                    const html = `
-                        <div class="metrics">
-                            <div class="metric">
-                                <div class="metric-value" style="color: #FAFAFA;">${data.requests.total}</div>
-                                <div class="metric-label">Requesty</div>
-                            </div>
-                            <div class="metric">
-                                <div class="metric-value" style="color: #F87171;">${data.errors.total}</div>
-                                <div class="metric-label">Błędy</div>
-                            </div>
-                            <div class="metric">
-                                <div class="metric-value" style="color: #FAFAFA;">${data.requests.avg_duration_ms}ms</div>
-                                <div class="metric-label">Śr. czas</div>
-                            </div>
-                            <div class="metric">
-                                <div class="metric-value" style="color: #A1A1AA;">${data.api.total_tokens.toLocaleString()}</div>
-                                <div class="metric-label">Tokeny</div>
-                            </div>
-                            <div class="metric">
-                                <div class="metric-value" style="color: #E2B44F;">$${data.api.total_cost_usd}</div>
-                                <div class="metric-label">Koszt 24h</div>
-                            </div>
-                        </div>
-                    `;
-                    document.getElementById('overview').innerHTML = html;
-                }
-                
-                function renderErrors(data) {
-                    if (data.recent.length === 0) {
-                        document.getElementById('errors').innerHTML = '<div style="color: #71717A; font-style: italic;">Brak błędów</div>';
-                        return;
-                    }
-                    
-                    const html = data.recent.slice(0, 10).map(err => {
-                        const time = new Date(err.ts * 1000).toLocaleTimeString('pl');
-                        return `
-                            <div style="padding: 8px 0; border-bottom: 1px solid #27272A; font-size: 12px; font-family: monospace;">
-                                <span style="color: #71717A; width: 60px; display: inline-block;">${time}</span>
-                                <span style="color: #A1A1AA; margin-right: 15px;">${err.endpoint}</span>
-                                <span style="color: #F87171; font-weight: 600;">${err.type}</span>
-                            </div>
-                        `;
-                    }).join('');
-                    document.getElementById('errors').innerHTML = html;
-                }
-                
-                function renderUsers(users) {
-                    const html = users.map(user => `
-                        <div style="padding: 12px 0; border-bottom: 1px solid #27272A; display: flex; align-items: center; font-size: 13px;">
-                            <span style="flex: 1; cursor: pointer; color: #E2B44F;" onclick="showUserDetails('${user.id}')">${user.email}</span>
-                            <select onchange="changeUserRole('${user.id}', this.value)" 
-                                    style="padding: 4px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; 
-                                           background: #18181B; border: 1px solid #27272A; color: #FAFAFA; margin-right: 15px;">
-                                <option value="free" ${user.role === 'free' ? 'selected' : ''}>FREE</option>
-                                <option value="pro" ${user.role === 'pro' ? 'selected' : ''}>PRO</option>
-                                <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>ADMIN</option>
+                      </Card>
+                    )}
+                  </>
+                )}
+
+                {tab === "users" && (
+                  <Card title={`Użytkownicy (${totalUsers})`}>
+                    <div className="grid grid-cols-3 gap-3 mb-5">
+                      <Metric label="Total" value={totalUsers} />
+                      <Metric label="PRO" value={proUsers} color="text-amber-400" />
+                      <Metric label="Free" value={freeUsers} />
+                    </div>
+                    <div className="rounded-xl border border-zinc-800 overflow-hidden">
+                      <div className="grid grid-cols-12 gap-2 px-4 py-2 bg-zinc-800/50 text-xs text-zinc-500 font-semibold uppercase tracking-wider">
+                        <div className="col-span-5">Email</div>
+                        <div className="col-span-2">Rola</div>
+                        <div className="col-span-2">Przepisy</div>
+                        <div className="col-span-3">Ostatnia aktywność</div>
+                      </div>
+                      {users.map((user) => (
+                        <div key={user.id} className="grid grid-cols-12 gap-2 px-4 py-3 border-t border-zinc-800/50 items-center hover:bg-zinc-800/20 transition-colors">
+                          <div className="col-span-5">
+                            <button onClick={() => showUserDetail(user.id)} className="text-sm text-amber-400/80 hover:text-amber-300 font-medium truncate text-left">
+                              {user.email}
+                            </button>
+                          </div>
+                          <div className="col-span-2">
+                            <select value={user.role} onChange={(e) => changeRole(user.id, e.target.value)}
+                              className={`text-xs font-bold px-2 py-1 rounded-lg border focus:outline-none ${user.role === "admin" ? "bg-purple-500/10 border-purple-500/30 text-purple-400" : user.role === "pro" ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-zinc-800 border-zinc-700 text-zinc-400"}`}>
+                              <option value="free">FREE</option>
+                              <option value="pro">PRO</option>
+                              <option value="admin">ADMIN</option>
                             </select>
-                            <span style="color: #71717A; font-size: 12px;">
-                                ${user.last_sign_in ? new Date(user.last_sign_in).toLocaleDateString('pl') : 'Never'}
-                            </span>
+                          </div>
+                          <div className="col-span-2 text-sm text-zinc-500 tabular-nums">{user.recipes_count ?? 0}</div>
+                          <div className="col-span-3 text-xs text-zinc-600">{fmt.date(user.last_sign_in)}</div>
                         </div>
-                    `).join('');
-                    document.getElementById('users').innerHTML = html;
-                }
-                
-                async function showUserDetails(userId) {
-                    try {
-                        const headers = getAuthHeaders();
-                        const response = await fetch(`/admin/api/users/${userId}`, { headers });
-                        const user = await response.json();
-                        
-                        if (!response.ok) {
-                            alert('Failed to load user details');
-                            return;
-                        }
-                        
-                        // Create modal
-                        const modal = document.createElement('div');
-                        modal.style.cssText = `
-                            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
-                            background: rgba(0,0,0,0.8); z-index: 1000; 
-                            display: flex; align-items: center; justify-content: center;
-                        `;
-                        
-                        modal.innerHTML = `
-                            <div style="background: #18181B; border: 1px solid #27272A; border-radius: 8px; 
-                                        width: 90%; max-width: 800px; max-height: 90%; overflow-y: auto; padding: 20px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                                    <h2 style="color: #FAFAFA; margin: 0;">Szczegóły użytkownika</h2>
-                                    <button onclick="this.closest('div').parentElement.remove()" 
-                                            style="background: none; border: none; color: #71717A; font-size: 20px; cursor: pointer;">×</button>
-                                </div>
-                                
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                                    <div>
-                                        <h3 style="color: #E2B44F; margin: 0 0 10px 0;">Profil</h3>
-                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Email:</strong> ${user.email}</p>
-                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Rola:</strong> ${user.profile.role.toUpperCase()}</p>
-                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Status:</strong> ${user.profile.subscription_status}</p>
-                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Język:</strong> ${user.profile.lang}</p>
-                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Utworzony:</strong> ${user.profile.created_at ? new Date(user.profile.created_at).toLocaleDateString('pl') : 'N/A'}</p>
-                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Ostatnie logowanie:</strong> ${user.profile.last_sign_in ? new Date(user.profile.last_sign_in).toLocaleDateString('pl') : 'Never'}</p>
-                                    </div>
-                                    
-                                    <div>
-                                        <h3 style="color: #E2B44F; margin: 0 0 10px 0;">Użycie API</h3>
-                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Zapytania:</strong> ${user.usage.total_api_calls}</p>
-                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Tokeny:</strong> ${user.usage.total_tokens.toLocaleString()}</p>
-                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Koszt:</strong> $${user.usage.total_cost_usd}</p>
-                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Przepisy:</strong> ${user.usage.recipes_cooked}</p>
-                                        <p style="color: #FAFAFA; margin: 5px 0;"><strong>Oceny:</strong> ${user.usage.recipes_rated}</p>
-                                    </div>
-                                </div>
-                                
-                                <div style="margin-bottom: 20px;">
-                                    <h3 style="color: #E2B44F; margin: 0 0 10px 0;">Ostatnie API calls</h3>
-                                    <div style="max-height: 200px; overflow-y: auto; border: 1px solid #27272A; border-radius: 4px;">
-                                        ${user.recent_api_calls.map(call => `
-                                            <div style="padding: 8px; border-bottom: 1px solid #27272A; font-size: 12px;">
-                                                <span style="color: #71717A;">${new Date(call.timestamp).toLocaleString('pl')}</span>
-                                                <span style="color: #FAFAFA; margin-left: 10px;">${call.endpoint || 'N/A'}</span>
-                                                <span style="color: #E2B44F; margin-left: 10px;">${call.input_tokens + call.output_tokens} tokens</span>
-                                                <span style="color: #71717A; margin-left: 10px;">$${call.cost_usd.toFixed(4)}</span>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <h3 style="color: #E2B44F; margin: 0 0 10px 0;">Preferencje</h3>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 12px;">
-                                        <div>
-                                            <strong style="color: #FAFAFA;">Sprzęt:</strong><br>
-                                            <span style="color: #71717A;">${user.equipment.join(', ') || 'Brak'}</span>
-                                        </div>
-                                        <div>
-                                            <strong style="color: #FAFAFA;">Zabronione składniki:</strong><br>
-                                            <span style="color: #71717A;">${user.preferences.banned_ingredients.join(', ') || 'Brak'}</span>
-                                        </div>
-                                        <div>
-                                            <strong style="color: #FAFAFA;">Ulubione składniki:</strong><br>
-                                            <span style="color: #71717A;">${user.preferences.favorite_ingredients.join(', ') || 'Brak'}</span>
-                                        </div>
-                                        <div>
-                                            <strong style="color: #FAFAFA;">Opanowane umiejętności:</strong><br>
-                                            <span style="color: #71717A;">${user.preferences.mastered_skills.join(', ') || 'Brak'}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                      ))}
+                    </div>
+                  </Card>
+                )}
+
+                {tab === "api" && (
+                  <>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <Metric label="API Calls" value={fmt.num(s.api.total_calls)} sub={`${timeRange}h`} />
+                      <Metric label="Tokeny" value={fmt.num(s.api.total_tokens)} />
+                      <Metric label="Koszt" value={fmt.money(s.api.total_cost_usd)} color="text-amber-400" />
+                      <Metric label="Error Rate" value={fmt.pct(s.requests.error_rate_pct)} color={s.requests.error_rate_pct > 5 ? "text-red-400" : "text-emerald-400"} />
+                    </div>
+                    {Object.keys(s.api.cost_by_provider || {}).length > 0 && (
+                      <Card title="Koszt per provider">
+                        <div className="space-y-3">
+                          {Object.entries(s.api.cost_by_provider).map(([provider, cost]) => (
+                            <div key={provider} className="flex items-center justify-between">
+                              <div>
+                                <span className="text-sm text-zinc-300 font-medium">{provider}</span>
+                                <span className="text-xs text-zinc-600 ml-2">{fmt.num(s.api.tokens_by_provider?.[provider] || 0)} tokens</span>
+                              </div>
+                              <span className="text-sm text-amber-400 font-bold tabular-nums">{fmt.money(cost)}</span>
                             </div>
-                        `;
-                        
-                        document.body.appendChild(modal);
-                        
-                        // Close on background click
-                        modal.addEventListener('click', (e) => {
-                            if (e.target === modal) {
-                                modal.remove();
-                            }
-                        });
-                        
-                    } catch (e) {
-                        console.error('Error loading user details:', e);
-                        alert('Error loading user details');
-                    }
-                }
-                
-                async function changeUserRole(userId, newRole) {
-                    try {
-                        const headers = getAuthHeaders();
-                        headers['Content-Type'] = 'application/json';
-                        
-                        const response = await fetch(`/admin/api/users/${userId}/role`, {
-                            method: 'POST',
-                            headers: headers,
-                            body: JSON.stringify({ role: newRole })
-                        });
-                        
-                        if (response.ok) {
-                            // Refresh user list
-                            loadData();
-                        } else {
-                            alert('Failed to update user role');
-                        }
-                    } catch (e) {
-                        console.error('Error changing user role:', e);
-                        alert('Error changing user role');
-                    }
-                }
-                
-                // Load data on page load
-                loadData();
-                
-                // Auto-refresh every 30 seconds
-                setInterval(loadData, 30000);
-            </script>
-        </body>
-        </html>
-        '''
+                          ))}
+                        </div>
+                      </Card>
+                    )}
+                    <Card title="Ostatnie API calls">
+                      {s.api.recent?.length > 0 ? (
+                        <div className="max-h-96 overflow-y-auto rounded-lg border border-zinc-800">
+                          {s.api.recent.map((call, i) => (
+                            <div key={i} className="flex items-center gap-3 px-3 py-2 text-xs border-b border-zinc-800/50 last:border-0">
+                              <span className="text-zinc-600 w-20 shrink-0">{fmt.time(call.timestamp)}</span>
+                              <Badge variant="info">{call.model}</Badge>
+                              <span className="text-zinc-400 truncate flex-1">{call.endpoint || "—"}</span>
+                              <span className="text-zinc-500 tabular-nums">{fmt.num((call.input_tokens || 0) + (call.output_tokens || 0))} tok</span>
+                              <span className="text-zinc-600 tabular-nums w-16 text-right">{fmt.ms(call.duration_ms)}</span>
+                              <span className="text-amber-500/70 tabular-nums w-16 text-right">{fmt.money(call.cost_usd)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : <p className="text-zinc-600 text-sm italic">Brak danych w wybranym zakresie</p>}
+                    </Card>
+                    <Card title="Projekcja kosztów">
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="text-center">
+                          <div className="text-xs text-zinc-500 mb-1">Dziennie (avg)</div>
+                          <div className="text-lg font-bold text-zinc-300 tabular-nums">{fmt.money(s.api.total_cost_usd / (timeRange / 24))}</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-xs text-zinc-500 mb-1">Miesięcznie (est.)</div>
+                          <div className="text-lg font-bold text-amber-400 tabular-nums">{fmt.money((s.api.total_cost_usd / (timeRange / 24)) * 30)}</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-xs text-zinc-500 mb-1">Per user/mies.</div>
+                          <div className="text-lg font-bold text-zinc-300 tabular-nums">
+                            {totalUsers > 0 ? fmt.money(((s.api.total_cost_usd / (timeRange / 24)) * 30) / totalUsers) : "—"}
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </>
+                )}
+
+                {tab === "errors" && (
+                  <Card title={`Błędy (${s.errors.total}) — ostatnie ${timeRange}h`}>
+                    {s.errors.recent?.length > 0 ? (
+                      <div className="space-y-1 max-h-[600px] overflow-y-auto">
+                        {s.errors.recent.map((err, i) => (
+                          <div key={i} className="px-3 py-2.5 rounded-lg bg-zinc-800/30 border border-zinc-800/50">
+                            <div className="flex items-center gap-3 text-xs">
+                              <span className="text-zinc-600">{fmt.ago(err.ts)}</span>
+                              <span className="text-zinc-400">{err.endpoint}</span>
+                              <Badge variant="error">{err.type}</Badge>
+                              {err.user_id && <span className="text-zinc-600 ml-auto">user: {err.user_id?.slice(0, 8)}…</span>}
+                            </div>
+                            {err.message && <pre className="mt-1.5 text-xs text-zinc-500 font-mono whitespace-pre-wrap break-all">{err.message}</pre>}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <div className="text-3xl mb-2">✅</div>
+                        <p className="text-zinc-500">Brak błędów w ostatnich {timeRange}h</p>
+                      </div>
+                    )}
+                  </Card>
+                )}
+
+                {tab === "system" && (
+                  <>
+                    <Card title="System Health">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {Object.entries(checks).map(([name, check]) => (
+                          <div key={name} className={`p-4 rounded-xl border ${check.status === "ok" ? "border-emerald-500/20 bg-emerald-500/5" : "border-red-500/20 bg-red-500/5"}`}>
+                            <div className="flex items-center gap-2 mb-1">
+                              <div className={`w-2 h-2 rounded-full ${check.status === "ok" ? "bg-emerald-400" : "bg-red-400"}`} />
+                              <span className="text-sm font-semibold text-zinc-300">{name}</span>
+                            </div>
+                            {check.uptime && <div className="text-xs text-zinc-500">Uptime: {fmt.uptime(check.uptime)}</div>}
+                            {check.collections && <div className="text-xs text-zinc-500">Kolekcje: {check.collections}</div>}
+                            {check.message && <div className="text-xs text-red-400 mt-1">{check.message}</div>}
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                    <Card title="Konfiguracja">
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div className="space-y-2">
+                          <div className="flex justify-between"><span className="text-zinc-500">Model (FREE)</span><span className="text-zinc-300 font-mono text-xs">gpt-4o-mini</span></div>
+                          <div className="flex justify-between"><span className="text-zinc-500">Model (PRO)</span><span className="text-amber-400 font-mono text-xs">gpt-4o</span></div>
+                          <div className="flex justify-between"><span className="text-zinc-500">Max tokens</span><span className="text-zinc-300 font-mono text-xs">4096</span></div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between"><span className="text-zinc-500">Free limit/day</span><span className="text-zinc-300 font-mono text-xs">5 przepisów</span></div>
+                          <div className="flex justify-between"><span className="text-zinc-500">ChromaDB</span><span className="text-zinc-300 font-mono text-xs">{checks.chromadb?.collections ?? "?"} kolekcji</span></div>
+                          <div className="flex justify-between"><span className="text-zinc-500">Knowledge layers</span><span className="text-zinc-300 font-mono text-xs">6 (core, flavor, tech, comp, baking, proc)</span></div>
+                        </div>
+                      </div>
+                    </Card>
+                    {Object.keys(s.requests.hourly || {}).length > 0 && (
+                      <Card title={`Requesty per hour (${timeRange}h)`}>
+                        <div className="flex items-end gap-1 h-24">
+                          {Array.from({ length: Math.min(timeRange, 24) }, (_, i) => {
+                            const count = s.requests.hourly[i] || 0;
+                            const max = Math.max(...Object.values(s.requests.hourly), 1);
+                            const h = Math.max((count / max) * 100, 2);
+                            return (
+                              <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                                <div className="w-full bg-amber-400/30 rounded-t" style={{ height: `${h}%` }} title={`${count} requests`} />
+                                {i % 4 === 0 && <span className="text-xs text-zinc-700">{i}h</span>}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </Card>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+          </div>
+          {selectedUser && <UserModal user={selectedUser} onClose={() => setSelectedUser(null)} />}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<AdminDashboard />);
+  </script>
+</body>
+</html>'''
         return html
 
     @app.route('/admin/api/stats')
