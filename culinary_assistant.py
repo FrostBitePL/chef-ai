@@ -3515,6 +3515,8 @@ class CulinaryAssistant:
             }
             if response_format:
                 kwargs["response_format"] = response_format
+            if stream:
+                kwargs["stream_options"] = {"include_usage": True}
                 
             resp = self.client.chat.completions.create(**kwargs)
             
@@ -3598,6 +3600,9 @@ class CulinaryAssistant:
 
     def _call_stream(self, prompt, msgs, mode=None, user_id=None):
         """Streaming version — yields chunks of text as they arrive."""
+        _stream_start = time.time()
+        _INPUT_PRICE = 0.40   # $/1M tokens (gpt-4o-mini)
+        _OUTPUT_PRICE = 1.60
         resp = self._call_with_logging(
             prompt, msgs, 
             max_tokens=AI_MAX_TOKENS,
@@ -3605,11 +3610,28 @@ class CulinaryAssistant:
             user_id=user_id
         )
         full = ""
+        last_usage = None
         for chunk in resp:
             if chunk.choices and chunk.choices[0].delta.content:
                 text = chunk.choices[0].delta.content
                 full += text
                 yield text
+            if hasattr(chunk, 'usage') and chunk.usage:
+                last_usage = chunk.usage
+        if last_usage:
+            _in = last_usage.prompt_tokens
+            _out = last_usage.completion_tokens
+            _cost = (_in * _INPUT_PRICE + _out * _OUTPUT_PRICE) / 1_000_000
+            metrics.log_api_call(
+                provider="openai",
+                model=getattr(self, '_recipe_model', AI_MODEL),
+                input_tokens=_in,
+                output_tokens=_out,
+                duration_ms=(time.time() - _stream_start) * 1000,
+                cost_usd=_cost,
+                endpoint=getattr(request, 'path', None) if 'request' in globals() else None,
+                user_id=user_id
+            )
         return full
 
     # ─── 2-STEP PIPELINE: generate_recipe() ───
@@ -6194,20 +6216,28 @@ Sitemap: https://chef-ai.netlify.app/sitemap.xml""", 200, {'Content-Type': 'text
                       <Metric label="Free" value={freeUsers} />
                     </div>
                     <div className="rounded-xl border border-zinc-800 overflow-hidden">
-                      <div className="grid grid-cols-12 gap-2 px-4 py-2 bg-zinc-800/50 text-xs text-zinc-500 font-semibold uppercase tracking-wider">
+                      <div className="hidden sm:grid grid-cols-12 gap-2 px-4 py-2 bg-zinc-800/50 text-xs text-zinc-500 font-semibold uppercase tracking-wider">
                         <div className="col-span-5">Email</div>
                         <div className="col-span-2">Rola</div>
                         <div className="col-span-2">Przepisy</div>
                         <div className="col-span-3">Ostatnia aktywność</div>
                       </div>
                       {users.map((user) => (
-                        <div key={user.id} className="grid grid-cols-12 gap-2 px-4 py-3 border-t border-zinc-800/50 items-center hover:bg-zinc-800/20 transition-colors">
-                          <div className="col-span-5">
-                            <button onClick={() => showUserDetail(user.id)} className="text-sm text-amber-400/80 hover:text-amber-300 font-medium truncate text-left">
+                        <div key={user.id} className="flex flex-col sm:grid sm:grid-cols-12 sm:gap-2 px-4 py-3 border-t border-zinc-800/50 hover:bg-zinc-800/20 transition-colors gap-1">
+                          <div className="sm:col-span-5 flex items-center justify-between sm:block min-w-0">
+                            <button onClick={() => showUserDetail(user.id)} className="text-sm text-amber-400/80 hover:text-amber-300 font-medium text-left truncate max-w-[60vw] sm:max-w-full block">
                               {user.email}
                             </button>
+                            <div className="sm:hidden shrink-0 ml-2">
+                              <select value={user.role} onChange={(e) => changeRole(user.id, e.target.value)}
+                                className={`text-xs font-bold px-2 py-1 rounded-lg border focus:outline-none ${user.role === "admin" ? "bg-purple-500/10 border-purple-500/30 text-purple-400" : user.role === "pro" ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-zinc-800 border-zinc-700 text-zinc-400"}`}>
+                                <option value="free">FREE</option>
+                                <option value="pro">PRO</option>
+                                <option value="admin">ADMIN</option>
+                              </select>
+                            </div>
                           </div>
-                          <div className="col-span-2">
+                          <div className="hidden sm:flex sm:col-span-2 items-center">
                             <select value={user.role} onChange={(e) => changeRole(user.id, e.target.value)}
                               className={`text-xs font-bold px-2 py-1 rounded-lg border focus:outline-none ${user.role === "admin" ? "bg-purple-500/10 border-purple-500/30 text-purple-400" : user.role === "pro" ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-zinc-800 border-zinc-700 text-zinc-400"}`}>
                               <option value="free">FREE</option>
@@ -6215,8 +6245,10 @@ Sitemap: https://chef-ai.netlify.app/sitemap.xml""", 200, {'Content-Type': 'text
                               <option value="admin">ADMIN</option>
                             </select>
                           </div>
-                          <div className="col-span-2 text-sm text-zinc-500 tabular-nums">{user.recipes_count ?? 0}</div>
-                          <div className="col-span-3 text-xs text-zinc-600">{fmt.date(user.last_sign_in)}</div>
+                          <div className="sm:col-span-2 text-xs text-zinc-500 tabular-nums sm:flex sm:items-center">
+                            <span className="text-zinc-600 sm:hidden">Przepisy: </span>{user.recipes_count ?? 0}
+                          </div>
+                          <div className="sm:col-span-3 text-xs text-zinc-600 sm:flex sm:items-center">{fmt.date(user.last_sign_in)}</div>
                         </div>
                       ))}
                     </div>
