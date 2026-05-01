@@ -10,7 +10,10 @@ function detectBrowserLang() {
   return 'pl';
 }
 
-let currentLang = localStorage.getItem('chef_lang') || 'pl';
+// Always start in Polish — explicit language preference is restored from Supabase profile after login.
+// We deliberately ignore localStorage at boot so that auth/onboarding screens are always in Polish
+// for first-time users (we only support PL right now, EN/DE/ES/FR are coming later).
+let currentLang = 'pl';
 
 const I18N = {
   pl: {

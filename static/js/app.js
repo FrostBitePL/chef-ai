@@ -80,12 +80,16 @@ async function onLogin(){
     userProfile=await r.json();
   }catch{userProfile={}}
 
-  // Language priority: 1) Supabase profile, 2) localStorage, 3) default Polish
+  // Language priority: 1) Supabase profile (if user explicitly chose), 2) Polish default
+  // For now we only support Polish users — other languages may exist via localStorage
+  // from prior testing, but we ignore that and force Polish for new accounts.
   const profileLang = userProfile?.lang;
   if (profileLang && SUPPORTED_LANGS.includes(profileLang)) {
-    setLang(profileLang, false); // apply without re-saving to profile
-  } else if (!localStorage.getItem('chef_lang')) {
-    setLang('pl', false); // new user — default to Polish
+    setLang(profileLang, false); // user has explicit preference on profile — respect it
+  } else {
+    // No lang on profile = new user → force Polish (override any stale localStorage)
+    // saveToProfile=true so future sessions on any device will pick this up
+    setLang('pl', true);
   }
 
   // Check if new user (no equipment = needs onboarding)
