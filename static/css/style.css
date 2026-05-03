@@ -173,7 +173,8 @@ body{
   display:flex;flex-direction:column;gap:4px;
   padding:12px 14px;border-radius:10px;
   background:var(--surface);border:1px solid var(--border);
-  text-decoration:none;transition:all var(--transition-fast)
+  text-decoration:none;transition:all var(--transition-fast);
+  width:100%;text-align:left;cursor:pointer;font-family:inherit
 }
 .ks-item:hover{border-color:#22d3ee;background:var(--surface-hover)}
 .ks-item-title{color:var(--text);font-size:15px;font-weight:500;line-height:1.35}

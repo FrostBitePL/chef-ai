@@ -4,7 +4,9 @@
 # Load environment variables from .env file
 try:
     from dotenv import load_dotenv
-    load_dotenv()
+    # Load local env file (project uses chef-ai.env instead of default .env)
+    load_dotenv('chef-ai.env')
+    load_dotenv()  # fallback to default .env if present
 except ImportError:
     pass
 
@@ -5277,26 +5279,41 @@ def create_app():
         p=db_get_profile(uid)
         return (p.get("role") or "").lower().strip() in ("tester","admin")
 
-    def _scrape_kwestiasmaku(query, limit=5):
-        """Search kwestiasmaku.com and return list of {title, url}."""
+    def _scrape_kwestiasmaku(query, limit=10):
+        """Search kwestiasmaku.com via its Drupal AJAX endpoint and return [{title,url}]."""
         if not http_requests:
             return []
         try:
-            from urllib.parse import quote_plus
-            url=f"https://www.kwestiasmaku.com/szukaj?search_api_fulltext={quote_plus(query)}"
-            r=http_requests.get(url,timeout=8,headers={"User-Agent":"Mozilla/5.0 Chef-AI/1.0"})
+            r=http_requests.post(
+                "https://www.kwestiasmaku.com/views/ajax",
+                data={
+                    "view_name":"wyniki_wyszukiwania",
+                    "view_display_id":"page",
+                    "search_api_views_fulltext":query,
+                },
+                headers={
+                    "User-Agent":"Mozilla/5.0 Chef-AI/1.0",
+                    "X-Requested-With":"XMLHttpRequest",
+                },
+                timeout=10,
+            )
             if r.status_code!=200: return []
-            html=r.text
-            # Match recipe links: href="https://www.kwestiasmaku.com/.../przepis.html">TITLE</a>
-            # Or relative: href="/.../przepis.html"
-            pattern=re.compile(r'href="(https?://www\.kwestiasmaku\.com/[^"]+/przepis\.html|/[^"]+/przepis\.html)"[^>]*>([^<]+)</a>',re.IGNORECASE)
-            seen=set(); results=[]
-            for m in pattern.finditer(html):
-                href=m.group(1); title=m.group(2).strip()
-                if href.startswith("/"): href="https://www.kwestiasmaku.com"+href
-                if href in seen or not title: continue
-                seen.add(href)
-                results.append({"title":title,"url":href})
+            data=r.json()
+            results=[]; seen=set()
+            pattern=re.compile(r'href="(/[^"]+/przepis\.html)"[^>]*>([^<]+)</a>',re.IGNORECASE)
+            for cmd in (data if isinstance(data,list) else []):
+                if cmd.get("command")!="insert": continue
+                sel=cmd.get("selector") or ""
+                # Only the view block contains real search results (facets give 0 hits)
+                if "view-dom-id" not in sel and "wyniki" not in sel.lower():
+                    continue
+                html_frag=cmd.get("data","") or ""
+                for m in pattern.finditer(html_frag):
+                    href=m.group(1); title=re.sub(r"\s+"," ",m.group(2)).strip()
+                    if not title or href in seen: continue
+                    seen.add(href)
+                    results.append({"title":title,"url":"https://www.kwestiasmaku.com"+href})
+                    if len(results)>=limit: break
                 if len(results)>=limit: break
             return results
         except Exception as e:

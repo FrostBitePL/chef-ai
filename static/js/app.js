@@ -281,7 +281,7 @@ async function runKsSearch(){
     if(!results.length){out.innerHTML='<div class="ks-empty">Brak wyników dla „'+esc(q)+'".</div>';return;}
     out.innerHTML='<div class="ks-count">Znaleziono '+results.length+' wyników dla „'+esc(q)+'"</div>'+
       '<div class="ks-list">'+
-      results.map(x=>'<a class="ks-item" href="'+esc(x.url)+'" target="_blank" rel="noopener"><span class="ks-item-title">'+esc(x.title)+'</span><span class="ks-item-host">kwestiasmaku.com ↗</span></a>').join('')+
+      results.map(x=>'<button class="ks-item" type="button" data-url="'+esc(x.url)+'" data-title="'+esc(x.title)+'" onclick="importKsRecipe(this.dataset.url,this.dataset.title)"><span class="ks-item-title">'+esc(x.title)+'</span><span class="ks-item-host">Otwórz w Chef AI →</span></button>').join('')+
       '</div>';
   }catch(e){
     out.innerHTML='<div class="ks-empty ks-err">Błąd połączenia: '+esc(e.message)+'</div>';
@@ -290,6 +290,36 @@ async function runKsSearch(){
   }
 }
 window.runKsSearch=runKsSearch;
+
+async function importKsRecipe(url, title){
+  if(!url) return;
+  // Switch to chat so renderRecipeCard / handleResponse have a visible target
+  showView('chat');
+  const msgs=document.getElementById('messages');
+  if(msgs){
+    const qt=document.getElementById('quickTags'); if(qt) qt.style.display='none';
+    const userLine=document.createElement('div');userLine.className='msg';
+    userLine.innerHTML='<div class="msg-user">🧪 Importuję z Kwestii Smaku: '+esc(title||url)+'</div>';
+    msgs.appendChild(userLine);
+  }
+  const lid='l'+Date.now();
+  const ld=document.createElement('div');ld.id=lid;ld.className='msg';
+  ld.innerHTML='<div class="msg-text">Wczytuję przepis…</div>';
+  msgs?.appendChild(ld);msgs&&(msgs.scrollTop=msgs.scrollHeight);
+  try{
+    const r=await fetch(API+'/api/import-url',{method:'POST',headers:authHeaders(),body:JSON.stringify({url:url,lang:(window.currentLang||'pl')})});
+    const d=await r.json();
+    document.getElementById(lid)?.remove();
+    if(d.is_limit){ if(typeof showLimitMessage==='function') showLimitMessage(d.message); else addMsg('t',d.message||'Limit osiągnięty'); return; }
+    if(d.error){ addMsg('t','Błąd importu: '+d.error); return; }
+    if(typeof handleResponse==='function'){ handleResponse(d.data||d); }
+    else{ addMsg('t','Zaimportowano, ale brak renderera.'); }
+  }catch(e){
+    document.getElementById(lid)?.remove();
+    addMsg('t','Błąd importu: '+e.message);
+  }
+}
+window.importKsRecipe=importKsRecipe;
 
 function toggleAvatarDropdown(){
   const dd=document.getElementById('avatarDropdown');

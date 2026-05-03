@@ -81,6 +81,7 @@ if('serviceWorker' in navigator){
   <div class="tab-bar">
     <button class="tab-btn active" onclick="showView('home')" id="tab-home">🏠 Home</button>
     <button class="tab-btn" onclick="showView('chat')" id="tab-chat" data-i18n="tab.chat">💬 Chat</button>
+    <button class="tab-btn" onclick="showView('ks')" id="tab-ks" style="display:none">🧪 KS</button>
     <button class="tab-btn" onclick="showView('planner')" id="tab-planner" data-i18n="tab.planner">📅 Plan</button>
     <button class="tab-btn" onclick="showView('history')" id="tab-history" data-i18n="tab.history">🕐 Historia</button>
     <button class="tab-btn" onclick="showView('favorites')" id="tab-fav"><span data-i18n="tab.favorites">❤️ Ulubione</span><span class="tab-badge" id="fav-badge" style="display:none">0</span></button>
@@ -312,6 +313,23 @@ if('serviceWorker' in navigator){
         <span class="kcal-unit" data-i18n="kcal.servings">porcji</span>
         <span class="kcal-summary" id="kcalSummary"></span>
         <button class="kcal-clear" onclick="clearKcal()" title="Usuń limit" data-i18n-title="kcal.remove">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kwestia Smaku (tester/admin) -->
+  <div class="view" id="view-ks">
+    <div class="ks-wrap">
+      <div class="ks-header">
+        <div class="ks-title">🧪 Kwestia Smaku</div>
+        <div class="ks-sub">Wyszukiwarka przepisów z kwestiasmaku.com (tryb testowy)</div>
+      </div>
+      <div class="ks-search-row">
+        <input type="text" id="ksInput" class="ks-input" placeholder="np. kurczak z cytryną, makaron z łososiem…" autocomplete="off">
+        <button class="ks-search-btn" id="ksSearchBtn" onclick="runKsSearch()">🔍 Szukaj</button>
+      </div>
+      <div class="ks-results" id="ksResults">
+        <div class="ks-empty">Wpisz czego szukasz i naciśnij <strong>Szukaj</strong> lub <strong>Enter</strong>.</div>
       </div>
     </div>
   </div>
