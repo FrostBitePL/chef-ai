@@ -4520,7 +4520,7 @@ def create_app():
         # Role-based override (manually granted PRO/admin)
         role=(p.get("role") or "").lower().strip()
         status=(p.get("subscription_status") or "").lower().strip()
-        if role in ("pro","admin","premium"):
+        if role in ("pro","admin","premium","tester"):
             logger.info(f"[is_pro] uid={uid} → True (role={role})")
             return True
         if status=="active":
@@ -5271,6 +5271,49 @@ def create_app():
     def reset_profile_ep():
         db_update_profile(g.user_id,dict(DEFAULT_PROFILE))
         return jsonify({"success":True})
+
+    # ─── Tester-only: Kwestia Smaku recipe search ───
+    def _tester_or_admin(uid):
+        p=db_get_profile(uid)
+        return (p.get("role") or "").lower().strip() in ("tester","admin")
+
+    def _scrape_kwestiasmaku(query, limit=5):
+        """Search kwestiasmaku.com and return list of {title, url}."""
+        if not http_requests:
+            return []
+        try:
+            from urllib.parse import quote_plus
+            url=f"https://www.kwestiasmaku.com/szukaj?search_api_fulltext={quote_plus(query)}"
+            r=http_requests.get(url,timeout=8,headers={"User-Agent":"Mozilla/5.0 Chef-AI/1.0"})
+            if r.status_code!=200: return []
+            html=r.text
+            # Match recipe links: href="https://www.kwestiasmaku.com/.../przepis.html">TITLE</a>
+            # Or relative: href="/.../przepis.html"
+            pattern=re.compile(r'href="(https?://www\.kwestiasmaku\.com/[^"]+/przepis\.html|/[^"]+/przepis\.html)"[^>]*>([^<]+)</a>',re.IGNORECASE)
+            seen=set(); results=[]
+            for m in pattern.finditer(html):
+                href=m.group(1); title=m.group(2).strip()
+                if href.startswith("/"): href="https://www.kwestiasmaku.com"+href
+                if href in seen or not title: continue
+                seen.add(href)
+                results.append({"title":title,"url":href})
+                if len(results)>=limit: break
+            return results
+        except Exception as e:
+            logger.warning(f"kwestiasmaku scrape error: {e}")
+            return []
+
+    @app.route("/api/tester/kwestiasmaku/search",methods=["POST"])
+    @require_auth
+    def tester_kwestiasmaku_search():
+        if not _tester_or_admin(g.user_id):
+            return jsonify({"error":"Forbidden — wymagana rola tester lub admin"}),403
+        d=request.get_json(silent=True) or {}
+        query=(d.get("query") or "").strip()
+        if not query:
+            return jsonify({"error":"No query"}),400
+        results=_scrape_kwestiasmaku(query, limit=int(d.get("limit",5)))
+        return jsonify({"query":query,"results":results,"source":"kwestiasmaku.com"})
 
     # Favorites
     @app.route("/api/favorites")
@@ -6235,18 +6278,20 @@ Sitemap: https://chef-ai.netlify.app/sitemap.xml""", 200, {'Content-Type': 'text
                             </button>
                             <div className="sm:hidden shrink-0 ml-2">
                               <select value={user.role} onChange={(e) => changeRole(user.id, e.target.value)}
-                                className={`text-xs font-bold px-2 py-1 rounded-lg border focus:outline-none ${user.role === "admin" ? "bg-purple-500/10 border-purple-500/30 text-purple-400" : user.role === "pro" ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-zinc-800 border-zinc-700 text-zinc-400"}`}>
+                                className={`text-xs font-bold px-2 py-1 rounded-lg border focus:outline-none ${user.role === "admin" ? "bg-purple-500/10 border-purple-500/30 text-purple-400" : user.role === "tester" ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-400" : user.role === "pro" ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-zinc-800 border-zinc-700 text-zinc-400"}`}>
                                 <option value="free">FREE</option>
                                 <option value="pro">PRO</option>
+                                <option value="tester">TESTER</option>
                                 <option value="admin">ADMIN</option>
                               </select>
                             </div>
                           </div>
                           <div className="hidden sm:flex sm:col-span-2 items-center">
                             <select value={user.role} onChange={(e) => changeRole(user.id, e.target.value)}
-                              className={`text-xs font-bold px-2 py-1 rounded-lg border focus:outline-none ${user.role === "admin" ? "bg-purple-500/10 border-purple-500/30 text-purple-400" : user.role === "pro" ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-zinc-800 border-zinc-700 text-zinc-400"}`}>
+                              className={`text-xs font-bold px-2 py-1 rounded-lg border focus:outline-none ${user.role === "admin" ? "bg-purple-500/10 border-purple-500/30 text-purple-400" : user.role === "tester" ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-400" : user.role === "pro" ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-zinc-800 border-zinc-700 text-zinc-400"}`}>
                               <option value="free">FREE</option>
                               <option value="pro">PRO</option>
+                              <option value="tester">TESTER</option>
                               <option value="admin">ADMIN</option>
                             </select>
                           </div>
@@ -6554,7 +6599,7 @@ Sitemap: https://chef-ai.netlify.app/sitemap.xml""", 200, {'Content-Type': 'text
     def admin_set_role(user_id):
         try:
             role = request.json.get('role', 'free')
-            if role not in ['free', 'pro', 'admin']:
+            if role not in ['free', 'pro', 'admin', 'tester']:
                 return jsonify({"error": "Invalid role"}), 400
             
             sb.table('profiles').update({'role': role}).eq('id', user_id).execute()

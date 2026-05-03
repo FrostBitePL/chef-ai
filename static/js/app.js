@@ -240,16 +240,68 @@ function renderUserInfo(){
   if(ddName) ddName.textContent=name;
   const ddEmail=document.getElementById('ddEmail');
   if(ddEmail) ddEmail.textContent=currentUser?.email||'';
+  const role=(userProfile?.role||'').toLowerCase();
   const badge=document.getElementById('subBadge');
   if(badge){
-    badge.textContent=subStatus.is_pro?'PRO':'FREE';
-    badge.classList.toggle('is-pro',subStatus.is_pro);
+    if(role==='tester'){badge.textContent='TESTER';badge.classList.add('is-pro');badge.classList.add('is-tester');}
+    else if(role==='admin'){badge.textContent='ADMIN';badge.classList.add('is-pro');badge.classList.remove('is-tester');}
+    else{badge.textContent=subStatus.is_pro?'PRO':'FREE';badge.classList.toggle('is-pro',subStatus.is_pro);badge.classList.remove('is-tester');}
   }
   // Update lang label
   const ddLang=document.getElementById('ddLang');
   if(ddLang) ddLang.textContent='🌐 Język ('+((window.currentLang||'pl').toUpperCase())+')';
+  // Tester-only: Kwestia Smaku search button
+  const isTesterOrAdmin=(role==='tester'||role==='admin');
+  let ksBtn=document.getElementById('ksBtn');
+  if(isTesterOrAdmin && !ksBtn){
+    const row=document.querySelector('#view-chat .input-row');
+    const sendBtn=document.getElementById('sendBtn');
+    if(row && sendBtn){
+      ksBtn=document.createElement('button');
+      ksBtn.className='icon-btn';
+      ksBtn.id='ksBtn';
+      ksBtn.title='Szukaj na Kwestii Smaku (tester)';
+      ksBtn.textContent='🧪';
+      ksBtn.onclick=()=>searchKwestiasmaku();
+      row.insertBefore(ksBtn, sendBtn);
+    }
+  } else if(!isTesterOrAdmin && ksBtn){
+    ksBtn.remove();
+  }
   // Legacy userInfo hidden via CSS
 }
+
+async function searchKwestiasmaku(){
+  const inp=document.getElementById('input');
+  let q=(inp?.value||'').trim();
+  if(!q){
+    q=(prompt('Czego szukać na kwestiasmaku.com?')||'').trim();
+    if(!q) return;
+  }
+  showView('chat');
+  addMsg('user','🧪 Kwestia Smaku: '+q);
+  const msgs=document.getElementById('messages');
+  const ld=document.createElement('div');ld.className='msg';ld.innerHTML='<div class="msg-text">Szukam na kwestiasmaku.com…</div>';
+  msgs.appendChild(ld);msgs.scrollTop=msgs.scrollHeight;
+  try{
+    const r=await fetch(API+'/api/tester/kwestiasmaku/search',{method:'POST',headers:authHeaders(),body:JSON.stringify({query:q,limit:5})});
+    const d=await r.json();
+    ld.remove();
+    if(!r.ok){addMsg('t','Błąd: '+(d.error||'nie udało się wyszukać'));return;}
+    const results=d.results||[];
+    if(!results.length){addMsg('t','Brak wyników na kwestiasmaku.com dla: '+q);return;}
+    const html='<div class="msg-text"><strong>🧪 Wyniki z kwestiasmaku.com dla: '+esc(q)+'</strong><ul style="margin:8px 0 0 18px;padding:0">'+
+      results.map(x=>'<li style="margin:4px 0"><a href="'+esc(x.url)+'" target="_blank" rel="noopener" style="color:#f59e0b">'+esc(x.title)+'</a></li>').join('')+
+      '</ul></div>';
+    const el=document.createElement('div');el.className='msg';el.innerHTML=html;
+    msgs.appendChild(el);msgs.scrollTop=msgs.scrollHeight;
+    if(inp) inp.value='';
+  }catch(e){
+    ld.remove();
+    addMsg('t','Błąd połączenia: '+e.message);
+  }
+}
+window.searchKwestiasmaku=searchKwestiasmaku;
 
 function toggleAvatarDropdown(){
   const dd=document.getElementById('avatarDropdown');

@@ -137,6 +137,10 @@ body{
   color:var(--gold);background:linear-gradient(135deg,var(--gold-dim),transparent);
   border-color:var(--gold-border);cursor:default
 }
+.sub-badge.is-tester{
+  color:#22d3ee;background:linear-gradient(135deg,rgba(34,211,238,.15),transparent);
+  border-color:rgba(34,211,238,.4);cursor:default
+}
 /* Avatar */
 .user-avatar{
   width:30px;height:30px;border-radius:9px;
