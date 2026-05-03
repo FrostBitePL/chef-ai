@@ -141,6 +141,43 @@ body{
   color:#22d3ee;background:linear-gradient(135deg,rgba(34,211,238,.15),transparent);
   border-color:rgba(34,211,238,.4);cursor:default
 }
+/* Kwestia Smaku view */
+#view-ks{padding:0}
+.ks-wrap{max-width:780px;margin:0 auto;padding:20px 16px 40px;display:flex;flex-direction:column;gap:16px}
+.ks-header{text-align:center;padding:8px 0 4px}
+.ks-title{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.ks-sub{font-size:12px;color:var(--text-muted);margin-top:4px}
+.ks-search-row{display:flex;gap:8px;align-items:stretch}
+.ks-input{
+  flex:1;padding:12px 14px;border-radius:12px;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text);font-size:15px;outline:none;
+  transition:border-color var(--transition-fast)
+}
+.ks-input:focus{border-color:#22d3ee}
+.ks-search-btn{
+  padding:0 18px;border-radius:12px;border:1px solid rgba(34,211,238,.4);
+  background:linear-gradient(135deg,rgba(34,211,238,.18),rgba(34,211,238,.06));
+  color:#22d3ee;font-weight:600;font-size:14px;cursor:pointer;
+  transition:all var(--transition-fast);white-space:nowrap
+}
+.ks-search-btn:hover:not(:disabled){background:rgba(34,211,238,.28)}
+.ks-search-btn:disabled{opacity:.5;cursor:wait}
+.ks-results{display:flex;flex-direction:column;gap:10px;min-height:60px}
+.ks-empty{padding:20px;text-align:center;color:var(--text-muted);font-size:14px;
+  background:var(--surface);border:1px dashed var(--border);border-radius:12px}
+.ks-empty.ks-err{color:#ef4444;border-color:rgba(239,68,68,.3)}
+.ks-count{font-size:12px;color:var(--text-muted);padding:2px 4px;letter-spacing:.02em}
+.ks-list{display:flex;flex-direction:column;gap:8px}
+.ks-item{
+  display:flex;flex-direction:column;gap:4px;
+  padding:12px 14px;border-radius:10px;
+  background:var(--surface);border:1px solid var(--border);
+  text-decoration:none;transition:all var(--transition-fast)
+}
+.ks-item:hover{border-color:#22d3ee;background:var(--surface-hover)}
+.ks-item-title{color:var(--text);font-size:15px;font-weight:500;line-height:1.35}
+.ks-item-host{color:var(--text-muted);font-size:11px;letter-spacing:.02em}
 /* Avatar */
 .user-avatar{
   width:30px;height:30px;border-radius:9px;

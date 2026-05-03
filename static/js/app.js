@@ -250,58 +250,46 @@ function renderUserInfo(){
   // Update lang label
   const ddLang=document.getElementById('ddLang');
   if(ddLang) ddLang.textContent='🌐 Język ('+((window.currentLang||'pl').toUpperCase())+')';
-  // Tester-only: Kwestia Smaku search button
+  // Tester/admin: show dedicated KS tab
   const isTesterOrAdmin=(role==='tester'||role==='admin');
-  let ksBtn=document.getElementById('ksBtn');
-  if(isTesterOrAdmin && !ksBtn){
-    const row=document.querySelector('#view-chat .input-row');
-    const sendBtn=document.getElementById('sendBtn');
-    if(row && sendBtn){
-      ksBtn=document.createElement('button');
-      ksBtn.className='icon-btn';
-      ksBtn.id='ksBtn';
-      ksBtn.title='Szukaj na Kwestii Smaku (tester)';
-      ksBtn.textContent='🧪';
-      ksBtn.onclick=()=>searchKwestiasmaku();
-      row.insertBefore(ksBtn, sendBtn);
+  const ksTab=document.getElementById('tab-ks');
+  if(ksTab) ksTab.style.display=isTesterOrAdmin?'':'none';
+  if(isTesterOrAdmin){
+    const ksInp=document.getElementById('ksInput');
+    if(ksInp && !ksInp._bound){
+      ksInp._bound=true;
+      ksInp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runKsSearch();}});
     }
-  } else if(!isTesterOrAdmin && ksBtn){
-    ksBtn.remove();
   }
   // Legacy userInfo hidden via CSS
 }
 
-async function searchKwestiasmaku(){
-  const inp=document.getElementById('input');
-  let q=(inp?.value||'').trim();
-  if(!q){
-    q=(prompt('Czego szukać na kwestiasmaku.com?')||'').trim();
-    if(!q) return;
-  }
-  showView('chat');
-  addMsg('user','🧪 Kwestia Smaku: '+q);
-  const msgs=document.getElementById('messages');
-  const ld=document.createElement('div');ld.className='msg';ld.innerHTML='<div class="msg-text">Szukam na kwestiasmaku.com…</div>';
-  msgs.appendChild(ld);msgs.scrollTop=msgs.scrollHeight;
+async function runKsSearch(){
+  const inp=document.getElementById('ksInput');
+  const out=document.getElementById('ksResults');
+  const btn=document.getElementById('ksSearchBtn');
+  if(!inp||!out) return;
+  const q=(inp.value||'').trim();
+  if(!q){inp.focus();return;}
+  out.innerHTML='<div class="ks-empty">🔎 Szukam „'+esc(q)+'" na kwestiasmaku.com…</div>';
+  if(btn){btn.disabled=true;}
   try{
-    const r=await fetch(API+'/api/tester/kwestiasmaku/search',{method:'POST',headers:authHeaders(),body:JSON.stringify({query:q,limit:5})});
+    const r=await fetch(API+'/api/tester/kwestiasmaku/search',{method:'POST',headers:authHeaders(),body:JSON.stringify({query:q,limit:10})});
     const d=await r.json();
-    ld.remove();
-    if(!r.ok){addMsg('t','Błąd: '+(d.error||'nie udało się wyszukać'));return;}
+    if(!r.ok){out.innerHTML='<div class="ks-empty ks-err">Błąd: '+esc(d.error||'nie udało się wyszukać')+'</div>';return;}
     const results=d.results||[];
-    if(!results.length){addMsg('t','Brak wyników na kwestiasmaku.com dla: '+q);return;}
-    const html='<div class="msg-text"><strong>🧪 Wyniki z kwestiasmaku.com dla: '+esc(q)+'</strong><ul style="margin:8px 0 0 18px;padding:0">'+
-      results.map(x=>'<li style="margin:4px 0"><a href="'+esc(x.url)+'" target="_blank" rel="noopener" style="color:#f59e0b">'+esc(x.title)+'</a></li>').join('')+
-      '</ul></div>';
-    const el=document.createElement('div');el.className='msg';el.innerHTML=html;
-    msgs.appendChild(el);msgs.scrollTop=msgs.scrollHeight;
-    if(inp) inp.value='';
+    if(!results.length){out.innerHTML='<div class="ks-empty">Brak wyników dla „'+esc(q)+'".</div>';return;}
+    out.innerHTML='<div class="ks-count">Znaleziono '+results.length+' wyników dla „'+esc(q)+'"</div>'+
+      '<div class="ks-list">'+
+      results.map(x=>'<a class="ks-item" href="'+esc(x.url)+'" target="_blank" rel="noopener"><span class="ks-item-title">'+esc(x.title)+'</span><span class="ks-item-host">kwestiasmaku.com ↗</span></a>').join('')+
+      '</div>';
   }catch(e){
-    ld.remove();
-    addMsg('t','Błąd połączenia: '+e.message);
+    out.innerHTML='<div class="ks-empty ks-err">Błąd połączenia: '+esc(e.message)+'</div>';
+  }finally{
+    if(btn) btn.disabled=false;
   }
 }
-window.searchKwestiasmaku=searchKwestiasmaku;
+window.runKsSearch=runKsSearch;
 
 function toggleAvatarDropdown(){
   const dd=document.getElementById('avatarDropdown');
