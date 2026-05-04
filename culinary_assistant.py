@@ -32,7 +32,7 @@ MAX_HISTORY=8; SEARCH_RESULTS=8
 
 # ─── AI Model ───
 OPENAI_API_KEY=os.environ.get("OPENAI_API_KEY","")
-AI_MODEL="gpt-4o-mini"
+AI_MODEL="gpt-4o"
 AI_MAX_TOKENS=4096
 AI_BASE_URL="https://api.openai.com/v1"
 
@@ -53,6 +53,8 @@ class AppMetrics:
         self.requests = deque(maxlen=max_entries)
         self.errors = deque(maxlen=1000)
         self.api_calls = deque(maxlen=5000)
+        self.enforcer_events = deque(maxlen=2000)
+        self.quality_events = deque(maxlen=2000)
         self.lock = threading.Lock()
     
     def log_request(self, endpoint, method, status, duration_ms, user_id=None):
@@ -75,7 +77,34 @@ class AppMetrics:
                 "message": str(message)[:500],
                 "user_id": user_id,
             })
-    
+
+    def log_enforcer(self, recipe_title, changes, user_id=None):
+        with self.lock:
+            self.enforcer_events.append({
+                "ts": time.time(),
+                "title": (recipe_title or "?")[:120],
+                "changes": list(changes),
+                "user_id": user_id,
+            })
+
+    def log_quality_check(self, recipe_title, issues, user_id=None):
+        with self.lock:
+            self.quality_events.append({
+                "ts": time.time(),
+                "title": (recipe_title or "?")[:120],
+                "issues": issues,
+                "user_id": user_id,
+            })
+
+    def log_quality_event(self, event_type, payload, user_id=None):
+        with self.lock:
+            self.quality_events.append({
+                "ts": time.time(),
+                "event": event_type,
+                "payload": payload,
+                "user_id": user_id,
+            })
+
     def log_api_call(self, provider, model, input_tokens, output_tokens, duration_ms, cost_usd, endpoint=None, user_id=None):
         """Log an API call with token usage and cost."""
         with self.lock:
@@ -545,147 +574,234 @@ def enforce_bans(data,banned_ingredients):
 # ─── Pro Quality Enforcer ───
 
 def enforce_pro_quality(data, prof_data=None):
-    """Post-process recipe JSON to enforce pro-level quality.
-    Works INDEPENDENTLY of LLM — catches what the model missed."""
+    """Post-process recipe JSON to enforce pro-level quality (no new ingredients/steps)."""
     if not isinstance(data, dict) or data.get("type") != "recipe":
         return data
-    steps = data.get("steps", [])
-    ingredients = data.get("ingredients", [])
-    warnings = data.get("warnings", [])
+
+    steps = data.get("steps") or []
+    ingredients = data.get("ingredients") or []
+    warnings = data.get("warnings")
+    if not isinstance(warnings, list):
+        warnings = []
+        data["warnings"] = warnings
+
+    user_id = None
+    if isinstance(prof_data, dict):
+        user_id = prof_data.get("id") or prof_data.get("user_id")
+
+    title = data.get("title", "")
+    title_lower = title.lower()
+    categories = _pq_classify_title(title_lower)
     all_text = _pq_get_all_text(data)
+    changes = []
 
-    # CHECK 1: ACID
+    # CHECK 1: ACID — suggest only where it makes sense
     has_acid = _pq_has_any(all_text, [
-        "cytryn", "limon", "ocet", "octu", "wino", "wina", "winem",
-        "labneh", "jogurt", "kefir", "kimchi", "kapary", "kapar",
-        "pickle", "marynow", "ferment", "kwaśn", "kwaskow",
-        "rabarbar", "żurawina", "porzeczk", "agrest", "tamarind", "sumak"
+        "cytryn", "limon", "ocet", "octu", "wino", "winem",
+        "labneh", "jogurt", "kefir", "kimchi", "kapary",
+        "pickle", "marynow", "ferment", "kwaśn"
     ])
-    if not has_acid:
-        _pq_add_ingredient_if_missing(ingredients, {"item": "cytryna", "amount": "10ml soku", "note": "finishing — świeżość i balans"})
-        _pq_add_finishing_note(steps, "Na koniec dodaj sok z cytryny (10ml) — kwas otwiera smak i równoważy tłuszcz.")
+    acid_allowed = not categories.intersection({"dessert", "sweet", "baking", "beverage"}) and "clear_soup" not in categories
+    if not has_acid and acid_allowed:
+        if "risotto" in categories or "pasta" in categories:
+            tip = "Na finiszu wciśnij 5 ml soku z cytryny lub dodaj 5 ml octu winnego — kwas przebija tłusty sos i podbija smak sera."
+        elif "salad" in categories:
+            tip = "Dressing potrzebuje balansu 3:1 (oliwa:kwas). Jeśli go brakuje — dodaj 5 ml octu z białego wina lub cytryny tuż przed podaniem."
+        else:
+            tip = "Tuż przed podaniem dodaj 5 ml soku z cytryny lub octu winnego — odblokowuje cięższe nuty i czyści podniebienie."
+        if tip and _pq_append_tip(data, tip):
+            changes.append("acid_tip")
 
-    # CHECK 2: CRUNCH
+    # CHECK 2: CRUNCH — add guidance, not ingredients
     has_crunch = _pq_has_any(all_text, [
-        "prażon", "tostow", "chrupią", "chrupiąc", "crunch",
-        "panko", "grzank", "chips", "kruszonk", "orzechy",
-        "orzeszk", "migdał", "sezam", "nasion", "dukkah", "furikake"
+        "prażon", "tostow", "chrupią", "crunch", "panko",
+        "grzank", "kruszonk", "orzech", "migdał", "sezam",
+        "nasion", "dukkah", "furikake"
     ])
     if not has_crunch:
-        title_lower = data.get("title", "").lower()
-        if any(w in title_lower for w in ["risotto", "zupa", "krem", "purée", "puree"]):
-            crunch, amount, instr = "prażone orzechy piniowe", "20g", "Praż orzechy piniowe (20g) na suchej patelni 60-90 sek, potrząsając — złociste, nie brązowe. Posyp na wierzch przy podaniu."
-        elif any(w in title_lower for w in ["makaron", "pasta", "spaghetti"]):
-            crunch, amount, instr = "panko w brązowym maśle", "30g", "Panko (30g) smaż na maśle (10g) na średnim ogniu 90 sek aż złociste. Posyp makaron na talerzu."
-        elif any(w in title_lower for w in ["sałat", "salat"]):
-            crunch, amount, instr = "prażone nasiona słonecznika", "20g", "Praż nasiona słonecznika (20g) na suchej patelni 60 sek. Posyp sałatkę."
-        elif any(w in title_lower for w in ["ciasto", "tarta", "kruche", "szarlotk"]):
-            crunch, amount, instr = None, None, None
-        else:
-            crunch, amount, instr = "prażone orzechy lub nasiona", "20g", "Praż orzechy/nasiona (20g) na suchej patelni 60 sek. Posyp danie przy podaniu — kontrast tekstury."
-        if crunch and instr:
-            _pq_add_ingredient_if_missing(ingredients, {"item": crunch, "amount": amount, "note": "kontrast tekstury — chrupiące na kremowym"})
-            _pq_add_finishing_note(steps, instr)
+        tip = None
+        if "clear_soup" in categories:
+            tip = "Profesjonalny rosół stawia na klarowność — zamiast chrupiących dodatków dukaj białko jajka z odrobiną wody, wlej do gorącego bulionu i przecedź: zaciąga mętne cząstki."  # noqa: E501
+        elif "cream_soup" in categories:
+            tip = "Wrzuć szybkie grzanki: kostki chleba + 10g masła na patelni 90 sek, aż złociste. Posyp zupę dla kontrastu."  # noqa: E501
+        elif "risotto" in categories:
+            tip = "Upraż 20g orzechów lub pestek na suchej patelni 60 sek i posyp risotto — kontrast chrupiące/kremowe robi robotę."
+        elif "pasta" in categories or "salad" in categories:
+            tip = "Panko w brązowym maśle (30g panko + 10g masła, 90 sek) na wierzchu daje natychmiastowy restauracyjny crunch."
+        elif categories.isdisjoint({"dessert", "sweet", "baking", "beverage"}):
+            tip = "Dodaj element chrupiący: prażone nasiona, crumble lub cienkie chipsy z warzyw — twarde + miękkie to klasyczny fine dining."  # noqa: E501
+        if tip and _pq_append_tip(data, tip):
+            changes.append("crunch_tip")
 
-    # CHECK 3: FINISHING
-    has_finishing_herb = _pq_has_any(all_text, ["świeża bazylia", "świeży koperek", "świeża mięta", "szczypiorek", "natka", "microgreen", "kolendra świeża"])
-    has_finishing_oil = _pq_has_any(all_text, ["oliwa extra virgin", "finishing oil", "olej sezamowy", r"oliw.* na koniec", r"skrop.* oliwą"])
+    # CHECK 3: FINISHING HERB/OIL/ZEST (skip desserts/clear soups)
+    has_finishing_herb = _pq_has_any(all_text, [
+        "świeża bazylia", "świeży koperek", "świeża mięta",
+        "szczypiorek", "natka", "microgreen", "kolendra"
+    ])
+    has_finishing_oil = _pq_has_any(all_text, [
+        "oliwa extra virgin", "finishing oil", "olej sezamowy",
+        r"oliw.* na koniec", r"skrop.* oliwą"
+    ])
     has_zest = _pq_has_any(all_text, [r"skórk.* cytry", r"skórk.* limon", "zest", "microplane"])
-    if not any([has_finishing_herb, has_finishing_oil, has_zest]):
-        title_lower = data.get("title", "").lower()
-        is_baking = any(w in title_lower for w in ["ciasto", "tarta", "kruche", "biszkopt", "sernik", "muffin", "chleb", "babka", "drożdżów", "ciastk"])
-        if not is_baking:
-            _pq_add_finishing_note(steps, "Skrop oliwą extra virgin (10ml) przy podaniu — aromaty oliwy zachowujesz tylko bez gotowania.")
+    if not any([has_finishing_herb, has_finishing_oil, has_zest]) and categories.isdisjoint({"dessert", "sweet", "baking", "clear_soup"}):
+        if _pq_append_tip(data, "Po zdjęciu z ognia skrop porcję 10 ml oliwy extra virgin i posyp świeżymi ziołami — aromaty przetrwają tylko bez gotowania."):
+            changes.append("finishing_tip")
 
-    # CHECK 4: UPGRADE field
+    # CHECK 4: UPGRADE field (contextual suggestion)
     upgrade = data.get("upgrade", "")
     if not upgrade or len(str(upgrade)) < 20:
-        data["upgrade"] = _pq_generate_upgrade(data.get("title", "").lower(), all_text)
+        if _pq_append_upgrade(data, _pq_generate_upgrade(title_lower, all_text)):
+            changes.append("upgrade")
 
-    # CHECK 5: MANTECATURA for risotto
-    if "risotto" in data.get("title", "").lower():
+    # CHECK 5: MANTECATURA for risotto (modify existing step only)
+    if "risotto" in title_lower:
         has_mantecatura = _pq_has_any(all_text, ["mantecatur", "zdejmij z ognia", "poza ogniem", "zdejmij z palnika", "po zdjęciu"])
         if not has_mantecatura:
             for step in reversed(steps):
-                instr = step.get("instruction", "").lower()
+                instr = (step.get("instruction") or "").lower()
                 if "parmezan" in instr or "masło" in instr or "wykończ" in instr:
                     maslo = _pq_find_amount(ingredients, "masło") or "30g"
                     parm = _pq_find_amount(ingredients, "parmezan") or "50g"
-                    step["instruction"] = (f"MANTECATURA: Zdejmij risotto z ognia. Dodaj zimne masło ({maslo}) pokrojone w kostki i starty parmezan ({parm}). Mieszaj energicznie drewnianą łyżką 30-60 sekund — emulsja masła ze skrobią tworzy jedwabistą kremowość. Na talerzu risotto powinno powoli się rozpływać (all'onda).")
-                    step["why"] = "Mantecatura to emulsyfikacja — zimne masło łączy się ze skrobią z ryżu tworząc stabilną emulsję. Na ogniu masło się rozdziela. Zdejmij z ognia = emulsja trzyma."
-                    step["tip"] = "Risotto na talerzu powinno powoli się rozpływać jak lawa — jeśli stoi w kopce, jest za gęste (dodaj łyżkę gorącego bulionu)."
+                    step["instruction"] = (
+                        f"MANTECATURA: Zdejmij risotto z ognia. Dodaj zimne masło ({maslo}) w kostkach i starty parmezan ({parm}). "
+                        "Mieszaj energicznie 30-60 sekund — emulsja skrobi z tłuszczem daje efekt all'onda."
+                    )
+                    step["why"] = "Na ogniu masło się rozwarstwia. Po zdjęciu temperatura spada <95°C i tłuszcz emulguje ze skrobią = jedwabista tekstura."
+                    step["tip"] = "Risotto powinno powoli rozpływać się na talerzu. Jeśli stoi w kopce — dodaj łyżkę gorącego bulionu."
+                    changes.append("mantecatura_fix")
                     break
 
     # CHECK 6: MOISTURE BARRIER for fruit tarts
-    title_lower = data.get("title", "").lower()
     is_fruit_tart = (any(w in title_lower for w in ["kruche", "tarta", "placek"]) and
                      any(w in title_lower for w in ["rabarbar", "jabłk", "śliwk", "wiśni", "truskawk", "owoc"]))
     if is_fruit_tart:
-        if not isinstance(warnings, list):
-            warnings = []
-            data["warnings"] = warnings
-        if not _pq_has_any(all_text, ["powidł", "marmolad", "dżem", "bariera", "frangipane", r"posmaruj żółtk"]):
-            warnings.append({"problem": "Owoce wydzielają dużo soku — spód rozmoknie", "solution": "Posmaruj upieczony spód cienką warstwą powideł (2mm) LUB rozbełtanym żółtkiem przed ułożeniem owoców — bariera wilgoci."})
+        if _pq_append_warning(data, "Owoce puszczają sok — spód może się rozmoczyć",
+                               "Posmaruj upieczony spód cienką warstwą powideł LUB rozbełtanym żółtkiem (2 min / 200°C) przed owocami — powstaje bariera wilgoci."):
+            changes.append("fruit_barrier")
         if not _pq_has_any(all_text, ["skrobi", "starch", "ziemniacz"]):
-            warnings.append({"problem": "Ciasto kruche z samej mąki może być sprężyste zamiast kruchego", "solution": "Zamień 20-25% mąki na skrobię ziemniaczaną (np. na 250g mąki: 190g mąki + 60g skrobi) — skrobia nie tworzy glutenu, ciasto będzie kruchsze."})
+            if _pq_append_warning(data, "Samo masło+mąka daje twarde kruche",
+                                   "Zamień 20-25% mąki na skrobię ziemniaczaną (np. 190g mąki + 60g skrobi na 250g) — skrobia nie tworzy glutenu, ciasto będzie delikatniejsze."):
+                changes.append("fruit_starch")
 
-    # CHECK 7: ASPARAGUS DUAL TECHNIQUE
+    # CHECK 7: ASPARAGUS DUAL TECHNIQUE for risotto
     if "risotto" in title_lower and _pq_has_any(all_text, ["szparag"]):
-        has_dual = _pq_has_any(all_text, [r"krem z", "zblenduj", "blenduj łodyg", r"tips.*sauté", r"tips.*smaż", "końcówki.*osobno", "łodygi.*krem"])
+        has_dual = _pq_has_any(all_text, [
+            r"krem z", "zblenduj", "blenduj łodyg", r"tips.*sauté", r"tips.*smaż",
+            "końcówki.*osobno", "łodygi.*krem"
+        ])
         if not has_dual:
-            dual = ("Szparagi dwutorowo: łodygi (dolne 2/3) blanszuj i zblenduj na krem — dodaj do risotto 3 min przed końcem. Tips (górne 1/3) sautéuj osobno na maśle 90 sek — ułóż na wierzchu. Efekt: głębia smaku + kontrast tekstury.")
-            existing = data.get("upgrade", "")
-            data["upgrade"] = (dual + " | " + existing) if existing and len(existing) > 20 else dual
+            dual = ("Szparagi dwutorowo: łodygi (dolne 2/3) zblenduj w krem i dodaj 3 min przed końcem, a tips (górne 1/3) sautéuj osobno 90 sek na maśle i ułóż na wierzchu — głębia + tekstura.")
+            if _pq_append_upgrade(data, dual):
+                changes.append("asparagus_dual")
+    # Record what changed (for admin insight)
+    if changes:
+        data["_enforcer_changes"] = changes
+        logger.info(f"[enforcer] {title[:50]} → {', '.join(changes)}")
+        metrics.log_enforcer(title, changes, user_id)
+    else:
+        data.pop("_enforcer_changes", None)
+
+    issues = _pq_check_quality_gates(data)
+    if issues:
+        metrics.log_quality_check(title, issues, user_id)
 
     return data
 
-
 def _pq_get_all_text(data):
-    parts = [data.get("title",""), data.get("subtitle",""), data.get("science",""), data.get("upgrade",""), data.get("flavor_logic","")]
+    parts = [data.get("title", ""), data.get("subtitle", ""), data.get("science", ""), data.get("upgrade", ""), data.get("flavor_logic", "")]
     for s in data.get("steps", []):
-        parts += [s.get("instruction",""), s.get("tip",""), s.get("why",""), s.get("title","")]
+        parts += [s.get("instruction", ""), s.get("tip", ""), s.get("why", ""), s.get("title", "")]
     for i in data.get("ingredients", []):
-        parts += [i.get("item",""), i.get("note","")]
+        parts += [i.get("item", ""), i.get("note", "")]
     for w in data.get("warnings", []):
-        parts += [w.get("problem",""), w.get("solution","")]
+        parts += [w.get("problem", ""), w.get("solution", "")]
     for m in data.get("mise_en_place", []):
         parts.append(str(m))
     pt = data.get("pro_tip", "")
-    if isinstance(pt, str): parts.append(pt)
+    if isinstance(pt, str):
+        parts.append(pt)
     return " ".join(str(p) for p in parts).lower()
 
 
 def _pq_has_any(text, patterns):
     for pat in patterns:
         if any(c in pat for c in r".*["):
-            if re.search(pat, text, re.IGNORECASE): return True
+            if re.search(pat, text, re.IGNORECASE):
+                return True
         else:
-            if pat.lower() in text: return True
+            if pat.lower() in text:
+                return True
     return False
 
 
-def _pq_add_ingredient_if_missing(ingredients, new_ing):
-    item_lower = new_ing["item"].lower()
-    for e in ingredients:
-        if item_lower in e.get("item","").lower(): return
-    ingredients.append(new_ing)
+def _pq_append_tip(data, text):
+    if not text:
+        return False
+    existing = (data.get("pro_tip") or "").strip()
+    if text in existing:
+        return False
+    data["pro_tip"] = f"{existing}\n{text}".strip() if existing else text
+    return True
+
+
+def _pq_append_upgrade(data, text):
+    if not text:
+        return False
+    existing = (data.get("upgrade") or "").strip()
+    if existing and text in existing:
+        return False
+    data["upgrade"] = f"{text} | {existing}".strip(" |") if existing else text
+    return True
+
+
+def _pq_append_warning(data, problem, solution):
+    if not problem or not solution:
+        return False
+    warnings = data.get("warnings")
+    if not isinstance(warnings, list):
+        warnings = []
+        data["warnings"] = warnings
+    for w in warnings:
+        if w.get("problem") == problem:
+            return False
+    warnings.append({"problem": problem, "solution": solution})
+    return True
+
+
+def _pq_classify_title(title_lower):
+    cats = set()
+    def has(words):
+        return any(w in title_lower for w in words)
+    if has(["rosół", "rosol", "bulion", "consomme", "klarown"]):
+        cats.add("clear_soup")
+    if has(["zupa krem", "krem z", "veloute"]):
+        cats.add("cream_soup")
+    if has(["risotto"]):
+        cats.add("risotto")
+    if has(["makaron", "pasta", "spaghetti", "tagliatelle", "penne", "linguin", "rigatoni"]):
+        cats.add("pasta")
+    if has(["sałat", "salat"]):
+        cats.add("salad")
+    if has(["ciasto", "tarta", "kruche", "biszkopt", "sernik", "muffin", "tort", "placek", "brownie", "babk"]):
+        cats.add("baking")
+    if has(["deser", "mus", "sorbet", "kompot", "lody", "panna cotta"]):
+        cats.add("dessert")
+    if has(["koktajl", "smoothie", "lemoniad", "napój", "tonik"]):
+        cats.add("beverage")
+    if has(["jajec", "omlet", "fritatta", "jajko", "scramble"]):
+        cats.add("eggs")
+    if has(["sos", "dressing", "dip", "aioli"]):
+        cats.add("sauce")
+    if not cats:
+        cats.add("main_protein")
+    return cats
 
 
 def _pq_find_amount(ingredients, keyword):
     for i in ingredients:
-        if keyword.lower() in i.get("item","").lower(): return i.get("amount","")
+        if keyword.lower() in i.get("item", "").lower():
+            return i.get("amount", "")
     return ""
-
-
-def _pq_add_finishing_note(steps, instruction):
-    if not steps: return
-    last = steps[-1]
-    last_title = last.get("title","").lower()
-    if any(w in last_title for w in ["serwow","podaj","podanie","finishing","wykończ"]):
-        last["instruction"] = last.get("instruction","").rstrip(". ") + ". " + instruction
-    else:
-        max_num = max((s.get("number",0) for s in steps), default=0)
-        steps.append({"number": max_num+1, "title": "Finishing", "instruction": instruction, "equipment": "brak"})
 
 
 def _pq_generate_upgrade(title_lower, all_text):
@@ -708,6 +824,109 @@ def _pq_generate_upgrade(title_lower, all_text):
     if any(w in title_lower for w in ["jajk","jajec","omlet","frittata"]):
         return "Brązowe masło + kapary (10g): kapary eksplodują smakowo w gorącym tłuszczu. Polej jajka. Orzechowość + kwasowość + sól w jednym geście."
     return "Element chrupiący na finishing: praż orzechy/nasiona (20g) na suchej patelni 60 sek lub panko w brązowym maśle 90 sek. Kontrast tekstury to najczęstsza różnica między domowym a restauracyjnym jedzeniem."
+
+
+def _pq_check_quality_gates(data):
+    """Return list of checklist issues that still fail."""
+    issues = []
+    text = _pq_get_all_text(data)
+    if not _pq_has_any(text, ["masło klarowane", "brązowe masło", "ghee", "finishing oil", "oliwa extra virgin"]):
+        issues.append("brak upgrade'u tłuszczu/finishing oil")
+    if not _pq_has_any(text, ["cytryn", "ocet", "ferment", "wino", "pickle", "kwaśn"]):
+        issues.append("brak elementu kwaśnego")
+    if not _pq_has_any(text, ["chrup", "panko", "orzech", "grzank", "nasion", "dukkah", "chips"]):
+        issues.append("brak kontrastu tekstury")
+    if not _pq_has_any(text, ["umami", "parmezan", "miso", "sos sojowy", "koncentrat", "Maillard"]):
+        issues.append("brak deklarowanego źródła umami")
+    for step in data.get("steps", []):
+        if not step.get("why"):
+            issues.append("krok bez why")
+            break
+    finishing_count = sum(bool(_pq_has_any(text, patt)) for patt in [
+        ["świeża", "microgreen", "ziół"], ["skórk", "zest"], ["finishing oil", "skrop"], ["flake salt", "płatki soli"]
+    ])
+    if finishing_count < 2:
+        issues.append("mniej niż 2 finishing elements")
+    if len(str(data.get("upgrade", ""))) < 20:
+        issues.append("brak upgrade")
+    return issues
+
+
+def _extract_all_text(data):
+    parts = []
+    if isinstance(data, dict):
+        for v in data.values():
+            if isinstance(v, str):
+                parts.append(v)
+    for step in data.get("steps", []):
+        if isinstance(step, dict):
+            parts.extend(str(v) for v in step.values() if isinstance(v, str))
+    for ing in data.get("ingredients", []):
+        if isinstance(ing, dict):
+            parts.extend(str(v) for v in ing.values() if isinstance(v, str))
+    return " ".join(parts).lower()
+
+
+def validate_enhance_diff(original, enhanced):
+    """Check if enhanced recipe has meaningful differences from original."""
+    issues = []
+    changes = 0
+
+    if not isinstance(original, dict) or not isinstance(enhanced, dict):
+        return False, ["Invalid input"], 0
+
+    enhanced_text = _extract_all_text(enhanced)
+    marker_count = enhanced_text.count("✨")
+    if marker_count >= 3:
+        changes += marker_count
+    else:
+        issues.append(f"Only {marker_count} ✨ markers (need ≥3)")
+
+    orig_ings = {i.get("item", "").lower().strip() for i in original.get("ingredients", [])}
+    enh_ings = {i.get("item", "").lower().strip() for i in enhanced.get("ingredients", [])}
+    new_ings = enh_ings - orig_ings
+    removed_ings = orig_ings - enh_ings
+    if new_ings:
+        changes += len(new_ings)
+    if removed_ings:
+        changes += len(removed_ings)
+    if not new_ings and not removed_ings:
+        issues.append("Zero ingredient changes")
+
+    orig_steps = len(original.get("steps", []))
+    enh_steps = len(enhanced.get("steps", []))
+    if enh_steps > orig_steps:
+        changes += (enh_steps - orig_steps)
+
+    upgrade = enhanced.get("upgrade", "")
+    if not upgrade or len(str(upgrade).strip()) < 30:
+        issues.append("Missing or too short upgrade field")
+    else:
+        changes += 1
+
+    pro_tip = enhanced.get("pro_tip", "")
+    orig_tip = original.get("pro_tip", "")
+    if pro_tip and pro_tip != orig_tip and len(str(pro_tip).strip()) > 20:
+        changes += 1
+    elif not pro_tip:
+        issues.append("Missing pro_tip")
+
+    orig_instructions = [s.get("instruction", "").strip()[:100] for s in original.get("steps", [])]
+    enh_instructions = [s.get("instruction", "").strip()[:100] for s in enhanced.get("steps", [])]
+    total_steps = max(len(orig_instructions), len(enh_instructions), 1)
+    identical_steps = sum(1 for a, b in zip(orig_instructions, enh_instructions) if a == b)
+    similarity = identical_steps / total_steps
+    if similarity > 0.8:
+        issues.append(f"Steps are {similarity:.0%} identical to original")
+    else:
+        changes += max(0, total_steps - identical_steps)
+
+    science = enhanced.get("science", "")
+    if not science or len(str(science).strip()) < 50:
+        issues.append("Missing or too short science field")
+
+    is_valid = changes >= 3 and len(issues) <= 2
+    return is_valid, issues, changes
 
 
 # ─── Skill Tree ───
@@ -764,6 +983,138 @@ SURPRISE_THEMES=["Cos z kurczakiem i cytryna","Comfort food na wieczor","Cos wlo
 # â”€â”€â”€ Prompts â”€â”€â”€
 RECIPE_JSON='{"type":"recipe","title":"...","subtitle":"...","times":{"prep_min":0,"cook_min":0,"total_min":0},"difficulty":3,"servings":2,"science":"...","shopping_list":[{"item":"...","amount":"...","section":"..."}],"ingredients":[{"item":"...","amount":"...","note":"..."}],"substitutes":[{"original":"...","substitute":"...","note":"..."}],"mise_en_place":["..."],"steps":[{"number":1,"title":"...","instruction":"...","equipment":"...","timer_seconds":0,"tip":"...","why":"..."}],"warnings":[{"problem":"...","solution":"..."}],"upgrade":"..."}'
 
+TRUISM_BLACKLIST_BLOCK="""
+## ⛔ ZAKAZANE FRAZESY — NIGDY NIE UŻYWAJ
+
+Poniższe konstrukcje są ZAKAZANE w polach "why", "tip" i "science".
+Jeśli łapiesz się na pisaniu czegoś z tej listy — SKASUJ i napisz mechanizm.
+
+### ZAKAZANE w "why":
+- "Dzięki temu mięso zyskuje lepszy smak" → ZAMIEŃ NA: mechanizm (Maillard, denaturacja, osmoza)
+- "To zapewnia, że..." → ZAMIEŃ NA: co fizycznie/chemicznie się dzieje
+- "Wzbogaca smak" → ZAMIEŃ NA: JAK wzbogaca (karmelizacja cukrów, uwolnienie olejków, emulsja)
+- "Zapewnia odpowiednią teksturę" → ZAMIEŃ NA: JAKĄ teksturę i DLACZEGO (koagulacja białek, żelatynizacja skrobi)
+- "Pozwala na uzyskanie" → ZAMIEŃ NA: mechanizm naukowy
+- "Sprawia, że X jest bardziej Y" → ZAMIEŃ NA: DLACZEGO jest bardziej Y
+- "Wymieszanie zapewnia harmonijny smak" → ZAMIEŃ NA: co rozpuszczanie/emulsja robi chemicznie
+- "Podgrzanie pozwala na połączenie smaków" → ZAMIEŃ NA: które związki się uwalniają i dlaczego
+- "Dobrze doprawione X lepiej smakuje" → NIGDY. To truizm. Wyjaśnij CO sól/pieprz robi (osmoza, blokowanie goryczki, uwydatnienie lotnych aromatów)
+- "Dodaje smaku" / "Wzbogaca danie" → NIGDY bez mechanizmu
+
+### ZAKAZANE w "tip":
+- "Podawaj natychmiast" → ZAMIEŃ NA: DLACZEGO (np. "panierka absorbuje wilgoć z sosu po 5 min — podawaj w ciągu 2 min od połączenia")
+- "Upewnij się, że X" → ZAMIEŃ NA: konkretne kryterium (kolor, temp, dźwięk, tekstura)
+- "Użyj dobrego Y" → ZAMIEŃ NA: JAKIE cechy ma "dobre Y"
+- "Olej powinien być dobrze rozgrzany" → ZAMIEŃ NA: "Olej gotowy gdy wrzucona zapałka/kawałek chleba skwierczy natychmiast (~180°C). Dym = za gorąco, zmniejsz ogień."
+
+### WZORCOWE "why" (naśladuj ten styl):
+- "Skrobia ziemniaczana absorbuje wilgoć z powierzchni mięsa — sucha powierzchnia osiąga 140°C+ w sekundy (Maillard). Mokra powierzchnia blokuje temp na 100°C (wrzenie wody) — mięso się gotuje zamiast smażyć."
+- "Każda warstwa panierki pełni inną funkcję: skrobia absorbuje wilgoć (sucha baza), jajko tworzy lepką emulsję lecytynową (klej), mąka pszenna + przyprawy daje chrupiącą matrycę glutenową (strukturę)."
+- "Deglazing winem rozpuszcza fond (karamelizowane białka + cukry) — setki związków Maillarda przechodzą do sosu. Sam bulion nie ma tej głębi."
+- "Masło poza ogniem emulsyfikuje ze skrobią (mantecatura) — tworzy stabilną emulsję. Na ogniu masło się rozdziela: tłuszcz + woda + mleko = brak kremowości."
+
+### WZORCOWE "tip" (naśladuj ten styl):
+- "Mięso puszcza łatwo z patelni bez siły = skorupa Maillarda gotowa. Jeśli klei się — daj jeszcze 30 sek, nie odrywaj."
+- "Sos otula łyżkę i spływa powoli (nappe) = gotowy. Jeśli cieknie jak woda — redukuj dalej."
+- "Olej gotowy gdy wrzucony kawałek panierki skwierczy natychmiast i wypływa na powierzchnię (~175°C). Dym = za gorąco."
+- "Cebula przezroczysta, miękka, ZERO brązowych plam = zeszklona. Brązowe plamy = karmelizacja (inny efekt, nie zeszklenie)."
+"""
+
+ENHANCE_PROMPT = """# SYSTEM — CHEF AI ENHANCE ENGINE
+
+Jesteś silnikiem kulinarnym, który ULEPSZA istniejące przepisy.
+User kliknął "Ulepsz" — to znaczy że OCZEKUJE REALNYCH ZMIAN.
+Jeśli Twoja wersja jest identyczna z oryginałem — ZROBIŁEŚ ŹLE.
+
+## TWOJE ZADANIE: Minimum 3 KONKRETNE ulepszenia
+
+Otrzymasz oryginalny przepis. Musisz go ulepszyć wprowadzając MINIMUM 3 zmiany z poniższej listy.
+Każda zmiana musi być WIDOCZNA — user musi natychmiast zobaczyć różnicę.
+
+### KATEGORIE ZMIAN (wybierz minimum 3):
+
+**A. UPGRADE SKŁADNIKA** — zamień składnik na lepszą wersję:
+- zwykłe masło → brązowe masło (beurre noisette) — orzechowa głębia
+- ketchup → gochujang + koncentrat pomidorowy — głębszy, bardziej złożony smak
+- śmietana → labneh/mascarpone — lekkość + kwasowość
+- cukier w sosie → miód + redukcja — karmelowa głębia
+- olej roślinny do finishing → oliwa extra virgin NA KONIEC
+- bulion z kartonu → wskazówka "domowy lub najlepszy dostępny"
+
+**B. DODAJ TECHNIKĘ** — wprowadź metodę której oryginał nie ma:
+- suche solenie (1.5% wagi, min 40 min przed)
+- deglazing fond ze dna patelni (wino/bulion → redukcja)
+- basting masłem (ostatnie 30-60 sek smażenia)
+- blanszowanie + szok lodowy (zamiast gotowania do miękkości)
+- double fry (smaż 6 min → wyjmij → podkręć temp → smaż 2 min)
+- blooming przypraw w gorącym tłuszczu (30 sek przed płynami)
+- tostowanie (ryżu, orzechów, nasion, przypraw — sucha patelnia)
+- mantecatura (emulsja masła poza ogniem)
+- rest/odpoczynek mięsa na kratce po smażeniu
+
+**C. DODAJ SKŁADNIK-FINISHING** — element którego brakuje:
+- kwas na koniec (sok z cytryny 5-10ml, ocet sherry/ryżowy)
+- fresh herb na talerzu (bazylia, koperek, mięta — nie gotowany)
+- element chrupiący (prażone orzechy, panko, sezam, grzanki)
+- skórka cytrusu (Microplane)
+- flake salt (Maldon) na mięso/czekoladę przy podaniu
+
+**D. ZMIEŃ METODĘ NA LEPSZĄ:**
+- gotowanie warzyw w wodzie → pieczenie 200°C / grillowanie / blanszowanie
+- "dodaj masło i mieszaj" → mantecatura poza ogniem
+- "smaż 5 min" → "smaż aż złocisty (~5 min), test: puszcza z patelni"
+- "dodaj przyprawy" → "blooming: podgrzej przyprawy w tłuszczu 30 sek"
+
+**E. DODAJ DONENESS CRITERIA** — do KAŻDEGO kroku:
+- wizualne: "złocisty", "przezroczysty", "pęcherzyki na brzegach"
+- dotykowe: "puszcza z patelni", "sprężysty jak kłąb kciuka"
+- zapachowe: "orzechowy zapach", "aromaty ziół"
+- temperaturowe: "74°C wewnątrz", "pirometr 280°C+ na patelni"
+
+### ZASADY ZMIAN:
+
+1. ZACHOWAJ ogólną strukturę dania — to ma być ULEPSZENIE, nie nowy przepis
+2. ZACHOWAJ liczbę porcji (servings)
+3. Czas przygotowania może wzrosnąć max o 15 min
+4. OZNACZ każdą zmianę: w polu "note" kroku/składnika wpisz "✨ Chef AI: [co zmieniłem]"
+5. Pole "upgrade" MUSI mieć 1 konkretny trick z MECHANIKĄ (co + dlaczego + jak)
+6. Pole "pro_tip" MUSI mieć wskazówkę której NIE MA w oryginalnym przepisie
+7. Pole "science" MUSI mieć 2-3 zdania o fizyce/chemii dania
+
+### ZAKAZANE ZMIANY:
+- NIE dodawaj składników z listy zakazanych użytkownika
+- NIE zamieniaj charakteru dania (pierogi nie stają się ravioli)
+- NIE dodawaj truflowego oleju / złota / kawioru jako "upgrade" — to jest gimmick, nie technika
+
+### WYMAGANIE KRYTYCZNE: WHY i TIP
+
+W KAŻDYM kroku:
+- "why" = mechanizm naukowy w 1-2 zdaniach (fizyka/chemia). NIE "poprawia smak".
+- "tip" = doneness criterion — jak user POZNA że krok jest zrobiony prawidłowo.
+
+### WALIDACJA PRZED ZWRÓCENIEM:
+Sprawdź czy Twoja wersja ma ≥3 pola z "✨ Chef AI" w notes.
+Jeśli NIE — dodaj więcej zmian. User PŁACI za ulepszenie.
+
+Odpowiedz WYŁĄCZNIE poprawnym JSON type:recipe.
+"""
+
+ENHANCE_RETRY_PROMPT = """Twoja poprzednia wersja jest ZBYT PODOBNA do oryginału.
+User kliknął "Ulepsz" i oczekuje WIDOCZNYCH ZMIAN — a Ty zwróciłeś prawie identyczny przepis.
+
+PROBLEMY:
+{issues}
+
+WYMAGANE POPRAWKI:
+1. Dodaj MINIMUM 3 konkretne ulepszenia (upgrade składnika, nowa technika, finishing element)
+2. Oznacz KAŻDĄ zmianę w "note": "✨ Chef AI: [co zmieniłem]"
+3. Pole "upgrade" MUSI zawierać konkretny trick z mechaniką
+4. WHY w krokach = mechanizm naukowy, nie "poprawia smak"
+5. TIP = doneness criterion, nie "upewnij się że"
+
+Zwróć poprawiony JSON z realnymi zmianami. Odpowiedz WYŁĄCZNIE JSON type:recipe.
+"""
+
 RESPONSE_RULES=f"""
 ## FORMAT:
 - PRZEPIS -> JSON type:"recipe" (schemat: {RECIPE_JSON})
@@ -782,8 +1133,9 @@ Opcjonalne: "kcal_per_serving" jesli user poda limit.
 - UŻYJ wiedzy z kontekstu do wyjaśniania nauki i technik, ale NIGDY nie podawaj tytułów książek ani nazwisk autorów. Pisz jak ekspert który po prostu WIE — nie powołuj się na źródła.
 - ZAWSZE timer_seconds w krokach z czekaniem
 - ZAWSZE w instrukcji kroku podawaj DOKLADNA ILOSC skladnika w nawiasie przy kazdym dodaniu
+- WHY = fizyka/chemia procesu (np. Maillard, denaturacja). TIP = mikro-ruch z konkretnym narzędziem/temperaturą/czasem. Zero marketingu.
 - NIE dodawaj pola "sources" do odpowiedzi.
-- Ton: kumpel-ekspert z pasja. POLSKI."""
+- Ton: kumpel-ekspert z pasja. POLSKI.""" + TRUISM_BLACKLIST_BLOCK
 
 PROMPT_LUKASZ="""Jestes osobistym mentorem kulinarnym. PRZEDE WSZYSTKIM PYSZNIE.
 Masz gleboka wiedze kulinarna. Uzywaj jej do wyjasniania nauki za gotowaniem.
@@ -3303,6 +3655,57 @@ def db_get_profile_cached(uid):
 def invalidate_profile_cache(uid):
     _profile_cache.pop(uid,None)
 
+# ─── Subscription Helpers ───
+def is_pro(uid):
+    """Check if user has active PRO/admin/tester entitlement."""
+    if not uid:
+        return False
+    profile = db_get_profile_cached(uid)
+    role = (profile.get("role") or "").lower().strip()
+    status = (profile.get("subscription_status") or "").lower().strip()
+    if role in ("pro","admin","premium","tester"):
+        return True
+    if status == "active":
+        return True
+    end = profile.get("subscription_end")
+    if end and status in ("canceled","past_due"):
+        try:
+            if datetime.fromisoformat(str(end).replace("Z","+00:00")) > datetime.utcnow().replace(tzinfo=None):
+                return True
+        except Exception:
+            pass
+    return False
+
+def check_daily_limit(uid,limit_type="recipes"):
+    """Check if free user exceeded daily limit. Returns (allowed, count, limit)."""
+    if not uid or is_pro(uid):
+        return True,0,999
+    profile=db_get_profile(uid)
+    stats=profile.get("stats",{})
+    if isinstance(stats,str): stats=json.loads(stats) if stats else {}
+    today=datetime.utcnow().strftime("%Y-%m-%d")
+    key=f"daily_{limit_type}"
+    daily=stats.get(key,{})
+    if isinstance(daily,str): daily=json.loads(daily) if daily else {}
+    if daily.get("date")!=today: daily={"date":today,"count":0}
+    limit=FREE_RECIPES_PER_DAY if limit_type=="recipes" else FREE_IMPORTS_PER_DAY
+    return daily["count"]<limit, daily["count"], limit
+
+def increment_daily(uid,limit_type="recipes"):
+    if not uid:
+        return
+    profile=db_get_profile(uid)
+    stats=profile.get("stats",{})
+    if isinstance(stats,str): stats=json.loads(stats) if stats else {}
+    today=datetime.utcnow().strftime("%Y-%m-%d")
+    key=f"daily_{limit_type}"
+    daily=stats.get(key,{})
+    if isinstance(daily,str): daily=json.loads(daily) if daily else {}
+    if daily.get("date")!=today: daily={"date":today,"count":0}
+    daily["count"]+=1
+    stats[key]=daily
+    db_update_profile(uid,{"stats":stats})
+
 class CulinaryAssistant:
     _CACHE_SIZE = 128
     _MAX_CACHE_MB = 20  # CRITICAL: Prevent memory leak
@@ -3504,7 +3907,10 @@ class CulinaryAssistant:
 
     # ─── LLM calls ───
     
-    def _call_with_logging(self, prompt, msgs, max_tokens=None, stream=False, response_format=None, user_id=None):
+    def _model_for_user(self, user_id):
+        return "gpt-4o" if user_id and is_pro(user_id) else AI_MODEL
+
+    def _call_with_logging(self, prompt, msgs, max_tokens=None, stream=False, response_format=None, user_id=None, model_name=None):
         """Wrapper for API calls with metrics logging."""
         start_time = time.time()
         
@@ -3513,8 +3919,9 @@ class CulinaryAssistant:
         OUTPUT_PRICE_PER_M = 1.60   # $/1M tokens
         
         try:
+            selected_model = model_name or self._model_for_user(user_id)
             kwargs = {
-                "model": getattr(self, '_recipe_model', AI_MODEL),
+                "model": selected_model,
                 "max_tokens": max_tokens or AI_MAX_TOKENS,
                 "temperature": 0.7,
                 "messages": [{"role": "system", "content": prompt}] + msgs,
@@ -3537,7 +3944,7 @@ class CulinaryAssistant:
                 
                 metrics.log_api_call(
                     provider="openai",
-                    model=AI_MODEL,
+                    model=selected_model,
                     input_tokens=input_tokens,
                     output_tokens=output_tokens,
                     duration_ms=duration_ms,
@@ -3610,11 +4017,13 @@ class CulinaryAssistant:
         _stream_start = time.time()
         _INPUT_PRICE = 0.40   # $/1M tokens (gpt-4o-mini)
         _OUTPUT_PRICE = 1.60
+        selected_model = self._model_for_user(user_id)
         resp = self._call_with_logging(
             prompt, msgs, 
             max_tokens=AI_MAX_TOKENS,
             stream=True,
-            user_id=user_id
+            user_id=user_id,
+            model_name=selected_model
         )
         full = ""
         last_usage = None
@@ -3631,7 +4040,7 @@ class CulinaryAssistant:
             _cost = (_in * _INPUT_PRICE + _out * _OUTPUT_PRICE) / 1_000_000
             metrics.log_api_call(
                 provider="openai",
-                model=getattr(self, '_recipe_model', AI_MODEL),
+                model=selected_model,
                 input_tokens=_in,
                 output_tokens=_out,
                 duration_ms=(time.time() - _stream_start) * 1000,
@@ -3689,9 +4098,7 @@ class CulinaryAssistant:
         if isinstance(bans, str):
             bans = json.loads(bans) if bans else []
 
-        # Model selection: PRO gets gpt-4o, FREE gets gpt-4o-mini
         user_is_pro = is_pro(uid) if uid else False
-        self._recipe_model = "gpt-4o" if user_is_pro else AI_MODEL
         if user_is_pro:
             logger.info(f"PRO user {uid} — using gpt-4o for recipe generation")
 
@@ -4424,7 +4831,9 @@ Przekształć poniższy przepis na JSON type:recipe.
 8. Zachowaj oryginalną liczbę porcji (servings).
 9. Dodaj 'science', 'why', 'tip', 'warnings' do kroków — ale NIE zmieniaj oryginalnych składników/kroków.
 10. NIE dodawaj pola 'sources' do odpowiedzi.
-11. Jeśli oryginał podaje kategorie składników (np. "Sos:", "Do podania:"), użyj ich w polu "note" składnika."""
+11. Jeśli oryginał podaje kategorie składników (np. "Sos:", "Do podania:"), użyj ich w polu "note" składnika.
+12. Każdy krok MUSI mieć `tip` i `why`: `tip` = mikro-ruch (czas, narzędzie, temperatura), `why` = fizyka/chemia tego kroku. Jeśli oryginał milczy, dopisz wyjaśnienie, ale nie zmieniaj sensu kroku.
+13. Pole `science` streszcza mechanikę całego dania (chemia/tekstura), zero marketingu."""
         prompt_with_lang = prompt + get_lang_instruction(lang)
         parsed, usage = self._call_text(prompt_with_lang, [{"role": "user", "content": f"URL: {url}\n\nTREŚĆ PRZEPISU:\n{page_text[:8000]}"}])
         parsed.pop("sources", None)
@@ -4437,6 +4846,107 @@ Przekształć poniższy przepis na JSON type:recipe.
         parsed = enforce_pro_quality(parsed, prof_data)
         auto_update_profile(uid, parsed)
         return {"data": parsed, "profile": profile, "usage": {"prompt_tokens": usage.prompt_tokens if usage else 0, "completion_tokens": usage.completion_tokens if usage else 0}}
+
+    def improve_recipe(self, recipe, profile="guest", uid=None, lang=None, max_retries=1):
+        """Enhance an imported recipe with aggressive upgrade instructions + validation."""
+        prof_data = db_get_profile(uid) if uid else dict(DEFAULT_PROFILE)
+        prof_ctx = profile_to_context(prof_data)
+        bans = prof_data.get("banned_ingredients", [])
+        if isinstance(bans, str):
+            bans = json.loads(bans) if bans else []
+        title = (recipe.get("title") or "").strip()
+
+        main_ing, dish_type = extract_query_terms(title or "przepis")
+        layer_queries = build_layer_queries(title or "przepis", main_ing, dish_type)
+        layers = parallel_search(self, layer_queries)
+        composition_ctx = trim_context("\n---\n".join(layers.get("composition", [])), 2000)
+        flavor_ctx = trim_context("\n---\n".join(layers.get("flavor", [])), 1500)
+        core_ctx = trim_context("\n---\n".join(layers.get("core", [])), 2000)
+        techniques_ctx = trim_context("\n---\n".join(layers.get("techniques", [])), 1500)
+        baking_ctx = trim_context("\n---\n".join(layers.get("baking", [])), 1500)
+
+        ban_text = ""
+        if bans:
+            ban_text = "\n\n## !!! ABSOLUTNE ZAKAZY !!!\nZAKAZANE: " + ", ".join(bans) + "\nUsuń zakazane i zaproponuj zamiennik w 'substitutes'."
+
+        knowledge_parts = []
+        if composition_ctx:
+            knowledge_parts.append(f"### KOMPOZYCJA\n{composition_ctx}")
+        if flavor_ctx:
+            knowledge_parts.append(f"### SMAK\n{flavor_ctx}")
+        if core_ctx:
+            knowledge_parts.append(f"### CORE\n{core_ctx}")
+        if techniques_ctx:
+            knowledge_parts.append(f"### TECHNIKI\n{techniques_ctx}")
+        if baking_ctx:
+            knowledge_parts.append(f"### BAKING\n{baking_ctx}")
+        knowledge_block = "\n\n".join(knowledge_parts)
+
+        try:
+            original_json = json.dumps(recipe, ensure_ascii=False)[:9000]
+        except Exception:
+            original_json = str(recipe)[:9000]
+
+        system_prompt = ENHANCE_PROMPT + "\n\n" + TRUISM_BLACKLIST_BLOCK
+        system_prompt += f"\n\n## PROFIL UŻYTKOWNIKA:\n{prof_ctx}"
+        system_prompt += ban_text
+        if knowledge_block:
+            system_prompt += f"\n\n## NASZA WIEDZA (wykorzystaj!):\n{knowledge_block}"
+        system_prompt += get_lang_instruction(lang)
+
+        user_msg = f"ORYGINALNY PRZEPIS (JSON):\n{original_json}\n\nZwróć POPRAWIONY przepis jako JSON type=recipe."
+        messages = [{"role": "user", "content": user_msg}]
+
+        best_result = None
+        best_changes = -1
+        last_usage = None
+
+        for attempt in range(max_retries + 1):
+            parsed, usage = self._call_text(system_prompt, messages, user_id=uid)
+            last_usage = usage
+            if isinstance(parsed, dict):
+                parsed.pop("sources", None)
+                parsed.pop("book_references", None)
+                if not parsed.get("type") and (parsed.get("title") or parsed.get("ingredients") or parsed.get("steps")):
+                    parsed["type"] = "recipe"
+                parsed = enforce_bans(parsed, bans)
+                parsed = enforce_equipment(parsed, prof_data)
+                parsed = enforce_pro_quality(parsed, prof_data)
+
+            is_valid, issues, change_count = validate_enhance_diff(recipe, parsed)
+            metrics.log_quality_event("enhance_attempt", {
+                "title": title or "(bez tytułu)",
+                "attempt": attempt + 1,
+                "valid": is_valid,
+                "changes": change_count,
+                "issues": issues,
+            }, user_id=uid)
+
+            if change_count > best_changes:
+                best_changes = change_count
+                best_result = parsed
+
+            if is_valid:
+                break
+
+            if attempt < max_retries:
+                issue_text = "\n".join(f"- {i}" for i in issues) if issues else "- brak szczegółów"
+                retry_instruction = ENHANCE_RETRY_PROMPT.format(issues=issue_text)
+                assistant_view = json.dumps(parsed, ensure_ascii=False, default=str)[:2000]
+                messages.extend([
+                    {"role": "assistant", "content": assistant_view},
+                    {"role": "user", "content": retry_instruction}
+                ])
+
+        final = best_result if best_result else parsed
+        return {
+            "data": final,
+            "profile": profile,
+            "usage": {
+                "prompt_tokens": last_usage.prompt_tokens if last_usage else 0,
+                "completion_tokens": last_usage.completion_tokens if last_usage else 0
+            }
+        }
 
     def total_chunks(self):
         """Total chunks across all 4 layer collections."""
@@ -4514,58 +5024,6 @@ def create_app():
     @app.route("/api/config")
     def config():
         return jsonify({"supabase_url":SUPABASE_URL,"supabase_anon_key":SUPABASE_ANON_KEY})
-
-    # â”€â”€â”€ Subscription Helpers â”€â”€â”€
-    def is_pro(uid):
-        """Check if user has active PRO subscription or PRO/admin role."""
-        p=db_get_profile(uid)
-        # Role-based override (manually granted PRO/admin)
-        role=(p.get("role") or "").lower().strip()
-        status=(p.get("subscription_status") or "").lower().strip()
-        if role in ("pro","admin","premium","tester"):
-            logger.info(f"[is_pro] uid={uid} → True (role={role})")
-            return True
-        if status=="active":
-            logger.info(f"[is_pro] uid={uid} → True (status=active)")
-            return True
-        # Check expiry for canceled but still valid
-        end=p.get("subscription_end")
-        if end and status in ("canceled","past_due"):
-            try:
-                if datetime.fromisoformat(str(end).replace("Z","+00:00"))>datetime.utcnow().replace(tzinfo=None):
-                    logger.info(f"[is_pro] uid={uid} → True (canceled but valid until {end})")
-                    return True
-            except: pass
-        logger.info(f"[is_pro] uid={uid} → False (role={role!r}, status={status!r}, end={end!r})")
-        return False
-
-    def check_daily_limit(uid,limit_type="recipes"):
-        """Check if free user exceeded daily limit. Returns (allowed, count, limit)."""
-        # PRO/admin/premium role or active subscription — unlimited
-        if is_pro(uid): return True,0,999
-        p=db_get_profile(uid)
-        stats=p.get("stats",{})
-        if isinstance(stats,str): stats=json.loads(stats) if stats else {}
-        today=datetime.utcnow().strftime("%Y-%m-%d")
-        key=f"daily_{limit_type}"
-        daily=stats.get(key,{})
-        if isinstance(daily,str): daily=json.loads(daily) if daily else {}
-        if daily.get("date")!=today: daily={"date":today,"count":0}
-        limit=FREE_RECIPES_PER_DAY if limit_type=="recipes" else FREE_IMPORTS_PER_DAY
-        return daily["count"]<limit, daily["count"], limit
-
-    def increment_daily(uid,limit_type="recipes"):
-        p=db_get_profile(uid)
-        stats=p.get("stats",{})
-        if isinstance(stats,str): stats=json.loads(stats) if stats else {}
-        today=datetime.utcnow().strftime("%Y-%m-%d")
-        key=f"daily_{limit_type}"
-        daily=stats.get(key,{})
-        if isinstance(daily,str): daily=json.loads(daily) if daily else {}
-        if daily.get("date")!=today: daily={"date":today,"count":0}
-        daily["count"]+=1
-        stats[key]=daily
-        db_update_profile(uid,{"stats":stats})
 
     # â”€â”€â”€ Stripe Endpoints â”€â”€â”€
     @app.route("/api/stripe/checkout",methods=["POST"])
@@ -5279,46 +5737,58 @@ def create_app():
         p=db_get_profile(uid)
         return (p.get("role") or "").lower().strip() in ("tester","admin")
 
-    def _scrape_kwestiasmaku(query, limit=10):
-        """Search kwestiasmaku.com via its Drupal AJAX endpoint and return [{title,url}]."""
+    def _scrape_kwestiasmaku(query, limit=200, max_pages=40):
+        """Search kwestiasmaku.com via Drupal AJAX endpoint, paginating through all pages.
+        Returns [{title,url}]. Stops when a page yields no new results or safety cap hit."""
         if not http_requests:
             return []
+        results=[]; seen=set()
+        # Match both URL schemes kwestiasmaku uses:
+        #   old: /kuchnia_xxx/.../przepis.html
+        #   new: /przepis/<slug>
+        pattern=re.compile(r'href="(/przepis/[^"#?]+|/[^"]+/przepis\.html)"[^>]*>([^<]+)</a>',re.IGNORECASE)
         try:
-            r=http_requests.post(
-                "https://www.kwestiasmaku.com/views/ajax",
-                data={
+            for page in range(max_pages):
+                body={
                     "view_name":"wyniki_wyszukiwania",
                     "view_display_id":"page",
                     "search_api_views_fulltext":query,
-                },
-                headers={
-                    "User-Agent":"Mozilla/5.0 Chef-AI/1.0",
-                    "X-Requested-With":"XMLHttpRequest",
-                },
-                timeout=10,
-            )
-            if r.status_code!=200: return []
-            data=r.json()
-            results=[]; seen=set()
-            pattern=re.compile(r'href="(/[^"]+/przepis\.html)"[^>]*>([^<]+)</a>',re.IGNORECASE)
-            for cmd in (data if isinstance(data,list) else []):
-                if cmd.get("command")!="insert": continue
-                sel=cmd.get("selector") or ""
-                # Only the view block contains real search results (facets give 0 hits)
-                if "view-dom-id" not in sel and "wyniki" not in sel.lower():
-                    continue
-                html_frag=cmd.get("data","") or ""
-                for m in pattern.finditer(html_frag):
-                    href=m.group(1); title=re.sub(r"\s+"," ",m.group(2)).strip()
-                    if not title or href in seen: continue
-                    seen.add(href)
-                    results.append({"title":title,"url":"https://www.kwestiasmaku.com"+href})
+                }
+                if page: body["page"]=str(page)
+                r=http_requests.post(
+                    "https://www.kwestiasmaku.com/views/ajax",
+                    data=body,
+                    headers={
+                        "User-Agent":"Mozilla/5.0 Chef-AI/1.0",
+                        "X-Requested-With":"XMLHttpRequest",
+                    },
+                    timeout=10,
+                )
+                if r.status_code!=200: break
+                try: data=r.json()
+                except Exception: break
+                page_added=0
+                for cmd in (data if isinstance(data,list) else []):
+                    if cmd.get("command")!="insert": continue
+                    sel=cmd.get("selector") or ""
+                    if "view-dom-id" not in sel and "wyniki" not in sel.lower():
+                        continue
+                    html_frag=cmd.get("data","") or ""
+                    for m in pattern.finditer(html_frag):
+                        href=m.group(1); title=re.sub(r"\s+"," ",m.group(2)).strip()
+                        if not title or href in seen: continue
+                        seen.add(href)
+                        results.append({"title":title,"url":"https://www.kwestiasmaku.com"+href})
+                        page_added+=1
+                        if len(results)>=limit: break
                     if len(results)>=limit: break
+                # Stop if this page gave nothing new (end of results)
+                if page_added==0: break
                 if len(results)>=limit: break
             return results
         except Exception as e:
             logger.warning(f"kwestiasmaku scrape error: {e}")
-            return []
+            return results
 
     @app.route("/api/tester/kwestiasmaku/search",methods=["POST"])
     @require_auth
@@ -5329,8 +5799,33 @@ def create_app():
         query=(d.get("query") or "").strip()
         if not query:
             return jsonify({"error":"No query"}),400
-        results=_scrape_kwestiasmaku(query, limit=int(d.get("limit",5)))
+        results=_scrape_kwestiasmaku(query, limit=int(d.get("limit",200)))
         return jsonify({"query":query,"results":results,"source":"kwestiasmaku.com"})
+
+    @app.route("/api/recipes/improve",methods=["POST"])
+    @require_auth
+    def improve_recipe_ep():
+        """Upgrade any recipe (e.g. imported) through the full Chef AI knowledge base pipeline."""
+        a=app.config.get("assistant")
+        if not a:
+            return jsonify({"error":"AI assistant unavailable"}),500
+        d=request.get_json(silent=True) or {}
+        recipe=d.get("recipe")
+        if not isinstance(recipe,dict) or not (recipe.get("title") or recipe.get("ingredients") or recipe.get("steps")):
+            return jsonify({"error":"Missing or invalid recipe"}),400
+        allowed,count,limit=check_daily_limit(g.user_id,"recipes")
+        if not allowed:
+            return jsonify({"error":"limit","is_limit":True,"message":f"Dzienny limit {limit} przepisów wyczerpany. Przejdź na PRO!"}),429
+        try:
+            p=db_get_profile_cached(g.user_id)
+            pr=d.get("profile") or p.get("bot_profile","guest")
+            lang=d.get("lang") or p.get("lang") or "pl"
+            out=a.improve_recipe(recipe, profile=pr, uid=g.user_id, lang=lang)
+            increment_daily(g.user_id,"recipes")
+            return jsonify({"success":True,"data":out["data"]})
+        except Exception as e:
+            logger.exception(f"improve_recipe error: {e}")
+            return jsonify({"error":str(e)}),500
 
     # Favorites
     @app.route("/api/favorites")

@@ -1106,6 +1106,12 @@ body{
 }
 .action-btn:hover{background:var(--surface-hover);color:var(--text-soft)}
 .action-btn.saved{color:var(--gold);border-color:var(--gold-border);background:var(--gold-dim)}
+.action-btn.action-improve{
+  color:#a78bfa;border-color:rgba(167,139,250,.35);
+  background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(167,139,250,.03))
+}
+.action-btn.action-improve:hover:not(:disabled){background:rgba(167,139,250,.22);color:#c4b5fd}
+.action-btn.action-improve:disabled{opacity:.6;cursor:wait}
 /* Servings stepper */
 .scaling-row{
   display:flex;justify-content:space-between;align-items:center;

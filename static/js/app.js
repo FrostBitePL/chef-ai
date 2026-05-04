@@ -274,7 +274,7 @@ async function runKsSearch(){
   out.innerHTML='<div class="ks-empty">🔎 Szukam „'+esc(q)+'" na kwestiasmaku.com…</div>';
   if(btn){btn.disabled=true;}
   try{
-    const r=await fetch(API+'/api/tester/kwestiasmaku/search',{method:'POST',headers:authHeaders(),body:JSON.stringify({query:q,limit:10})});
+    const r=await fetch(API+'/api/tester/kwestiasmaku/search',{method:'POST',headers:authHeaders(),body:JSON.stringify({query:q,limit:200})});
     const d=await r.json();
     if(!r.ok){out.innerHTML='<div class="ks-empty ks-err">Błąd: '+esc(d.error||'nie udało się wyszukać')+'</div>';return;}
     const results=d.results||[];

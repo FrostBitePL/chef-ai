@@ -193,6 +193,40 @@ async function saveNote(title) {
   } catch { showStatus(t('modal.note_error')); }
 }
 
+// ─── Improve Recipe (run through Chef AI knowledge base pipeline) ───
+async function improveRecipe(btn) {
+  const r = getRecipe(btn);
+  if (!r) return;
+  const card = btn.closest('.recipe-card');
+  const origLabel = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '🪄 Ulepszam…';
+  // Show loader message in chat
+  const msgs = document.getElementById('messages');
+  const lid = 'l' + Date.now();
+  const ld = document.createElement('div'); ld.id = lid; ld.className = 'msg';
+  ld.innerHTML = '<div class="msg-text">🪄 Przepuszczam przepis przez Chef AI — technika, nauka, profil…</div>';
+  if (msgs) { msgs.appendChild(ld); msgs.scrollTop = msgs.scrollHeight; }
+  try {
+    const resp = await fetch(API + '/api/recipes/improve', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ recipe: r, lang: (window.currentLang || 'pl') })
+    });
+    const d = await resp.json();
+    document.getElementById(lid)?.remove();
+    if (d.is_limit) { if (typeof showLimitMessage === 'function') showLimitMessage(d.message); else addMsg('t', d.message || 'Limit wyczerpany'); return; }
+    if (!d.success || !d.data) { addMsg('t', 'Błąd: ' + (d.error || 'nie udało się poprawić')); return; }
+    addMsg('system', '✨ Przepis ulepszony przez Chef AI — na bazie wiedzy kulinarnej i Twojego profilu');
+    handleResponse(d.data);
+  } catch (e) {
+    document.getElementById(lid)?.remove();
+    addMsg('t', 'Błąd połączenia: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = origLabel;
+  }
+}
+
 // ─── Share Recipe ───
 async function shareRecipe(btn) {
   const r = getRecipe(btn);

@@ -267,7 +267,7 @@ function renderRecipeCard(r){
   h+=`<div class="recipe-actions">
     <button class="action-save${fav?' saved':''}" onclick="toggleFav(this)" title="${fav?t('recipe.saved'):t('recipe.save')}">${svgHeart}</button>
     <button class="action-cook" onclick="openLive(this)">${svgPlay} ${t('recipe.cook')}</button>
-    <button class="action-more" onclick="this.nextElementSibling.classList.toggle('open')" title="Więcej">···</button>
+    <button class="action-more" onclick="this.parentElement.nextElementSibling.classList.toggle('open')" title="Więcej">···</button>
   </div>
   <div class="action-extras">
     <button class="action-btn" onclick="openStepMode(this)">👨‍🍳 ${t('recipe.steps')}</button>
@@ -277,6 +277,7 @@ function renderRecipeCard(r){
     <button class="action-btn" onclick="rateRecipe(this)">⭐ ${t('recipe.rate')}</button>
     <button class="action-btn" onclick="showPairing(this)">🍷 ${t('recipe.pairing')}</button>
     <button class="action-btn" onclick="openNotes(this)">📝 ${t('recipe.notes')}</button>
+    <button class="action-btn action-improve" onclick="improveRecipe(this)" title="Przepuść przez Chef AI">🪄 Popraw</button>
   </div>`;
 
   // Stepper
